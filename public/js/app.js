@@ -67090,7 +67090,7 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./resources/js/index.js":
+/***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
@@ -67111,8 +67111,6 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 __webpack_require__(/*! ./components/Example */ "./resources/js/components/Example.js");
-
-__webpack_require__(/*! ./views/test.views */ "./resources/js/views/test.views.js");
 
 /***/ }),
 
@@ -67201,46 +67199,6 @@ if (document.getElementById('example')) {
 
 /***/ }),
 
-/***/ "./resources/js/views/test.views.js":
-/*!******************************************!*\
-  !*** ./resources/js/views/test.views.js ***!
-  \******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-function TestExample() {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "container"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "row justify-content-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "col-md-8"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "card-header"
-  }, "Test Example Component"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "card-body"
-  }, "I'm an example component!")))));
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (TestExample);
-
-if (document.getElementById('test-example')) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TestExample, null), document.getElementById('test-example'));
-}
-
-/***/ }),
-
 /***/ "./resources/sass/app.scss":
 /*!*********************************!*\
   !*** ./resources/sass/app.scss ***!
@@ -67259,7 +67217,7 @@ if (document.getElementById('test-example')) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/macintosh/Documents/laravel-react-bsi/resources/js/app.js */"./resources/js/index.js");
+__webpack_require__(/*! /Users/macintosh/Documents/laravel-react-bsi/resources/js/app.js */"./resources/js/app.js");
 module.exports = __webpack_require__(/*! /Users/macintosh/Documents/laravel-react-bsi/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
