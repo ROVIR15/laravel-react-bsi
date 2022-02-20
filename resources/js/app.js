@@ -13,3 +13,5 @@ require('./bootstrap');
  */
 
 require('./components/Example');
+require('./index.main');
+require('./index.dashboard');

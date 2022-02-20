@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::view('/app/{path?}', 'app');
+Route::view('/dashboard/{path?}', 'dashboard')->where('path', '.*');

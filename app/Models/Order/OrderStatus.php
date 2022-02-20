@@ -1,0 +1,20 @@
+<?php
+  
+  namespace App\Models\Order;
+  
+  use Illuminate\Database\Eloquent\Model;
+  
+  class OrderStatus extends Model
+  {
+    protected $table = 'order_status';
+
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+
+    protected $fillable = [
+        'status_type',
+        'create_time',
+        'order_id'
+    ];
+  }
