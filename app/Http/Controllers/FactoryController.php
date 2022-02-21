@@ -1,12 +1,14 @@
 <?php
-  
-  namespace App\Http\Controllers\Product;
-  
-  use Illuminate\Http\Request;
-  use App\Http\Controllers\Controller;
-  
-  class Goods extends Controller
-  {  
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Product\Factory;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\Factory as FactoryCollection;
+
+class FactoryController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
@@ -15,13 +17,13 @@
      */
     public function index(Request $request)
     {
-        $param = $request->all();
-        $query = new PurchaseOrder();
+      $param = $request->all();
+      $query = new Factory();
 
-        return new PurchaseOrderCollection($query);
+      return new FactoryCollection($query);
     }
 
-        /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -85,5 +87,5 @@
     public function destroy(X $x)
     {
         //
-    }    
-  }
+    }
+}

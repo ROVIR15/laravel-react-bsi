@@ -14,6 +14,10 @@ class ProductCategory extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'order_type_id' => $this->order_type_id,
+            'creation_time' => $this->creation_time,
+            'update_time' => $this->update_time
+        ];
     }
 }

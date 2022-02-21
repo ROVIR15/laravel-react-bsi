@@ -14,6 +14,11 @@ class PartBOM extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'product_id' => $this->product_id,
+            'qty_used' => $this->qty_used,
+            'description' => $this->description
+        ];
     }
 }
