@@ -10,11 +10,18 @@
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    const CREATED_AT = 'creation_time';
+    const UPDATED_AT = 'update_time';
+
+    public $incrementing = false;
 
     protected $fillable = [
-        'order_type_id',
-        'creation_time',
-        'update_time'
+        'id',
+        'sales_order_id',
+        'purchase_order_id'
     ];
+
+    public function getId(){
+      return $this->id;
+    }
   }

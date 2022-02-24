@@ -21,10 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //Order
-Route::resource('sales-order', 'SalesOrderController')->only(['index']);
-Route::resource('purchase-order', 'PurchaseOrderController')->only(['index']);
+Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('order', 'OrderController')->only(['index']);
-Route::resource('order-item', 'OrderItemController')->only(['index']);
+Route::resource('order-item', 'OrderItemController')->only(['index', 'store']);
 Route::resource('order-status', 'OrderStatusController')->only(['index']);
 Route::resource('order-role', 'OrderRoleController')->only(['index']);
 Route::resource('order-associaiton', 'OrderAssociationController')->only(['index']);

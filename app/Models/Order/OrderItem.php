@@ -5,13 +5,15 @@ use Illuminate\Database\Eloquent\Model;
   
   class OrderItem extends Model
   {
-    protected $table = 'order';
+    protected $table = 'order_item';
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $timestamps = false;
+    public $incrementing = false;
 
     protected $fillable = [
+        'id',
         'order_id',
         'qty',
         'unit_price',

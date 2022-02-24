@@ -9,10 +9,14 @@
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $timestamps = false;
+    public $incrementing = false;
 
     protected $fillable = [
+        'id',
         'order_id',
+        'created_at',
+        'updated_at'
     ];
   }
 

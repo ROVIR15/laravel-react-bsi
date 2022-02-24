@@ -14,6 +14,9 @@ class SalesOrder extends JsonResource
      */
     public function toArray($request)
     {
-        return ['id' => $this->id, 'order_id' => $this->order_id];
+        return [
+            'id' => $this->id,
+            'order_id' => $this->order_id
+        ];
     }
 }

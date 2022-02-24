@@ -4,7 +4,8 @@
   
   use App\Models\Order\OrderItem;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Order\OrderItem as OrderItemCollection;
+  use App\Http\Resources\Order\OrderItemCollection;
+  use App\Http\Resources\Order\OrderItem as oneOrderItem;
   use Illuminate\Http\Request;
   
   class OrderItemController extends Controller
@@ -18,7 +19,7 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = new OrderItem();
+        $query = OrderItem::all();
 
         return new OrderItemCollection($query);
     }
@@ -41,7 +42,28 @@
      */
     public function store(Request $request)
     {
+      $orderItemData = $request->all()['payload'];
+      try {
+        $orderItem = OrderItem::insert($orderItemData);
 
+        return response()->json([ 'test' => true ]);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
+
+      return response()->json(
+        [
+          'success' => true
+        ], 200
+      );
     }
 
     /**
@@ -50,9 +72,17 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $orderItem = OrderItem::find($id);
+        return new oneOrderItem($orderItem);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ]);
+      }
     }
 
     /**
@@ -73,9 +103,22 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($orderId)
     {
-        //
+      $orderItemData = $request->all()['payload'];
+      try {
+        $orderItem = SalesOrder::where('order_id', $orderId)->update($orderItemData);
+
+        return response()->json([
+          'success' => true
+        ], 200);
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -84,8 +127,21 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        OrderItem::destroy($id);
+        return response()->json([ 'test' => 'yo']);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
     }
   }
