@@ -14,10 +14,11 @@ class OrderStatus extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'status_type' => $this->status_type,
-            'create_time' => $this->create_time,
-            'order_id' => $this->order_id   
-        ];
+      return [
+        'status_type' => $this->status_type,
+        'created_at' => $this->created_at,
+        'order_id' => $this->order_id,
+        'updated_at' => $this->updated_at
+      ];
     }
 }

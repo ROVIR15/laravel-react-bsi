@@ -24,10 +24,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('order', 'OrderController')->only(['index']);
-Route::resource('order-item', 'OrderItemController')->only(['index', 'store']);
-Route::resource('order-status', 'OrderStatusController')->only(['index']);
-Route::resource('order-role', 'OrderRoleController')->only(['index']);
-Route::resource('order-associaiton', 'OrderAssociationController')->only(['index']);
+Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy']);
+Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
+Route::resource('order-association', 'OrderAssociationController')->only(['index', 'store', 'update', 'destroy']);
 
 //Product
 Route::resource('product', 'ProductController')->only(['index']);

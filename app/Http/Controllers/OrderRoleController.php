@@ -2,9 +2,12 @@
   
   namespace App\Http\Controllers;
   
+  use Faker\Generator as Faker;
+
   use App\Models\Order\OrderRole;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Order\OrderRole as OrderRoleCollection;
+  use App\Http\Resources\Order\OrderRoleCollection;
+  use App\Http\Resources\Order\OrderRole as OrderRoleOneCollection;
   use Illuminate\Http\Request;
   
   class OrderRoleController extends Controller
@@ -39,9 +42,25 @@
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-   public function store(Request $request)
+   public function store(Request $request, Faker $faker)
    {
+      $orderRole = $request->all()['payload'];
+      try {
+        OrderRole::create([
+          'id' => $faker->unique()->numberBetween(9,9482),
+          'order_id' => $orderRole['order_id']
+        ]);
+      } catch (Exception $th) {
+          //throw $th;
+          return response()->json([
+            'success'=> false,
+            'errors'=> $th->getMessage()
+          ], 500);
+      }
 
+      return response()->json([
+        'success' => true,
+      ], 200);
    }
 
    /**
@@ -50,9 +69,18 @@
     * @param  \App\X  $X
     * @return \Illuminate\Http\Response
     */
-   public function show(X $x)
+   public function show($id)
    {
-       //
+       try {
+        $data = OrderRole::find($id);
+        return new OrderRoleOneCollection($data);
+       } catch (Exception $th) {
+           //throw $th;
+           return response()->json([
+            'success'=> false,
+            'errors'=> $th->getMessage()
+          ], 500);
+       }
    }
 
    /**
@@ -73,9 +101,20 @@
     * @param  \App\X  $X
     * @return \Illuminate\Http\Response
     */
-   public function update(Request $request, X $x)
+   public function update($id, Request $request)
    {
-       //
+      $param = $request->all();
+      try {
+        OrderRole::find($id)->update($param['payload']);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'successs'=> true
+      ], 200);
    }
 
    /**
@@ -84,8 +123,19 @@
     * @param  \App\X  $X
     * @return \Illuminate\Http\Response
     */
-   public function destroy(X $x)
+   public function destroy($id)
    {
-       //
+      try {
+        OrderRole::find($id)->delete();
+      } catch (Exception $th) {
+          //throw $th;
+          return response()->json([
+            'success'=> false,
+            'errors'=> $th->getMessage()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
    }
   }

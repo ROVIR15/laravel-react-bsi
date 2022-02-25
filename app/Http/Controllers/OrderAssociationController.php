@@ -4,7 +4,8 @@
   
   use App\Models\Order\OrderAssociation;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Order\OrderAssociation as OrderAssociationCollection;
+  use App\Http\Resources\Order\OrderAssociation as OrderAssociationOneCollection;
+  use App\Http\Resources\Order\OrderAssociationCollection;
   use Illuminate\Http\Request;
   
   class OrderAssociationController extends Controller
@@ -17,10 +18,29 @@
      */
     public function index(Request $request)
     {
-        $param = $request->all();
-        $query = new OrderAssociation();
+      $param = $request->all();
+      try {
 
-        return new OrderAssociationCollection($query);
+        if(empty($param)){
+          $data = OrderAssociation::all();
+          return new OrderAssociationCollection($data);
+        }
+
+        if(!empty($param['sales_order_id'])) {
+          $data = OrderAssociation::where('sales_order_id', $param['sales_order_id'])->get();
+          return new OrderAssociationCollection($data);
+        }
+
+        if(!empty($param['purchase_order_id'])) {
+          $data = OrderAssociation::where('purchase_order_id', $param['purchase_order_id'])->get();
+          return new OrderAssociationCollection($data);
+        }
+      } catch (Exception $th) {
+          return response()->json([
+            'success' => false,
+            'errors' => $th->getMessage()
+          ]);
+      }
     }
 
         /**
@@ -28,9 +48,9 @@
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+
     }
 
     /**
@@ -41,7 +61,16 @@
      */
     public function store(Request $request)
     {
+      $orderAsscData = $request->all()['payload'];
+      
+      try {
+        OrderAssociation::create($orderAsscData);
+      } catch (Exception $th) {
+          //throw $th;
+        return response()->json([ 'success' => false, 'errors' => $th], 500);
+      }
 
+      return response()->json([ 'success' => true], 200);
     }
 
     /**
@@ -50,9 +79,9 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id, Request $request)
     {
-        //
+
     }
 
     /**
@@ -73,9 +102,27 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update(Request $request, OrderAssociation $orderAssc)
     {
-        //
+      $orderAsscData = $request->all();
+      try {
+        if(!empty($orderAssociationData['sales_order_id'])) {
+          OrderAssociation::where($orderAsscData['sales_order_id'])->update($orderAsscData['payload']['new_data']);
+        }
+
+        if(!empty($orderAssociationData['purchase_order_id'])) {
+          OrderAssociation::find($orderAsscData['purchase_order_id'])->update($orderAsscData['payload']['new_data']);
+        }
+      } catch (Exception $th) {
+          return response()->json([
+            'success' => false,
+            'errors' => $th->getMessage()
+          ], 500);
+      }
+
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -84,8 +131,26 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy(Request $request)
     {
-        //
-    }
+      $orderAsscData = $request->all();
+      try {
+        if(!empty($orderAssociationData['sales_order_id'])) {
+          OrderAssociation::find($orderAssociationData['sales_order_id']);
+        }
+
+        if(!empty($orderAssociationData['purchase_order_id'])) {
+          OrderAssociation::find($orderAssociationData['purchase_order_id']);
+        }
+      } catch (Exception $th) {
+          return response()->json([
+            'success' => false,
+            'errors' => $th->getMessage()
+          ], 500);
+      }
+
+        return response()->json([
+          'success' => true
+        ], 200);
+      }
   }

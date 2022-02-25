@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Order;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class OrderRole extends JsonResource
+class OrderStatusCollection extends ResourceCollection
 {
     /**
      * Transform the resource into an array.
@@ -14,9 +14,8 @@ class OrderRole extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'order_id' => $this->order_id
-        ];
+      return ([
+        'data' => $this->collection
+      ]);
     }
 }

@@ -10,11 +10,13 @@
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
 
     protected $fillable = [
         'status_type',
-        'create_time',
-        'order_id'
+        'created_at',
+        'updated_at',
+        'order_id',
+        'id'
     ];
   }

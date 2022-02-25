@@ -2,9 +2,11 @@
   
   namespace App\Http\Controllers;
   
+  use Faker\Generator as Faker;
   use App\Models\Order\OrderStatus;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\OrderStatus as OrderStatusCollection;
+  use App\Http\Resources\Order\OrderStatusCollection;
+  use App\Http\Resources\Order\OrderStatus as OrderStatusOneCollection;
   use Illuminate\Http\Request;
   
   class OrderStatusController extends Controller
@@ -15,12 +17,11 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $param = $request->all();
-        $query = new PurchaseOrder();
+        $query = OrderStatus::all();
 
-        return new PurchaseOrderCollection($query);
+        return new OrderStatusCollection($query);
     }
 
         /**
@@ -39,9 +40,22 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
+      $orderStatusData = $request->all()['payload'];
+      try {
+        OrderStatus::create([
+          'id' => $faker->unique()->numberBetween(78,7933),
+          'order_id' => $orderStatusData['order_id'],
+          'status_type' => $orderStatusData['status_type']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
+      }
 
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -50,9 +64,18 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $orderStatusData = OrderStatus::find($id);
+        return new OrderStatusOneCollection($orderStatusData);
+
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +96,23 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $orderStatusData = $request->all()['payload'];
+
+      try {
+        if(empty($id)) return response()->json([ 'success' => false, 'errors' => 'id not found']);
+        OrderStatus::find($id)->update($orderStatusData);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -84,8 +121,18 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        OrderStatus::find($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
   }

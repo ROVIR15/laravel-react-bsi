@@ -18,10 +18,8 @@
     protected $fillable = [
         'id',
         'sales_order_id',
-        'purchase_order_id'
+        'purchase_order_id',
+        'creation_time',
+        'update_time'
     ];
-
-    public function getId(){
-      return $this->id;
-    }
   }

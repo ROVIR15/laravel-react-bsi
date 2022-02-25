@@ -8,7 +8,8 @@
   use App\Models\Order\SalesOrder;
   use App\Models\Order\PurchaseOrder;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Order\Order as OrderCollection;
+  use App\Http\Resources\Order\Order as OrderOneCollection;
+  use App\Http\Resources\Order\OrderCollection;
   use Illuminate\Http\Request;
   use Illuminate\Support\Facades\Validator;
   
@@ -23,7 +24,7 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = new Order();
+        $query = Order::all();
         return new OrderCollection($query);
     }
 

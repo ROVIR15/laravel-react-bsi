@@ -16,7 +16,8 @@
     {
       return [
         'id' => $this->id,
-        'order_type_id' => $this->order_type_id,
+        'sales_order_id' => $this->sales_order_id,
+        'purchase_order_id' => $this->purchase_order_id,
         'creation_time' => $this->creation_time
       ];
     }
