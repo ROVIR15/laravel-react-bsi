@@ -124,8 +124,6 @@
     {
       $salesOrderData = $request->all()['payload'];
       try {
-        $salesOrder = SalesOrder::find($id)->update($salesOrderData);
-
         return response()->json([
           'success' => true
         ], 200);
@@ -134,7 +132,7 @@
         return response()->json([
           'success' => false,
           'errors' => $e->getMessage()
-        ]);
+        ],500);
       }
     }
 

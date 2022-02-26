@@ -10,11 +10,14 @@ class Product extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
-        'product_type_id',
+        'service_id',
+        'goods_id',
         'name',
-        'part_id'
+        'part_id',
+        'id'
     ];
 }

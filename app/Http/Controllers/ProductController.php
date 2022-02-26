@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
@@ -39,9 +41,27 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
+      $productData = $request->all()['payload'];
+      try {
+        $data = Product::create([
+          'service_id' => $productData['service_id'],
+          'goods_id' => $productData['goods_id'],
+          'name' => $productData['name'],
+          'part_id' => $productData['part_id'],
+          'id' => $faker->unique()->numberBetween(982,2147)
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
 
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -84,8 +104,19 @@ class ProductController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Product::find($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+
+      return response()->json([
+          'success' => true
+      ], 200);
     }
 }

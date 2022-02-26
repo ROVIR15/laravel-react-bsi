@@ -41,7 +41,21 @@ class RelationshipController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        $query = Realationship::create([
+          'id' => $faker->unique()->numberBetween(1,2314),
+          'status_id' => $param['status_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);    
     }
 
     /**
@@ -84,9 +98,19 @@ class RelationshipController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Relationship::where('id', $id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
 }

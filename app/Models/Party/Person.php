@@ -10,7 +10,8 @@ class Person extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'id'

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
-use App\Models\Person\Person;
+use App\Models\Party\Person;
+use App\Models\Party\Party;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Person\Person as PersonCollection;
+use App\Http\Resources\Party\Person as PersonOneCollection;
+use App\Http\Resources\Party\PersonCollection;
 
 class PersonController extends Controller
 {
@@ -41,7 +45,25 @@ class PersonController extends Controller
      */
     public function store(Request $request)
     {
+      $param = $request->all()['payload'];
+      try {
+        $person = Person::create([
+          'id' => $faker->unique()->numberBetween(1,2314)
+        ]);
 
+        Party::create([
+          'id' => $faker->unique()->numberBetween(1,89833),
+          'person_id' => $param['person_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -50,9 +72,17 @@ class PersonController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = Person::find($id);
+        return new PersonOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +103,20 @@ class PersonController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Person::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -86,6 +127,17 @@ class PersonController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+      try {
+        Person::find($id)->delete();
+        Party::where('person_id', $id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 }

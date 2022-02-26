@@ -16,8 +16,7 @@ class Factory extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'update_time' => $this->update_time,
+            'factory_type' => $this->name,
         ];
     }
 }

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Party\Organization;
+use App\Models\Party\Party;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Party\Organization as OrganizationCollection;
+use App\Http\Resources\Party\Organization as OrganizationOneCollection;
+use App\Http\Resources\Party\OrganizationCollection;
 
 class OrganizationController extends Controller
 {
@@ -41,7 +45,24 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        $query = Organization::create([
+          'id' => $faker->unique()->numberBetween(1,2314)
+        ]);
+        Party::create([
+          'id' => $faker->unique()->numberBetween(1,89833),
+          'person_id' => $query['person_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -50,9 +71,17 @@ class OrganizationController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = Person::find($id);
+        return new OrganizationOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +102,20 @@ class OrganizationController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Party::where('organization_id', $id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -86,7 +126,16 @@ class OrganizationController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+      try {
+        Party::where('person_id', $id)->delete();
+      } catch (\Throwable $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);    
     }
-
 }

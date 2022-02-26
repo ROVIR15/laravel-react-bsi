@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Party\Address;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Party\Address as AddressCollection;
+use App\Http\Resources\Party\Address as AddressOneCollection;
+use App\Http\Resources\Party\AddressCollection;
 
 class AddressController extends Controller
 {
@@ -18,7 +19,7 @@ class AddressController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Address();
+      $query = Address::all();
 
       return new AddressCollection($query);
     }
@@ -39,9 +40,23 @@ class AddressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        $query = Address::create([
+          'id' => $faker->unique()->numberBetween(1,2314),
+          'party_id' => $param['party_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -50,9 +65,17 @@ class AddressController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = Address::find($id);
+        return new AddressOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +96,20 @@ class AddressController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update(Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Address::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -84,8 +118,18 @@ class AddressController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Address::where('party_id', $id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 }

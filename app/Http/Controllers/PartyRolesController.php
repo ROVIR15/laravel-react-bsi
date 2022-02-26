@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Party\PartyRoles;
 use App\Http\Controllers\Controller;
@@ -41,7 +43,22 @@ class PartyRolesController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        $query = PartyRoles::create([
+          'id' => $faker->unique()->numberBetween(1,2314),
+          'party_id' => $param['party_id'],
+          'relationship_id' => $param['relationship_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -52,7 +69,7 @@ class PartyRolesController extends Controller
      */
     public function show(X $x)
     {
-        //
+
     }
 
     /**
@@ -75,7 +92,18 @@ class PartyRolesController extends Controller
      */
     public function update(Request $request, X $x)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        PartyRoles::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -84,9 +112,19 @@ class PartyRolesController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        PartyRoles::where('id', $id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
 }

@@ -10,11 +10,13 @@ class Party extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
-
+    public $incrementing = false;
+    public $timestamps = false;
+    
     protected $fillable = [
         'id',
-        'party_type',
+        'person_id',
+        'organisation_id',
         'agreement_role_id'
     ];
 }

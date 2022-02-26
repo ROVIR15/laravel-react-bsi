@@ -4,7 +4,7 @@ namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ProductCategoryCollection extends ResourceCollection
+class ProductFeature extends ResourceCollection
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +15,7 @@ class ProductCategoryCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => $this->collection
+          'data' => $this->collection
         ];
     }
 }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product\Service;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\Service as ServiceCollection;
+use App\Http\Resources\Product\Service as ServiceOneCollection;
+use App\Http\Resources\Product\ServiceCollection;
 
 class ServiceController extends Controller
 {
@@ -18,7 +19,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Service();
+      $query = Service::all();
 
       return new ServiceCollection($query);
     }
@@ -39,9 +40,30 @@ class ServiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
+      $param = $request->all()['payload'];
+      
+      try {
+        $service = Service::create([
+          'id' => $faker->unique()->numberBetween(1,8939)
+        ]);
 
+        $products = $product->insert([
+          'goods_id' => $service->id,
+          'name' => $param['name'],
+          'part_id' => $param['part_id'],
+          'id' => $faker->unique()->numberBetween(1,8939)
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -50,9 +72,17 @@ class ServiceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $serviceData = Service::find($id);
+        return new ServiceOneCollection($serviceData); 
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +103,18 @@ class ServiceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Service::find($id)->update($param);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ], 500);
+      }
     }
 
     /**
@@ -84,8 +123,19 @@ class ServiceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Service::find($id)->delete();
+      } catch (Exception $th) {
+          //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Product\PartBOM;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\PartBOM as PartBOMCollection;
+use App\Http\Resources\Product\PartBOMCollection;
+use App\Http\Resources\Product\PartBOM as PartBOMOneCollection;
 
 class PartBOMController extends Controller
 {
@@ -39,9 +42,25 @@ class PartBOMController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        PartBOM::create([
+            'id' => $faker->unique()->numberBetween(1,8391),
+            'product_id' => $param['product_id'],
+            'qty_used' => $param['qty_used'],
+            'description' => $param['description']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -50,9 +69,17 @@ class PartBOMController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = PartBOM::find($id);
+        return new PartBOMOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
     }
 
     /**
@@ -75,7 +102,19 @@ class PartBOMController extends Controller
      */
     public function update(Request $request, X $x)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        PartBOM::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 
     /**
@@ -86,6 +125,16 @@ class PartBOMController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+      try {
+        PartBOM::find($id)->delete();
+      } catch (\Throwable $th) {
+        return response()->json([
+            'success'=> false,
+            'errors'=> $th->getError()
+          ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 }

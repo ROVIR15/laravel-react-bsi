@@ -10,11 +10,11 @@ class Address extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
         'party_id',
-        'update_time'
     ];
 }

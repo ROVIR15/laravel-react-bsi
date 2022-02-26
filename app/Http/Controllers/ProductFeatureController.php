@@ -18,7 +18,7 @@ class ProductFeatureController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new ProductFeature();
+      $query = ProductFeature::all();
 
       return new ProductFeatureCollection($query);
     }
@@ -41,7 +41,23 @@ class ProductFeatureController extends Controller
      */
     public function store(Request $request)
     {
+      $productFeatureData = $request->all()['payload'];
 
+      try {
+        ProductFeature::insert($productFeatureData);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json(
+            [
+              'success' => false,
+              'errors' => $e->getMessage()
+            ],
+            500
+          );        
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -50,9 +66,17 @@ class ProductFeatureController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $productFeature = ProductFeature::find($id);
+        return new ProductFeatureCollection($id);
+      } catch (\Throwable $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);        
+      }
     }
 
     /**
@@ -73,9 +97,20 @@ class ProductFeatureController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($product_id, Request $request)
     {
-        //
+      $productFeatureData = $request->all()['payload'];
+      try {
+        ProductFeature::where('product_id', $product_id)->update($productFeatureData);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true,
+      ], 200);
     }
 
     /**
@@ -84,8 +119,19 @@ class ProductFeatureController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        ProductFeature::find($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 }

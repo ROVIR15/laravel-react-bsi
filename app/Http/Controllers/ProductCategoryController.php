@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Product\ProductCategory;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductCategory as ProductCategoryCollection;
+use App\Http\Resources\Product\ProductCategory as ProductCategoryOneCollection;
+use App\Http\Resources\Product\ProductCategoryCollection;
 
 class ProductCategoryController extends Controller
 {
@@ -39,9 +42,23 @@ class ProductCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        ProductCategory::create([
+          'id' => $faker->unique()->numberBetween(1, 20),
+          'name' => $param['name']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -84,8 +101,19 @@ class ProductCategoryController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        ProductCategory::find($id)->delete();
+      } catch (\Throwable $th) {
+          //throw $th;
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 }

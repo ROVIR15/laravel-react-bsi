@@ -4,8 +4,10 @@
 
   use Illuminate\Http\Request;
   use App\Models\Product\Goods;
+  use App\Models\Product\Product;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Product\Goods as GoodsCollection;
+  use App\Http\Resources\Product\GoodsCollection;
+  use App\Http\Resources\Product\Goods as GoodsOneCollection;
     
   class GoodsController extends Controller
   {  
@@ -18,7 +20,7 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = new Goods();
+        $query = Goods::all();
 
         return new GoodsCollection($query);
     }
@@ -39,9 +41,30 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
+      $param = $request->all()['payload'];
+      
+      try {
+        $goods = Goods::create([
+          'id' => $faker->unique()->numberBetween(1,8939)
+        ]);
 
+        $products = $product->insert([
+          'goods_id' => $goods->id,
+          'name' => $param['name'],
+          'part_id' => $param['part_id'],
+          'id' => $faker->unique()->numberBetween(1,8939)
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -50,9 +73,18 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $data = Goods::find($id);
+        return new GoodsOneCollection($data);
+      } catch (Exception $th) {
+          //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
     }
 
     /**
@@ -73,9 +105,18 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Goods::find($id)->update($param);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ], 500);
+      }
     }
 
     /**
@@ -84,8 +125,19 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Goods::find($id)->delete();
+      } catch (Exception $th) {
+          //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }    
   }

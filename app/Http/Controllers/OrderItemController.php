@@ -81,7 +81,7 @@
         return response()->json([
           'success'=> false,
           'errors'=> $th->getError()
-        ]);
+        ], 500);
       }
     }
 
@@ -103,7 +103,7 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($orderId)
+    public function update($orderId, Request $request)
     {
       $orderItemData = $request->all()['payload'];
       try {
@@ -117,7 +117,7 @@
         return response()->json([
           'success' => false,
           'errors' => $e->getMessage()
-        ]);
+        ], 500);
       }
     }
 

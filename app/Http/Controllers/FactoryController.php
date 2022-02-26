@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product\Factory;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\Factory as FactoryCollection;
+use App\Http\Resources\Product\FactoryCollection;
+use App\Http\Resources\Product\Factory as FactoryOneCollection;
 
 class FactoryController extends Controller
 {
@@ -41,7 +42,25 @@ class FactoryController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        Factory::create([
+          'id' => $faker->unique()->numberBetween(1,3811),
+          'factory_type' => $param['factory_type']
+        ]);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -73,9 +92,26 @@ class FactoryController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['factory'];
+      try {
+        Factory::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
+      return response()->json(
+        [
+          'success' => true,
+        ],
+        200
+      );
     }
 
     /**
@@ -84,8 +120,18 @@ class FactoryController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Factory::find($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
     }
 }

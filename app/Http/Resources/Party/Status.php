@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Party;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class status extends JsonResource
+class Status extends ResourceCollection
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +15,7 @@ class status extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this.id
+            'data' => $this.collection
         ];
     }
 }

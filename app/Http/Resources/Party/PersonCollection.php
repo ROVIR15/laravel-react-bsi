@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Party;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ProductCategoryCollection extends ResourceCollection
+class PersonCollection extends ResourceCollection
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource collection into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array

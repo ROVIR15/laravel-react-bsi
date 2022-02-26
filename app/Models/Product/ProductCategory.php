@@ -10,11 +10,10 @@ class ProductCategory extends Model
 
     protected $primaryKey = 'product_category';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
-        'order_type_id',
-        'creation_time',
-        'update_time'
+        'name'
     ];
 }

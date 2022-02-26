@@ -41,7 +41,22 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
+      $param = $request->all()['payload'];
+      try {
+        Part::create([
+          'id' => $faker->unique()->numberBetween(1,900),
+          'part_type' => $param['part_type']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getMessage()
+        ], 500);
+      }
 
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -73,9 +88,20 @@ class PartController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Part::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
 
     /**
@@ -84,9 +110,18 @@ class PartController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        Part::find($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true,
+      ], 200);
     }
-
 }
