@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Shipment\ShipmentItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Shipment\ShipmentItem as ShipmentItemCollection;
+use App\Http\Resources\Shipment\ShipmentItemCollection;
+use App\Http\Resources\Shipment\ShipmentItem as ShipmentItemOneCollection;
 
 class ShipmentItemController extends Controller
 {
@@ -18,7 +21,7 @@ class ShipmentItemController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new ShipmentItem();
+      $query = ShipmentItem::all();
 
       return new ShipmentItemCollection($query);
     }
@@ -39,9 +42,24 @@ class ShipmentItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        OrderShipment::create([
+          'id' => $faker->unique()->numberBetween(1,3189),
+          'order_shipment_id' => $param['order_shipment_id'],
+          'item_issuance_id' => $param['item_issuance_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -50,9 +68,17 @@ class ShipmentItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = OrderShipment::find($id);
+        return new OrderShipmentOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
     }
 
     /**
@@ -73,9 +99,20 @@ class ShipmentItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $orderShipmentData = $request->all()['payload'];
+      try {
+        ShipmentItem::find($id)->update($orderShipmentData);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -84,8 +121,17 @@ class ShipmentItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        ShipmentItem::find($id)->delete();
+        return response()->json([ 'success'=> true ], 200);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
     }
 }

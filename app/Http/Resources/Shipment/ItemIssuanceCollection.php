@@ -4,7 +4,7 @@ namespace App\Http\Resources\Shipment;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Shipment extends JsonResource
+class ItemIssuanceCollection extends ResourceCollection
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +15,7 @@ class Shipment extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id
+            'data' => $this->collection
         ];
     }
 }

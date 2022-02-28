@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shipment\Shipment;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Shipment\ShipmentOneCollection;
 use App\Http\Resources\Shipment\Shipment as ShipmentCollection;
 
 
@@ -19,7 +20,7 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Shipment();
+      $query = Shipment::all();
 
       return new ShipmentCollection($query);
     }
@@ -42,7 +43,20 @@ class ShipmentController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        Shipment::create([
+          'id' => $faker->unique()->numberBetween(1,3189)
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -51,9 +65,17 @@ class ShipmentController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = Shipment::find($id);
+        return new ShipmentOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
     }
 
     /**
@@ -76,7 +98,18 @@ class ShipmentController extends Controller
      */
     public function update(Request $request, X $x)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        Shipment::find($id)->update($orderShipmentData);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -87,6 +120,15 @@ class ShipmentController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+      try {
+        Shipment::find($id)->delete();
+        return response()->json([ 'success'=> true ], 200);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
     }
 }

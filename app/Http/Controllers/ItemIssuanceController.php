@@ -18,7 +18,7 @@ class ItemIssuanceController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new ItemIssuance();
+      $query = ItemIssuance::all();
 
       return new ItemIssuanceCollection($query);
     }
@@ -41,7 +41,20 @@ class ItemIssuanceController extends Controller
      */
     public function store(Request $request)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        ItemIssuance::create([
+          'id' => $faker->unique()->numberBetween(1,3189)
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -52,7 +65,15 @@ class ItemIssuanceController extends Controller
      */
     public function show(X $x)
     {
-        //
+      try {
+        $query = ItemIssuance::find($id);
+        return new ItemIssuanceOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
     }
 
     /**
@@ -75,7 +96,18 @@ class ItemIssuanceController extends Controller
      */
     public function update(Request $request, X $x)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        ItemIssuance::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -86,6 +118,15 @@ class ItemIssuanceController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+      try {
+        ItemIssuance::find($id)->delete();
+        return response()->json([ 'success'=> true ], 200);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
     }
 }

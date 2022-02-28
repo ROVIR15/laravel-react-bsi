@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Shipment\ShipmentReceipt;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Shipment\ShipmentReceipt as ShipmentReceiptCollection;
+use App\Http\Resources\Shipment\hipmentReceiptCollection;
+use App\Http\Resources\Shipment\ShipmentReceipt as ShipmentReceiptOneCollection;
 
 class ShipmentReceiptController extends Controller
 {
@@ -39,9 +42,23 @@ class ShipmentReceiptController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-
+      $param = $request->all()['payload'];
+      try {
+        ShipmentReceipt::create([
+          'id' => $faker->unique()->numberBetween(1,3189),
+          'order_id' => $param['order_id']
+        ]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -50,9 +67,17 @@ class ShipmentReceiptController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+      try {
+        $query = ShipmentReceipt::find($id);
+        return new ShipmentReceiptOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
     }
 
     /**
@@ -73,9 +98,20 @@ class ShipmentReceiptController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+      $param = $request->all()['payload'];
+      try {
+        SheipmentReceipt::find($id)->update($param);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $e->getMessage()
+        ],500);
+      }
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -84,8 +120,17 @@ class ShipmentReceiptController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
-        //
+      try {
+        SheipmentReceipt::find($id)->delete();
+        return response()->json([ 'success'=> true ], 200);
+      } catch (Exception $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
     }
 }

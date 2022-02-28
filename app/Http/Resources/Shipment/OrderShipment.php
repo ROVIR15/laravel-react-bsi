@@ -4,7 +4,7 @@ namespace App\Http\Resources\Shipment;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderShipment extends JsonResource
+class Shipment extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +15,8 @@ class OrderShipment extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id
+            'id' => $this->id,
+            'shipment_item_id' => $this->shipment_item_id
         ];
     }
 }
