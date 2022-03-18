@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
+import briefcaseFill from '@iconify/icons-eva/briefcase-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
@@ -19,34 +20,122 @@ const sidebarConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'user',
-    path: '/dashboard/user',
-    icon: getIcon(peopleFill)
+    title: 'Sales',
+    icon: getIcon(briefcaseFill),
+    children: [
+      {
+        title: 'Buyer',
+        path: '/dashboard/order/buyer'
+      },
+      {
+        title: 'Inquiry',
+        path: '/dashboard/order/inquiry',
+      },
+      {
+        title: 'Quotation',
+        path: '/dashboard/order/quotation'
+      },
+      {
+        title: 'Sales Order',
+        path: '/dashboard/order/sales-order',
+      },
+      {
+        title: 'Shipment',
+        path: '/dashboard/order/order-shipment'
+      },
+      {
+        title: 'Outbound Delivery',
+        path: '/dashboard/order/outbound-delivery'
+      },
+      {
+        title: 'Goods Issue',
+        path: '/dashboard/order/goods-isssue'
+      }
+    ]
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: getIcon(shoppingBagFill)
+    title: 'Production',
+    icon: getIcon(),
+    children: [
+      {
+        title: 'Bill of Material',
+        path: '/dashboard/production/bom-production'
+      },
+      {
+        title: 'Routing',
+        path: '/dashboard/production/routing'
+      },
+      {
+        title: 'Work Center',
+        path: '/dashboard/production/work-center'
+      }
+    ]
   },
   {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: getIcon(fileTextFill)
+    title: 'Material Management',
+    icon: getIcon(),
+    children: [
+      {
+        title: 'Goods',
+        path: '/dashboard/material/goods'
+      },
+      {
+        title: 'Service',
+        path: '/dashboard/material/service'
+      },
+      {
+        title: 'Non-Material',
+        path: '/dashboard/material/non-material-goods'
+      },
+      {
+        title: 'Material Grouping',
+        path: '/dashboard/material/material-grouping'
+      }
+    ]
   },
   {
-    title: 'login',
-    path: '/login',
-    icon: getIcon(lockFill)
+    title: 'Inventory Management',
+    icon: getIcon(),
+    children: [
+      {
+        title: 'Stock',
+        path: '/dashboard/inventory/stocks'
+      },
+      {
+        title: 'Inventory Item',
+        path: '/dashboard/inventory/inventory-items'
+      },
+      {
+        title: 'Goods Receipt',
+        path: '/dashboard/material/service'
+      },
+      {
+        title: 'Goods Issue',
+        path: '/dashboard/material/non-material-goods'
+      }
+    ]
   },
   {
-    title: 'register',
-    path: '/register',
-    icon: getIcon(personAddFill)
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: getIcon(alertTriangleFill)
+    title: "Purchasing",
+    icon: getIcon(),
+    children: [
+      {
+        title: 'Vendor',
+        path: '/dashboard/purchasing/vendor'
+      },
+      {
+        title: 'Purchase Requisition',
+        path: '/dashboard/purchasing/purchase-requisition'
+      },
+      {
+        title: 'Request for Quotation',
+        path: '/dashboard/purchasing/request-for-quotation'
+      },
+      {
+        title: 'Purchase Order',
+        path: '/dashboard/purchasing/purchase-order'
+      }
+    ]
   }
 ];
 

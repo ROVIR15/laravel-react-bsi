@@ -14,6 +14,7 @@ class ProductFeature extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id',
         'product_id',
         'color',
         'size',

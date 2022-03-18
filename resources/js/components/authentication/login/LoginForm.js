@@ -36,7 +36,9 @@ export default function LoginForm() {
       remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
+    onSubmit: (values) => {
+      console.log(values);
+      alert(JSON.stringify(values));
       navigate('/dashboard', { replace: true });
     }
   });

@@ -14,6 +14,8 @@ class Status extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id'
+        'id',
+        'name',
+        'description'
     ];
 }

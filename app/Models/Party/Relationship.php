@@ -17,4 +17,19 @@ class Relationship extends Model
         'id',
         'status_id'
     ];
+
+    public function status()
+    {
+      return $this->hasOne('App\Models\Party\Status');
+    }
+
+    public function party_roles()
+    {
+      return $this->hasMany('App\Models\Party\PartyRoles');
+    }
+
+    public function party()
+    {
+      return $this->hasManyThrough('App\Models\Party\PartyRoles', 'App\Models\Party\Party');
+    }
 }

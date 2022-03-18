@@ -20,4 +20,12 @@ class Product extends Model
         'part_id',
         'id'
     ];
+
+    public function Goods(){
+        return $this->belongsTo('App\Models\Product\Goods');
+    }
+
+    public function productCategory(){
+        return $this->hasOneThrough('App\Models\Product\Product', 'App\Models\Product\ProductHasCategory');
+    }
 }

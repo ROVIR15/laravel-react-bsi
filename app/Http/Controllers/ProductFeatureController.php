@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\Product\ProductFeature;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductFeature as ProductFeatureCollection;
+use App\Http\Resources\Product\ProductFeatureCollection;
 
 class ProductFeatureController extends Controller
 {
@@ -39,12 +41,21 @@ class ProductFeatureController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
       $productFeatureData = $request->all()['payload'];
 
       try {
-        ProductFeature::insert($productFeatureData);
+        $data = ProductFeature::create([
+          'id' => $faker->unique()->numberBetween(1,8939),
+          'product_id' => $productFeatureData['product_id'],
+          'size' => $productFeatureData['size'],
+          'color' => $productFeatureData['color']
+        ]);
+        return response()->json([
+          'success' => true,
+          'data' => $data
+        ], 200);
       } catch (Exception $th) {
         //throw $th;
         return response()->json(
@@ -55,9 +66,6 @@ class ProductFeatureController extends Controller
             500
           );        
       }
-      return response()->json([
-        'success' => true
-      ], 200);
     }
 
     /**
@@ -69,9 +77,9 @@ class ProductFeatureController extends Controller
     public function show($id)
     {
       try {
-        $productFeature = ProductFeature::find($id);
-        return new ProductFeatureCollection($id);
-      } catch (\Throwable $th) {
+        $productFeature = ProductFeature::find("product_id", $product_id)->get();
+        return new ProductFeatureCollection($productFeature);
+      } catch (Exception $th) {
         return response()->json([
           'success'=> false,
           'errors'=> $th->getError()
@@ -97,11 +105,11 @@ class ProductFeatureController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($product_id, Request $request)
+    public function update($id, Request $request)
     {
       $productFeatureData = $request->all()['payload'];
       try {
-        ProductFeature::where('product_id', $product_id)->update($productFeatureData);
+        ProductFeature::find($id)->update($productFeatureData);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -129,7 +137,6 @@ class ProductFeatureController extends Controller
           'errors' => $th->getMessage()
         ], 500);
       }
-
       return response()->json([
         'success' => true
       ], 200);

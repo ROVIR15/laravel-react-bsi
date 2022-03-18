@@ -1,0 +1,9 @@
+export { default as BuyerLayout } from './Buyer';
+export { default as InquiryLayout } from './Inquiry';
+export { default as QuotationLayout } from './Quotation';
+export { default as SalesOrderLayout } from './SalesOrder';
+export { default as GoodsLayout } from './Goods';
+export { default as InventoryLayout } from './Inventory';
+export { default as WorkCenterLayout } from './WorkCenter';
+export { default as RoutingLayout } from './Routing';
+export { default as BillOfMaterialLayout } from './BillofMaterial';

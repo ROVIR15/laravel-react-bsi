@@ -7,7 +7,6 @@ use Faker\Generator as Faker;
 use Illuminate\Http\Request;
 use App\Models\Product\ProductCategory;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductCategory as ProductCategoryOneCollection;
 use App\Http\Resources\Product\ProductCategoryCollection;
 
 class ProductCategoryController extends Controller
@@ -21,7 +20,7 @@ class ProductCategoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new ProductCategory();
+      $query = ProductCategory::all();
 
       return new ProductCategoryCollection($query);
     }

@@ -18,7 +18,6 @@ class ProductFeature extends JsonResource
             'product_id' => $this->product_id,
             'color' => $this->color,
             'size' => $this->size,
-            'brand' => $this->brand,
             'price_component_id' => $this->price_component_id
         ];
     }

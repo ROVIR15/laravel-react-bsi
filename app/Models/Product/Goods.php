@@ -14,6 +14,22 @@ class Goods extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id'
+        'id',
+        'name',
+        'satuan',
+        'value',
+        'brand'
     ];
+
+    public function product(){
+        return $this->belongsTo('App\Models\Product\Product');
+    }
+
+    public function productHasCategory(){
+        return $this->hasOneThrough('App\Models\Product\Product', 'App\Models\Product\ProductHasCategory');
+    }
+
+    // public function ProductFeature(){
+    //     return $this->belongsTo()
+    // }
 }

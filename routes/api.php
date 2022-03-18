@@ -26,6 +26,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'AuthController@logout');
 });
 
+//Buyer
+Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
 //Order
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -38,14 +41,14 @@ Route::resource('order-association', 'OrderAssociationController')->only(['index
 //Product
 Route::resource('product', 'ProductController')->only(['index']);
 Route::resource('service', 'ServiceController')->only(['index']);
-Route::resource('goods', 'GoodsController')->only(['index']);
+Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
 Route::resource('inventory', 'InventoryController')->only(['index']);
 Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
 Route::resource('part', 'PartController')->only(['index']);
 Route::resource('partBOM', 'PartBOMController')->only(['index']);
 Route::resource('product', 'ProductController')->only(['index']);
-Route::resource('productCategory', 'ProductCategoryController')->only(['index']);
-Route::resource('productFeature', 'ProductFeatureController')->only(['index']);
+Route::resource('product-category', 'ProductCategoryController')->only(['index']);
+Route::resource('product-feature', 'ProductFeatureController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
 //Party
 Route::resource('address', 'AddressController')->only(['index']);

@@ -7,8 +7,11 @@ import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
 import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill';
 // material
 import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
-
+import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton, Typography } from '@mui/material';
+// material labs
+import TreeView from '@mui/lab/TreeView';
+import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
+import NestedSection from './NestedSection';
 // ----------------------------------------------------------------------
 
 const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props} />)(
@@ -34,6 +37,80 @@ const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props
     }
   })
 );
+
+// ---------------------------------------------------------------------- 
+
+const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  [`& .${treeItemClasses.content}`]: {
+    color: theme.palette.text.secondary,
+    borderTopRightRadius: theme.spacing(2),
+    borderBottomRightRadius: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+    fontWeight: theme.typography.fontWeightMedium,
+    '&.Mui-expanded': {
+      fontWeight: theme.typography.fontWeightRegular,
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
+      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      color: 'var(--tree-view-color)',
+    },
+    [`& .${treeItemClasses.label}`]: {
+      fontWeight: 'inherit',
+      color: 'inherit',
+    },
+  },
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: 0,
+    [`& .${treeItemClasses.content}`]: {
+      paddingLeft: theme.spacing(2),
+    },
+  },
+}));
+
+function StyledTreeItem(props) {
+  const {
+    bgColor,
+    color,
+    labelIcon: LabelIcon,
+    labelInfo,
+    labelText,
+    ...other
+  } = props;
+
+  return (
+    <StyledTreeItemRoot
+      label={
+        <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 0 }}>
+          <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} />
+          <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+            {labelText}
+          </Typography>
+          <Typography variant="caption" color="inherit">
+            {labelInfo}
+          </Typography>
+        </Box>
+      }
+      style={{
+        '--tree-view-color': color,
+        '--tree-view-bg-color': bgColor,
+      }}
+      {...other}
+    />
+  );
+}
+
+StyledTreeItem.propTypes = {
+  bgColor: PropTypes.string,
+  color: PropTypes.string,
+  labelIcon: PropTypes.elementType,
+  labelInfo: PropTypes.string,
+  labelText: PropTypes.string.isRequired,
+};
+
 
 const ListItemIconStyle = styled(ListItemIcon)({
   width: 22,

@@ -16,5 +16,10 @@ class Address extends Model
     protected $fillable = [
         'id',
         'party_id',
+        'street',
+        'city',
+        'province',
+        'country',
+        'postal_code'
     ];
 }

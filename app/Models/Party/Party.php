@@ -15,8 +15,36 @@ class Party extends Model
     
     protected $fillable = [
         'id',
-        'person_id',
-        'organisation_id',
+        'person_party_id',
+        'name',
+        'email',
+        'npwp',
+        'organization_party_id',
         'agreement_role_id'
     ];
+
+    public function person()
+    {
+      return $this->hasMany('App\Models\Party\Person');
+    }
+
+    public function organization()
+    {
+      return $this->hasMany('App\Models\Party\Organization');
+    }
+
+    public function party_roles()
+    {
+      return $this->hasMany('App\Models\Party\PartyRoles')->with('relationship');
+    }
+
+    public function address()
+    {
+      return $this->hasOne('App\Models\Party\Address');
+    }
+
+    public function relationship()
+    {
+      return $this->hasOneThrough('App\Models\Party\Relationship', 'App\Models\Party\PartyRoles');
+    }
 }
