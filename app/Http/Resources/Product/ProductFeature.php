@@ -15,7 +15,10 @@ class ProductFeature extends JsonResource
     public function toArray($request)
     {
         return [
-            'product_id' => $this->product_id,
+            'id' => $this->product_id,
+            'goods_id' => $this->product->goods_id,
+            'name' => $this->product->goods['name'],
+            'brand' => $this->product->goods['brand'],
             'color' => $this->color,
             'size' => $this->size,
             'price_component_id' => $this->price_component_id

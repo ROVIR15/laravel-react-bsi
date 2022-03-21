@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
+use App\Models\RRQ\QuoteItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\RRQ\Quote as QuoteCollection;
+use App\Http\Resources\RRQ\Quote as QuoteOneCollection;
+use App\Http\Resources\RRQ\QuoteCollection;
 
 class QuoteController extends Controller
 {
@@ -15,10 +17,10 @@ class QuoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, Quote $quote)
     {
       $param = $request->all();
-      $query = new Quote();
+      $query = $quote->all();
 
       return new QuoteCollection($query);
     }
@@ -41,7 +43,40 @@ class QuoteController extends Controller
      */
     public function store(Request $request)
     {
-
+        $param = $request->all()['payload'];
+        try {
+            //code...
+          $quoteCreation = Quote::create([
+            'issue_date' => $param['serial_req'],
+            'valid_from' => $param['buyer_id'],
+            'valid_thru' => $param['buyer_shipment_id']
+          ]);
+  
+          $quoteItemsCreation = [];
+  
+          foreach($param['quote_items'] as $key){
+            array_push($quoteItemsCreation, [
+              'id' => $faker->unique()->numberBetween(1,8939),
+              'quote_id' => $quoteCreation['id'],
+              'request_item_id' => $key['request_item_id'],
+              'product_feature_id' => $key['product_feature_id'],
+              'qty' => $key['qty'],
+              'unit_price' => $key['unit_price']
+            ]);
+          }
+  
+          QuoteItem::insert($quoteItemsCreation);
+  
+        } catch (Exception $th) {
+          return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+          ]);
+        }
+  
+        return response()->json([
+          'success' => true
+        ]);        
     }
 
     /**
@@ -50,9 +85,18 @@ class QuoteController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
         //
+      try {
+        $query = Quote::with('quote_item')->find($id);
+        return new QuoteOneCollection($query);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -61,9 +105,9 @@ class QuoteController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function edit(X $x)
+    public function edit($id, Request $request)
     {
-        //
+
     }
 
     /**
@@ -73,9 +117,22 @@ class QuoteController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+        $param = $request->all()['payload'];
+        try {
+            //code...
+            Quote::find($id)->update($param);
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+        return response()->json([
+            'success' => true
+        ], 200);
     }
 
     /**
@@ -86,6 +143,20 @@ class QuoteController extends Controller
      */
     public function destroy(X $x)
     {
-        //
+        $quote = new Quote;
+
+        try {
+            //code...
+            $quote->find($id)->delete();
+        } catch (Exception $th) {
+          //throw $th;
+          return response()->json([
+            'success' => false,
+            'errors' => $th->getMessage()
+          ], 500);
+        }
+        return response()->json([
+          'success' => true
+        ], 200);    
     }
 }

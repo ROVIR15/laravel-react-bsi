@@ -26,7 +26,7 @@ function Inquiry() {
       ship_tp: '',
       po_number: '',
       po_date: '',
-      valid_from: '',
+      delivery_date: '',
       valid_to: ''
     },
     validationSchema: InquirySchema,
@@ -86,12 +86,12 @@ function Inquiry() {
             />    
             <TextField
               fullWidth
-              autoComplete="po_date"
-              type="number"
-              label="Rilis PO"
+              autoComplete="delivery_date"
+              type="date"
+              label="Delivery Time"
               {...getFieldProps('po_date')}
-              error={Boolean(touched.po_date && errors.po_date)}
-              helperText={touched.po_date && errors.po_date}
+              error={Boolean(touched.delivery_date && errors.delivery_date)}
+              helperText={touched.delivery_date && errors.delivery_date}
             />            
           </CardContent>
         </Card>
@@ -103,18 +103,20 @@ function Inquiry() {
             <div style={{display: 'flex'}}>
             <TextField
               fullWidth
-              autoComplete="valid_from"
+              autoComplete="po_date"
               type="date"
-              placeholder='valid'
-              {...getFieldProps('valid_from')}
-              error={Boolean(touched.valid_from && errors.valid_from)}
-              helperText={touched.valid_from && errors.valid_from}
+              placeholder='po_date'
+              label="PO Date"
+              {...getFieldProps('po_date')}
+              error={Boolean(touched.po_date && errors.po_date)}
+              helperText={touched.po_date && errors.po_date}
             />
             <TextField
               fullWidth
               autoComplete="valid_to"
               type="date"
-              placeholder='valid'
+              placeholder='valid_to'
+              label="Expired Date"
               {...getFieldProps('valid_to')}
               error={Boolean(touched.valid_to && errors.valid_to)}
               helperText={touched.valid_to && errors.valid_to}

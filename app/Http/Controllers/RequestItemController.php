@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\RRQ\RequestItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\RRQ\RequestItem as RequestItemCollection;
+use App\Http\Resources\RRQ\RequestItem as RequestItemOneCollection;
+use App\Http\Resources\RRQ\RequestItemCollection;
 
 class RequestItemController extends Controller
 {
@@ -15,10 +18,10 @@ class RequestItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, RequestItem $requestItem)
     {
       $param = $request->all();
-      $query = new RequestItem();
+      $query = $requestItem->all();
 
       return new RequestItemCollection($query);
     }
@@ -39,9 +42,30 @@ class RequestItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
+        $param = $request->all()['payload'];
 
+        try {
+            //code...
+            $requestItem = new RequestItem;
+            $requestItem->create([
+                'id' => $faker->unique()->numberBetween(1,8939),
+                'request_id' => $param['request_id'],
+                'product_feature_id' => $param['product_feature_id'],
+                'qty' => $param['qty']
+            ]);
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+        ], 200);
     }
 
     /**
@@ -50,9 +74,20 @@ class RequestItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
-        //
+        try {
+            //code...
+            $_rI = RequestItem::with('product_feature')->find($id);
+
+            return new RequestItemOneCollection($_rI);
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -73,9 +108,24 @@ class RequestItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
         //
+        $param = $request->all()['payload'];
+
+        try {
+            //code...
+            RequestItem::where('id', $id)->update($param);
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     /**
@@ -84,8 +134,23 @@ class RequestItemController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
         //
+        $requestItem = new RequestItem;
+        
+        try {
+            //code...
+            $requestItem->find($id)->delete();
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+              'success' => false,
+              'errors' => $th->getMessage()
+            ], 500);
+        }
+        return response()->json([
+          'success' => true
+        ], 200);
     }
 }

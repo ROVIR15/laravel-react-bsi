@@ -15,9 +15,13 @@ class QuoteItem extends Model
     protected $fillable = [
         'id',
         'quote_id',
-        'order_item_id',
-        'order_item_order_id',
         'request_item_id',
+        'product_feature_id',
+        'unit_price',
         'qty'
     ];
+
+    public function product_feature(){
+        return $this->belongsTo('App\Models\Product\ProductFeature')->with('product');
+    }
 }

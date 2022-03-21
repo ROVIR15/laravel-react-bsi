@@ -20,7 +20,7 @@ class ProductFeatureController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ProductFeature::all();
+      $query = ProductFeature::with('product')->get();
 
       return new ProductFeatureCollection($query);
     }
@@ -77,7 +77,7 @@ class ProductFeatureController extends Controller
     public function show($id)
     {
       try {
-        $productFeature = ProductFeature::find("product_id", $product_id)->get();
+        $productFeature = ProductFeature::with('product_info')->where("product_id", $id)->get();
         return new ProductFeatureCollection($productFeature);
       } catch (Exception $th) {
         return response()->json([

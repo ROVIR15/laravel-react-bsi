@@ -13,6 +13,13 @@ class Quote extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'id'
+        'id',
+        'issue_date',
+        'valid_thru',
+        'valid_from'
     ];
+
+    public function quote_item(){
+        return $this->hasMany('App\Models\RRQ\QuoteItem');
+    }
 }

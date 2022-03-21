@@ -21,7 +21,7 @@ class Product extends Model
         'id'
     ];
 
-    public function Goods(){
+    public function goods(){
         return $this->belongsTo('App\Models\Product\Goods');
     }
 

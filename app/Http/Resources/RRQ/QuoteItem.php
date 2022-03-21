@@ -3,6 +3,7 @@
 namespace App\Http\Resources\RRQ;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Product\ProductFeature;
 
 class QuoteItem extends JsonResource
 {
@@ -17,10 +18,11 @@ class QuoteItem extends JsonResource
         return [
             'id' => $this->id,
             'quote_id' => $this->quote_id,
-            'order_item_id' => $this->order_item_id,
-            'order_item_order_id' => $this->order_item_order_id,
             'request_item_id' => $this->request_item_id,
-            'qty' => $this->qty
+            'product_feature_id' => $this->product_feature_id,
+            'qty' => $this->qty,
+            'unit_price' => $this->unit_price,
+            'product' => new ProductFeature($this->product_feature)
         ];
     }
 }

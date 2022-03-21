@@ -27,11 +27,14 @@ import AddGoods from '../pages/dashboard/Goods/add';
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
 import DisplayGoods from '../pages/dashboard/Goods/display';
-import DisplayInquiry from '../pages/dashboard/Inquiry/';
+import DisplayInquiry from '../pages/dashboard/Inquiry/display';
+import DisplayQuote from '../pages/dashboard/Quotation/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
 import ShowGoods from '../pages/dashboard/Goods/show';
+import ShowInquiry from '../pages/dashboard/Inquiry/show';
+import ShowQuote from '../pages/dashboard/Quotation/show';
 
 export default function TestRouter() {
   return useRoutes([
@@ -52,18 +55,18 @@ export default function TestRouter() {
           path: 'order/inquiry', 
           element: <InquiryLayout />,
           children: [
-            { path: ':id', element: <p>show</p>},
+            { path: ':id', element: <ShowInquiry />},
             { path: 'add', element: <AddInquiry />},
-            { path: 'display', element: <p>display</p>},
+            { path: 'display', element: <DisplayInquiry />},
           ]
         },
         { 
           path: 'order/quotation', 
           element: <QuotationLayout />,
           children: [
-            { path: ':id', element: <p>show</p>},
+            { path: ':id', element: <ShowQuote/>},
             { path: 'add', element: <AddQuotation />},
-            { path: 'display', element: <p>display</p>},
+            { path: 'display', element: <DisplayQuote />},
             { path: 'edit', element: <p>edit</p>}
           ]
         },

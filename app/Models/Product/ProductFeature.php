@@ -21,4 +21,8 @@ class ProductFeature extends Model
         'brand',
         'price_component_id'
     ];
+
+    public function product(){
+        return $this->belongsTo('App\Models\Product\Product')->with('goods');
+    }
 }

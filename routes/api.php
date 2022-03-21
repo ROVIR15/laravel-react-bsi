@@ -29,6 +29,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 //Buyer
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
+//Inquiry
+Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update']);
+
 //Order
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -60,11 +63,11 @@ Route::resource('relationship', 'RelationshipController')->only(['index']);
 Route::resource('status', 'StatusController')->only(['index']);
 
 //Request, Requirement and Quote
-Route::resource('quote', 'QuoteController')->only(['index']);
-Route::resource('quote-item', 'QuoteItemController')->only(['index']);
+Route::resource('quote', 'QuoteController')->only(['index', 'show', 'update', 'destroy', 'store']);
+Route::resource('quote-item', 'QuoteItemController')->only(['index', 'show', 'update', 'destroy']);
 Route::resource('quote-role', 'QuoteRoleController')->only(['index']);
 Route::resource('request', 'RequestController')->only(['index']);
-Route::resource('request-item', 'RequestItemController')->only(['index']);
+Route::resource('request-item', 'RequestItemController')->only(['index', 'update', 'show', 'destroy', 'store']);
 Route::resource('requirement', 'RequirementController')->only(['index']);
 Route::resource('requirement-has-request', 'RequirementHasRequestController')->only(['index']);
 Route::resource('requirement-has-request-item', 'RequirementHasRequestItemController')->only(['index']);

@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
 
-import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
-
 import { LoadingButton } from '@mui/lab';
-import { Button, Container, Card, CardHeader, CardContent, FormControl, InputLabel, MenuItem, Stack, Select, TextField, MenuList } from '@mui/material';
-import { Link as RouterLink, useLocation, } from 'react-router-dom';
+import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
+
+import { Card, CardHeader, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Link as RouterLink, useLocation, } from 'react-router-dom';
+import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // Components
 import DataGrid from '../../../components/DataGrid';
 
 //API
 import API from '../../../helpers'
-import { GridActionsCellItem } from '@mui/x-data-grid';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -23,8 +23,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 function Goods() {
   const {id} = useParams();
-
-  const {pathname} = useLocation();
+  
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
   const [items, setItems] = useState([]);
@@ -166,21 +165,6 @@ function Goods() {
   ]
 
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
-
-  const MenuItemList = (listArray) => {
-    console.log(listArray);
-    if(!Array.isArray(listArray)) {
-      return (
-        <MenuItem value={1}>{"wkwkw"}</MenuItem>
-      )
-    } else {
-      listArray.map(function(x){
-        return (
-          <MenuItem value={x.id}>{x.name}</MenuItem>
-        )
-      })
-    }
-  }
 
   useEffect(() => {
     if(cat.length > 0 || cat.length != 0) return

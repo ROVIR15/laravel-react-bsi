@@ -3,6 +3,7 @@
 namespace App\Http\Resources\RRQ;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\RRQ\QuoteItemCollection;
 
 class Quote extends JsonResource
 {
@@ -15,7 +16,12 @@ class Quote extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id
+            'id' => $this->id,
+            'po_number' => $this->po_number,
+            'issue_date' => $this->issue_date,
+            'valid_thru' => $this->valid_thru,
+            'valid_from' => $this->valid_from,
+            'quote_items' => new QuoteItemCollection($this->quote_item)
         ];
     }
 }

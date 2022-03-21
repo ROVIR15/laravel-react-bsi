@@ -10,9 +10,21 @@ class Request extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamp = false;
 
     protected $fillable = [
-        'id'
+        'id',
+        'serial_req',
+        'sold_to',
+        'ship_to',
+        'po_number',
+        'po_date',
+        'delivery_date',
+        'valid_to'
     ];
+
+    public function request_item(){
+        return $this->hasMany('App\Models\RRQ\RequestItem')->with('product_feature');
+    }
 }
