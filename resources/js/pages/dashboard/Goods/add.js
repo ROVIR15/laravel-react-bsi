@@ -33,10 +33,10 @@ function Goods() {
       feature_two: []
     },
     validationSchema: GoodsSchema,
-    onSubmit: ({ name, unit, value, brand, category, feature_one, feature_two }) => {
+    onSubmit: ({ name, unit_measurement, value, brand, category, feature_one, feature_two }) => {
       const _new = {
         goods: {
-          name, unit, value, brand
+          name, unit: unit_measurement, value, brand
         }, 
         category,
         feature_one,

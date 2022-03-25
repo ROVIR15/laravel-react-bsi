@@ -276,7 +276,86 @@ const main = {
         cb(err.response);
       });
     },
-    updateRequestItem(id, _data, cb){
+    updateQuoteItem(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/quote-item/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // SalesOrder
+    insertSalesOrder(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/sales-order', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getSalesOrder(cb){
+      axios.get( uri + '/sales-order').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getASalesOrder(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/sales-order' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteSalesOrder(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/sales-order/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSalesOrder(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/sales-order/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    //SalesOrder Item
+    insertSalesOrderItem(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/order-item', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getASalesOrderItem(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/order-item' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteSalesOrderItem(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/order-item/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSalesOrderItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
       axios.put( uri + '/request-item/' + id, { payload: _data}, {headers}).then(function(res){
@@ -284,7 +363,151 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       });
-    }
-}
-
+    },
+    // Product Feature
+    getProductFeature(cb){
+      axios.get( uri + '/product-feature').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    //BOM
+    insertBOM(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getBOM(cb){
+      axios.get( uri + '/bom').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getABOM(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/bom' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteBOM(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/bom/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateBOM(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/bom/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // BOM Item
+    getABOMItembyBOMId(bomId, cb){
+      axios.get( uri + '/bom-item/' + bomId ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Work Center 
+    insertWorkCenter(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/work-center', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getWorkCenter(cb){
+      axios.get( uri + '/work-center').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAWorkCenter(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/work-center' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteWorkCenter(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/work-center/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateWorkCenter(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/work-center/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Work Center 
+    insertOpeation(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/operation', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getOpeation(cb){
+      axios.get( uri + '/operation').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAOpeation(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/operation' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteOpeation(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/operation/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateOpeation(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/operation/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+  }
 export default main;

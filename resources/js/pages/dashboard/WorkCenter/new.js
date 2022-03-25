@@ -1,6 +1,6 @@
 import React from 'react';
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, TextField, Button, Stack } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -27,14 +27,13 @@ function WorkCenter() {
     initialValues: {
       id: '',
       name: '',
-      code: '',
       working_hours: '',
-      company: '',
+      company_name: '',
       time_efficiency: '',
       capacity: '',
       oee_target: '',
       cost_per_hour: '',
-      desc: ''
+      description: ''
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
@@ -77,19 +76,19 @@ function WorkCenter() {
               fullWidth
               autoComplete="working_hours"
               type="text"
-              label="Working House"
+              label="Working Hours"
               {...getFieldProps('working_hours')}
               error={Boolean(touched.working_hours && errors.working_hours)}
               helperText={touched.working_hours && errors.working_hours}
             />
             <TextField
               fullWidth
-              autoComplete="company"
+              autoComplete="company_name"
               type="text"
-              label="Working House"
-              {...getFieldProps('company')}
-              error={Boolean(touched.company && errors.company)}
-              helperText={touched.company && errors.company}
+              label="Company Name"
+              {...getFieldProps('company_name')}
+              error={Boolean(touched.company_name && errors.company_name)}
+              helperText={touched.company_name && errors.company_name}
             />            
           </CardContent>
         </Card>
@@ -98,8 +97,8 @@ function WorkCenter() {
             title="Detail Performance in Work Center"
           />
           <CardContent>
-            <div style={{display: 'flex'}}>
-            <div>
+            <Stack direction="row" m={1}>
+            <Stack direction="column" m={1}>
               <TextField
                 fullWidth
                 autoComplete="time_efficiency"
@@ -111,12 +110,12 @@ function WorkCenter() {
               />
               <TextField
                 fullWidth
-                autoComplete="capacity"
+                autoComplete="prod_capacity"
                 type="text"
                 label="Kapasitas Produksi"
-                {...getFieldProps('capacity')}
-                error={Boolean(touched.capacity && errors.capacity)}
-                helperText={touched.capacity && errors.capacity}
+                {...getFieldProps('prod_capacity')}
+                error={Boolean(touched.prod_capacity && errors.prod_capacity)}
+                helperText={touched.prod_capacity && errors.prod_capacity}
               />
               <TextField
                 fullWidth
@@ -127,8 +126,8 @@ function WorkCenter() {
                 error={Boolean(touched.oee_target && errors.oee_target)}
                 helperText={touched.oee_target && errors.oee_target}
               />
-            </div>
-            <div>
+            </Stack>
+            <Stack direction="column" m={1}>
               <TextField
                 fullWidth
                 autoComplete="cost_per_hour"
@@ -140,23 +139,15 @@ function WorkCenter() {
               />
               <TextField
                 fullWidth
-                autoComplete="desc"
+                autoComplete="description"
                 type="text"
                 label="Deskripsi"
-                {...getFieldProps('desc')}
-                error={Boolean(touched.desc && errors.desc)}
-                helperText={touched.desc && errors.desc}
+                {...getFieldProps('description')}
+                error={Boolean(touched.description && errors.description)}
+                helperText={touched.description && errors.description}
               />
-            </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Machines"
-          />
-          <CardContent>        
-            <DataGrid />
+            </Stack>
+            </Stack>
           </CardContent>
         </Card>
         <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>

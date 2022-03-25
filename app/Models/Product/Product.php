@@ -26,6 +26,6 @@ class Product extends Model
     }
 
     public function productCategory(){
-        return $this->hasOneThrough('App\Models\Product\Product', 'App\Models\Product\ProductHasCategory');
+        return $this->hasOne('App\Models\Product\ProductHasCategory')->with('category');
     }
 }

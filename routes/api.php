@@ -3,8 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controller\Order;
-
 /*
 |--------------------------------------------------------------------------
 | API Route
@@ -36,7 +34,7 @@ Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store',
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('order', 'OrderController')->only(['index']);
-Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy']);
+Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
 Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
 Route::resource('order-association', 'OrderAssociationController')->only(['index', 'store', 'update', 'destroy']);
@@ -52,6 +50,14 @@ Route::resource('partBOM', 'PartBOMController')->only(['index']);
 Route::resource('product', 'ProductController')->only(['index']);
 Route::resource('product-category', 'ProductCategoryController')->only(['index']);
 Route::resource('product-feature', 'ProductFeatureController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
+//BOM
+Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+//WorkCenter & Operation
+Route::resource('work-center', 'WorkCenterController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('operation', 'OperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
 //Party
 Route::resource('address', 'AddressController')->only(['index']);

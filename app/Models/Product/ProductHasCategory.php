@@ -17,4 +17,8 @@ class ProductHasCategory extends Model
         'product_id',
         'product_category_id'
     ];
+
+    public function category(){
+        return $this->belongsTo('App\Models\Product\ProductCategory', 'product_category_id');
+    }
 }

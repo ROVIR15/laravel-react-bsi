@@ -22,4 +22,8 @@
         'creation_time',
         'update_time'
     ];
+
+    public function order_item(){
+      return $this->hasMany('App\Models\Order\OrderItem');
+    }
   }

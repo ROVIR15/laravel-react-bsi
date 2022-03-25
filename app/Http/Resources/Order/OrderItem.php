@@ -2,8 +2,8 @@
   
   namespace App\Http\Resources\Order;
   use Illuminate\Http\Resources\Json\JsonResource;
-  
-  
+  use App\Http\Resources\Product\ProductFeature;
+
   class OrderItem extends JsonResource
   {
       /**
@@ -15,11 +15,12 @@
     public function toArray($request)
     {
       return [
+        'id' => $this->id,
         'order_id' => $this->order_id,
         'qty' => $this->qty,
         'unit_price' => $this->unit_price,
         'shipment_estimated' => $this->shipment_estimated,
-        'product_id' => $this->product_id
+        'product_feature' => new ProductFeature($this->product_feature)
       ];
     }
   }

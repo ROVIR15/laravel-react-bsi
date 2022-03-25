@@ -23,7 +23,7 @@
      */
     public function index()
     {
-      $query = SalesOrder::all();
+      $query = SalesOrder::with('order_item', 'product_feature')->get();
 
       return new SalesOrderCollection($query);
     }

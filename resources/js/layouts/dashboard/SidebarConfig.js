@@ -59,7 +59,7 @@ const sidebarConfig = [
     children: [
       {
         title: 'Bill of Material',
-        path: '/dashboard/production/bom-production'
+        path: '/dashboard/production/bom'
       },
       {
         title: 'Routing',

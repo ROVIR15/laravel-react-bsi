@@ -20,7 +20,7 @@ class Quote extends JsonResource
             'po_number' => $this->po_number,
             'issue_date' => $this->issue_date,
             'valid_thru' => $this->valid_thru,
-            'valid_from' => $this->valid_from,
+            'delivery_date' => $this->delivery_date,
             'quote_items' => new QuoteItemCollection($this->quote_item)
         ];
     }

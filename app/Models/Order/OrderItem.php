@@ -20,5 +20,9 @@ use Illuminate\Database\Eloquent\Model;
         'shipment_estimated',
         'product_id'
     ];
+
+    public function product_feature(){
+      return $this->belongsTo('App\Models\Product\ProductFeature')->with('product');
+    }
   }
 

@@ -18,11 +18,14 @@ class ProductFeature extends Model
         'product_id',
         'color',
         'size',
-        'brand',
         'price_component_id'
     ];
 
     public function product(){
-        return $this->belongsTo('App\Models\Product\Product')->with('goods');
+        return $this->belongsTo('App\Models\Product\Product');
+    }
+
+    public function product_category(){
+        return $this->hasOneThrough('App\Models\Product\ProductHasCategory', 'App\Models\Product\Product', 'id', 'product_id', 'product_id', 'id');
     }
 }

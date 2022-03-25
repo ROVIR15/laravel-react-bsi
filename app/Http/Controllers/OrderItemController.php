@@ -75,8 +75,8 @@
     public function show($id)
     {
       try {
-        $orderItem = OrderItem::find($id);
-        return new oneOrderItem($orderItem);
+        $orderItem = OrderItem::with('product_feature')->where('order_id', $id)->get();
+        return new OrderItemCollection($orderItem);
       } catch (Exception $th) {
         return response()->json([
           'success'=> false,
