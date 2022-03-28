@@ -14,9 +14,13 @@ class Quote extends Model
 
     protected $fillable = [
         'id',
+        'inquiry_id',
+        'sold_to',
+        'ship_to',
+        'po_number',
+        'delivery_date',
         'issue_date',
-        'valid_thru',
-        'valid_from'
+        'valid_thru'
     ];
 
     public function quote_item(){

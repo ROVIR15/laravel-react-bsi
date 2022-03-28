@@ -52,13 +52,13 @@ class InquiryController extends Controller
           //code...
         $inquiryCreation = Inquiry::create([
           'id' => $faker->unique()->numberBetween(1,8939),
-          'serial_req' => $param['serial_req'],
-          'buyer_id' => $param['buyer_id'],
-          'buyer_shipment_id' => $param['buyer_shipment_id'],
+          'serial_req' => 'Inquiry',
+          'sold_to' => $param['sold_to'],
+          'ship_to' => $param['ship_to'],
           'po_number' => $param['po_number'],
-          'release_date' => $param['release_date'],
-          'req_deliv_date' => $param['req_deliv_date'],
-          'valid_until' => $param['valid_until']
+          'po_date' => $param['po_date'],
+          'delivery_date' => $param['delivery_date'],
+          'valid_to' => $param['valid_to']
         ]);
 
         $inquiryItemCreation = [];
@@ -67,7 +67,7 @@ class InquiryController extends Controller
           array_push($inquiryItemCreation, [
             'id' => $faker->unique()->numberBetween(1,8939),
             'request_id' => $inquiryCreation['id'],
-            'product_feature_id' => $key['product_feature_id'],
+            'product_feature_id' => $key['id'],
             'qty' => $key['qty']
           ]);
         }

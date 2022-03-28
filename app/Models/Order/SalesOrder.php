@@ -12,9 +12,10 @@
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
 
     protected $fillable = [
+        'id',
         'order_id',
         'sold_to',
         'ship_to',

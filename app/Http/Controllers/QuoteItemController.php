@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Faker\Generator as Faker;
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\QuoteItem;
@@ -40,9 +41,37 @@ class QuoteItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
+        $param = $request->all()['payload'];
 
+        try {
+            //code...
+            $quoteItemsCreation = [];
+  
+            foreach($param as $key){
+              array_push($quoteItemsCreation, [
+                'id' => $faker->unique()->numberBetween(1,8939),
+                'quote_id' => $key['quote_id'],
+                'request_item_id' => $key['inquiry_item_id'],
+                'product_feature_id' => $key['product_feature_id'],
+                'qty' => $key['qty'],
+                'unit_price' => $key['unit_price']
+              ]);
+            }
+
+            QuoteItem::insert($quoteItemsCreation);
+
+        } catch (Exception $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     /**

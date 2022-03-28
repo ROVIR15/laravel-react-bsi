@@ -18,7 +18,7 @@
         'id' => $this->id,
         'sales_order_id' => $this->sales_order_id,
         'purchase_order_id' => $this->purchase_order_id,
-        'creation_time' => $this->creation_time
+        'created_at' => $this->created_at
       ];
     }
   }

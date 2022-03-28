@@ -21,7 +21,7 @@ class Operation extends JsonResource
             'seq' => $this->seq,
             'work_center_id' => $this->work_center_id,
             'bom_id' => $this->bom_id,
-            'work_center_info' => new OperationCollection($this->work_center)
+            'work_center_info' => $this->work_center
         ];
     }
 }

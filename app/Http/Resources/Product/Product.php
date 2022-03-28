@@ -17,9 +17,10 @@ class Product extends JsonResource
         return [
             'service_id' => $this->service_id,
             'goods_id' => $this->goods_id,
-            'name' => $this->name,
             'part_id' => $this->part_id,
-            'id' => $this->id
+            'id' => $this->id,
+            'name' => $this->goods['name'],
+            'brand' => $this->goods['brand']
         ];
     }
 }

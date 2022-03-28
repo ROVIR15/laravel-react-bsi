@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
 use App\Models\RRQ\QuoteItem;
@@ -41,24 +43,28 @@ class QuoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
         $param = $request->all()['payload'];
         try {
-            //code...
+          //code...
+          $id = $faker->unique()->numberBetween(1,8939);
           $quoteCreation = Quote::create([
-            'issue_date' => $param['serial_req'],
-            'valid_from' => $param['buyer_id'],
-            'valid_thru' => $param['buyer_shipment_id']
+            'id' => $id,
+            'inquiry_id' => $param['inquiry_id'],
+            'po_number' => $param['po_number'],
+            'delivery_date' => $param['delivery_date'],
+            'issue_date' => $param['issue_date'],
+            'valid_thru' => $param['valid_thru']
           ]);
-  
+          
           $quoteItemsCreation = [];
   
           foreach($param['quote_items'] as $key){
             array_push($quoteItemsCreation, [
               'id' => $faker->unique()->numberBetween(1,8939),
-              'quote_id' => $quoteCreation['id'],
-              'request_item_id' => $key['request_item_id'],
+              'quote_id' => $id,
+              'request_item_id' => $key['inquiry_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']

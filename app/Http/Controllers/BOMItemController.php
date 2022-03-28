@@ -3,6 +3,8 @@
   namespace App\Http\Controllers;
   
   use Faker\Generator as Faker;
+  use Carbon\Carbon;
+
   use App\Models\Manufacture\BOMItem;
 
   use App\Http\Resources\Manufacture\BOMItem as BOMItemOneCollection;
@@ -43,7 +45,42 @@
      */
     public function store(Request $request, Faker $faker)
     {
+        $param = $request->all()['payload'];
+        $current_date_time = Carbon::now()->toDateTimeString();
 
+        try {
+  
+            $bomItemsCreation = [];
+      
+            foreach($param as $key){
+              array_push($bomItemsCreation, [
+                'id' => $faker->unique()->numberBetween(1,8939),
+                'bom_id' => $key['bom_id'],
+                'product_feature_id' => $key['product_feature_id'],
+                'qty' => $key['qty'],
+                'created_at' => $current_date_time
+              ]);
+            }
+    
+            BOMItem::insert($bomItemsCreation);
+  
+        } catch (Exception $e) {
+          //throw $th;
+          return response()->json(
+            [
+              'success' => false,
+              'errors' => $e->getMessage()
+            ],
+            500
+          );
+        }
+  
+        return response()->json(
+          [
+            'success' => true
+          ], 200
+        );
+  
     }
 
     /**

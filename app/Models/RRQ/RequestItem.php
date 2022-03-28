@@ -11,7 +11,7 @@ class RequestItem extends Model
     protected $primaryKey = 'id';
 
     public $incrementing = false;
-    public $timestamp = false;
+    public $timestamp = true;
 
     protected $fillable = [
         'id',

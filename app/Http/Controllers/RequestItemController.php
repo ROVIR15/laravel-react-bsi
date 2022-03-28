@@ -49,12 +49,7 @@ class RequestItemController extends Controller
         try {
             //code...
             $requestItem = new RequestItem;
-            $requestItem->create([
-                'id' => $faker->unique()->numberBetween(1,8939),
-                'request_id' => $param['request_id'],
-                'product_feature_id' => $param['product_feature_id'],
-                'qty' => $param['qty']
-            ]);
+            $requestItem->insert($param);
         } catch (Exception $th) {
             //throw $th;
             return response()->json([

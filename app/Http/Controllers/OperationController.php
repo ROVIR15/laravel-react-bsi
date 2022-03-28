@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Generator as Faker;
+use Carbon\Carbon;
+
 use App\Models\Manufacture\Operation;
 
 use App\Http\Resources\Manufacture\Operation as OperationOneCollection;
@@ -40,13 +43,27 @@ class OperationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
       $param = $request->all()['payload'];
+      $current_date_time = Carbon::now()->toDateTimeString();
+
       try {
-        Operation::create([
-          'id' => $faker->unique()->numberBetween(1,3189)
-        ]);
+        $operationsCreation = [];
+
+        foreach($param as $key){
+            array_push($operationsCreation, [
+              'id' => $faker->unique()->numberBetween(1,8939),
+              'name' => $key['name'],
+              'seq' => $key['seq'],
+              'work_center_id' => $key['work_center_id'],
+              'bom_id' => $key['bom_id'],
+              'created_at' => $current_date_time
+            ]);
+        }
+
+        Operation::insert($operationsCreation);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -64,11 +81,11 @@ class OperationController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($bomId)
     {
       try {
-        $query = Operation::find($id);
-        return new OperationOneCollection($query);
+        $query = Operation::with('work_center')->where('bom_id', $bomId)->get();
+        return new OperationCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -95,7 +112,7 @@ class OperationController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {

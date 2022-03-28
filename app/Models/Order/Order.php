@@ -10,17 +10,12 @@
 
     protected $primaryKey = 'id';
 
-    const CREATED_AT = 'creation_time';
-    const UPDATED_AT = 'update_time';
-
     public $incrementing = false;
 
     protected $fillable = [
         'id',
         'sales_order_id',
         'purchase_order_id',
-        'creation_time',
-        'update_time'
     ];
 
     public function order_item(){

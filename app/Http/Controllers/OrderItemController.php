@@ -1,7 +1,8 @@
 <?php
   
   namespace App\Http\Controllers;
-  
+  use Faker\Generator as Faker;
+
   use App\Models\Order\OrderItem;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\OrderItemCollection;
@@ -40,13 +41,25 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
-      $orderItemData = $request->all()['payload'];
+      $param = $request->all()['payload'];
       try {
-        $orderItem = OrderItem::insert($orderItemData);
 
-        return response()->json([ 'test' => true ]);
+        $salesItemsCreation = [];
+  
+        foreach($param as $key){
+          array_push($salesItemsCreation, [
+            'id' => $faker->unique()->numberBetween(1,8939),
+            'order_id' => $key['order_id'],
+            'product_feature_id' => $key['product_feature_id'],
+            'qty' => $key['qty'],
+            'unit_price' => $key['unit_price'],
+            'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
+          ]);
+        }
+
+        OrderItem::insert($salesItemsCreation);
 
       } catch (Exception $e) {
         //throw $th;
@@ -103,11 +116,11 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($orderId, Request $request)
+    public function update($id, Request $request)
     {
       $orderItemData = $request->all()['payload'];
       try {
-        $orderItem = SalesOrder::where('order_id', $orderId)->update($orderItemData);
+        $orderItem = OrderItem::find($id)->update($orderItemData);
 
         return response()->json([
           'success' => true

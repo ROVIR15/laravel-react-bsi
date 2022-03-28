@@ -10,7 +10,7 @@ class Operation extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
 
     protected $fillable = [
         'id',

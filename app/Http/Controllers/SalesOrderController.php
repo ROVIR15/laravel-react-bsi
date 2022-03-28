@@ -6,6 +6,7 @@
   use Faker\Generator as Faker;
 
   use App\Models\Order\Order;
+  use App\Models\Order\OrderItem;
   use App\Models\Order\SalesOrder;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\SalesOrder as oneSalesOrder;
@@ -44,25 +45,44 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Faker $faker)
+    public function store(Request $request, Faker $faker)
     {
+      $param = $request->all()['payload'];
       try {
         //Order Creation
         $order = Order::create([
           'id' => $faker->unique()->numberBetween(1, 9999),
-          'creation_time' => Carbon::now(),
-          'update_time' => Carbon::now()
         ]);
 
         $salesOrder = SalesOrder::create([
-          'id' => $faker->unique()->numberBetween(1, 3123),
-          'order_id' => $order->id
+          'id' => $faker->unique()->numberBetween(1, 9999),
+          'order_id' => $order->id,
+          'quote_id' => $param['quote_id'],
+          'po_number' => $param['po_number'],
+          'sold_to' => $param['sold_to'],
+          'ship_to' => $param['ship_to'],
+          'delivery_date' => $param['delivery_date'],
+          'issue_date' => $param['issue_date'],
+          'valid_thru' => $param['valid_thru']
         ]);
 
         //Update order_id on Sales Order Resource
         $order->find($order->id)->update([ 'sales_order_id' => $salesOrder->id]);
 
-        return response()->json([ 'test' => 'yo' ]);
+        $salesItemsCreation = [];
+  
+        foreach($param['order_items'] as $key){
+          array_push($salesItemsCreation, [
+            'id' => $faker->unique()->numberBetween(1,8939),
+            'order_id' => $order->id,
+            'product_feature_id' => $key['product_feature_id'],
+            'qty' => $key['qty'],
+            'unit_price' => $key['unit_price'],
+            'shipment_estimated' => date('Y-m-d', strtotime($key['shipment_estimated']))
+          ]);
+        }
+
+        OrderItem::insert($salesItemsCreation);
 
       } catch (Exception $e) {
         //throw $th;
@@ -124,6 +144,7 @@
     {
       $salesOrderData = $request->all()['payload'];
       try {
+        SalesOrder::find($id)->update($salesOrderData);
         return response()->json([
           'success' => true
         ], 200);
