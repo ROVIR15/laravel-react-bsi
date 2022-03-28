@@ -28,7 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
 //Inquiry
-Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update']);
+Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
 //Order
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -55,6 +55,9 @@ Route::resource('product-feature', 'ProductFeatureController')->only(['index', '
 Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
+//Operation
+Route::resource('operation', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
 //WorkCenter & Operation
 Route::resource('work-center', 'WorkCenterController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('operation', 'OperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -70,7 +73,7 @@ Route::resource('status', 'StatusController')->only(['index']);
 
 //Request, Requirement and Quote
 Route::resource('quote', 'QuoteController')->only(['index', 'show', 'update', 'destroy', 'store']);
-Route::resource('quote-item', 'QuoteItemController')->only(['index', 'show', 'update', 'destroy']);
+Route::resource('quote-item', 'QuoteItemController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('quote-role', 'QuoteRoleController')->only(['index']);
 Route::resource('request', 'RequestController')->only(['index']);
 Route::resource('request-item', 'RequestItemController')->only(['index', 'update', 'show', 'destroy', 'store']);
