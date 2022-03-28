@@ -358,11 +358,19 @@ const main = {
     updateSalesOrderItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/request-item/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/order-item/' + id, { payload: _data}, {headers}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       });
+    },
+    // Product
+    getProduct(cb){
+      axios.get( uri + '/product').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
     },
     // Product Feature
     getProductFeature(cb){
@@ -416,8 +424,32 @@ const main = {
       });
     },
     // BOM Item
+    insertBOMItem(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom-item', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     getABOMItembyBOMId(bomId, cb){
       axios.get( uri + '/bom-item/' + bomId ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateABOMItem(bomId, _data, cb){
+      axios.put( uri + '/bom-item/' + bomId, {payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteABOMItem(id, cb){
+      axios.delete( uri + '/bom-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -477,14 +509,14 @@ const main = {
         cb(err);
       });
     },
-    getOpeation(cb){
+    getOperation(cb){
       axios.get( uri + '/operation').then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       })
     },
-    getAOpeation(id, cb){
+    getAOperation(id, cb){
       if(!id) console.error('ID not found')
       axios.get( uri + '/operation' + `/${id}`).then( function(res){
         cb(res.data);
@@ -492,7 +524,7 @@ const main = {
         cb(err.response);
       });
     },
-    deleteOpeation(id, cb){
+    deleteOperation(id, cb){
       if(!id) throw new Error('ID is required');
       axios.delete( uri + '/operation/' + id, {headers}).then(function(res){
         cb(res.data);
@@ -500,7 +532,7 @@ const main = {
         cb(err.response);
       });
     },
-    updateOpeation(id, _data, cb){
+    updateOperation(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
       axios.put( uri + '/operation/' + id, { payload: _data}, {headers}).then(function(res){

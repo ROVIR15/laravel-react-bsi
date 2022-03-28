@@ -12,7 +12,8 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 import API from '../../../helpers';
 
 //Component
-import DataGrid from '../../../components/DataGrid';
+import DataGrid from './components/DataGrid';
+import Modal from './components/Modal';
 import AutoComplete from './components/AutoComplete';
 
 //Icons
@@ -21,19 +22,31 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 function SalesOrder() {
+
+  // Option for Quote
   const [options, setOptions] = useState([]);
+
+  // Option for Product Items
+  const [optionsP, setOptionsP] = useState([])
+
+  //AutoComplete
+  const [open, setOpen] = useState(false);
+  const loading = open && options.length === 0;
+
+  //Data Grid
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
+
+  // Sales Order Items storage variable on Data Grid
   const [items, setItems] = useState([])
 
-  const loading = open && options.length === 0;
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  // Modal Props and Handling
+  const [openM, setOpenM] = React.useState(false);
+  const handleOpenModal = () => setOpenM(true);
+  const handleCloseModal = () => setOpenM(false);
 
   const SalesOrderSchema = Yup.object().shape({
     quote_id: Yup.string().required('Quote References is required'),
-    sold_to: Yup.string().required('Name is required'),
-    ship_tp: Yup.string().required('Address is required'),
     po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
     valid_thru: Yup.date().required('city is required'),
@@ -42,9 +55,9 @@ function SalesOrder() {
 
   const formik = useFormik({
     initialValues: {
-      quote_id: '',
       sold_to: '',
-      ship_tp: '',
+      ship_to: '',
+      quote_id: '',
       po_number: '',
       issue_date: '',
       valid_thru: '',
@@ -52,8 +65,14 @@ function SalesOrder() {
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      const _data = {
+        ...values, order_items: items
+      }
+      API.insertSalesOrder(_data, function(res){
+        if(res.success) alert('success');
+        else alert('failed')
+      })
+      setSubmitting(false);
     }
   })
 
@@ -61,14 +80,25 @@ function SalesOrder() {
     let active = true;
 
     (async () => {
-    API.getQuote((res) => {
+
+      API.getQuote((res) => {
+          if(!res) return
+		    if(!res.data) {
+          setOptions([]);
+        } else {
+          setOptions(res.data);
+        }
+      })
+
+      API.getProductFeature((res) => {
         if(!res) return
-		  if(!res.data) {
-        setOptions([]);
-      } else {
-        setOptions(res.data);
-      }
-    })
+        if(!res.data) {
+          setOptionsP([]);
+        } else {
+          setOptionsP(res.data);
+        }
+      })
+
     })();
 
     return () => {
@@ -76,7 +106,7 @@ function SalesOrder() {
     };
   }, [loading])
 
-  const { errors, touched, values, isSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
 
   function changeData(data){
     const orderItem = data.quote_items.map(function(key, index){
@@ -85,9 +115,9 @@ function SalesOrder() {
         'quote_item_id' : key.id,
         'product_id' : key.product.id,
         'product_feature_id' : key.product_feature_id,
-        'product_name' : key.product.name,
-        'product_size' : key.product.size,
-        'product_color' : key.product.color,
+        'name' : key.product.name,
+        'size' : key.product.size,
+        'color' : key.product.color,
         'qty' : key.qty,
         'shipment_estimated': null,
         'unit_price' : key.unit_price
@@ -96,6 +126,8 @@ function SalesOrder() {
     setValues({
       quote_id: data.id,
       po_number: data.po_number,
+      sold_to: data.sold_to,
+      ship_to: data.ship_to,
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
       delivery_date: data.delivery_date,
@@ -135,11 +167,6 @@ function SalesOrder() {
           });
         });
 
-        // update on firebase
-        setFieldValue('quote_item', items);
-        // API.updateRequestItem(editedIds, data, function(res){
-        //   alert(JSON.stringify(res));
-        // })
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -160,9 +187,9 @@ function SalesOrder() {
           'quote_item_id' : key.id,
           'product_id' : key.product.id,
           'product_feature_id' : key.product_feature_id,
-          'product_name' : key.product.name,
-          'product_size' : key.product.size,
-          'product_color' : key.product.color,
+          'name' : key.product.name,
+          'size' : key.product.size,
+          'color' : key.product.color,
           'qty' : key.qty,
           'shipment_estimated': null,
           'unit_price' : key.unit_price
@@ -170,29 +197,6 @@ function SalesOrder() {
       })
       setItems(temp);
     })
-  };
-
-  const handleAddRow = () => {
-    const _new = {
-      'quote_item_id' : null,
-      'product_id' : null,
-      'product_feature_id' : null,
-      'product_name' : null,
-      'product_size' : null,
-      'product_color' : null,
-      'qty' : 0,
-      'unit_price' : 0
-    }
-
-    setItems((prevItems) => [...prevItems, {..._new, id: items.length}]);
-
-    // API.insertRequestItem(_new, function(res){
-    //   const {success, data} = res;
-    //   if(!success) alert('error');
-    //   setItems((prevItems) => [...prevItems, _new]);
-    // }).catch(function(err){
-    //   alert('error');
-    // });
   };
 
   const columns = useMemo(() => [
@@ -220,6 +224,13 @@ function SalesOrder() {
   return (
     <Page>
       <Container>
+      <Modal 
+        payload={items}
+        open={openM}
+        options={optionsP}
+        handleClose={handleCloseModal}
+        setComponent={setItems}
+      />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -231,7 +242,7 @@ function SalesOrder() {
                 fullWidth
                 autoComplete="quote_id"
                 type="text"
-                label="No Inquiry"
+                label="No Quotation"
                 error={Boolean(touched.quote_id && errors.quote_id)}
                 helperText={touched.quote_id && errors.quote_id}
                 options={options}
@@ -282,7 +293,7 @@ function SalesOrder() {
               rows={items}
               onEditRowsModelChange={handleEditRowsModelChange}
               handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleAddRow}
+              handleAddRow={handleOpenModal}
             />
             </CardContent>
           </Card>

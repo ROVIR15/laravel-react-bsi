@@ -141,7 +141,7 @@ function DisplaySalesOrder({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteInquiry(id, function(res){
+    API.deleteSalesOrder(id, function(res){
       if(res.success) location.reload();
     }).catch(function(error){
       alert('error')

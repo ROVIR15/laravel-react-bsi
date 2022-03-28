@@ -11,7 +11,7 @@ function sleep(delay = 0) {
   });
 }
 
-export default function Asynchronous({ loading, options, open, setOpen, changeData }) {
+export default function Asynchronous({ loading, options, label, open, setOpen, changeData }) {
     const [value, setValue] = React.useState(null);
 
     React.useEffect(() => {
@@ -50,7 +50,7 @@ export default function Asynchronous({ loading, options, open, setOpen, changeDa
           {...params}
           fullWidth
           autoComplete="inquiry_id"
-          label="No Inquiry"
+          label={label}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

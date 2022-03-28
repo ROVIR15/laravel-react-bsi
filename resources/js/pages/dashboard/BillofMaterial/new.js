@@ -13,33 +13,37 @@ import API from '../../../helpers';
 
 // Components
 import AutoComplete from './components/AutoComplete';
+import AutoCompleteP from './components/AutoCompleteP';
 import DataGrid from '../../../components/DataGrid';
-import Modal from './components/Modal';
-import Modal2 from './components/Modal2';
+import Modal from './components/ModalNewP';
+import Modal2 from './components/ModalNewO';
 
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 function BillOfMaterial() {
-  const [options2, setOptions2] = useState([]);
-  const [options, setOptions] = useState([]);
   const [items, setItems] = useState([]);
 
   const loading = open && options.length === 0;
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [component, setComponent] = useState([]);
 
+  // Options for Product Feature
+  const [options, setOptions] = useState([]);
 
-  // Options for
+  // Options for Product
+  const [options3, setOptions3] = useState([]);
+  
+  // Options for Work Center
+  const [options2, setOptions2] = useState([]);
+
   const [operation, setOperation] = useState([]);
+  const [component, setComponent] = useState([]);
 
   //Modal Component of BOM 
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
-
 
   //Modal Operation of BOM
   const [openMO, setOpenMO] = React.useState(false);
@@ -55,25 +59,31 @@ function BillOfMaterial() {
   const [editRowDataO, setEditRowDataO] = React.useState({});
 
   const BOMSchema = Yup.object().shape({
-    inquiry_id: Yup.string().required('Inquiry References is required'),
-    id: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    sold_to: Yup.string().required('Name is required'),
-    ship_tp: Yup.string().required('Address is required'),
-    po_number: Yup.string().required('city is required'),
-    po_date: Yup.string().required('province is required')
+    name: Yup.string().required('Name is required'),
+    product_id: Yup.string().required('Product ID is required'),
+    company_name: Yup.string().required('Company is required'),
+    qty: Yup.number().required('Quantity BOM is required')
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
       product_id: '',
-      company: '',
+      product_feature_id: '',
+      company_name: '',
       qty: '',
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      const _data = {...values, components: component, operations: operation}
+      API.insertBOM(_data, (res)=>{
+        if(!res.success) {
+          alert('Failed');
+        } else {
+          alert('Success');
+        }
+      })
+      setSubmitting(false)
     }
   })
 
@@ -98,6 +108,16 @@ function BillOfMaterial() {
           setOptions2(res.data);
         }
       })
+
+      await API.getProduct((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions3([]);
+        } else {
+          setOptions3(res.data);
+        }
+      })
+
     })();
 
     return () => {
@@ -109,7 +129,7 @@ function BillOfMaterial() {
     setItems(data);
   }
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   const goodsColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
@@ -123,35 +143,35 @@ function BillOfMaterial() {
         <GridActionsCellItem
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
-          onClick={deleteData(params.id)}
+          onClick={deleteDataComponent(params.id)}
           showInMenu
         />
       ]
     }
-  ], [deleteData]);
+  ], [deleteDataComponent]);
 
   const operationColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, hideable: true },
-    { field: 'name', headerName: 'Operation Name', editable: true, width: 250 },
     { field: 'seq', headerName: 'seq', editable: true},
     { field: 'work_center_id', headerName: 'Work Center ID', editable: false },
+    { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
-          onClick={deleteData(params.id)}
+          onClick={deleteDataOperation(params.id)}
           showInMenu
         />
       ]
     }
-  ], [deleteData]);
+  ], [deleteDataOperation]);
 
   /**
    * Handling Data Grid for a Component BOM
    */
 
-  const handleEditRowsModelChange = React.useCallback(
+   const handleEditComponentRowsModelChange = React.useCallback(
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
@@ -181,14 +201,60 @@ function BillOfMaterial() {
     [editRowData]
   );
 
-  const handleResetRows = () => {
+
+  /**
+   * Handling Data Grid for a Operation BOM
+   */
+
+  const handleEditOperationRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        setOperation((prevItems) => {
+          const itemToUpdateIndex = parseInt(editedIds[0]);
+    
+          return prevItems.map((row, index) => {
+            if(row.id === parseInt(itemToUpdateIndex)){
+              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+            } else {
+              return row
+            }
+          });
+        });
+
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+  
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
+  const handleResetOperationRows = () => {
+    setOperation([]);
+  }
+
+  const handleResetComponentRows = () => {
     setComponent([]);
   }
 
-  const deleteData = React.useCallback(
+  const deleteDataComponent = React.useCallback(
     (id) => () => {
       setComponent((prevComponent) => {
         return prevComponent.filter((x) => (x.id !== id))
+      });
+  })
+
+  const deleteDataOperation = React.useCallback(
+    (id) => () => {
+      setOperation((prevOperation) => {
+        return prevOperation.filter((x) => (x.id !== id))
       });
   })
 
@@ -225,17 +291,29 @@ function BillOfMaterial() {
               error={Boolean(touched.name && errors.name)}
               helperText={touched.name && errors.name}
             />
-            <AutoComplete
+            <AutoCompleteP
               fullWidth
               autoComplete="product_id"
               type="text"
               label="Product Id"
               error={Boolean(touched.product_id && errors.product_id)}
               helperText={touched.product_id && errors.product_id}
+              options={options3}
+              setOpen={setOpen}
+              loading={loading}
+              changeData={setFieldValue}
+            />
+            <AutoComplete
+              fullWidth
+              autoComplete="product_feature_id"
+              type="text"
+              label="Product Variant Id"
+              error={Boolean(touched.product_feature_id && errors.product_feature_id)}
+              helperText={touched.product_feature_id && errors.product_feature_id}
               options={options}
               setOpen={setOpen}
               loading={loading}
-              changeData={changeData}
+              changeData={setFieldValue}
             />
             <TextField
               fullWidth
@@ -248,12 +326,12 @@ function BillOfMaterial() {
             />
             <TextField
               fullWidth
-              autoComplete="company"
+              autoComplete="company_name"
               type="text"
               label="Company Name"
-              {...getFieldProps('company')}
-              error={Boolean(touched.company && errors.company)}
-              helperText={touched.company && errors.company}
+              {...getFieldProps('company_name')}
+              error={Boolean(touched.company_name && errors.company_name)}
+              helperText={touched.company_name && errors.company_name}
             />
           </CardContent>
         </Card>
@@ -266,8 +344,8 @@ function BillOfMaterial() {
               columns={goodsColumns}
               rows={component}
               handleAddRow={handleOpenModal}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleResetRows={handleResetRows}
+              onEditRowsModelChange={handleEditComponentRowsModelChange}
+              handleResetRows={handleResetComponentRows}
             />
           </CardContent>
         </Card>
@@ -280,8 +358,8 @@ function BillOfMaterial() {
               columns={operationColumns}
               rows={operation}
               handleAddRow={handleOpenModalO}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleResetRows={handleResetRows}
+              onEditRowsModelChange={handleEditOperationRowsModelChange}
+              handleResetRows={handleResetOperationRows}
             />
           </CardContent>
         </Card>

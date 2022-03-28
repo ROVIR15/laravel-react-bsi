@@ -26,13 +26,13 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
+      getOptionLabel={({id, name}) => (`${id} - ${name}`)}
       options={options}
       loading={loading}
       value={choosen} 
-      onInputChange={async (event, newInputValue) => {
-        await changeData('product_feature_id', parseInt(newInputValue.split('-')[0]));
-      }
+      onInputChange={(event, newInputValue) => {
+          setValue(newInputValue);
+        }
       }
       renderInput={(params) => (
         <TextField

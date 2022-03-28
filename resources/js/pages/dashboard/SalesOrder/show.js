@@ -16,6 +16,7 @@ import API from '../../../helpers';
 //Component
 import DataGrid from '../../../components/DataGrid';
 import AutoComplete from './components/AutoComplete';
+import Modal from './components/Modal2';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -25,22 +26,33 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 function SalesOrder() {
   const {id} = useParams();
 
+  // Option for Quote
   const [options, setOptions] = useState([]);
+
+  // Option for Product Items
+  const [optionsP, setOptionsP] = useState([])
+
+  //AutoComplete
+  const [open, setOpen] = useState(false);
+  const loading = open && options.length === 0;
+
+  //Data Grid
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
+
+  // Sales Order Items storage variable on Data Grid
   const [items, setItems] = useState([])
 
-  const QuotationSchema = Yup.object().shape({
-    po_number: Yup.string().required('Inquiry References is required'),
-    issue_date: Yup.date().required('PO Date is required'),
-    valid_thru: Yup.date().required('Valid To is required'),
-    delivery_date: Yup.date().required('Delivery Date is required')
-  });
+  // Modal Props and Handling
+  const [openM, setOpenM] = React.useState(false);
+  const handleOpenModal = () => setOpenM(true);
+  const handleCloseModal = () => setOpenM(false);
 
   const SalesOrderSchema = Yup.object().shape({
-    quote_id: Yup.string().required('Quote References is required'),
+    order_id: Yup.string().required('Order ID is required'),
+    quote_id: Yup.string().required('Quote ID is required'),
     sold_to: Yup.string().required('Name is required'),
-    ship_tp: Yup.string().required('Address is required'),
+    ship_to: Yup.string().required('Address is required'),
     po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
     valid_thru: Yup.date().required('city is required'),
@@ -49,9 +61,10 @@ function SalesOrder() {
 
   const formik = useFormik({
     initialValues: {
-      quote_id: '',
+      id: '',
+      order_id: '',
       sold_to: '',
-      ship_tp: '',
+      ship_to: '',
       po_number: '',
       issue_date: '',
       valid_thru: '',
@@ -59,8 +72,10 @@ function SalesOrder() {
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      API.updateSalesOrder(id, values, function(res){
+        alert('success');
+      });
+      setSubmitting(false);
     }
   })
 
@@ -75,7 +90,10 @@ function SalesOrder() {
 
     setValues({
       id: load.id,
+      order_id: load.order_id,
       po_number: load.po_number,
+      ship_to: load.ship_to,
+      sold_to: load.sold_to,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
       delivery_date: load.delivery_date,
@@ -90,11 +108,41 @@ function SalesOrder() {
 
     var c = load2.map((key)=>{
       const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, ...key}
+      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), ...key}
     })
     setItems(c);
 
   }, [id]);
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+
+      API.getInquiry((res) => {
+          if(!res) return
+		    if(!res.data) {
+          setOptions([]);
+        } else {
+          setOptions(res.data);
+        }
+      })
+
+      API.getProductFeature((res) => {
+        if(!res) return
+        if(!res.data) {
+          setOptionsP([]);
+        } else {
+          setOptionsP(res.data);
+        }
+      })
+
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loading])
 
   const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
@@ -110,9 +158,9 @@ function SalesOrder() {
 
       API.deleteSalesOrderItem(id, (res)=> {
         alert('success')
-      }).catch((error)=>{
-        alert('Error')
-      })
+      });
+
+      handleUpdateAllRows();
   })
 
   useEffect(() => {
@@ -128,24 +176,36 @@ function SalesOrder() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
-        //update items state
-        setItems((prevItems) => {
-          const itemToUpdateIndex = parseInt(editedIds[0]);
-    
-          return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
-            } else {
-              return row
-            }
-          });
-        });
+        const data = new Object();
 
+        function formatDate(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+      
+          if (month.length < 2) 
+              month = '0' + month;
+          if (day.length < 2) 
+              day = '0' + day;
+      
+          return [year, month, day].join('-');
+      }
+
+        switch (editedColumnName) {
+          case 'shipment_estimated':
+            let date = formatDate(editRowData[editedColumnName].value);
+            data[editedColumnName] = date;
+            break;
+        
+          default:
+            data[editedColumnName] = editRowData[editedColumnName].value;
+            break;
+        }
         // update on firebase
-        setFieldValue('quote_item', items);
-        // API.updateRequestItem(editedIds, data, function(res){
-        //   alert(JSON.stringify(res));
-        // })
+        API.updateSalesOrderItem(editedIds, data, function(res){
+          alert(JSON.stringify(res));
+        });
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -155,47 +215,17 @@ function SalesOrder() {
     [editRowData]
   );
 
-  const handleUpdateAllRows = () => {
-    API.getAQuote(id, function(res){
-      if(!res) alert("Something went wrong!");
-      var temp = res.data.inquiry_item;
-      temp = res.data.inquiry_item.map(function(_d){
-        return {
-          id: _d.id,
-          product_id: _d.product.id,
-          product_feature_id: _d.product_feature_id,
-          product_name: _d.product.name,
-          product_size: _d.product.size,
-          product_color: _d.product.color,
-          qty: _d.qty,
-          actions: _d.actions
-        }
-      })
-      setItems(temp);
+  const handleUpdateAllRows = async() => {
+    const load2 = await axios.get('http://localhost:8000/api' + '/order-item' + `/${values.order_id}`)
+    .then(function({data: {data}}) {
+      return(data);
     })
-  };
 
-  const handleAddRow = () => {
-    const _new = {
-      'inquiry_item_id' : null,
-      'product_id' : null,
-      'product_feature_id' : null,
-      'product_name' : null,
-      'product_size' : null,
-      'product_color' : null,
-      'qty' : 0,
-      'unit_price' : 0
-    }
-
-    setItems((prevItems) => [...prevItems, {..._new, id: items.length}]);
-
-    // API.insertRequestItem(_new, function(res){
-    //   const {success, data} = res;
-    //   if(!success) alert('error');
-    //   setItems((prevItems) => [...prevItems, _new]);
-    // }).catch(function(err){
-    //   alert('error');
-    // });
+    var c = load2.map((key)=>{
+      const { product_feature } = key
+      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), ...key}
+    })
+    setItems(c);
   };
 
   const columns = useMemo(() => [
@@ -206,6 +236,7 @@ function SalesOrder() {
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
+    { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -221,6 +252,14 @@ function SalesOrder() {
   return (
     <Page>
       <Container>
+      <Modal 
+        payload={items}
+        order_id={values.order_id}
+        open={openM}
+        options={optionsP}
+        handleClose={handleCloseModal}
+        updateOrderItem={handleUpdateAllRows}
+      />        
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -291,7 +330,7 @@ function SalesOrder() {
               rows={items}
               onEditRowsModelChange={handleEditRowsModelChange}
               handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleAddRow}
+              handleAddRow={handleOpenModal}
             />
             </CardContent>
           </Card>

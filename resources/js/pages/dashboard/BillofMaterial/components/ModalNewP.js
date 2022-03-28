@@ -17,7 +17,6 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 // Components
 import API from '../../../../helpers';
 import AutoComplete from './AutoComplete';
-import { random } from 'lodash';
 
 const style = {
   position: 'absolute',
@@ -34,10 +33,8 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
   const [openX, setOpenX] = React.useState(false);
 
   const handleDoneFill = () => {
-    const xValue = value.map((key, index)=> {
-      return {id: Math.random(), name: '', work_center_id: key.id, seq: index}
-    });
-    setComponent((prevComponent) => prevComponent.concat(xValue))
+    if(!value.length) handleClose(); 
+    setComponent((prevComponent) => prevComponent.concat(value))
     handleClose();
   }
 

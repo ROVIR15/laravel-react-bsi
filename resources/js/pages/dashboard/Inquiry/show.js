@@ -12,6 +12,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // Components
 import DataGrid from '../../../components/DataGrid';
+import Modal from './components/Modal2';
 
 //API
 import API from '../../../helpers'
@@ -24,15 +25,18 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 function Inquiry() {
   const {id} = useParams();
 
+  //AutoComplete props
+  const [options, setOptions] = useState([]);
+  const loading = open && options.length === 0;
+
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
   const [items, setItems] = useState([])
 
   const InquirySchema = Yup.object().shape({
-    inquiry_id: Yup.string().required('Inquiry References is required'),
-    id: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    id: Yup.string().required('Email is required'),
     sold_to: Yup.string().required('Name is required'),
-    ship_tp: Yup.string().required('Address is required'),
+    ship_to: Yup.string().required('Address is required'),
     po_number: Yup.string().required('city is required'),
     po_date: Yup.string().required('province is required')
   });
@@ -49,8 +53,10 @@ function Inquiry() {
     },
     validationSchema: InquirySchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      API.updateProductFeature(id, values, function(res){
+        alert('success');
+      });
+      setSubmitting(false);
     }
   })
 
@@ -58,8 +64,6 @@ function Inquiry() {
     (id) => () => {
       API.deleteRequestItem(id, function(res){
         console.log(res)
-      }).catch(function(error){
-        alert('Fail');
       });
     }, []
   )
@@ -96,44 +100,58 @@ function Inquiry() {
           id: _d.id,
           product_id: _d.product.id,
           product_feature_id: _d.product_feature_id,
-          product_name: _d.product.name,
-          product_size: _d.product.size,
-          product_color: _d.product.color,
+          name: _d.product.name,
+          size: _d.product.size,
+          color: _d.product.color,
           qty: _d.qty,
-          actions: _d.actions
         }
       })
       setItems(temp);
     })
   };
 
-  const handleAddRow = () => {
-    const _new = {
-      request_id: id,
-      product_feature_id: 1,
-      qty: 1000,
-      product_id: '0',
-      product_name: '',
-      product_size: '',
-      product_color: ''
-    }
-    API.insertRequestItem(_new, function(res){
+  // Preapre data from product features
+  React.useEffect(() => {
+    let active = true;
+
+      API.getProductFeature((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions([]);
+        } else {
+          setOptions(res.data);
+        }
+      })
+
+    return () => {
+      active = false;
+    };
+  }, [loading])
+
+  const addRow = (newItems) => {
+    const _items = newItems.map(function(item){
+      return { id: Math.floor(Math.random() * 23810), product_feature_id: item.id, qty: 0, request_id: id}
+    });
+    API.insertRequestItem(_items, function(res){
       const {success, data} = res;
       if(!success) alert('error');
-      setItems((prevItems) => [...prevItems, _new]);
-    }).catch(function(err){
-      alert('error');
-    });
+    })
+    handleUpdateAllRows();
   };
+  
+  // Modal Props and Handling
+  const [openM, setOpenM] = React.useState(false);
+  const handleOpenModal = () => setOpenM(true);
+  const handleCloseModal = () => setOpenM(false);
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Inquiry Item ID', editable: false, visible: 'hide' },
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'product_name', headerName: 'Name', editable: false},
-    { field: 'product_size', headerName: 'Size', editable: false },
-    { field: 'product_color', headerName: 'Color', editable: false },
-    { field: 'qty', headerName: 'Quantity', editable: false },
+    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'size', headerName: 'Size', editable: false },
+    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -167,22 +185,29 @@ function Inquiry() {
           id: _d.id,
           product_id: _d.product.id,
           product_feature_id: _d.product_feature_id,
-          product_name: _d.product.name,
-          product_size: _d.product.size,
-          product_color: _d.product.color,
+          name: _d.product.name,
+          size: _d.product.size,
+          color: _d.product.color,
           qty: _d.qty,
-          actions: _d.actions
         }
       })
       setItems(temp);
     });
   }, [id]);
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
   return (
     <Page>
       <Container>
+      <Modal 
+        payload={[]}
+        open={openM}
+        options={options}
+        handleClose={handleCloseModal}
+        setComponent={setItems}
+        addRow={addRow}
+      />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -267,7 +292,7 @@ function Inquiry() {
               rows={items}
               onEditRowsModelChange={handleEditRowsModelChange}
               handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleAddRow}
+              handleAddRow={handleOpenModal}
             />
           </CardContent>
         </Card>

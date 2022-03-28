@@ -151,11 +151,9 @@ function DisplayBOM({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    // API.deleteGoods(id, function(res){
-    //   if(res.success) location.reload();
-    // }).catch(function(error){
-    //   alert('error')
-    // });
+    API.deleteBOM(id, function(res){
+      if(res.success) location.reload();
+    })
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bomData.length) : 0;

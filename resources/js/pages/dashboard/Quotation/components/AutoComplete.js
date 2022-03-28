@@ -15,6 +15,20 @@ function sleep(delay = 0) {
 export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
     const [value, setValue] = React.useState(null);
 
+    React.useEffect(() => {
+      console.log(value)
+      if(!value) return
+      let id = value.split(',')[0]
+      API.getAInquiry(id, (res) => {
+        if(!res) return
+        if(!res.data) {
+          changeData([]);
+        } else {
+          changeData(res.data);
+        }
+      })
+    }, [value])
+    
     return (
     <Autocomplete
       sx={{ width: 300 }}
@@ -25,14 +39,14 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
+      isOptionEqualToValue={(option, value) => option.po_number === value.po_number}
+      getOptionLabel={(option) => (option.id + ', ' + option.po_number)}
       options={options}
       loading={loading}
       value={choosen} 
-      onInputChange={async (event, newInputValue) => {
-        await changeData('product_feature_id', parseInt(newInputValue.split('-')[0]));
-      }
+      onInputChange={(event, newInputValue) => {
+          setValue(newInputValue);
+        }
       }
       renderInput={(params) => (
         <TextField

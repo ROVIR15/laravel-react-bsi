@@ -15,8 +15,10 @@ import API from '../../../helpers';
 
 // Components
 import AutoComplete from './components/AutoComplete';
+import AutoCompleteP from './components/AutoCompleteP';
 import DataGrid from '../../../components/DataGrid';
-import Modal from './components/Modal';
+import Modal from './components/ModalShowP';
+import Modal2 from './components/ModalShowO';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -25,53 +27,69 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 function BillOfMaterial() {
   const {id} = useParams();
 
-  const [options, setOptions] = useState([]);
-  const [vAC, setVAC] = useState({});
+  const [items, setItems] = useState([]);
 
   const loading = open && options.length === 0;
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+
+  // Options for Product Feature
+  const [options, setOptions] = useState([]);
+
+  // Options for Product
+  const [options3, setOptions3] = useState([]);
+  
+  // Options for Work Center
+  const [options2, setOptions2] = useState([]);
+
+
+  //Data Grid variable items
+  const [operation, setOperation] = useState([]);
   const [component, setComponent] = useState([]);
 
-  //Modal
+  //Modal Component of BOM 
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
 
+  //Modal Operation of BOM
+  const [openMO, setOpenMO] = React.useState(false);
+  const handleOpenModalO = () => setOpenMO(true);
+  const handleCloseModalO = () => setOpenMO(false);
 
-  //Data Grid
+  //Data Grid Component of BOM
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
 
-
-  //AutoComplete Product Feaure
-  const [items, setItems] = useState([]);
-
+  //Data Grid Opration of BOM
+  const [editRowsModelO, setEditRowsModelO] = React.useState({});
+  const [editRowDataO, setEditRowDataO] = React.useState({});
 
   const BOMSchema = Yup.object().shape({
-    inquiry_id: Yup.string().required('Inquiry References is required'),
-    id: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    sold_to: Yup.string().required('Name is required'),
-    ship_tp: Yup.string().required('Address is required'),
-    po_number: Yup.string().required('city is required'),
-    po_date: Yup.string().required('province is required')
+    name: Yup.string().required('Name is required'),
+    product_id: Yup.string().required('Product ID is required'),
+    company_name: Yup.string().required('Company is required'),
+    qty: Yup.number().required('Quantity BOM is required')
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
       product_id: '',
+      product_feature_id: '',
       company_name: '',
       qty: '',
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      API.updateBOM(id, values, function(res){
+        if(res.success) alert('success');
+        else alert('failed')
+      })
+      setSubmitting(false);
     }
   })
 
-  const { errors, touched, values, setValues, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, setValues, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
 
   useEffect(() => {
     let active = true;
@@ -85,16 +103,31 @@ function BillOfMaterial() {
           setOptions(res.data);
         }
       })
+
+      await API.getWorkCenter((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions2([]);
+        } else {
+          setOptions2(res.data);
+        }
+      })
+
+      await API.getProduct((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions3([]);
+        } else {
+          setOptions3(res.data);
+        }
+      })
+
     })();
 
     return () => {
       active = false;
     };
   }, [loading])
-
-  function changeData(data){
-    setItems(data);
-  }
 
   const goodsColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
@@ -108,12 +141,29 @@ function BillOfMaterial() {
         <GridActionsCellItem
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
-          onClick={deleteData(params.id)}
+          onClick={deleteDataComponent(params.id)}
           showInMenu
         />
       ]
     }
-  ], [deleteData]);
+  ], [deleteDataComponent]);
+
+  const operationColumns = useMemo(() => [
+    { field: 'id', headerName: 'ID Feature', editable: false, hideable: true },
+    { field: 'seq', headerName: 'seq', editable: true},
+    { field: 'work_center_id', headerName: 'Work Center ID', editable: false },
+    { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
+    { field: 'actions', type: 'actions', width: 100, 
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Icon icon={trash2Outline} width={24} height={24} />}
+          label="Delete"
+          onClick={deleteDataOperation(params.id)}
+          showInMenu
+        />
+      ]
+    }
+  ], [deleteDataOperation]);
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -150,38 +200,24 @@ function BillOfMaterial() {
     })
     setComponent(c);
 
-    /**
-     * GET Product Feature Data
-     */
-
-    const load3 = await axios.get('http://localhost:8000/api' + '/product-feature')
+    const load4 = await axios.get('http://localhost:8000/api' + '/operation' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
       console.log(error);
     })
 
-    // Set to Autocomplete product_feature option variable
-    setOptions(load3);
-
-    // Find selected product feature from bom item
-    const selectedOptionProductFeature = load2.map((option) => (option.product_feature));
-
-    // set to item on selected;
-    setItems(selectedOptionProductFeature);
-
-    if(!vAC) {
-      (async () => {
-        await API.getAProductFeature(load.product_feature_id, (res) => {
-          if(!res) return
-          if(!res.data) {
-            setVAC({});
-          } else {
-            setVAC(res.data);
-          }
-        })
-      })();
-    } 
+    var o = load4.map((key)=>{
+      const { work_center_info, seq, id, work_center_id, bom_id } = key
+      return {
+        ...work_center_info, 
+        seq, 
+        bom_id,
+        id,
+        work_center_id
+      }
+    })
+    setOperation(o);
 
   }, [id]);
 
@@ -189,7 +225,7 @@ function BillOfMaterial() {
    * Handling Data Grid for a Component BOM
    */
 
-  const handleEditRowsModelChange = React.useCallback(
+  const handleEditComponentRowsModelChange = React.useCallback(
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
@@ -198,17 +234,73 @@ function BillOfMaterial() {
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
         //update items state
-        setComponent((prevItems) => {
-          const itemToUpdateIndex = parseInt(editedIds[0]);
-    
-          return prevItems.map((row, index) => {
-            if(row.id === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
-            } else {
-              return row
-            }
-          });
-        });
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value;
+
+        API.updateABOMItem(editedIds, data, function(res){
+          alert(JSON.stringify(res));
+        })
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+  
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
+  const handleUpdateAllComponentRows = async() => {
+    const load2 = await axios.get('http://localhost:8000/api' + '/bom-item' + `/${id}`)
+    .then(function({data: {data}}) {
+      return(data);
+    }).catch((error) => {
+      console.log(error);
+    })
+
+    var c = load2.map((key)=>{
+      const { product_feature } = key
+      return {...product_feature, product_feature_id: key.product_feature_id, id: key.id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
+    })
+    setComponent(c);
+  };
+
+  const handleResetComponentRows = () => {
+    setComponent([]);
+  }
+
+  const deleteDataComponent = React.useCallback(
+    (id) => () => {
+      setComponent((prevComponent) => {
+        return prevComponent.filter((x) => (x.id !== id))
+      });
+
+      API.deleteABOMItem(id, (res)=> {
+        alert('success')
+      });
+
+      handleUpdateAllComponentRows();
+
+  })
+
+  /**
+   * Handling Data Grid for a Operation BOM
+   */
+
+   const handleEditOperationRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value;
+
+        API.updateOperation(editedIds, data, function(res){
+          alert(JSON.stringify(res));
+        })
 
       } else {
         setEditRowData(model[editedIds[0]]);
@@ -219,26 +311,59 @@ function BillOfMaterial() {
     [editRowData]
   );
 
-  const handleResetRows = () => {
+  const handleUpdateAllOperationRows = async() => {
+    const load4 = await axios.get('http://localhost:8000/api' + '/operation' + `/${id}`)
+    .then(function({data: {data}}) {
+      return(data);
+    }).catch((error) => {
+      console.log(error);
+    })
+
+    var o = load4.map((key)=>{
+      const { work_center_info, seq, id, work_center_id, bom_id } = key
+      return {
+        ...work_center_info, 
+        seq, 
+        bom_id,
+        id,
+        work_center_id
+      }
+    })
+    setOperation(o);
+  };
+
+
+  const handleResetOperationRows = () => {
     setComponent([]);
   }
 
-  const deleteData = React.useCallback(
+  const deleteDataOperation = React.useCallback(
     (id) => () => {
-      setComponent((prevComponent) => {
-        return prevComponent.filter((x) => (x.id !== id))
+      setOperation((prevOperation) => {
+        return prevOperation.filter((x) => (x.id !== id))
       });
+
+      handleUpdateAllOperationRows();
   })
 
   return (
     <Page>
       <Container>
         <Modal
-          payload={items}
+          payload={component}
+          bom_id={id}
           open={openM}
           options={options}
           handleClose={handleCloseModal}
-          setComponent={setComponent}
+          updateIt={handleUpdateAllComponentRows}
+        />
+        <Modal2
+          payload={operation}
+          bom_id={id}
+          open={openMO}
+          options={options2}
+          handleClose={handleCloseModalO}
+          updateIt={handleUpdateAllOperationRows}
         />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -266,7 +391,6 @@ function BillOfMaterial() {
               options={options}
               setOpen={setOpen}
               loading={loading}
-              choosen={vAC}
             />
             <AutoComplete
               fullWidth
@@ -278,8 +402,6 @@ function BillOfMaterial() {
               options={options}
               setOpen={setOpen}
               loading={loading}
-              choosen={vAC}
-              changeData={changeData}
             />            
             <TextField
               fullWidth
@@ -310,8 +432,9 @@ function BillOfMaterial() {
               columns={goodsColumns}
               rows={component}
               handleAddRow={handleOpenModal}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleResetRows={handleResetRows}
+              onEditRowsModelChange={handleEditComponentRowsModelChange}
+              handleResetRows={handleResetComponentRows}
+              handleUpdateAllRows={handleUpdateAllComponentRows}
             />
           </CardContent>
         </Card>
@@ -320,7 +443,14 @@ function BillOfMaterial() {
             title="Operations"
           />
           <CardContent>
-            <DataGrid />
+            <DataGrid 
+              columns={operationColumns}
+              rows={operation}
+              handleAddRow={handleOpenModalO}
+              onEditRowsModelChange={handleEditOperationRowsModelChange}
+              handleResetRows={handleResetOperationRows}
+              handleUpdateAllRows={handleUpdateAllOperationRows}
+            />
           </CardContent>
         </Card>
         <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>

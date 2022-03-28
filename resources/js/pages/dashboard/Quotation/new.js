@@ -12,8 +12,9 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 import API from '../../../helpers';
 
 //Component
-import DataGrid from '../../../components/DataGrid';
-import AutoComplete from '../../../components/AutoComplete';
+import DataGrid from './components/DataGrid';
+import Modal from './components/Modal';
+import AutoComplete from './components/AutoComplete';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -21,19 +22,31 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 function Quotation() {
+  // Option Inquiry
   const [options, setOptions] = useState([]);
-  const [editRowsModel, setEditRowsModel] = React.useState({});
-  const [editRowData, setEditRowData] = React.useState({});
-  const [items, setItems] = useState([])
 
+  // Option for Product Items
+  const [optionsP, setOptionsP] = useState([])
+
+  //AutoComplete
   const loading = open && options.length === 0;
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+
+  //Data Grid
+  const [items, setItems] = useState([])
+
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
+
+  // Modal Props and Handling
+  const [openM, setOpenM] = React.useState(false);
+  const handleOpenModal = () => setOpenM(true);
+  const handleCloseModal = () => setOpenM(false);
 
   const QuotationSchema = Yup.object().shape({
     inquiry_id: Yup.number().required('Inquiry References is required'),
-    po_date: Yup.date().required('PO Date is required'),
-    valid_to: Yup.date().required('Valid To is required'),
+    issue_date: Yup.date().required('PO Date is required'),
+    valid_thru: Yup.date().required('Valid To is required'),
     delivery_date: Yup.date().required('Delivery Date is required')
   });
 
@@ -41,14 +54,19 @@ function Quotation() {
     initialValues: {
       inquiry_id: '',
       issue_date: '',
-      valid_to: '',
+      valid_thru: '',
       delivery_date: '',
-      quote_item: []
     },
     validationSchema: QuotationSchema,
     onSubmit: (values) => {
-      console.log(values);
-      alert(JSON.stringify(values));
+      const _data = {
+        ...values, quote_items: items
+      }
+      API.insertQuote(_data, function(res){
+        if(res.success) alert('success');
+        else alert('failed')
+      })
+      setSubmitting(false);
     }
   })
 
@@ -56,14 +74,25 @@ function Quotation() {
     let active = true;
 
     (async () => {
-    API.getInquiry((res) => {
+
+      API.getInquiry((res) => {
+          if(!res) return
+		    if(!res.data) {
+          setOptions([]);
+        } else {
+          setOptions(res.data);
+        }
+      })
+
+      API.getProductFeature((res) => {
         if(!res) return
-		  if(!res.data) {
-        setOptions([]);
-      } else {
-        setOptions(res.data);
-      }
-    })
+        if(!res.data) {
+          setOptionsP([]);
+        } else {
+          setOptionsP(res.data);
+        }
+      })
+
     })();
 
     return () => {
@@ -76,35 +105,40 @@ function Quotation() {
       return {
         'id': index,
         'inquiry_item_id' : key.id,
-        'product_id' : key.product.id,
+        'product_id' : key.product.product_id,
         'product_feature_id' : key.product_feature_id,
-        'product_name' : key.product.name,
-        'product_size' : key.product.size,
-        'product_color' : key.product.color,
+        'name' : key.product.name,
+        'size' : key.product.size,
+        'color' : key.product.color,
         'qty' : key.qty,
         'unit_price' : 0
       }
     })
     setValues({
       inquiry_id: data.id,
+      po_number: data.po_number,
       issue_date: data.po_date,
-      valid_to: data.valid_to,
+      valid_thru: data.valid_to,
       delivery_date: data.delivery_date,
     })
     setItems(quoteItem);
   }
 
-  const { errors, touched, values, isSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
 
   const deleteData = useCallback(
     (id) => () => {
-      setItems((prevItems) => {
-        const rowToDeleteIndex = id;
-        return [
-          ...items.slice(0, rowToDeleteIndex),
-          ...items.slice(rowToDeleteIndex + 1),
-        ];
+      const rowToDeleteIndex = id;
+      let a = [
+        ...items.slice(0, rowToDeleteIndex),
+        ...items.slice(rowToDeleteIndex + 1),
+      ];
+
+      a = a.map(function(x, index){
+        return {...x, id: index}
       });
+
+      setItems(a);
     })
 
   const handleEditRowsModelChange = React.useCallback(
@@ -118,6 +152,7 @@ function Quotation() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
+          console.log(itemToUpdateIndex)
     
           return prevItems.map((row, index) => {
             if(index === parseInt(itemToUpdateIndex)){
@@ -128,11 +163,7 @@ function Quotation() {
           });
         });
 
-        // update on firebase
-        setFieldValue('quote_item', items);
-        // API.updateRequestItem(editedIds, data, function(res){
-        //   alert(JSON.stringify(res));
-        // })
+        // update on field value
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -142,56 +173,17 @@ function Quotation() {
     [editRowData]
   );
 
-  const handleUpdateAllRows = () => {
-    API.getAInquiry(id, function(res){
-      if(!res) alert("Something went wrong!");
-      var temp = res.data.inquiry_item;
-      temp = res.data.inquiry_item.map(function(_d){
-        return {
-          id: _d.id,
-          product_id: _d.product.id,
-          product_feature_id: _d.product_feature_id,
-          product_name: _d.product.name,
-          product_size: _d.product.size,
-          product_color: _d.product.color,
-          qty: _d.qty,
-          actions: _d.actions
-        }
-      })
-      setItems(temp);
-    })
-  };
-
-  const handleAddRow = () => {
-    const _new = {
-      'inquiry_item_id' : null,
-      'product_id' : null,
-      'product_feature_id' : null,
-      'product_name' : null,
-      'product_size' : null,
-      'product_color' : null,
-      'qty' : 0,
-      'unit_price' : 0
-    }
-
-    setItems((prevItems) => [...prevItems, {..._new, id: items.length}]);
-
-    // API.insertRequestItem(_new, function(res){
-    //   const {success, data} = res;
-    //   if(!success) alert('error');
-    //   setItems((prevItems) => [...prevItems, _new]);
-    // }).catch(function(err){
-    //   alert('error');
-    // });
-  };
+  const handleResetRows = () => {
+    setItems([]);
+  }
 
   const columns = useMemo(() => [
     { field: 'inquiry_item_id', headerName: 'Inquiry Item ID', editable: false, visible: 'hide' },
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'product_name', headerName: 'Name', editable: false},
-    { field: 'product_size', headerName: 'Size', editable: false },
-    { field: 'product_color', headerName: 'Color', editable: false },
+    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'size', headerName: 'Size', editable: false },
+    { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
@@ -209,6 +201,13 @@ function Quotation() {
   return (
     <Page>
       <Container>
+      <Modal 
+        payload={items}
+        open={openM}
+        options={optionsP}
+        handleClose={handleCloseModal}
+        setComponent={setItems}
+      />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -248,13 +247,13 @@ function Quotation() {
               />
               <TextField
                 fullWidth
-                autoComplete="valid_to"
+                autoComplete="valid_thru"
                 type="date"
                 label="Valid to"
                 placeholder='valid'
-                {...getFieldProps('valid_to')}
-                error={Boolean(touched.valid_to && errors.valid_to)}
-                helperText={touched.valid_to && errors.valid_to}
+                {...getFieldProps('valid_thru')}
+                error={Boolean(touched.valid_thru && errors.valid_thru)}
+                helperText={touched.valid_thru && errors.valid_thru}
               />
               <TextField
                 fullWidth
@@ -270,8 +269,9 @@ function Quotation() {
               columns={columns} 
               rows={items}
               onEditRowsModelChange={handleEditRowsModelChange}
-              handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleAddRow}
+              handleAddRow={handleOpenModal}
+              handleReset={handleResetRows}
+              handleUpdateAllRows={false}
             />
             </CardContent>
           </Card>

@@ -33,7 +33,28 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
   const [openX, setOpenX] = React.useState(false);
 
   const handleDoneFill = () => {
-    setComponent((prevComponent) => prevComponent.concat(value))
+    if(!value.length) {
+      handleClose();
+      return
+    };
+    
+    const _value = value.map(function(x, index){
+      return {...x, 
+        product_feature_id: x.id, 
+        id: payload.length+index, 
+        quote_item_id: null, 
+        qty: 0, 
+        unit_price: 0}
+    });
+
+    var _p = payload.concat(_value);
+
+    _p = _p.map(function(x, index){
+      return {...x, id: index}
+    });
+
+    setComponent(_p);
+
     handleClose();
   }
 
@@ -46,7 +67,7 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
       >
         <Card sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Select material component for BOM
+            Select Product to Inquiry Item
           </Typography>
           <Autocomplete
             multiple
