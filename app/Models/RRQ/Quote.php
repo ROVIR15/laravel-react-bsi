@@ -14,8 +14,9 @@ class Quote extends Model
 
     protected $fillable = [
         'id',
-        'inquiry_id',
-        'sold_to',
+        'quote_type',
+        'request_id',
+        'party_id',
         'ship_to',
         'po_number',
         'delivery_date',
