@@ -191,7 +191,7 @@
       try {
         $existingProduct = Product::find($id);
 
-        Goods::where('id', $existingProduct['goods_id'])->update([
+        Goods::find($id)->update([
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value']
