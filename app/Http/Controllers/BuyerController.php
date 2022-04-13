@@ -41,7 +41,7 @@ class BuyerController extends Controller
       ->leftJoin("relationship as r", function($join){
           $join->on("pr.relationship_id", "=", "r.id");
       })
-      ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country")
+      ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
       ->where("r.name", "=", "Buyer")
       ->get();
       return response()->json($data);
@@ -148,7 +148,7 @@ class BuyerController extends Controller
         ->leftJoin("relationship as r", function($join){
             $join->on("pr.relationship_id", "=", "r.id");
         })
-        ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country")
+        ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
         ->where("r.name", "=", "Buyer")
         ->where("p.id", "=", $id)
         ->get();
