@@ -20,9 +20,12 @@ class BOM extends JsonResource
             'product_feature_id' => $this->product_feature_id,
             'name' => $this->name,
             'qty' => $this->qty,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
             'company_name' => $this->company_name,
             'bom_items' => $this->bom_items,
-            'product_info' => $this->product_info
+            'product_info' => $this->product_info,
+            'operations' => $this->operation
         ];
     }
 }
