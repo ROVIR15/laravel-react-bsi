@@ -5,6 +5,7 @@
   use Faker\Generator as Faker;
 
   use App\Models\Order\Order;
+  use App\Models\Order\OrderItem;
   use App\Models\Order\PurchaseOrder;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\PurchaseOrderCollection;
@@ -49,8 +50,11 @@
         //Order Creation
         $order = Order::create([
           'id' => $faker->unique()->numberBetween(1, 9999),
-          'creation_time' => Carbon::now(),
-          'update_time' => Carbon::now()
+          'order_id' => $order->id,
+          'quote_id' => $param['quote_id'],
+          'vendor_id' => $param['vendor_id'],
+          'issue_date' => $param['issue_date'],
+          'valid_thru' => $param['valid_thru']
         ]);
 
         $purchaseOrder = PurchaseOrder::create([
@@ -61,7 +65,21 @@
         //Update order_id on Sales Order Resource
         $order->find($order->id)->update([ 'purchase_order_id' => $purchaseOrder->id]);
 
-        return response()->json([ 'test' => 'yo' ]);
+        //Create purchase order item
+        $purchaseItemsCreation = [];
+
+        foreach($param['order_items'] as $key){
+          array_push($salesItemsCreation, [
+            'id' => $faker->unique()->numberBetween(1,8939),
+            'order_id' => $order->id,
+            'product_feature_id' => $key['product_feature_id'],
+            'qty' => $key['qty'],
+            'unit_price' => $key['unit_price'],
+            'shipment_estimated' => date('Y-m-d', strtotime($key['delivery_date']))
+          ]);
+        }
+
+        OrderItem::insert($purchaseItemsCreation);
 
       } catch (Exception $e) {
         //throw $th;
@@ -72,7 +90,11 @@
           ],
           500
         );
-      }     
+      }
+      
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
