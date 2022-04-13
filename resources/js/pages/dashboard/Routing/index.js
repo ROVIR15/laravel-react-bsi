@@ -20,7 +20,7 @@ function RoutingLayout() {
       <Typography variant="h4" gutterBottom>
         Routing
       </Typography>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" >
+      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
         <Button
           variant="contained"
           component={RouterLink}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -55,6 +55,8 @@ function Quotation() {
     initialValues: {
       id: '',
       po_number: '',
+      ship_to: '',
+      sold_to: '',
       inquiry_id: '',
       issue_date: '',
       valid_thru: '',
@@ -169,6 +171,8 @@ function Quotation() {
       setValues({
         id: res.data.id,
         po_number: res.data.po_number,
+        sold_to: res.data.sold_to,
+        ship_to: res.data.ship_to,
         inquiry_id: res.data.inquiry_id,
         issue_date: res.data.issue_date,
         delivery_date: res.data.delivery_date,
@@ -237,6 +241,51 @@ function Quotation() {
                 helperText={touched.po_number && errors.po_number}
                 disabled={true}
               />
+            </CardContent>
+          </Card>
+          <Card sx={{ m: 2}}>
+            <CardHeader
+              title="Information"
+            />
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={7}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    autoComplete="po_number"
+                    type="text"
+                    label="No PO"
+                    {...getFieldProps('po_number')}
+                    error={Boolean(touched.po_number && errors.po_number)}
+                    helperText={touched.po_number && errors.po_number}
+                  />    
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="sold_to"
+                    type="number"
+                    label="Pembeli"
+                    {...getFieldProps('sold_to')}
+                    disabled
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    autoComplete="ship_to"
+                    type="number"
+                    label="Penerima"
+                    {...getFieldProps('ship_to')}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                  />
+                </Grid>
+              </Grid>       
             </CardContent>
           </Card>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>

@@ -2,6 +2,10 @@ import { format, formatDistanceToNow } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
+export function dateDifference(_date1, _date2) {
+  return Math.floor((new Date(_date1) - new Date(_date2)) / (1000*60*60*24))
+}
+
 export function fDate(date) {
   return format(new Date(date), 'dd MMMM yyyy');
 }

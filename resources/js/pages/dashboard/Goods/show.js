@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
 
-import { Card, CardHeader, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { Link as RouterLink, useLocation, } from 'react-router-dom';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
@@ -32,7 +32,6 @@ function Goods() {
   const GoodsSchema = Yup.object().shape({
     name: Yup.string().required('Nama is required'),
     unit_measurement: Yup.string().required('Satuan is required'),
-    gross_weight: Yup.string().required('Berat Kotor is required'),
     category: Yup.string().required('Kategori is required'),
     value: Yup.string().required('Nilai Produk is required'),
   });
@@ -41,16 +40,23 @@ function Goods() {
     initialValues: {
       name: '',
       unit_measurement: '',
-      gross_weight: '',
       category: '',
       value: '',
       brand: '',
-      feature_one: [],
-      feature_two: []
     },
     validationSchema: GoodsSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values));
+    onSubmit: ({ name, unit_measurement, value, brand, category}) => {
+      const _new = {
+        goods: {
+          name, unit: unit_measurement, value, brand
+        }, 
+        category
+      }
+      API.updateGoods(id, _new, function(res){
+        if(res.success) alert('success');
+        else alert('failed')
+      })
+      setSubmitting(false);
     }
   });
 
@@ -164,7 +170,7 @@ function Goods() {
   }
   ]
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
   useEffect(() => {
     if(cat.length > 0 || cat.length != 0) return
@@ -206,71 +212,81 @@ function Goods() {
               <CardHeader
                 title="Product Information"
               />
-              <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="name"
-                  type="text"
-                  label="Nama"
-                  {...getFieldProps('name')}
-                  error={Boolean(touched.name && errors.name)}
-                  helperText={touched.name && errors.name}
-                />
-                <FormControl fullWidth>
-                  <InputLabel >Kategori</InputLabel>
-                  <Select
-                    autoComplete="category"
-                    type="text"
-                    {...getFieldProps('category')}
-                    error={Boolean(touched.category && errors.category)}
-                    helperText={touched.category && errors.category}
-                  >
-                    {
-                      cat.map(function(x){
-                        return (
-                          <MenuItem value={x.id} selected={x.id === values.category}>{x.name}</MenuItem>
-                        )
-                      })
-                    }
-                  </Select>
-                </FormControl>
-                <TextField
-                  fullWidth
-                  autoComplete="unit_measurement"
-                  type="text"
-                  label="Satuan"
-                  {...getFieldProps('unit_measurement')}
-                  error={Boolean(touched.unit_measurement && errors.unit_measurement)}
-                  helperText={touched.unit_measurement && errors.unit_measurement}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="gross_weight"
-                  type="text"
-                  label="Berat Kotor"
-                  {...getFieldProps('gross_weight')}
-                  error={Boolean(touched.gross_weight && errors.gross_weight)}
-                  helperText={touched.gross_weight && errors.gross_weight}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="value"
-                  type="text"
-                  label="Nilai Produk"
-                  {...getFieldProps('value')}
-                  error={Boolean(touched.value && errors.value)}
-                  helperText={touched.value && errors.value}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="brand"
-                  type="text"
-                  label="Brand"
-                  {...getFieldProps('brand')}
-                  error={Boolean(touched.brand && errors.brand)}
-                  helperText={touched.brand && errors.brand}
-                />
-              </CardContent>
+                <CardContent>
+                <Grid container spacing={2}>
+                  
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="name"
+                      type="text"
+                      label="Nama"
+                      {...getFieldProps('name')}
+                      error={Boolean(touched.name && errors.name)}
+                      helperText={touched.name && errors.name}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="brand"
+                      type="text"
+                      label="Brand"
+                      {...getFieldProps('brand')}
+                      error={Boolean(touched.brand && errors.brand)}
+                      helperText={touched.brand && errors.brand}
+                    />
+                  </Grid>
+
+
+                  <Grid item xs={9}>
+                    <FormControl fullWidth>
+                      <InputLabel >Kategori</InputLabel>
+                      <Select
+                        autoComplete="category"
+                        type="text"
+                        {...getFieldProps('category')}
+                        error={Boolean(touched.category && errors.category)}
+                        helperText={touched.category && errors.category}
+                      >
+                        {
+                          cat.map(function(x){
+                            return (
+                              <MenuItem value={x.id}>{x.name}</MenuItem>
+                            )
+                          })
+                        }
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="unit_measurement"
+                      type="text"
+                      label="Satuan"
+                      {...getFieldProps('unit_measurement')}
+                      error={Boolean(touched.unit_measurement && errors.unit_measurement)}
+                      helperText={touched.unit_measurement && errors.unit_measurement}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="value"
+                      type="text"
+                      label="Nilai Produk"
+                      {...getFieldProps('value')}
+                      error={Boolean(touched.value && errors.value)}
+                      helperText={touched.value && errors.value}
+                    />
+                  </Grid>
+
+                </Grid>
+                </CardContent>
             </Card>
             <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>
               <CardHeader

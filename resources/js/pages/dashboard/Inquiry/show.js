@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
 
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
 import { Link as RouterLink, useLocation, } from 'react-router-dom';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
@@ -210,83 +210,111 @@ function Inquiry() {
       />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Inquiry Information"
-          />
-          <CardContent>
-            <TextField
-              fullWidth
-              autoComplete="id"
-              type="text"
-              label="No Inquiry"
-              {...getFieldProps('id')}
-              error={Boolean(touched.id && errors.id)}
-              helperText={touched.id && errors.id}
+        <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Card >
+            <CardHeader
+              title="Inquiry Information"
             />
-            <TextField
-              fullWidth
-              autoComplete="sold_to"
-              type="text"
-              label="Pembeli"
-              {...getFieldProps('sold_to')}
-              error={Boolean(touched.sold_to && errors.sold_to)}
-              helperText={touched.sold_to && errors.sold_to}
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    autoComplete="id"
+                    type="text"
+                    label="No Inquiry"
+                    {...getFieldProps('id')}
+                    error={Boolean(touched.id && errors.id)}
+                    helperText={touched.id && errors.id}
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    autoComplete="po_number"
+                    type="text"
+                    label="No PO"
+                    {...getFieldProps('po_number')}
+                    error={Boolean(touched.po_number && errors.po_number)}
+                    helperText={touched.po_number && errors.po_number}
+                  />    
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="sold_to"
+                    type="text"
+                    label="Pembeli"
+                    {...getFieldProps('sold_to')}
+                    disabled
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    autoComplete="ship_to"
+                    type="text"
+                    label="Penerima"
+                    {...getFieldProps('ship_to')}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                  />
+                </Grid>
+              </Grid>       
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Card >
+            <CardHeader
+              title="Item Overview"
             />
-            <TextField
-              fullWidth
-              autoComplete="ship_to"
-              type="text"
-              label="Penerima"
-              {...getFieldProps('ship_to')}
-              error={Boolean(touched.ship_to && errors.ship_to)}
-              helperText={touched.ship_to && errors.ship_to}
-            />
-            <TextField
-              fullWidth
-              autoComplete="po_number"
-              type="text"
-              label="No PO"
-              {...getFieldProps('po_number')}
-              error={Boolean(touched.po_number && errors.po_number)}
-              helperText={touched.po_number && errors.po_number}
-            />    
-            <TextField
-              fullWidth
-              autoComplete="delivery_date"
-              type="date"
-              label="Estimasi Pengiriman"
-              {...getFieldProps('delivery_date')}
-              error={Boolean(touched.delivery_date && errors.delivery_date)}
-              helperText={touched.delivery_date && errors.delivery_date}
-            />            
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Item Overview"
-          />
-          <CardContent>
-            <div style={{display: 'flex'}}>
-            <TextField
-              fullWidth
-              autoComplete="po_date"
-              type="date"
-              placeholder='valid'
-              {...getFieldProps('po_date')}
-              error={Boolean(touched.po_date && errors.po_date)}
-              helperText={touched.po_date && errors.po_date}
-            />
-            <TextField
-              fullWidth
-              autoComplete="valid_to"
-              type="date"
-              placeholder='valid'
-              {...getFieldProps('valid_to')}
-              error={Boolean(touched.valid_to && errors.valid_to)}
-              helperText={touched.valid_to && errors.valid_to}
-            /> 
-            </div>
+            <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="po_date"
+                  type="date"
+                  placeholder='po_date'
+                  label="PO Date"
+                  {...getFieldProps('po_date')}
+                  error={Boolean(touched.po_date && errors.po_date)}
+                  helperText={touched.po_date && errors.po_date}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="valid_to"
+                  type="date"
+                  placeholder='valid_to'
+                  label="Expired Date"
+                  {...getFieldProps('valid_to')}
+                  error={Boolean(touched.valid_to && errors.valid_to)}
+                  helperText={touched.valid_to && errors.valid_to}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="delivery_date"
+                  type="date"
+                  label="Delivery Time"
+                  {...getFieldProps('delivery_date')}
+                  error={Boolean(touched.delivery_date && errors.delivery_date)}
+                  helperText={touched.delivery_date && errors.delivery_date}
+                />
+              </Grid>
+            </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
             <DataGrid 
               columns={columns} 
               rows={items}
@@ -294,28 +322,29 @@ function Inquiry() {
               handleUpdateAllRows={handleUpdateAllRows}
               handleAddRow={handleOpenModal}
             />
-          </CardContent>
-        </Card>
-        <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-          <LoadingButton
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-            sx={{ m: 1 }}
-          >
-            Save
-          </LoadingButton>
-          <Button
-            size="large"
-            type="submit"
-            color="grey"
-            variant="contained"
-            sx={{ m: 1 }}
-          >
-            Cancel
-          </Button>
-        </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Card sx={{ p:2, display: 'flex', justifyContent: 'end', marginTop: '1.5em' }}>
+            <LoadingButton
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button
+              size="large"
+              color="grey"
+              variant="contained"
+              sx={{ m: 1 }}
+            >
+              Cancel
+            </Button>
+          </Card>
+        </Grid>
+        </Grid>
         </Form>
       </FormikProvider>
       </Container>

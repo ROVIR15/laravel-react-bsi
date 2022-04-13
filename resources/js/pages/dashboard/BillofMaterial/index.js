@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Grid, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
@@ -21,22 +21,28 @@ function BillOfMaterial() {
         Bill of Material
       </Typography>
       <div>
-        <Button
-          variant="contained"
-          component={RouterLink}
-          to={getPathname(pathname.split('/')) + '/add'}
-          startIcon={<Icon icon={plusFill} />}
-        >
-          New
-        </Button>
-        <Button
-          variant="contained"
-          component={RouterLink}
-          to={getPathname(pathname.split('/')) + '/display'}
-          startIcon={<Icon icon={hardDriveFill} />}
-        >
-          Display
-        </Button>
+      <Grid container spacing={2}>
+        <Grid item>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to={getPathname(pathname.split('/')) + '/add'}
+            startIcon={<Icon icon={plusFill} />}
+          >
+            New
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to={getPathname(pathname.split('/')) + '/display'}
+            startIcon={<Icon icon={hardDriveFill} />}
+          >
+            Display
+          </Button>
+        </Grid>
+      </Grid>
       </div>
     </Stack>
     <Outlet/>

@@ -20,7 +20,7 @@ function QuotationLayout() {
       <Typography variant="h4" gutterBottom>
         Quotation
       </Typography>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" >
+      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
         <Button
           variant="contained"
           component={RouterLink}

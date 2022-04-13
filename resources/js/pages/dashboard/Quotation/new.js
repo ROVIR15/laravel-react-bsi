@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -45,6 +45,8 @@ function Quotation() {
 
   const QuotationSchema = Yup.object().shape({
     inquiry_id: Yup.number().required('Inquiry References is required'),
+    ship_to: Yup.number().required('Inquiry References is required'),
+    sold_to: Yup.number().required('Inquiry References is required'),
     issue_date: Yup.date().required('PO Date is required'),
     valid_thru: Yup.date().required('Valid To is required'),
     delivery_date: Yup.date().required('Delivery Date is required')
@@ -53,6 +55,9 @@ function Quotation() {
   const formik = useFormik({
     initialValues: {
       inquiry_id: '',
+      po_number: '',
+      ship_to: '',
+      sold_to: '',
       issue_date: '',
       valid_thru: '',
       delivery_date: '',
@@ -69,6 +74,8 @@ function Quotation() {
       setSubmitting(false);
     }
   })
+
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
   useEffect(() => {
     let active = true;
@@ -117,14 +124,14 @@ function Quotation() {
     setValues({
       inquiry_id: data.id,
       po_number: data.po_number,
+      sold_to: data.sold_to,
+      ship_to: data.ship_to,
       issue_date: data.po_date,
       valid_thru: data.valid_to,
       delivery_date: data.delivery_date,
     })
     setItems(quoteItem);
   }
-
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
 
   const deleteData = useCallback(
     (id) => () => {
@@ -227,6 +234,50 @@ function Quotation() {
                 loading={loading}
                 changeData={changeData}
               />
+            </CardContent>
+          </Card>
+          <Card sx={{ m: 2}}>
+            <CardHeader
+              title="Information"
+            />
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={7}>
+                  <TextField
+                    fullWidth
+                    autoComplete="po_number"
+                    type="text"
+                    label="No PO"
+                    {...getFieldProps('po_number')}
+                    error={Boolean(touched.po_number && errors.po_number)}
+                    helperText={touched.po_number && errors.po_number}
+                  />    
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="sold_to"
+                    type="text"
+                    label="Pembeli"
+                    {...getFieldProps('sold_to')}
+                    disabled
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    autoComplete="ship_to"
+                    type="text"
+                    label="Penerima"
+                    {...getFieldProps('ship_to')}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                  />
+                </Grid>
+              </Grid>       
             </CardContent>
           </Card>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>

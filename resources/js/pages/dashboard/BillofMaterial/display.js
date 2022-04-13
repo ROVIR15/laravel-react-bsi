@@ -77,19 +77,6 @@ function DisplayBOM({ placeHolder }) {
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
-    // (async()=> {
-    //   if(isEmpty(bomData)) {
-    //     await API.getBOM((res) => {
-    //       console.log(res);
-    //       if(!res) return
-    //       if(!res.success) {
-    //         console.error('Nothing');
-    //         setBomData(BUYERLIST);
-    //       } else {
-    //         setBomData(res.data);
-    //       }
-    //     });
-    // }});
     if(!isEmpty(bomData)) return;
     API.getBOM((res) => {
       console.log(res);

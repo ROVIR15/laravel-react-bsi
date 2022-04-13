@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, Link as RouterLink } from 'react-router-dom';
 
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
@@ -24,7 +24,13 @@ import Modal2 from './components/ModalShowO';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+function getPathname(array){
+  if(!array.length) console.error('Require an Array type');
+  return '/' + array[1] + '/' + array[2] + '/' + array[3];
+}
+
 function BillOfMaterial() {
+  const { pathname } = useLocation();
   const {id} = useParams();
 
   const [items, setItems] = useState([]);
@@ -78,6 +84,8 @@ function BillOfMaterial() {
       product_feature_id: '',
       company_name: '',
       qty: '',
+      start_date: '',
+      end_date: ''
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
@@ -135,6 +143,7 @@ function BillOfMaterial() {
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
+    { field: 'value', headerName: 'Value', editable: false},
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
@@ -149,10 +158,14 @@ function BillOfMaterial() {
   ], [deleteDataComponent]);
 
   const operationColumns = useMemo(() => [
-    { field: 'id', headerName: 'ID Feature', editable: false, hideable: true },
-    { field: 'seq', headerName: 'seq', editable: true},
-    { field: 'work_center_id', headerName: 'Work Center ID', editable: false },
+    { field: 'id', headerName: 'ID Feature', editable: false, hideable: true, width: 30},
+    { field: 'seq', headerName: 'seq', editable: true, width: 30},
+    { field: 'work_center_id', headerName: 'Work Center ID', editable: false, width: 30 },
     { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
+    { field: 'work_hours', headerName: 'Working Hours', editable: false, width: 100, align: 'left' },
+    { field: 'cost_per_hour', headerName: 'Cost per Hours', editable: false, width: 100, align: 'left' },
+    { field: 'labor_alloc', headerName: 'Labor Allocation', editable: false, width: 100, align: 'left' },
+    { field: 'overhead_cost', headerName: 'CM Cost', editable: false, width: 100, align: 'left' },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -184,6 +197,8 @@ function BillOfMaterial() {
       product_feature_id: load.product_feature_id,
       name: load.name,
       qty: load.qty,
+      start_date: load.start_date,
+      end_date: load.end_date,
       company_name: load.company_name
     })
 
@@ -367,112 +382,168 @@ function BillOfMaterial() {
         />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="BOM Information"
-          />
-          <CardContent>
-            <TextField
-              fullWidth
-              autoComplete="name"
-              type="text"
-              label="BOM Name"
-              {...getFieldProps('name')}
-              error={Boolean(touched.name && errors.name)}
-              helperText={touched.name && errors.name}
-            />
-            <AutoComplete
-              fullWidth
-              autoComplete="product_id"
-              type="text"
-              label="Product Id"
-              error={Boolean(touched.product_id && errors.product_id)}
-              helperText={touched.product_id && errors.product_id}
-              options={options}
-              setOpen={setOpen}
-              loading={loading}
-            />
-            <AutoComplete
-              fullWidth
-              autoComplete="product_feature_id"
-              type="text"
-              label="Product Feature Id"
-              error={Boolean(touched.product_feature_id && errors.product_feature_id)}
-              helperText={touched.product_feature_id && errors.product_feature_id}
-              options={options}
-              setOpen={setOpen}
-              loading={loading}
-            />            
-            <TextField
-              fullWidth
-              autoComplete="qty"
-              type="text"
-              label="Quantity"
-              {...getFieldProps('qty')}
-              error={Boolean(touched.qty && errors.qty)}
-              helperText={touched.qty && errors.qty}
-            />
-            <TextField
-              fullWidth
-              autoComplete="company_name"
-              type="text"
-              label="Company Name"
-              {...getFieldProps('company_name')}
-              error={Boolean(touched.company_name && errors.company_name)}
-              helperText={touched.company_name && errors.company_name}
-            />
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Components"
-          />
-          <CardContent>
-            <DataGrid 
-              columns={goodsColumns}
-              rows={component}
-              handleAddRow={handleOpenModal}
-              onEditRowsModelChange={handleEditComponentRowsModelChange}
-              handleResetRows={handleResetComponentRows}
-              handleUpdateAllRows={handleUpdateAllComponentRows}
-            />
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Operations"
-          />
-          <CardContent>
-            <DataGrid 
-              columns={operationColumns}
-              rows={operation}
-              handleAddRow={handleOpenModalO}
-              onEditRowsModelChange={handleEditOperationRowsModelChange}
-              handleResetRows={handleResetOperationRows}
-              handleUpdateAllRows={handleUpdateAllOperationRows}
-            />
-          </CardContent>
-        </Card>
-        <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-          <LoadingButton
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-            sx={{ m: 1 }}
-          >
-            Save
-          </LoadingButton>
-          <Button
-            size="large"
-            type="submit"
-            color="grey"
-            variant="contained"
-            sx={{ m: 1 }}
-          >
-            Cancel
-          </Button>
-        </Card>
+          <Grid container spacing={3}>
+            {/* BOM Form */}
+            <Grid item xs={12}>
+              <Card >
+                <CardHeader
+                  title="BOM Information"
+                />
+                <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    autoComplete="name"
+                    type="text"
+                    label="BOM Name"
+                    {...getFieldProps('name')}
+                    error={Boolean(touched.name && errors.name)}
+                    helperText={touched.name && errors.name}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="product_id"
+                    type="text"
+                    label="Product Id"
+                    {...getFieldProps('product_id')}
+                    disabled
+                    error={Boolean(touched.product_id && errors.product_id)}
+                    helperText={touched.product_id && errors.product_id}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="product_feature_id"
+                    type="text"
+                    label="Product Variant Id"
+                    {...getFieldProps('product_feature_id')}
+                    disabled
+                    error={Boolean(touched.product_feature_id && errors.product_feature_id)}
+                    helperText={touched.product_feature_id && errors.product_feature_id}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="start_date"
+                    type="date"
+                    label="Start Date"
+                    {...getFieldProps('start_date')}
+                    error={Boolean(touched.start_date && errors.start_date)}
+                    helperText={touched.start_date && errors.start_date}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="end_date"
+                    type="date"
+                    label="End Date"
+                    {...getFieldProps('end_date')}
+                    error={Boolean(touched.end_date && errors.end_date)}
+                    helperText={touched.end_date && errors.end_date}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="qty"
+                    type="text"
+                    label="Quantity"
+                    {...getFieldProps('qty')}
+                    error={Boolean(touched.qty && errors.qty)}
+                    helperText={touched.qty && errors.qty}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="company_name"
+                    type="text"
+                    label="Company Name"
+                    {...getFieldProps('company_name')}
+                    error={Boolean(touched.company_name && errors.company_name)}
+                    helperText={touched.company_name && errors.company_name}
+                  />
+                </Grid>
+              </Grid>
+              </CardContent>
+              </Card>
+            </Grid>
+            {/* Components Data Grid */}
+            <Grid item xs={12}>
+              <Card >
+                <CardHeader
+                  title="Components"
+                />
+                <CardContent>
+                  <DataGrid 
+                    columns={goodsColumns}
+                    rows={component}
+                    handleAddRow={handleOpenModal}
+                    onEditRowsModelChange={handleEditComponentRowsModelChange}
+                    handleResetRows={handleResetComponentRows}
+                    handleUpdateAllRows={handleUpdateAllComponentRows}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            {/* Operation Data Grid */}
+            <Grid item xs={12}>
+              <Card >
+                <CardHeader
+                  title="Operations"
+                />
+                <CardContent>
+                  <DataGrid 
+                    columns={operationColumns}
+                    rows={operation}
+                    handleAddRow={handleOpenModalO}
+                    onEditRowsModelChange={handleEditOperationRowsModelChange}
+                    handleResetRows={handleResetComponentRows}
+                    handleUpdateAllRows={handleUpdateAllOperationRows}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            {/* Button */}
+            <Grid item xs={12}>
+              <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+                <LoadingButton
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button
+                  component={RouterLink}
+                  to={getPathname(pathname.split('/')) + `/document/${id}`}
+                  size="large"
+                  color="grey"
+                  variant="contained"
+                  sx={{ m: 1 }}
+                >
+                  Show
+                </Button>  
+                <Button
+                  size="large"
+                  color="grey"
+                  variant="contained"
+                  sx={{ m: 1 }}
+                >
+                  Cancel
+                </Button>
+              </Card>
+
+            </Grid>
+          </Grid>
         </Form>
       </FormikProvider>
       </Container>

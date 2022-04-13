@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -250,6 +250,50 @@ function SalesOrder() {
                 loading={loading}
                 changeData={changeData}
               />
+            </CardContent>
+          </Card>
+          <Card sx={{ m: 2}}>
+            <CardHeader
+              title="Information"
+            />
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={7}>
+                  <TextField
+                    fullWidth
+                    autoComplete="po_number"
+                    type="text"
+                    label="No PO"
+                    {...getFieldProps('po_number')}
+                    error={Boolean(touched.po_number && errors.po_number)}
+                    helperText={touched.po_number && errors.po_number}
+                  />    
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="sold_to"
+                    type="text"
+                    label="Pembeli"
+                    {...getFieldProps('sold_to')}
+                    disabled
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    autoComplete="ship_to"
+                    type="text"
+                    label="Penerima"
+                    {...getFieldProps('ship_to')}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                  />
+                </Grid>
+              </Grid>       
             </CardContent>
           </Card>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>

@@ -17,7 +17,6 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
 
     return (
     <Autocomplete
-      sx={{ width: 300 }}
       open={open}
       onOpen={() => {
         setOpen(true);

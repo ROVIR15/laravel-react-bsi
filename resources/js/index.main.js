@@ -9,16 +9,27 @@ import { BrowserRouter } from 'react-router-dom';
 import TestRouter from './routes/auth.route';
 import ScrollToTop from './components/ScrollToTop';
 
+// Notistack
+import { SnackbarProvider } from 'notistack'
+
 function MainApp(){
   return (
     <HelmetProvider>
-      <BrowserRouter>
-        <ThemeConfig>
-        <ScrollToTop/>
-        <GlobalStyles/>
-        <TestRouter />
-        </ThemeConfig>
-      </BrowserRouter>
+      <SnackbarProvider
+        anchorOrigin={{
+             vertical: 'bottom',
+             horizontal: 'left',
+        }}
+        TransitionComponent={Slide}      
+        >
+        <BrowserRouter>
+          <ThemeConfig>
+            <ScrollToTop/>
+            <GlobalStyles/>
+            <TestRouter />
+          </ThemeConfig>
+        </BrowserRouter>
+      </SnackbarProvider>
     </HelmetProvider>
   )
 }

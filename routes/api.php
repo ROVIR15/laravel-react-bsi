@@ -53,6 +53,7 @@ Route::resource('product-feature', 'ProductFeatureController')->only(['index', '
 
 //BOM
 Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
 //Operation

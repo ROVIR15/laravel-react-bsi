@@ -86,6 +86,16 @@ const main = {
         cb(err.response);
       });
     },
+    updateGoods(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/goods'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     deleteGoods(id, cb){
       if(!id) throw new Error('ID is required');
       axios.delete( uri + '/goods/' + id, {headers}).then(function(res){

@@ -16,6 +16,8 @@ import { Icon } from '@iconify/react';
 import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
 import Layout from '../../../layouts/Layout';
 
+import { useSnackbar } from 'notistack'
+
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
@@ -24,13 +26,21 @@ function getPathname(array){
 function BuyerList() {
   const { pathname } = useLocation();
 
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleClick = () => {
+    enqueueSnackbar('Here I am', {
+      variant: 'success'
+    });
+  };
+
   return (
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4" gutterBottom>
           Buyer
         </Typography>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
           <Button
             variant="contained"
             component={RouterLink}
@@ -46,6 +56,14 @@ function BuyerList() {
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Display
+          </Button>
+          <Button
+            variant="contained"
+            component='div'
+            onClick={handleClick}
+            startIcon={<Icon icon={hardDriveFill} />}
+          >
+            Show Snackbar
           </Button>
         </Stack>
       </Stack>

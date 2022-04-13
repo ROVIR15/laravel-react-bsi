@@ -2,6 +2,10 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import briefcaseFill from '@iconify/icons-eva/briefcase-fill';
+import flashFill from '@iconify/icons-eva/flash-fill';
+import cubeFill from '@iconify/icons-eva/cube-fill';
+import shoppingCart from '@iconify/icons-eva/shopping-cart-fill';
+import archiveFill from '@iconify/icons-eva/archive-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
@@ -39,32 +43,32 @@ const sidebarConfig = [
         title: 'Sales Order',
         path: '/dashboard/order/sales-order',
       },
-      {
-        title: 'Shipment',
-        path: '/dashboard/order/order-shipment'
-      },
-      {
-        title: 'Outbound Delivery',
-        path: '/dashboard/order/outbound-delivery'
-      },
-      {
-        title: 'Goods Issue',
-        path: '/dashboard/order/goods-isssue'
-      }
+      // {
+      //   title: 'Shipment',
+      //   path: '/dashboard/order/order-shipment'
+      // },
+      // {
+      //   title: 'Outbound Delivery',
+      //   path: '/dashboard/order/outbound-delivery'
+      // },
+      // {
+      //   title: 'Goods Issue',
+      //   path: '/dashboard/order/goods-isssue'
+      // }
     ]
   },
   {
     title: 'Production',
-    icon: getIcon(),
+    icon: getIcon(flashFill),
     children: [
       {
         title: 'Bill of Material',
         path: '/dashboard/production/bom'
       },
-      {
-        title: 'Routing',
-        path: '/dashboard/production/routing'
-      },
+      // {
+      //   title: 'Routing',
+      //   path: '/dashboard/production/routing'
+      // },
       {
         title: 'Work Center',
         path: '/dashboard/production/work-center'
@@ -73,51 +77,55 @@ const sidebarConfig = [
   },
   {
     title: 'Material Management',
-    icon: getIcon(),
+    icon: getIcon(cubeFill),
     children: [
       {
         title: 'Goods',
         path: '/dashboard/material/goods'
       },
       {
-        title: 'Service',
-        path: '/dashboard/material/service'
+        title: 'Invoice Receipt',
+        path: '/dashboard/material/invoice-receipt'
       },
-      {
-        title: 'Non-Material',
-        path: '/dashboard/material/non-material-goods'
-      },
-      {
-        title: 'Material Grouping',
-        path: '/dashboard/material/material-grouping'
-      }
+      // {
+      //   title: 'Service',
+      //   path: '/dashboard/material/service'
+      // },
+      // {
+      //   title: 'Non-Material',
+      //   path: '/dashboard/material/non-material-goods'
+      // },
+      // {
+      //   title: 'Material Grouping',
+      //   path: '/dashboard/material/material-grouping'
+      // }
     ]
   },
   {
     title: 'Inventory Management',
-    icon: getIcon(),
+    icon: getIcon(archiveFill),
     children: [
-      {
-        title: 'Stock',
-        path: '/dashboard/inventory/stocks'
-      },
-      {
-        title: 'Inventory Item',
-        path: '/dashboard/inventory/inventory-items'
-      },
+      // {
+      //   title: 'Stock',
+      //   path: '/dashboard/inventory/stocks'
+      // },
+  //     {
+  //       title: 'Inventory Item',
+  //       path: '/dashboard/inventory/inventory-items'
+  //     },
       {
         title: 'Goods Receipt',
-        path: '/dashboard/material/service'
+        path: '/dashboard/inventory/goods-receipt'
       },
-      {
-        title: 'Goods Issue',
-        path: '/dashboard/material/non-material-goods'
-      }
+  //     {
+  //       title: 'Goods Issue',
+  //       path: '/dashboard/material/non-material-goods'
+  //     }
     ]
   },
   {
     title: "Purchasing",
-    icon: getIcon(),
+    icon: getIcon(shoppingCart),
     children: [
       {
         title: 'Vendor',

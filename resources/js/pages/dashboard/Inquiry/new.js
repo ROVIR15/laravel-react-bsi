@@ -1,10 +1,14 @@
 import React, {useState, useMemo} from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, TextField, Button } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Paper, Button } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
+
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { LoadingButton } from '@mui/lab';
 
 // API
@@ -14,6 +18,7 @@ import API from '../../../helpers';
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import AutoComplete from './components/AutoCompleteB';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -23,12 +28,16 @@ function Inquiry() {
 
   //AutoComplete props
   const [options, setOptions] = useState([]);
+  const [buyerOptions, setBuyerOptions] = useState([]);
+
+  // Props of AutoComplete
   const loading = open && options.length === 0;
+  const [open, setOpen] = useState(false);a
 
   const InquirySchema = Yup.object().shape({
     id: Yup.string().required('Id is required'),
-    sold_to: Yup.string().required('Sold to Buyer is required'),
-    ship_to: Yup.string().required('Ship to Buyer is required'),
+    sold_to: Yup.number().required('Sold to Buyer is required'),
+    ship_to: Yup.number().required('Ship to Buyer is required'),
     po_number: Yup.string().required('city is required'),
     po_date: Yup.string().required('province is required')
   });
@@ -36,8 +45,8 @@ function Inquiry() {
   const formik = useFormik({
     initialValues: {
       id: '',
-      sold_to: '',
-      ship_to: '',
+      sold_to: 0,
+      ship_to: 0,
       po_number: '',
       po_date: '',
       delivery_date: '',
@@ -57,7 +66,7 @@ function Inquiry() {
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   // Preapre data from product features
   React.useEffect(() => {
@@ -70,6 +79,11 @@ function Inquiry() {
         } else {
           setOptions(res.data);
         }
+      })
+
+      API.getBuyers((res) => {
+        if(!res) return
+        else setBuyerOptions(res);
       })
 
     return () => {
@@ -166,85 +180,116 @@ function Inquiry() {
       />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Inquiry Information"
-          />
-          <CardContent>
-            <TextField
-              fullWidth
-              autoComplete="id"
-              type="text"
-              label="No Inquiry"
-              {...getFieldProps('id')}
-              error={Boolean(touched.id && errors.id)}
-              helperText={touched.id && errors.id}
+        <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Card >
+            <CardHeader
+              title="Inquiry Information"
             />
-            <TextField
-              fullWidth
-              autoComplete="sold_to"
-              type="number"
-              label="Pembeli"
-              {...getFieldProps('sold_to')}
-              error={Boolean(touched.sold_to && errors.sold_to)}
-              helperText={touched.sold_to && errors.sold_to}
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    autoComplete="id"
+                    type="text"
+                    label="No Inquiry"
+                    {...getFieldProps('id')}
+                    error={Boolean(touched.id && errors.id)}
+                    helperText={touched.id && errors.id}
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    autoComplete="po_number"
+                    type="text"
+                    label="No PO"
+                    {...getFieldProps('po_number')}
+                    error={Boolean(touched.po_number && errors.po_number)}
+                    helperText={touched.po_number && errors.po_number}
+                  />    
+                </Grid>
+                <Grid item xs={6}>
+                  <AutoComplete
+                    fullWidth
+                    autoComplete="sold_to"
+                    label="Pembeli"
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    options={buyerOptions}
+                    setOpen={setOpen}
+                    loading={loading}
+                    changeData={setFieldValue}
+                    name='sold_to'
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <AutoComplete
+                    fullWidth
+                    autoComplete="ship_to"
+                    type="text"
+                    label="Penerima To"
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                    options={buyerOptions}
+                    setOpen={setOpen}
+                    loading={loading}
+                    changeData={setFieldValue}
+                    name='ship_to'
+                  />
+                </Grid>
+              </Grid>       
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Card >
+            <CardHeader
+              title="Item Overview"
             />
-            <TextField
-              fullWidth
-              autoComplete="ship_to"
-              type="number"
-              label="Penerima"
-              {...getFieldProps('ship_to')}
-              error={Boolean(touched.ship_to && errors.ship_to)}
-              helperText={touched.ship_to && errors.ship_to}
-            />
-            <TextField
-              fullWidth
-              autoComplete="po_number"
-              type="text"
-              label="No PO"
-              {...getFieldProps('po_number')}
-              error={Boolean(touched.po_number && errors.po_number)}
-              helperText={touched.po_number && errors.po_number}
-            />    
-            <TextField
-              fullWidth
-              autoComplete="delivery_date"
-              type="date"
-              label="Delivery Time"
-              {...getFieldProps('delivery_date')}
-              error={Boolean(touched.delivery_date && errors.delivery_date)}
-              helperText={touched.delivery_date && errors.delivery_date}
-            />            
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-          <CardHeader
-            title="Item Overview"
-          />
-          <CardContent>
-            <div style={{display: 'flex'}}>
-            <TextField
-              fullWidth
-              autoComplete="po_date"
-              type="date"
-              placeholder='po_date'
-              label="PO Date"
-              {...getFieldProps('po_date')}
-              error={Boolean(touched.po_date && errors.po_date)}
-              helperText={touched.po_date && errors.po_date}
-            />
-            <TextField
-              fullWidth
-              autoComplete="valid_to"
-              type="date"
-              placeholder='valid_to'
-              label="Expired Date"
-              {...getFieldProps('valid_to')}
-              error={Boolean(touched.valid_to && errors.valid_to)}
-              helperText={touched.valid_to && errors.valid_to}
-            /> 
-            </div>
+            <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="po_date"
+                  type="date"
+                  placeholder='po_date'
+                  label="PO Date"
+                  {...getFieldProps('po_date')}
+                  error={Boolean(touched.po_date && errors.po_date)}
+                  helperText={touched.po_date && errors.po_date}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="valid_to"
+                  type="date"
+                  placeholder='valid_to'
+                  label="Expired Date"
+                  {...getFieldProps('valid_to')}
+                  error={Boolean(touched.valid_to && errors.valid_to)}
+                  helperText={touched.valid_to && errors.valid_to}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  autoComplete="delivery_date"
+                  type="date"
+                  label="Delivery Time"
+                  {...getFieldProps('delivery_date')}
+                  error={Boolean(touched.delivery_date && errors.delivery_date)}
+                  helperText={touched.delivery_date && errors.delivery_date}
+                />
+              </Grid>
+            </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
             <DataGrid 
               columns={inquiryItemsColumns}
               rows={items}
@@ -252,28 +297,29 @@ function Inquiry() {
               onEditRowsModelChange={handleEditRowsModelChange}
               handleResetRows={handleResetRows}
             />
-          </CardContent>
-        </Card>
-        <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-          <LoadingButton
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-            sx={{ m: 1 }}
-          >
-            Save
-          </LoadingButton>
-          <Button
-            size="large"
-            type="submit"
-            color="grey"
-            variant="contained"
-            sx={{ m: 1 }}
-          >
-            Cancel
-          </Button>
-        </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Card sx={{ p:2, display: 'flex', justifyContent: 'end', marginTop: '1.5em' }}>
+            <LoadingButton
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button
+              size="large"
+              color="grey"
+              variant="contained"
+              sx={{ m: 1 }}
+            >
+              Cancel
+            </Button>
+          </Card>
+        </Grid>
+        </Grid>
         </Form>
       </FormikProvider>
       </Container>
