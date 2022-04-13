@@ -22,7 +22,7 @@ class QuoteController extends Controller
     public function index(Request $request, Quote $quote)
     {
       $param = $request->all();
-      $query = $quote->all();
+      $query = $quote->where('quote_type')->get();
 
       return new QuoteCollection($query);
     }
@@ -54,6 +54,8 @@ class QuoteController extends Controller
             'inquiry_id' => $param['inquiry_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
+            'party_id' => $param['sold_to'],
+            'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
             'valid_thru' => $param['valid_thru']
           ]);
@@ -93,7 +95,6 @@ class QuoteController extends Controller
      */
     public function show($id)
     {
-        //
       try {
         $query = Quote::with('quote_item')->find($id);
         return new QuoteOneCollection($query);
@@ -147,7 +148,7 @@ class QuoteController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
         $quote = new Quote;
 
