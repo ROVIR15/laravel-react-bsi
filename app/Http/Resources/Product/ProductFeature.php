@@ -23,6 +23,7 @@ class ProductFeature extends JsonResource
             'goods_id' => $this->product->goods_id,
             'name' => $this->product->goods['name'],
             'brand' => $this->product->goods['brand'],
+            'value' => $this->product->goods['value'],
             'color' => $this->color,
             'size' => $this->size,
             'category' => $cat->name,

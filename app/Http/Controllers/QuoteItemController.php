@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Faker\Generator as Faker;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\QuoteItem;
@@ -44,7 +45,7 @@ class QuoteItemController extends Controller
     public function store(Request $request, Faker $faker)
     {
         $param = $request->all()['payload'];
-
+        $current_date_time = Carbon::now()->toDateTimeString();
         try {
             //code...
             $quoteItemsCreation = [];
@@ -56,7 +57,8 @@ class QuoteItemController extends Controller
                 'request_item_id' => $key['inquiry_item_id'],
                 'product_feature_id' => $key['product_feature_id'],
                 'qty' => $key['qty'],
-                'unit_price' => $key['unit_price']
+                'unit_price' => $key['unit_price'],
+                'created_at' => $current_date_time
               ]);
             }
 
