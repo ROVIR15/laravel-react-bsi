@@ -59,6 +59,8 @@
               'product_feature_id' => $param['product_feature_id'],
               'name' => $param['name'],
               'qty' => $param['qty'],
+              'start_date' => $param['start_date'],
+              'end_date' => $param['end_date'],
               'company_name' => $param['company_name']
             ]);
     
@@ -119,7 +121,7 @@
     {
         try {
             //code...
-            $query = BOM::with('product_info')->find($id);
+            $query = BOM::with('product_info', 'operation')->find($id);
             return new BOMOneCollection($query);
         } catch (Exception $th) {
             //throw $th;
