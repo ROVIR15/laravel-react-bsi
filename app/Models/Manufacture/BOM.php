@@ -18,6 +18,8 @@ class BOM extends Model
         'product_feature_id',
         'name',
         'qty',
+        'start_date',
+        'end_date',
         'company_name'
     ];
 
@@ -30,6 +32,6 @@ class BOM extends Model
     }
 
     public function operation(){
-        return $this->hasMany('App\Models\Manufacture\Operation');
+        return $this->hasMany('App\Models\Manufacture\Operation', 'bom_id');
     }
 }
