@@ -10,16 +10,18 @@ class WorkCenter extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = true;
+    public $incrementing = false;
+    public $timestamp = false;
 
     protected $fillable = [
         'id',
         'name',
         'work_hours',
         'company_name',
-        'time_efficiency',
+        'overhead_cost',
         'prod_capacity',
         'cost_per_hour',
+        'labor_alloc',
         'oee_target',
         'description'
     ];

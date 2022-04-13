@@ -28,4 +28,8 @@ class ProductFeature extends Model
     public function product_category(){
         return $this->hasOneThrough('App\Models\Product\ProductHasCategory', 'App\Models\Product\Product', 'id', 'product_id', 'product_id', 'id');
     }
+
+    public function goods(){
+        return $this->hasOneThrough('App\Models\Product\Goods', 'App\Models\Product\Product', 'goods_id', 'id');
+    }
 }
