@@ -17,12 +17,13 @@ class WorkCenter extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'working_hours' => $this->work_hours,
+            'work_hours' => $this->work_hours,
             'company_name' => $this->company_name,
-            'time_efficiency' => $this->time_efficiency,
+            'overhead_cost' => $this->overhead_cost,
             'prod_capacity' => $this->prod_capacity,
             'cost_per_hour' => $this->cost_per_hour,
             'oee_target' => $this->oee_target,
+            'labor_alloc' => $this->labor_alloc,
             'description' => $this->description
         ];
     }
