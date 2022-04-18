@@ -24,15 +24,15 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'AuthController@logout');
 });
 
-//Buyer
+//Party
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
 //Inquiry
 Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
 //Order
 Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('order', 'OrderController')->only(['index']);
 Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
 Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
@@ -43,8 +43,6 @@ Route::resource('order-association', 'OrderAssociationController')->only(['index
 Route::resource('product', 'ProductController')->only(['index']);
 Route::resource('service', 'ServiceController')->only(['index']);
 Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
-Route::resource('inventory', 'InventoryController')->only(['index']);
-Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
 Route::resource('part', 'PartController')->only(['index']);
 Route::resource('partBOM', 'PartBOMController')->only(['index']);
 Route::resource('product', 'ProductController')->only(['index']);
@@ -95,3 +93,14 @@ Route::resource('shipment', 'ShipmentController')->only(['index']);
 Route::resource('shipment-item', 'ShipmentItemController')->only(['index']);
 Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index']);
 Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
+
+//Inventory
+Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index']);
+Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index']);
+Route::resource('inventory', 'InventoryController')->only(['index']);
+Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
+
+//Purchasing
+Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
+Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
