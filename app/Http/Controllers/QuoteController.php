@@ -51,7 +51,8 @@ class QuoteController extends Controller
           $id = $faker->unique()->numberBetween(1,8939);
           $quoteCreation = Quote::create([
             'id' => $id,
-            'inquiry_id' => $param['inquiry_id'],
+            'quote_type' => $param['quote_type'],
+            'request_id' => $param['inquiry_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
             'party_id' => $param['sold_to'],
@@ -66,7 +67,7 @@ class QuoteController extends Controller
             array_push($quoteItemsCreation, [
               'id' => $faker->unique()->numberBetween(1,8939),
               'quote_id' => $id,
-              'request_item_id' => $key['inquiry_item_id'],
+              'request_item_id' => $key['request_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']
