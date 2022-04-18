@@ -44,8 +44,10 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Faker $faker)
+    public function store(Request $request)
     {
+      $param = $request->all()['payload'];
+      
       try {
         //Order Creation
         $order = Order::create([
