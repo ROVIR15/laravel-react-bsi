@@ -49,31 +49,32 @@ class RFQController extends Controller
         try {
           //code...
           $id = $faker->unique()->numberBetween(1,8939);
-          $quoteCreation = Quote::create([
+          $rfqCreation = Quote::create([
             'id' => $id,
-            'inquiry_id' => $param['inquiry_id'],
+            'request_id' => $param['request_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
-            'party_id' => $param['sold_to'],
+            'party_id' => $param['party_id'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
-            'valid_thru' => $param['valid_thru']
+            'valid_thru' => $param['valid_thru'],
+            'quote_type' => $param['quote_type']
           ]);
           
-          $quoteItemsCreation = [];
+          $rfqItemsCreation = [];
   
           foreach($param['quote_items'] as $key){
-            array_push($quoteItemsCreation, [
+            array_push($rfqItemsCreation, [
               'id' => $faker->unique()->numberBetween(1,8939),
               'quote_id' => $id,
-              'request_item_id' => $key['inquiry_item_id'],
+              'request_item_id' => $key['request_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']
             ]);
           }
   
-          QuoteItem::insert($quoteItemsCreation);
+          QuoteItem::insert($rfqItemsCreation);
   
         } catch (Exception $th) {
           return response()->json([
