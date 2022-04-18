@@ -18,8 +18,8 @@ class Request extends JsonResource
     {
         return [
           'id' => $this->id,
-          'serial_req' => $this->serial_req,
-          'sold_to' => $this->sold_to,
+          'req_type' => $this->req_type,
+          'party_id' => $this->party_id,
           'ship_to' => $this->ship_to,
           'po_number' => $this->po_number,
           'po_date' => $this->po_date,

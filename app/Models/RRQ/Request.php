@@ -14,14 +14,14 @@ class Request extends Model
     public $timestamp = false;
 
     protected $fillable = [
-        'id',
-        'serial_req',
-        'sold_to',
-        'ship_to',
-        'po_number',
-        'po_date',
-        'delivery_date',
-        'valid_to'
+      'id',
+      'req_type',
+      'party_id',
+      'ship_to',
+      'po_number',
+      'po_date',
+      'delivery_date',
+      'valid_to'
     ];
 
     public function request_item(){
