@@ -53,7 +53,7 @@ class PurchaseRequisitionController extends Controller
           //code...
         $purReqCreation = PurReq::create([
           'id' => $faker->unique()->numberBetween(1,8939),
-          'serial_req' => 'PurchaseReq',
+          'req_type' => 'PurchaseReq',
           'party_id' => $param['party_id'],
           'ship_to' => $param['ship_to'],
           'po_number' => $param['po_number'],
@@ -73,7 +73,7 @@ class PurchaseRequisitionController extends Controller
           ]);
         }
 
-        PurReqItems::insert($inquiryItemCreation);
+        PurReqItems::insert($PRItemsCreation);
 
       } catch (Exception $th) {
         return response()->json([
