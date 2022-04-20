@@ -136,11 +136,11 @@ class PurchaseRequisitionController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
-            ]);
+            ], 500);
         }
         return response()->json([
             'success' => true
-        ]);
+        ], 200);
     }
 
     /**
