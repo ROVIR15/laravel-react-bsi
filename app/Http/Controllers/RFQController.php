@@ -22,7 +22,7 @@ class RFQController extends Controller
     public function index(Request $request, Quote $quote)
     {
       $param = $request->all();
-      $query = $quote->where('quote_type', 'PR')->get();
+      $query = $quote->where('quote_type', 'PurchaseReq')->get();
 
       return new QuoteCollection($query);
     }

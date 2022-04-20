@@ -16,6 +16,7 @@
         'id',
         'sales_order_id',
         'purchase_order_id',
+        'quote_id'
     ];
 
     public function order_item(){

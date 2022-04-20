@@ -42,7 +42,7 @@ class VendorController extends Controller
           $join->on("pr.relationship_id", "=", "r.id");
       })
       ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-      ->where("r.name", "=", "Buyer")
+      ->where("r.name", "=", "Supplier")
       ->get();
       return response()->json($data);
     //   return new BuyerCollection($query);
