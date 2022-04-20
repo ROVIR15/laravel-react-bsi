@@ -18,9 +18,9 @@ class Quote extends JsonResource
         return [
             'id' => $this->id,
             'po_number' => $this->po_number,
-            'sold_to' => $this->party_id,
+            'party_id' => $this->party_id,
             'ship_to' => $this->ship_to,
-            'inquiry_id' => $this->inquiry_id,
+            'request_id' => $this->request_id,
             'issue_date' => $this->issue_date,
             'valid_thru' => $this->valid_thru,
             'delivery_date' => $this->delivery_date,
