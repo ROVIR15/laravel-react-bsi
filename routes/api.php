@@ -95,8 +95,10 @@ Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index']
 Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
 
 //Inventory
-Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index']);
-Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index']);
+Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('goods-receipt-item', 'GRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('inventory', 'InventoryController')->only(['index']);
 Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
 
