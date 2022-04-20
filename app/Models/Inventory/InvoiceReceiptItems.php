@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoiceReceiptItems extends Model
 {
-    protected $table = 'invoice_receipt';
+    protected $table = 'invoice_receipt_items';
 
     protected $primaryKey = 'id';
 

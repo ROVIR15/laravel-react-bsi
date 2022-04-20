@@ -5,13 +5,12 @@
   use Faker\Generator as Faker;
 
   use App\Models\Inventory\InvoiceReceiptItems;
-  use App\Models\Inventory\InvoiceReceipt;
   use App\Http\Controllers\Controller;
-  use App\Http\Resources\Inventory\InvoiceReceiptCollection;
-  use App\Http\Resources\Inventory\InvoiceReceipt as oneInvoiceReceipt;
+  use App\Http\Resources\Inventory\InvoiceReceiptItemsCollection;
+  use App\Http\Resources\Inventory\InvoiceReceiptItems as oneInvoiceReceiptItems;
   use Illuminate\Http\Request;
   
-  class InvoiceReceiptController extends Controller
+  class IRItemsController extends Controller
   {  
     /**
      * Display a listing of the resource.
@@ -22,9 +21,9 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = InvoiceReceipt::all();
+        $query = InvoiceReceiptItems::all();
 
-        return new InvoiceReceiptCollection($query);
+        return new InvoiceReceiptItemsCollection($query);
     }
 
         /**
@@ -48,21 +47,12 @@
       $param = $request->all()['payload'];
 
       try {
-        //Goods Receipt Creation
-        $InvoiceReceipt = InvoiceReceipt::create([
-            'purchase_order_id' => $param['purchase_order_id'],
-            'amount' => $param['amount'],
-            'qty' => $param['qty'],
-            'invoice_date' => $param['invoice_date'],
-            'posting_date' => $param['posting_date']
-        ]);
-
         //Create purchase order item
         $IRItems = [];
 
-        foreach($param['IRItems'] as $key){
+        foreach($param as $key){
           array_push($IRItems, [
-            'invoice_receipt_id' => $InvoiceReceipt->id,
+            'invoice_receipt_id' => $key['invoice_receipt_id'],
             'order_item_id' => $key['order_item_id'],
             'amount' => $key['amount'],
             'qty' => $key['qty']
@@ -96,8 +86,8 @@
     public function show($id)
     {
       try {
-        $GoodsReceiptData = InvoiceReceipt::find($id);
-        return new oneInvoiceReceipt($GoodsReceiptData);
+        $InvoiceReceiptData = InvoiceReceiptItems::find($id);
+        return new oneInvoiceReceiptItems($InvoiceReceiptData);
     } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -128,11 +118,7 @@
     {
       $GoodsReceiptData = $request->all()['payload'];
       try {
-        $InvoiceReceipt = InvoiceReceipt::find($id)->update($GoodsReceiptData);
-
-        return response()->json([
-          'success' => true
-        ], 200);
+        InvoiceReceiptItems::find($id)->update($GoodsReceiptData);
       } catch (Exception $th) {
           //throw $th;
         return response()->json([
@@ -140,6 +126,10 @@
           'errors' => $th->getMessage()
         ], 500);
       }
+
+      return response()->json([
+        'success' => true
+      ], 200);
     }
 
     /**
@@ -151,15 +141,18 @@
     public function destroy($id)
     {
       try {
-        $InvoiceReceipt = InvoiceReceipt::destroy($id);
-        return response()->json([
-          'success' => true,
-        ], 200);
+        $InvoiceReceipt = InvoiceReceiptItems::destroy($id);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
         ], 500);
       }
+
+      return response()->json([
+        'success' => true,
+      ], 200);
+
     }
   }

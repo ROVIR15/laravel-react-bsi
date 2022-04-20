@@ -17,7 +17,7 @@ class InvoiceReceipt extends Model
         'purchase_order_id',
         'amount',
         'qty',
-        'invoice_receipt',
+        'invoice_date',
         'posting_date',
     ];
 }
