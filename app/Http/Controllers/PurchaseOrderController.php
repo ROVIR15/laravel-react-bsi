@@ -23,7 +23,7 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = PurchaseOrder::all();
+        $query = PurchaseOrder::with('order_item', 'product_feature')->get();
 
         return new PurchaseOrderCollection($query);
     }
@@ -44,7 +44,7 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
       $param = $request->all()['payload'];
       
@@ -52,16 +52,19 @@
         //Order Creation
         $order = Order::create([
           'id' => $faker->unique()->numberBetween(1, 9999),
-          'order_id' => $order->id,
           'quote_id' => $param['quote_id'],
-          'vendor_id' => $param['vendor_id'],
           'issue_date' => $param['issue_date'],
           'valid_thru' => $param['valid_thru']
         ]);
 
         $purchaseOrder = PurchaseOrder::create([
           'id' => $faker->unique()->numberBetween(1, 3123),
-          'order_id' => $order->id
+          'order_id' => $order->id,
+          'po_number' => $param['po_number'],
+          'bought_from' => $param['party_id'],
+          'issue_date' => $param['issue_date'],
+          'delivery_date' => $param['delivery_date'],
+          'valid_thru' => $param['valid_thru']
         ]);
 
         //Update order_id on Sales Order Resource
@@ -71,7 +74,7 @@
         $purchaseItemsCreation = [];
 
         foreach($param['order_items'] as $key){
-          array_push($salesItemsCreation, [
+          array_push($purchaseItemsCreation, [
             'id' => $faker->unique()->numberBetween(1,8939),
             'order_id' => $order->id,
             'product_feature_id' => $key['product_feature_id'],
