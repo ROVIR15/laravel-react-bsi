@@ -87,11 +87,10 @@ Route::resource('agreement-item', 'AgreementItemController')->only(['index']);
 Route::resource('price-component', 'PriceComponentController')->only(['index']);
 
 //Shipment
-Route::resource('item-issuance', 'ItemIssuanceController')->only(['index']);
-Route::resource('order-shipment', 'OrderShipmentController')->only(['index']);
-Route::resource('shipment', 'ShipmentController')->only(['index']);
-Route::resource('shipment-item', 'ShipmentItemController')->only(['index']);
-Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index']);
+Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
 
 //Inventory
