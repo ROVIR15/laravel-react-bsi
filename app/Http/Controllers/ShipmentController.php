@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shipment\Shipment;
+use App\Models\Shipment\ShipmentItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Shipment\ShipmentOneCollection;
-use App\Http\Resources\Shipment\Shipment as ShipmentCollection;
+use App\Http\Resources\Shipment\ShipmentCollection;
+use App\Http\Resources\Shipment\Shipment as ShipmentOneCollection;
 
 
 class ShipmentController extends Controller
@@ -20,7 +21,7 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Shipment::all();
+      $query = Shipment::with('item')->get();
 
       return new ShipmentCollection($query);
     }
@@ -45,9 +46,25 @@ class ShipmentController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Shipment::create([
-          'id' => $faker->unique()->numberBetween(1,3189)
+        $shipment = Shipment::create([
+          'delivery_date'=> $param['delivery_date'],
+          'total_weight'=> $param['total_weight']
         ]);
+
+        //shipment item variable
+        $shipmentItemP = [];
+
+        //Arrange the data
+        foreach($param['items'] as $item){
+          array_push($shipmentItemP, [
+            'shipment_id' => $shipment->id,
+            'product_feature_id' => $item['product_feature_id'],
+            'qty_shipped' => $item['qty_shipped']
+          ]);
+        }
+
+        ShipmentItem::insert($shipmentItemP);
+      
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -68,7 +85,7 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = Shipment::find($id);
+        $query = Shipment::with('item')->find($id);
         return new ShipmentOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
@@ -96,11 +113,11 @@ class ShipmentController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
-        Shipment::find($id)->update($orderShipmentData);
+        Shipment::find($id)->update($param);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -118,7 +135,7 @@ class ShipmentController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
       try {
         Shipment::find($id)->delete();

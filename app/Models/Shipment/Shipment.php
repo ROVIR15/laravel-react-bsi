@@ -10,11 +10,15 @@ class Shipment extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
-    public $timestamps = false;
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'id',
-        'shipment_item_id'
+        'delivery_date',
+        'total_weight'
     ];
+
+    public function item(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem');
+    }
 }
