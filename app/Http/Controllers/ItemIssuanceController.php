@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shipment\ItemIssuance;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Shipment\ItemIssuance as ItemIssuanceCollection;
+use App\Http\Resources\Shipment\ItemIssuance as ItemIssuanceOneCollection;
+use App\Http\Resources\Shipment\ItemIssuanceCollection;
 
 class ItemIssuanceController extends Controller
 {
@@ -44,7 +45,8 @@ class ItemIssuanceController extends Controller
       $param = $request->all()['payload'];
       try {
         ItemIssuance::create([
-          'id' => $faker->unique()->numberBetween(1,3189)
+          'shipment_item_id' => $param['shipment_item_id'],
+          'item_issued' => $param['item_issued']
         ]);
       } catch (Exception $th) {
         return response()->json([
@@ -63,7 +65,7 @@ class ItemIssuanceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
       try {
         $query = ItemIssuance::find($id);
@@ -94,7 +96,7 @@ class ItemIssuanceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
@@ -116,7 +118,7 @@ class ItemIssuanceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
       try {
         ItemIssuance::find($id)->delete();

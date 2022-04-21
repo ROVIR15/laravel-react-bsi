@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Shipment;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ItemIssuanceCollection extends ResourceCollection
 {

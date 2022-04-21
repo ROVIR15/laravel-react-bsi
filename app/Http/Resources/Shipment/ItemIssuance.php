@@ -15,7 +15,9 @@ class ItemIssuance extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id
+            'id' => $this->id,
+            'shipment_item_id' => $this->shipment_item_id,
+            'item_issued' => $this->item_issued
         ];
     }
 }
