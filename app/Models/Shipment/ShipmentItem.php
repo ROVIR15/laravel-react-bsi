@@ -10,12 +10,13 @@ class ShipmentItem extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
     
     protected $fillable = [
         'id',
-        'order_shipment_id',
-        'item_issuance_id'
+        'shipment_id',
+        'product_feature_id',
+        'qty_shipped'
     ];
 }

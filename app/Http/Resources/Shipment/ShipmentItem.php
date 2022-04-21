@@ -16,8 +16,9 @@ class ShipmentItem extends JsonResource
     {
         return [
             'id' => $this->id,
-            'order_shipment_id' => $this->order_shipment_id,
-            'item_issuance_id' => $this->item_issuance_id
+            'shipment_id' => $this->shipment_id,
+            'product_feature_id' => $this->product_feature_id,
+            'qty_shipped' => $this->qty_shipped
         ];
     }
 }

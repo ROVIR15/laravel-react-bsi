@@ -46,10 +46,10 @@ class ShipmentItemController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        OrderShipment::create([
-          'id' => $faker->unique()->numberBetween(1,3189),
-          'order_shipment_id' => $param['order_shipment_id'],
-          'item_issuance_id' => $param['item_issuance_id']
+        ShipmentItem::create([
+          'shipment_id' => $param['shipment_id'],
+          'product_feature_id' => $param['product_feature_id'],
+          'qty_shipped' => $param['qty_shipped']
         ]);
       } catch (Exception $th) {
         return response()->json([
@@ -101,9 +101,9 @@ class ShipmentItemController extends Controller
      */
     public function update($id, Request $request)
     {
-      $orderShipmentData = $request->all()['payload'];
+      $param = $request->all()['payload'];
       try {
-        ShipmentItem::find($id)->update($orderShipmentData);
+        ShipmentItem::find($id)->update($param);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
