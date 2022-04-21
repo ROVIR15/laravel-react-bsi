@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 use Illuminate\Http\Request;
 use App\Models\Shipment\ShipmentReceipt;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Shipment\hipmentReceiptCollection;
+use App\Http\Resources\Shipment\ShipmentReceiptCollection;
 use App\Http\Resources\Shipment\ShipmentReceipt as ShipmentReceiptOneCollection;
 
 class ShipmentReceiptController extends Controller
@@ -21,7 +21,7 @@ class ShipmentReceiptController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new ShipmentReceipt();
+      $query = ShipmentReceipt::all();
 
       return new ShipmentReceiptCollection($query);
     }
@@ -42,13 +42,13 @@ class ShipmentReceiptController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         ShipmentReceipt::create([
-          'id' => $faker->unique()->numberBetween(1,3189),
-          'order_id' => $param['order_id']
+          'shipment_item_id' => $param['shipment_item_id'],
+          'qty_accepted' => $param['qty_accepted']
         ]);
       } catch (Exception $th) {
         return response()->json([
@@ -102,7 +102,7 @@ class ShipmentReceiptController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        SheipmentReceipt::find($id)->update($param);
+        ShipmentReceipt::find($id)->update($param);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -123,7 +123,7 @@ class ShipmentReceiptController extends Controller
     public function destroy($id)
     {
       try {
-        SheipmentReceipt::find($id)->delete();
+        ShipmentReceipt::find($id)->delete();
         return response()->json([ 'success'=> true ], 200);
       } catch (Exception $th) {
         //throw $th;

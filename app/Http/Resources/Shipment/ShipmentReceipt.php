@@ -16,7 +16,8 @@ class ShipmentReceipt extends JsonResource
     {
         return [
             'id' => $this->id,
-            'order_shipment_id' => $this->order_shipment_id
+            'shipment_item_id' => $this->shipment_item_id,
+            'qty_accepted' => $this->qty_accepted
         ];
     }
 }
