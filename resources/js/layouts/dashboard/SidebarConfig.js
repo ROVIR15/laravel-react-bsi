@@ -72,6 +72,10 @@ const sidebarConfig = [
       {
         title: 'Work Center',
         path: '/dashboard/production/work-center'
+      },
+      {
+        title: 'Manufacture Order',
+        path: '/dashboard/manufacture-order'
       }
     ]
   },
