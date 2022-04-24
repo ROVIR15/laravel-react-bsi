@@ -105,3 +105,9 @@ Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
 Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
 Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
+
+//Study
+Route::resource('observation-result', 'ObservationResultController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('process-study', 'ProcessStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('process', 'ProcessController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('production-study', 'ProductionStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
