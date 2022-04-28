@@ -111,3 +111,17 @@ Route::resource('observation-result', 'ObservationResultController')->only(['ind
 Route::resource('process-study', 'ProcessStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('process', 'ProcessController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::resource('production-study', 'ProductionStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+//Invoice
+Route::resource('billing-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('billing-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('financial-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('financial-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('financial-transaction', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-status', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('invoice-term', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('payment', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('payment-application', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
