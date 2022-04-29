@@ -13,3 +13,4 @@ export { default as RFQLayout } from './RFQ';
 export { default as PurchaseOrderLayout } from './PurchaseOrder';
 export { default as GoodsReceipt } from './GoodsReceipt';
 export { default as InvoiceReceipt } from './InvoiceReceipt';
+export { default as ProcessLayout } from './IndustrialEngineeringStudy/Process';

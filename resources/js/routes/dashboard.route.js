@@ -17,7 +17,8 @@ import {
   RFQLayout,
   PurchaseOrderLayout,
   GoodsReceipt,
-  InvoiceReceipt
+  InvoiceReceipt,
+  ProcessLayout
 } from '../pages/dashboard';
 
 // Add Pages
@@ -36,6 +37,7 @@ import AddRFQ from '../pages/dashboard/RFQ/new';
 import AddPurchaseOrder from '../pages/dashboard/PurchaseOrder/new';
 import AddGR from '../pages/dashboard/GoodsReceipt/new';
 import AddIR from '../pages/dashboard/InvoiceReceipt/new';
+import AddProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -51,6 +53,7 @@ import DisplayRFQ from '../pages/dashboard/RFQ/display';
 import DisplayPO from '../pages/dashboard/PurchaseOrder/display';
 import DisplayGR from '../pages/dashboard/GoodsReceipt/display';
 import DisplayIR from '../pages/dashboard/InvoiceReceipt/display';
+import DisplayProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -66,6 +69,7 @@ import ShowRFQ from '../pages/dashboard/RFQ/show';
 import ShowPO from '../pages/dashboard/PurchaseOrder/show';
 import ShowGR from '../pages/dashboard/GoodsReceipt/show';
 import ShowIR from '../pages/dashboard/InvoiceReceipt/show';
+import ShowProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -216,6 +220,34 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGR />},
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
+          ]
+        },
+        //Industrial Engineering Study Route
+        { 
+          path: 'ie-study/process', 
+          element: <ProcessLayout />,
+          children: [
+            { path: ':id', element: <ShowProcess />},
+            { path: 'add', element: <AddProcess />},
+            { path: 'display', element: <DisplayProcess />},
+          ]
+        },
+        { 
+          path: 'ie-study/production-study', 
+          element: <InvoiceReceipt />,
+          children: [
+            { path: ':id', element: <ShowGR />},
+            { path: 'add', element: <AddGR />},
+            { path: 'display', element: <DisplayGR />},
+          ]
+        },
+        { 
+          path: 'ie-study/result', 
+          element: <InvoiceReceipt />,
+          children: [
+            { path: ':id', element: <ShowProcess />},
+            { path: 'add', element: <AddProcess />},
+            { path: 'display', element: <DisplayProcess />},
           ]
         },
         { path: '*', element: <Navigate to="/404" /> }

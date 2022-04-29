@@ -509,7 +509,7 @@ const main = {
       });
     },
     // Work Center 
-    insertOpeation(_data, cb){
+    insertOperation(_data, cb){
       if(!_data) {
           console.error('data not found');
       }
@@ -551,5 +551,49 @@ const main = {
         cb(err.response);
       });
     },
+    // Industrial Engineering Study - Process
+    insertProcess(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/process', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getProcess(cb){
+      axios.get( uri + '/process').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAProcess(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/process' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteProcess(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/process/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateProcess(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/process/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    }
+
   }
 export default main;
