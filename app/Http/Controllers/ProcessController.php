@@ -46,7 +46,7 @@ class ProcessController extends Controller
       try {
         Process::create([
           'name' => $param['name'],
-          'description' => $param['desc']
+          'description' => $param['description']
         ]);
       } catch (Exception $th) {
         return response()->json([
@@ -69,7 +69,7 @@ class ProcessController extends Controller
     {
       try {
         $query = Process::find($id);
-        return new ProcessCollection($query);
+        return new ProcessOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

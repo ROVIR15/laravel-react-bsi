@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 //Party
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('labor', 'LaborController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
 //Inquiry
 Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update', 'destroy']);

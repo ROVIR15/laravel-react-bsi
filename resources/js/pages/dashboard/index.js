@@ -14,3 +14,5 @@ export { default as PurchaseOrderLayout } from './PurchaseOrder';
 export { default as GoodsReceipt } from './GoodsReceipt';
 export { default as InvoiceReceipt } from './InvoiceReceipt';
 export { default as ProcessLayout } from './IndustrialEngineeringStudy/Process';
+export { default as PSLayout } from './IndustrialEngineeringStudy/ProductionStudy';
+export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationResult';

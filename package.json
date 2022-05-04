@@ -57,8 +57,7 @@
         "numeral": "^2.0.6",
         "react-helmet-async": "^1.2.3",
         "react-router-dom": "^6.2.1",
-        "simplebar": "^5.3.6",
-        "simplebar-react": "^2.3.6",
+        "simplebar-react": "^2.3.7",
         "web-vitals": "^2.1.4",
         "yup": "^0.32.11"
     }

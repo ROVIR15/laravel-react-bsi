@@ -15,13 +15,6 @@ import { SnackbarProvider } from 'notistack'
 function MainApp(){
   return (
     <HelmetProvider>
-      <SnackbarProvider
-        anchorOrigin={{
-             vertical: 'bottom',
-             horizontal: 'left',
-        }}
-        TransitionComponent={Slide}      
-        >
         <BrowserRouter>
           <ThemeConfig>
             <ScrollToTop/>
@@ -29,7 +22,6 @@ function MainApp(){
             <TestRouter />
           </ThemeConfig>
         </BrowserRouter>
-      </SnackbarProvider>
     </HelmetProvider>
   )
 }

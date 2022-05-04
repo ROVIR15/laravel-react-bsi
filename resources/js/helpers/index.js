@@ -593,7 +593,192 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       });
-    }
-
+    },
+    // Industrial Engineering Study - Production Study
+    insertProductionStudy(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/production-study', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getProductionStudy(cb){
+      axios.get( uri + '/production-study').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAProductionStudy(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/production-study' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteProductionStudy(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/production-study/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateProductionStudy(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/production-study/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Industrial Engineering Study - Process Study
+    insertProcessStudy(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/process-study', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getProcessStudy(cb){
+      axios.get( uri + '/process-study').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getProcessStudyByProductionStudy(id, cb){
+      axios.get( uri + `/process-study?prod_study=${id}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAProcessStudy(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/process-study' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteProcessStudy(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/process-study/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateProcessStudy(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/process-study/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Industrial Engineering Study - Observation Study
+    insertObservationStudy(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/observation-result', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getObservationStudy(cb){
+      axios.get( uri + '/observation-result').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getObservationStudyByProductionStudy(id, cb){
+      axios.get( uri + `/observation-result?prod_study=${id}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAObservationStudy(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/observation-result' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteObservationStudy(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/observation-result/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateObservationStudy(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/observation-result/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Human Resources - Labor
+    insertLabor(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/labor', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getLabor(cb){
+      axios.get( uri + '/labor').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getALabor(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/labor' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteLabor(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/labor/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateLabor(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/labor/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
   }
 export default main;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Study\Invoice;
+use App\Models\Study\InvoiceItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
 use App\Http\Resources\Study\InvoiceCollection;
@@ -18,13 +19,13 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-      $param = $request->all();
-      $query = Invoice::all();
+        $param = $request->all();
+        $query = Invoice::all();
 
-      return new InvoiceCollection($query);
+        return new InvoiceReceiptCollection($query);
     }
 
-    /**
+        /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -43,17 +44,42 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
+
       try {
-        Invoice::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+        //Goods Receipt Creation
+        $Invoice = Invoice::create([
+            'purchase_order_id' => $param['purchase_order_id'],
+            'amount' => $param['amount'],
+            'qty' => $param['qty'],
+            'invoice_date' => $param['invoice_date'],
+            'posting_date' => $param['posting_date']
         ]);
-      } catch (Exception $th) {
-        return response()->json([
-          'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+
+        //Create purchase order item
+        $IRItems = [];
+
+        foreach($param['IRItems'] as $key){
+          array_push($IRItems, [
+            'invoice_receipt_id' => $Invoice->id,
+            'order_item_id' => $key['order_item_id'],
+            'amount' => $key['amount'],
+            'qty' => $key['qty']
+          ]);
+        }
+
+        InvoiceItem::insert($IRItems);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
       }
+      
       return response()->json([
         'success' => true
       ], 200);
@@ -68,13 +94,13 @@ class InvoiceController extends Controller
     public function show($id)
     {
       try {
-        $query = Invoice::find($id);
-        return new InvoiceCollection($query);
-      } catch (Exception $th) {
+        $invoiceData = Invoice::find($id);
+        return new oneInvoiceReceipt($invoiceData);
+    } catch (Exception $th) {
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+          'errors' => $th->getMessage()
+        ], 500);
       }
     }
 
@@ -98,18 +124,20 @@ class InvoiceController extends Controller
      */
     public function update($id, Request $request)
     {
-      $param = $request->all()['payload'];
+      $GoodsReceiptData = $request->all()['payload'];
       try {
-        Invoice::find($id)->update($param);
+        $Invoice = Invoice::find($id)->update($GoodsReceiptData);
+
+        return response()->json([
+          'success' => true
+        ], 200);
       } catch (Exception $th) {
+          //throw $th;
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+          'errors' => $th->getMessage()
+        ], 500);
       }
-      return response()->json([
-        'success' => true
-      ], 200);
     }
 
     /**
@@ -121,14 +149,15 @@ class InvoiceController extends Controller
     public function destroy($id)
     {
       try {
-        Invoice::find($id)->delete();
-        return response()->json([ 'success'=> true ], 200);
+        $Invoice = Invoice::destroy($id);
+        return response()->json([
+          'success' => true,
+        ], 200);
       } catch (Exception $th) {
-        //throw $th;
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
-        ]);
+        ], 500);
       }
     }
 }

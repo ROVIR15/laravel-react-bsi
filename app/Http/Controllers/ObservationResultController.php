@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Study\ObservationResult;
+use App\Models\Study\SPOR;
+use App\Models\Study\SPORView;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\ObservationResult as ObservationResultOneCollection;
 use App\Http\Resources\Study\ObservationResultCollection;
@@ -19,9 +21,16 @@ class ObservationResultController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ObservationResult::all();
+      $queryParam = $request->query('prod_study');
+      $query;
 
-      return new ObservationResultCollection($query);
+      if($queryParam) {
+        $query = SPORView::where('production_study_id', $queryParam)->get();
+      } else {
+        $query = SPORView::all();
+      }
+      
+      return response()->json(['data' => $query]);
     }
 
     /**
@@ -43,8 +52,23 @@ class ObservationResultController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
+      $array_of_record_data = array();
+
       try {
-        ObservationResult::insert($param);
+        foreach($param as $item){
+          foreach($item['result_items'] as $res_item){
+            $obr_res = ObservationResult::create([
+              'name' => $res_item['name'],
+              'result' => $res_item['result']
+            ]);
+  
+            $spor = SPOR::create([
+              'process_study_id' => $item['process_study_id'],
+              'observation_result_id' => $obr_res['id']
+            ]);
+          }  
+        }
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

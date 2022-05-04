@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 // Pages
 import FirstPage from '../pages/auth/first.page.js';
+import Test from '../pages/auth/dialog-test';
 import SecondPage from '../pages/auth/second.page.js';
 
 import Login from '../pages/auth/Login';
@@ -12,11 +13,10 @@ export default function TestRouter() {
     {
       path: '/app',
       children: [
-        { path: 'first-page', element: <FirstPage /> },
+        { path: 'first-page', element: <Test /> },
         { path: 'second-page', element: <SecondPage /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> }
-
       ]
     }
   ]);

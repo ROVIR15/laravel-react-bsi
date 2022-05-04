@@ -37,7 +37,6 @@ function MainApp(){
         }}
         TransitionComponent={Slide}      
       >
-
         <DashboardRouter />
       </StyledSnackbarProvider>
         </ThemeConfig>

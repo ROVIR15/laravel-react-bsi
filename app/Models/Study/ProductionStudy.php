@@ -14,7 +14,7 @@ class ProductionStudy extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'product_feature_id',
+        'product_id',
         'work_center_id'
     ];
 

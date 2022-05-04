@@ -18,7 +18,9 @@ import {
   PurchaseOrderLayout,
   GoodsReceipt,
   InvoiceReceipt,
-  ProcessLayout
+  ProcessLayout,
+  PSLayout,
+  ORLayout
 } from '../pages/dashboard';
 
 // Add Pages
@@ -38,6 +40,8 @@ import AddPurchaseOrder from '../pages/dashboard/PurchaseOrder/new';
 import AddGR from '../pages/dashboard/GoodsReceipt/new';
 import AddIR from '../pages/dashboard/InvoiceReceipt/new';
 import AddProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/add';
+import AddPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/new';
+import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/new';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -54,6 +58,8 @@ import DisplayPO from '../pages/dashboard/PurchaseOrder/display';
 import DisplayGR from '../pages/dashboard/GoodsReceipt/display';
 import DisplayIR from '../pages/dashboard/InvoiceReceipt/display';
 import DisplayProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/display';
+import DisplayPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/display';
+import DisplayOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -70,6 +76,8 @@ import ShowPO from '../pages/dashboard/PurchaseOrder/show';
 import ShowGR from '../pages/dashboard/GoodsReceipt/show';
 import ShowIR from '../pages/dashboard/InvoiceReceipt/show';
 import ShowProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/show';
+import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/show';
+import ShowOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -234,20 +242,20 @@ export default function TestRouter() {
         },
         { 
           path: 'ie-study/production-study', 
-          element: <InvoiceReceipt />,
+          element: <PSLayout />,
           children: [
-            { path: ':id', element: <ShowGR />},
-            { path: 'add', element: <AddGR />},
-            { path: 'display', element: <DisplayGR />},
+            { path: ':id', element: <ShowPS />},
+            { path: 'add', element: <AddPS />},
+            { path: 'display', element: <DisplayPS />},
           ]
         },
         { 
           path: 'ie-study/result', 
-          element: <InvoiceReceipt />,
+          element: <ORLayout />,
           children: [
-            { path: ':id', element: <ShowProcess />},
-            { path: 'add', element: <AddProcess />},
-            { path: 'display', element: <DisplayProcess />},
+            { path: ':id/edit', element: <ShowOR />},
+            { path: ':id/add', element: <AddOR />},
+            { path: 'display', element: <DisplayOR />},
           ]
         },
         { path: '*', element: <Navigate to="/404" /> }

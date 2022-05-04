@@ -18,13 +18,13 @@ class InvoiceItemController extends Controller
      */
     public function index(Request $request)
     {
-      $param = $request->all();
-      $query = InvoiceItem::all();
+        $param = $request->all();
+        $query = InvoiceItem::all();
 
-      return new InvoiceItemCollection($query);
+        return new InvoiceItemCollection($query);
     }
 
-    /**
+        /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -43,17 +43,33 @@ class InvoiceItemController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
+
       try {
-        InvoiceItem::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
-        ]);
-      } catch (Exception $th) {
-        return response()->json([
-          'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+        //Create purchase order item
+        $IRItems = [];
+
+        foreach($param as $key){
+          array_push($IRItems, [
+            'invoice_receipt_id' => $key['invoice_receipt_id'],
+            'order_item_id' => $key['order_item_id'],
+            'amount' => $key['amount'],
+            'qty' => $key['qty']
+          ]);
+        }
+
+        InvoiceItem::insert($IRItems);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
       }
+      
       return response()->json([
         'success' => true
       ], 200);
@@ -68,13 +84,13 @@ class InvoiceItemController extends Controller
     public function show($id)
     {
       try {
-        $query = InvoiceItem::find($id);
-        return new InvoiceItemCollection($query);
-      } catch (Exception $th) {
+        $InvoiceReceiptData = InvoiceItem::find($id);
+        return new oneInvoiceItem($InvoiceReceiptData);
+    } catch (Exception $th) {
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+          'errors' => $th->getMessage()
+        ], 500);
       }
     }
 
@@ -98,15 +114,17 @@ class InvoiceItemController extends Controller
      */
     public function update($id, Request $request)
     {
-      $param = $request->all()['payload'];
+      $invoiceItemData = $request->all()['payload'];
       try {
-        InvoiceItem::find($id)->update($param);
+        InvoiceItem::find($id)->update($invoiceItemData);
       } catch (Exception $th) {
+          //throw $th;
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
+          'errors' => $th->getMessage()
+        ], 500);
       }
+
       return response()->json([
         'success' => true
       ], 200);
@@ -121,14 +139,18 @@ class InvoiceItemController extends Controller
     public function destroy($id)
     {
       try {
-        InvoiceItem::find($id)->delete();
-        return response()->json([ 'success'=> true ], 200);
+        InvoiceItem::destroy($id);
+
       } catch (Exception $th) {
-        //throw $th;
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
-        ]);
+        ], 500);
       }
+
+      return response()->json([
+        'success' => true,
+      ], 200);
+
     }
 }

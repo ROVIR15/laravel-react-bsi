@@ -6,6 +6,7 @@ import flashFill from '@iconify/icons-eva/flash-fill';
 import cubeFill from '@iconify/icons-eva/cube-fill';
 import shoppingCart from '@iconify/icons-eva/shopping-cart-fill';
 import archiveFill from '@iconify/icons-eva/archive-fill';
+import settingsOutline from '@iconify/icons-eva/settings-2-outline';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
@@ -76,6 +77,28 @@ const sidebarConfig = [
       {
         title: 'Manufacture Order',
         path: '/dashboard/manufacture-order'
+      }
+    ]
+  },
+  {
+    title: 'Industrial Engineering Study',
+    icon: getIcon(settingsOutline),
+    children: [
+      {
+        title: 'Process',
+        path: '/dashboard/ie-study/process'
+      },
+      // {
+      //   title: 'Routing',
+      //   path: '/dashboard/production/routing'
+      // },
+      {
+        title: 'Production Study',
+        path: '/dashboard/ie-study/production-study'
+      },
+      {
+        title: 'Observation Result',
+        path: '/dashboard/ie-study/result'
       }
     ]
   },

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Study\ProcessStudy;
+use App\Models\Study\ProcessStudyView;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\ProcessStudy as ProcessStudyOneCollection;
 use App\Http\Resources\Study\ProcessStudyCollection;
@@ -19,8 +20,14 @@ class ProcessStudyController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ProcessStudy::all();
+      $queryParam = $request->query('prod_study');
+      $query;
 
+      if($queryParam) {
+        $query = ProcessStudyView::where('production_study_id', $queryParam)->get();
+      } else {
+        $query = ProcessStudyView::all();
+      }
       return new ProcessStudyCollection($query);
     }
 
@@ -46,7 +53,8 @@ class ProcessStudyController extends Controller
       try {
         ProcessStudy::create([
           'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+          'party_id' => $param['labor_id'],
+          'process_id' => $param['process_id']
         ]);
       } catch (Exception $th) {
         return response()->json([
