@@ -6,9 +6,9 @@ import Dialog from '@mui/material/Dialog';
 
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import Scrollbar from '../../../../../components/Scrollbar';
+import Scrollbar from '../../../../components/Scrollbar';
 
-import API from '../../../../../helpers';
+import API from '../../../../helpers';
 
 const content = [
   {
@@ -110,7 +110,7 @@ const DialogStyled = styled(Dialog)(({ theme }) => ({
 
 function SimpleDialog(props) {
 
-  const { onClose, selectedValue, open, options, loading } = props;
+  const { onClose, selectedValue, open, options } = props;
 
   const opts = !options ? [] : options; 
   const handleClose = () => {
@@ -123,7 +123,7 @@ function SimpleDialog(props) {
 
   return (
     <DialogStyled onClose={handleClose} open={open} fullWidth>
-      <DialogTitle>Choose Product</DialogTitle>
+      <DialogTitle>Choose Facility</DialogTitle>
       <List sx={{ pt: 0 }}>
         <Scrollbar sx={{
             padding: '0px 12px 12px',
@@ -135,12 +135,11 @@ function SimpleDialog(props) {
             <ListItemStyled 
               button 
               onClick={() => handleListItemClick(item)}
-              selected={selectedValue.id === item.id}
+              selected={selectedValue === item.id}
               key={item.id}
             >
-              <Typography variant="subtitle2">{item.name}</Typography>
-              <Typography component="span" variant="caption">{item.category}</Typography>
-              <Typography variant="body2">{item.brand}</Typography>
+              <Typography variant="subtitle2">{`${item.name}`}</Typography>
+              <Typography component="span" variant="caption">{item.type.name}</Typography>
             </ListItemStyled>
           )))
         }

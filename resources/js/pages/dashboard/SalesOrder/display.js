@@ -90,7 +90,7 @@ function DisplaySalesOrder({ placeHolder }) {
         }
       });
     }
-  }, [salesOrderData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

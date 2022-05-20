@@ -1,11 +1,22 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
+import { useParams } from 'react-router-dom';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
@@ -21,10 +32,32 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function GoodsReceipt() {
+  const {id} = useParams();
+
   // Option Inquiry
   const [options, setOptions] = useState([]);
-
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+    type: {
+      name: ''
+    }
+  });
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
 
@@ -52,6 +85,7 @@ function GoodsReceipt() {
     initialValues: {
       purchase_order_id: '',
       issue_date: '',
+      po_number: ''
     },
     validationSchema: GoodsReceiptSchema,
     onSubmit: (values) => {
@@ -69,55 +103,36 @@ function GoodsReceipt() {
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
   useEffect(() => {
-    let active = true;
-
-    (async () => {
-
-      API.getInquiry((res) => {
-          if(!res) return
-		    if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
-
-      API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
-          setOptionsP([]);
-        } else {
-          setOptionsP(res.data);
-        }
-      })
-
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loading])
+    API.getAGoodsReceipt(id, function(res){
+      if(!res) return;
+      else {
+        changeData(res.data);
+      }
+    })
+  }, [id])
 
   function changeData(data){
-    const quoteItem = data.inquiry_item.map(function(key, index){
+    const GRItems = data.GR_Items.map(function(key, index){
       return {
-        'id': index,
-        'po_item_id' : key.id,
-        'product_id' : key.product.product_id,
-        'product_feature_id' : key.product_feature_id,
+        'id': key.id,
+        'product_id': key.product.id,
         'name' : key.product.name,
         'size' : key.product.size,
         'color' : key.product.color,
+        'qty_order' : key.qty_order,
+        'qty_on_receipt' : key.qty_on_receipt,
         'qty_received' : key.qty_received,
-        'qty_receipt' : key.qty_receipt,
-        'qty_order' : key.qty_order
       }
     })
     setValues({
-      purchase_order_id: data.id,
-      issue_date: data.po_date,
+      purchase_order_id: data.po_number,
+      issue_date: data.issue_date,
+      facility_id: data.facility_id
     })
-    setItems(quoteItem);
+
+    setSelectedValueSH(data.facility)
+    setSelectedValueSO(data.bought_from)
+    setItems(GRItems);
   }
 
   const deleteData = useCallback(
@@ -142,20 +157,28 @@ function GoodsReceipt() {
       if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+        
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value;
+
+        //Update fire through API
+        API.updateGoodsReceiptItem(editedIds, data, function(res){
+          alert(JSON.stringify(res));
+        });
 
         //update items state
-        setItems((prevItems) => {
-          const itemToUpdateIndex = parseInt(editedIds[0]);
-          console.log(itemToUpdateIndex)
+        // setItems((prevItems) => {
+        //   const itemToUpdateIndex = parseInt(editedIds[0]);
+        //   console.log(itemToUpdateIndex)
     
-          return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
-            } else {
-              return row
-            }
-          });
-        });
+        //   return prevItems.map((row, index) => {
+        //     if(index === parseInt(itemToUpdateIndex)){
+        //       return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+        //     } else {
+        //       return row
+        //     }
+        //   });
+        // });
 
         // update on field value
       } else {
@@ -172,15 +195,14 @@ function GoodsReceipt() {
   }
 
   const columns = useMemo(() => [
-    { field: 'po_item_id', headerName: 'PO Item ID', editable: false, visible: 'hide' },
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
+    { field: 'id', headerName: 'ID', editable: false},
+    { field: 'product_id', headerName: 'Product ID', editable: false},
     { field: 'name', headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
-    { field: 'qty_received', headerName: 'Quantity Receive', editable: true },
-    { field: 'qty_receipt', headerName: 'Quantity Receive', editable: true },
-    { field: 'qty_order', headerName: 'Quantity Receive', editable: true },
+    { field: 'qty_order', headerName: 'Qty Order', editable: false },
+    { field: 'qty_on_receipt', headerName: 'Qty On Receive', editable: true },
+    { field: 'qty_received', headerName: 'Qty Received', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -205,37 +227,80 @@ function GoodsReceipt() {
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Goods Receipt Information"
-            />
-            <CardContent>
-              <AutoComplete
-                fullWidth
-                autoComplete="purchase_order_id"
-                type="text"
-                label="Purchase Order ID"
-                error={Boolean(touched.purchase_order_id && errors.purchase_order_id)}
-                helperText={touched.purchase_order_id && errors.purchase_order_id}
-                options={options}
-                setOpen={setOpen}
-                loading={loading}
-                changeData={changeData}
-              />
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  autoComplete="vendor_id"
-                  type="text"
-                  label="Vendor"
-                  {...getFieldProps('vendor_id')}
-                  disabled
-                  error={Boolean(touched.vendor_id && errors.vendor_id)}
-                  helperText={touched.vendor_id && errors.vendor_id}
+          <Grid container spacing={1} direction="row">
+            <Grid item xs={4}>
+              <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <CardHeader
+                  title="Warehouse"
                 />
-              </Grid>
-            </CardContent>
-          </Card>
+                <CardContent>
+                    <ColumnBox>
+                      <SpaceBetweenBox>
+                        <Typography variant="h6"> Facility </Typography>
+                        <Button
+                          disabled
+                        >
+                          Select
+                        </Button>
+                      </SpaceBetweenBox>
+                      <div>
+                        <Typography variant="body1">
+                          {selectedValueSH.name}
+                        </Typography>
+                        <Typography variant="caption">
+                          {selectedValueSH.type.name}
+                        </Typography>
+                      </div>
+                    </ColumnBox>
+                </CardContent>
+              </Card>              
+            </Grid>
+            <Grid item xs={8}>
+              <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <CardHeader
+                  title="Goods Receipt Information"
+                />
+                <CardContent>
+                  <Grid container direction="row" spacing={2}>
+                    <Grid item xs={4} sx={{padding: 'unset'}}>
+                      <TextField
+                        fullWidth
+                        autoComplete="purchase_order_id"
+                        disabled
+                        type="text"
+                        label="Purchase Order ID"
+                        error={Boolean(touched.purchase_order_id && errors.purchase_order_id)}
+                        helperText={touched.purchase_order_id && errors.purchase_order_id}
+                        value={values.purchase_order_id}
+                        loading={loading}
+                      />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Divider orientation="vertical"/>
+                    </Grid>
+                    <Divider/>
+                    <Grid item xs={6}>
+                      <ColumnBox>
+                        <SpaceBetweenBox>
+                          <Typography variant="h6"> Supplier </Typography>
+                          <Button
+                            disabled
+                          >
+                            Select
+                          </Button>
+                        </SpaceBetweenBox>
+                        <div>
+                          <Typography variant="body1">
+                            {selectedValueSO.name}
+                          </Typography>
+                        </div>
+                      </ColumnBox>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
               title="Item Overview"

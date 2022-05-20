@@ -77,7 +77,7 @@ function DisplayPurchaseReq({ placeHolder }) {
     }
 
     if(isEmpty(inquiryData)) {
-      API.getInquiry((res) => {
+      API.getPurchaseRequisiton((res) => {
 		if(!res) return
 		if(!res.data) {
           setInquiryData(BUYERLIST);
@@ -86,7 +86,7 @@ function DisplayPurchaseReq({ placeHolder }) {
         }
       });
     }
-  }, [inquiryData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

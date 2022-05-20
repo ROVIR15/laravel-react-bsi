@@ -23,9 +23,9 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'issue_date', label: 'Issue Date', alignRight: false },
-  { id: 'valid_from', label: 'Valid From', alignRight: false },
-  { id: 'valid_thru', label: 'Valid Thru', alignRight: false }
+  { id: 'po_number', label: 'PO Number', alignRight: false },
+  { id: 'bought_from', label: 'Supplier Name', alignRight: false },
+  { id: 'issue_date', label: 'Issue Date', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -60,9 +60,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function DisplayQuote({ placeHolder }) {
+function GoodsReceipt({ placeHolder }) {
 
-  const [quoteData, setQuoteData] = useState([]);
+  const [goodsReceipt, setGoodsReceipt] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -76,17 +76,17 @@ function DisplayQuote({ placeHolder }) {
       return !array.length;
     }
 
-    if(isEmpty(quoteData)) {
-      API.getQuote((res) => {
+    if(isEmpty(goodsReceipt)) {
+      API.getGoodsReceipt((res) => {
 		    if(!res) return
 		    if(!res.data) {
-          setQuoteData(BUYERLIST);
+          setGoodsReceipt(BUYERLIST);
         } else {
-          setQuoteData(res.data);
+          setGoodsReceipt(res.data);
         }
       });
     }
-  }, [quoteData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -96,7 +96,7 @@ function DisplayQuote({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = quoteData.map((n) => n.name);
+      const newSelecteds = goodsReceipt.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -136,17 +136,15 @@ function DisplayQuote({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
-    API.deleteQuote(id, function(res){
+    API.deleteGoodsReceipt(id, function(res){
       if(res.success) location.reload();
-    }).catch(function(error){
-      alert('error')
+      else alert('error');
     });
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -165,7 +163,7 @@ function DisplayQuote({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={quoteData.length}
+              rowCount={goodsReceipt.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -176,9 +174,9 @@ function DisplayQuote({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    issue_date,
-                    valid_thru,
-                    valid_from
+                    po_number,
+                    bought_from,
+                    issue_date
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -197,9 +195,9 @@ function DisplayQuote({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
-                      <TableCell align="left">{valid_from}</TableCell>
-                      <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -227,7 +225,7 @@ function DisplayQuote({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={quoteData.length}
+        count={goodsReceipt.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -237,4 +235,4 @@ function DisplayQuote({ placeHolder }) {
   )
 }
 
-export default DisplayQuote;
+export default GoodsReceipt;

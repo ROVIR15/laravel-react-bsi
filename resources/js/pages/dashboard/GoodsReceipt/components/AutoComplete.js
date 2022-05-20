@@ -15,9 +15,21 @@ function sleep(delay = 0) {
 export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
     const [value, setValue] = React.useState(null);
 
+    React.useEffect(() => {
+      if(!value) return
+      let id = value.split('-')[0]
+      API.getAPurchaseOrder(id, (res) => {
+        if(!res) return
+        if(!res.data) {
+          changeData([]);
+        } else {
+          changeData(res.data);
+        }
+      })
+    }, [value])
+
     return (
     <Autocomplete
-      sx={{ width: 300 }}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -26,7 +38,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${brand} ${color} - ${size}`)}
+      getOptionLabel={({ po_number, id}) => (`${id} - ${po_number}`)}
       options={options}
       loading={loading}
       value={choosen} 

@@ -4,14 +4,16 @@
   use Carbon\Carbon;
   use Faker\Generator as Faker;
 
+  use Illuminate\Http\Request;
   use App\Models\Order\Order;
   use App\Models\Order\OrderItem;
   use App\Models\Order\PurchaseOrder;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\PurchaseOrderCollection;
   use App\Http\Resources\Order\PurchaseOrder as onePurchaseOrder;
-  use Illuminate\Http\Request;
-  
+  use App\Http\Resources\Order\POViewCollection;
+  use App\Http\Resources\Order\POView as onePurchaseOrderView;
+
   class PurchaseOrderController extends Controller
   {  
     /**
@@ -23,9 +25,9 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = PurchaseOrder::with('order_item', 'product_feature')->get();
+        $query = PurchaseOrder::with('party')->get();
 
-        return new PurchaseOrderCollection($query);
+        return new POViewCollection($query);
     }
 
         /**
@@ -61,7 +63,8 @@
           'id' => $faker->unique()->numberBetween(1, 3123),
           'order_id' => $order->id,
           'po_number' => $param['po_number'],
-          'bought_from' => $param['party_id'],
+          'bought_from' => $param['sold_to'],
+          'ship_to' => $param['ship_to'],
           'issue_date' => $param['issue_date'],
           'delivery_date' => $param['delivery_date'],
           'valid_thru' => $param['valid_thru']
@@ -111,7 +114,7 @@
     public function show($id)
     {
       try {
-        $purchaseOrderData = PurchaseOrder::find($id);
+        $purchaseOrderData = PurchaseOrder::with('party', 'ship', 'order_item')->find($id);
         return new onePurchaseOrder($purchaseOrderData);
     } catch (Exception $th) {
         return response()->json([

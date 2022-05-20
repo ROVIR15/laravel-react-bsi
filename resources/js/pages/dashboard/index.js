@@ -16,3 +16,5 @@ export { default as InvoiceReceipt } from './InvoiceReceipt';
 export { default as ProcessLayout } from './IndustrialEngineeringStudy/Process';
 export { default as PSLayout } from './IndustrialEngineeringStudy/ProductionStudy';
 export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationResult';
+export { default as LaborLayout } from './Labor';
+export { default as MOLayout } from './ManufactureOrder';

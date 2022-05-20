@@ -27,4 +27,12 @@ class Quote extends Model
     public function quote_item(){
         return $this->hasMany('App\Models\RRQ\QuoteItem');
     }
+
+    public function party(){
+        return $this->belongsTo('App\Models\Party\Party', 'party_id', 'id');
+    }
+
+    public function ship(){
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    }
 }

@@ -18,15 +18,18 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { previousSaturday } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'purchase_req_id', label: 'Purchase Req', alignRight: false },
-  { id: 'vendor_id', label: 'Vendor ID', alignRight: false },  
+  { id: 'po_number', label: 'PO Number', alignRight: false },  
+  { id: 'vendor_id', label: 'Supplier ID', alignRight: false },  
+  { id: 'vendor_name', label: 'Nama Supplier', alignRight: false },  
   { id: 'issue_date', label: 'Issue Date', alignRight: false },
   { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -78,7 +81,7 @@ function DisplayRFQ({ placeHolder }) {
     }
 
     if(isEmpty(quoteData)) {
-      API.getQuote((res) => {
+      API.getRFQ((res) => {
 		    if(!res) return
 		    if(!res.data) {
           setQuoteData(BUYERLIST);
@@ -177,9 +180,11 @@ function DisplayRFQ({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
+                    po_number,
+                    party,
                     issue_date,
                     valid_thru,
-                    valid_from
+                    delivery_date
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -198,10 +203,12 @@ function DisplayRFQ({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{pruchase_req_id}</TableCell>
-                      <TableCell align="left">{vendor_id}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{party.id}</TableCell>
+                      <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
+                      <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

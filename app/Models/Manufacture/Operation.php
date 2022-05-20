@@ -21,6 +21,6 @@ class Operation extends Model
     ];
 
     public function work_center(){
-        return $this->belongsTo('App\Models\Manufacture\WorkCenter');
+        return $this->belongsTo('App\Models\Manufacture\WorkCenter', 'work_center_id', 'id');
     }
 }

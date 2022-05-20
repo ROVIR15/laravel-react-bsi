@@ -1,6 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -21,10 +32,28 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function SalesOrder() {
 
   // Option for Quote
   const [options, setOptions] = useState([]);
+
+  //Dialog Interaction
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
@@ -81,7 +110,7 @@ function SalesOrder() {
 
     (async () => {
 
-      API.getQuote((res) => {
+      API.getQuoteBySO((res) => {
           if(!res) return
 		    if(!res.data) {
           setOptions([]);
@@ -131,7 +160,9 @@ function SalesOrder() {
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
       delivery_date: data.delivery_date,
-    })
+    });
+    setSelectedValueSO(data.party)
+    setSelectedValueSH(data.ship)
     setItems(orderItem);
   }
 
@@ -237,7 +268,7 @@ function SalesOrder() {
             <CardHeader
               title="Sales Order Information"
             />
-            <CardContent>
+            <CardContent sx={{paddingBottom: '6px'}}>
               <AutoComplete
                 fullWidth
                 autoComplete="quote_id"
@@ -249,51 +280,45 @@ function SalesOrder() {
                 setOpen={setOpen}
                 loading={loading}
                 changeData={changeData}
-              />
+              />               
             </CardContent>
-          </Card>
-          <Card sx={{ m: 2}}>
-            <CardHeader
-              title="Information"
-            />
             <CardContent>
-              <Grid container spacing={3}>
-                <Grid item xs={7}>
-                  <TextField
-                    fullWidth
-                    autoComplete="po_number"
-                    type="text"
-                    label="No PO"
-                    {...getFieldProps('po_number')}
-                    error={Boolean(touched.po_number && errors.po_number)}
-                    helperText={touched.po_number && errors.po_number}
-                  />    
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    autoComplete="sold_to"
-                    type="text"
-                    label="Pembeli"
-                    {...getFieldProps('sold_to')}
-                    disabled
-                    error={Boolean(touched.sold_to && errors.sold_to)}
-                    helperText={touched.sold_to && errors.sold_to}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    autoComplete="ship_to"
-                    type="text"
-                    label="Penerima"
-                    {...getFieldProps('ship_to')}
-                    error={Boolean(touched.ship_to && errors.ship_to)}
-                    helperText={touched.ship_to && errors.ship_to}
-                  />
-                </Grid>
-              </Grid>       
+              <Paper>
+                <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Pembeli </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSO.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Penerima </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+
+                </Stack>
+              </Paper>
             </CardContent>
           </Card>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -353,7 +378,6 @@ function SalesOrder() {
             </LoadingButton>
             <Button
               size="large"
-              type="submit"
               color="grey"
               variant="contained"
               sx={{ m: 1 }}

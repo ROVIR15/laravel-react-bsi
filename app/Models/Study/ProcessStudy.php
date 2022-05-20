@@ -16,7 +16,11 @@ class ProcessStudy extends Model
     protected $fillable = [
         'production_study_id',
         'party_id',
-        'process_id'
+        'process_id',
+        'seq_1',
+        'seq_2',
+        'seq_3',
+        'target'
     ];
 
 }

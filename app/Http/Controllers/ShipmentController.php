@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shipment\Shipment;
+use App\Models\Shipment\ShipmentView;
 use App\Models\Shipment\ShipmentItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Shipment\ShipmentCollection;
@@ -21,7 +22,7 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Shipment::with('item')->get();
+      $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info')->get();
 
       return new ShipmentCollection($query);
     }
@@ -48,18 +49,18 @@ class ShipmentController extends Controller
       try {
         $shipment = Shipment::create([
           'delivery_date'=> $param['delivery_date'],
-          'total_weight'=> $param['total_weight']
+          'order_id'=> $param['order_id']
         ]);
 
         //shipment item variable
         $shipmentItemP = [];
 
         //Arrange the data
-        foreach($param['items'] as $item){
+        foreach($param['OD_items'] as $item){
           array_push($shipmentItemP, [
             'shipment_id' => $shipment->id,
-            'product_feature_id' => $item['product_feature_id'],
-            'qty_shipped' => $item['qty_shipped']
+            'order_item_id' => $item['po_item_id'],
+            'qty_shipped' => $item['deliv_qty']
           ]);
         }
 
@@ -85,7 +86,7 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = Shipment::with('item')->find($id);
+        $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info')->find($id);
         return new ShipmentOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

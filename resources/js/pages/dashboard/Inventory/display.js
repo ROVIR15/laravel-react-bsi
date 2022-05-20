@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Checkbox,
@@ -16,14 +16,16 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 //
 import INVENTORYLIST from '../../../_mocks_/inventory'
 
+//API
+import API from '../../../helpers';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'unit_measurement', label: 'Satuan', alignRight: false},
-  { id: 'category', label: 'Size', alignRight: false },
-  { id: 'brand', label: 'Merek', alignRight: false },
-  { id: 'type', label: 'Kategori', alignRight: false},
+  { id: 'id', label: 'ID', alignRight: false},
+  { id: 'product_name', label: 'Name', alignRight: false },
+  { id: 'facility_name', label: 'facility', alignRight: false},
+  { id: 'qty_on_hand', label: 'Qty', alignRight: false},
 ];
 
 // ----------------------------------------------------------------------
@@ -59,12 +61,24 @@ function applySortFilter(array, comparator, query) {
 
 function DisplayInventory({ placeHolder }) {
 
+  const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // GET Data Inventory Item
+
+  useEffect(() => {
+
+    API.getInventoryItem(function(res){
+      if(!res) setData(INVENTORYLIST);
+      setData(res.data);
+    })
+  
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -74,7 +88,7 @@ function DisplayInventory({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = INVENTORYLIST.map((n) => n.name);
+      const newSelecteds = data.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -112,9 +126,9 @@ function DisplayInventory({ placeHolder }) {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - INVENTORYLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
-  const filteredData = applySortFilter(INVENTORYLIST, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(data, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -133,7 +147,7 @@ function DisplayInventory({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={INVENTORYLIST.length}
+              rowCount={data.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -142,8 +156,12 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, unit_measurement, category, type, brand} = row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
+                  const { id, product, facility, qty_on_hand} = row;
+                  const prepare = {
+                    product_name: `${product.name} ${product.size} - ${product.color}`,
+                    facility_name: facility.name
+                  }
+                  const isItemSelected = selected.indexOf(prepare.product_name) !== -1;
                   return (
                     <TableRow
                       hover
@@ -159,11 +177,10 @@ function DisplayInventory({ placeHolder }) {
                           onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{unit_measurement}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{brand}</TableCell>
-                      <TableCell align="left">{type}</TableCell>
+                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{prepare.product_name}</TableCell>
+                      <TableCell align="left">{prepare.facility_name}</TableCell>
+                      <TableCell align="left">{qty_on_hand}</TableCell>
                       <TableCell align="right">
                         <MoreMenu />
                       </TableCell>
@@ -191,7 +208,7 @@ function DisplayInventory({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={INVENTORYLIST.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

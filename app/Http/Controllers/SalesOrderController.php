@@ -11,6 +11,8 @@
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\SalesOrder as oneSalesOrder;
   use App\Http\Resources\Order\SalesOrderCollection;
+  use App\Http\Resources\Order\SOView as oneSalesOrderView;
+  use App\Http\Resources\Order\SOViewCollection;
   use Illuminate\Http\Request;
 
   class SalesOrderController extends Controller
@@ -24,9 +26,9 @@
      */
     public function index()
     {
-      $query = SalesOrder::with('order_item', 'product_feature')->get();
+      $query = SalesOrder::all();
 
-      return new SalesOrderCollection($query);
+      return new SOViewCollection($query);
     }
 
             /**
@@ -112,7 +114,7 @@
     public function show($id)
     {
       try {
-        $salesOrder = SalesOrder::find($id);
+        $salesOrder = SalesOrder::with('party', 'order_item', 'ship')->find($id);
         return new oneSalesOrder($salesOrder);
       } catch (Exception $th) {
         return response()->json([

@@ -1,7 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
+
 import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
@@ -23,11 +36,29 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function SalesOrder() {
   const {id} = useParams();
 
   // Option for Quote
   const [options, setOptions] = useState([]);
+
+  //Dialog Interaction
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
@@ -50,20 +81,25 @@ function SalesOrder() {
 
   const SalesOrderSchema = Yup.object().shape({
     order_id: Yup.string().required('Order ID is required'),
-    rfq_id: Yup.string().required('Quote ID is required'),
-    vendor_id: Yup.string().required('Name is required'),
+    quote_id: Yup.string().required('Quote ID is required'),
+    sold_to: Yup.string().required('Name is required'),
+    ship_to: Yup.string().required('Address is required'),
+    po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
     valid_thru: Yup.date().required('city is required'),
+    delivery_date: Yup.date().required('province is required')
   });
 
   const formik = useFormik({
     initialValues: {
       id: '',
       order_id: '',
-      rfq_id: '',
-      vendor_id: '',
+      bought_from: '',
+      ship_to: '',
+      po_number: '',
       issue_date: '',
-      valid_thru: ''
+      valid_thru: '',
+      delivery_date: ''
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {
@@ -76,21 +112,26 @@ function SalesOrder() {
 
   useEffect(async () => {
     if(!id) return;
-    const load = await axios.get('http://localhost:8000/api' + '/sales-order' + `/${id}`)
+    const load = await axios.get('http://localhost:8000/api' + '/purchase-order' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-        console.log(error);
+      console.log(error);
     })
 
     setValues({
       id: load.id,
       order_id: load.order_id,
-      rfq_id: load.po_number,
-      vendor_id: load.ship_to,
+      po_number: load.po_number,
+      bought_from: load.bought_from,
+      sold_to: load.sold_to,
       issue_date: load.issue_date,
-      valid_thru: load.valid_thru
+      valid_thru: load.valid_thru,
+      shipment_estimated: load.shipment_estimated,
     })
+
+    setSelectedValueSO(load.party)
+    setSelectedValueSH(load.ship)
 
     const load2 = await axios.get('http://localhost:8000/api' + '/order-item' + `/${load.order_id}`)
     .then(function({data: {data}}) {
@@ -111,15 +152,6 @@ function SalesOrder() {
     let active = true;
 
     (async () => {
-
-      API.getInquiry((res) => {
-          if(!res) return
-		    if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
 
       API.getProductFeature((res) => {
         if(!res) return
@@ -186,7 +218,7 @@ function SalesOrder() {
       }
 
         switch (editedColumnName) {
-          case 'delivery_date':
+          case 'shipment_estimated':
             let date = formatDate(editRowData[editedColumnName].value);
             data[editedColumnName] = date;
             break;
@@ -196,7 +228,7 @@ function SalesOrder() {
             break;
         }
         // update on firebase
-        API.updateSalesOrderItem(editedIds, data, function(res){
+        API.updatePurchaseOrderItem(editedIds, data, function(res){
           alert(JSON.stringify(res));
         });
       } else {
@@ -229,7 +261,7 @@ function SalesOrder() {
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
-    { field: 'delivery_date', headerName: 'Est. Estimated', type: 'date', editable: true },
+    { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -257,38 +289,67 @@ function SalesOrder() {
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
-              title="Quotation Information"
+              title="Purchase Order Information"
             />
             <CardContent>
-              <TextField
-                fullWidth
-                autoComplete="id"
-                type="number"
-                label="Sales Order ID"
-                {...getFieldProps('id')}
-                error={Boolean(touched.id && errors.id)}
-                helperText={touched.id && errors.id}
-                disabled={true}
-              />
-              <TextField
-                fullWidth
-                autoComplete="po_number"
-                type="text"
-                label="Referenced Quote"
-                {...getFieldProps('po_number')}
-                error={Boolean(touched.po_number && errors.po_number)}
-                helperText={touched.po_number && errors.po_number}
-                disabled={true}
-              />
-            </CardContent>
+              <Paper>
+                <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Supplier </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSO.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Dikirim ke </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+
+                </Stack>
+              </Paper>
+            </CardContent> 
           </Card>
-          <Card sx={{ m: 2}}>
+
+          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
-              title="Information"
+              title="Item Overview"
             />
-            <CardContent>
+            <CardContent sx={{paddingBottom: '6px'}}>
               <Grid container spacing={3}>
-                <Grid item xs={7}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    autoComplete="id"
+                    type="number"
+                    label="Sales Order ID"
+                    {...getFieldProps('id')}
+                    error={Boolean(touched.id && errors.id)}
+                    helperText={touched.id && errors.id}
+                    disabled={true}
+                  />  
+                </Grid>
+                <Grid item xs={6}>
                   <TextField
                     fullWidth
                     autoComplete="po_number"
@@ -299,38 +360,8 @@ function SalesOrder() {
                     helperText={touched.po_number && errors.po_number}
                   />    
                 </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    autoComplete="sold_to"
-                    type="text"
-                    label="Pembeli"
-                    {...getFieldProps('sold_to')}
-                    disabled
-                    error={Boolean(touched.sold_to && errors.sold_to)}
-                    helperText={touched.sold_to && errors.sold_to}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    autoComplete="ship_to"
-                    type="text"
-                    label="Penerima"
-                    {...getFieldProps('ship_to')}
-                    error={Boolean(touched.ship_to && errors.ship_to)}
-                    helperText={touched.ship_to && errors.ship_to}
-                  />
-                </Grid>
               </Grid>       
             </CardContent>
-          </Card>
-
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
             <CardContent>
               <div style={{display: 'flex'}}>
               <TextField

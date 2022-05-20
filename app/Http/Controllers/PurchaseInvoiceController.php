@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\Invoice;
+use App\Models\Invoice\Invoice;
+use App\Models\Invoice\InvoiceItem;
+use App\Models\Invoice\PurchaseInvoiceView;
+use App\Models\Invoice\PurchaseInvoice;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
-use App\Http\Resources\Study\InvoiceCollection;
+use App\Http\Resources\Invoice\PurchaseInvoiceView as PurchaseInvoiceViewViewOneCollection;
+use App\Http\Resources\Invoice\PurchaseInvoiceViewCollection;
+use App\Http\Resources\Invoice\PurchaseInvoiceShow;
 
 class PurchaseInvoiceController extends Controller
 {
@@ -19,9 +23,10 @@ class PurchaseInvoiceController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Invoice::all();
+      $query = PurchaseInvoiceView::with('party')->get();
 
-      return new InvoiceCollection($query);
+      return new PurchaseInvoiceViewCollection($query);
+      // return response()->json($query);
     }
 
     /**
@@ -43,17 +48,39 @@ class PurchaseInvoiceController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
+
       try {
-        Invoice::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+        
+        $invoice = Invoice::create([
+          'invoice_date' => $param['invoice_date'],
+          'description' => $param['description']
         ]);
+
+        PurchaseInvoice::create([
+          'purchase_order_id' => $param['purchase_order_id'],
+          'invoice_id' => $invoice->id
+        ]);
+
+        $invoiceItemCreation= [];
+
+        foreach($param['items'] as $key){
+          array_push($invoiceItemCreation, [
+            'invoice_id' => $invoice->id,
+            'order_item_id' => $key['order_item_id'],
+            'qty' => $key['qty'],
+            'amount' => $key['amount'],
+          ]);
+        }
+
+        InvoiceItem::insert($invoiceItemCreation);
+        
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $e->getMessage()
         ],500);
       }
+
       return response()->json([
         'success' => true
       ], 200);
@@ -68,8 +95,8 @@ class PurchaseInvoiceController extends Controller
     public function show($id)
     {
       try {
-        $query = Invoice::find($id);
-        return new InvoiceCollection($query);
+        $query = PurchaseInvoiceView::find($id);
+        return new PurchaseInvoiceShow($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -99,8 +126,9 @@ class PurchaseInvoiceController extends Controller
     public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
+
       try {
-        Invoice::find($id)->update($param);
+        Invoice::find($param['invoice_id'])->update($param);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -121,7 +149,7 @@ class PurchaseInvoiceController extends Controller
     public function destroy($id)
     {
       try {
-        Invoice::find($id)->delete();
+        SalesInvoice::find($id)->delete();
         return response()->json([ 'success'=> true ], 200);
       } catch (Exception $th) {
         //throw $th;

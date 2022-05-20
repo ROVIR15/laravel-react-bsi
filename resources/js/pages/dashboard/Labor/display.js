@@ -11,20 +11,25 @@ import {
   TablePagination,
 } from '@mui/material';
 //components
-import Scrollbar from '../../../../components/Scrollbar';
-import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import Scrollbar from '../../../components/Scrollbar';
+import SearchNotFound from '../../../components/SearchNotFound';
+import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 //
-import BUYERLIST from '../../../../_mocks_/buyer';
+import BUYERLIST from '../../../_mocks_/buyer';
 // api
-import API from '../../../../helpers';
+import API from '../../../helpers';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
-  { id: 'product_name', label: 'Product Name', alignRight: false },
-  { id: 'work_center_name', label: 'Operation Name', alignRight: false }
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'npwp', label: 'Phone Number', alignRight: false },
+  { id: 'street', label: 'Address', alignRight: false },
+  { id: 'city', label: 'City', alignRight: false },
+  { id: 'province', label: 'Province', alignRight: false },
+  { id: 'country', label: 'Country', alignRight: false },
+  { id: 'postal_code', label: 'ZIP Code', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -54,14 +59,14 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-function DisplayProductionStudy({ placeHolder }) {
+function Labor({ placeHolder }) {
 
-  const [productionStudyData, setProductionStudyData] = useState([]);
+  const [laborData, setLaborData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -75,19 +80,17 @@ function DisplayProductionStudy({ placeHolder }) {
       return !array.length;
     }
 
-    if(isEmpty(productionStudyData)) {
-      API.getProductionStudy((res) => {
-		  if(!res) return
-		  if(!res.data) {
-            setProductionStudyData(BUYERLIST);
-          } else {
-            setProductionStudyData(res.data);
-          }
-        });
-    } else {
-      return
+    if(isEmpty(laborData)) {
+      API.getLabor((res) => {
+        if(isEmpty(res)) {
+          console.error('Nothing');
+          setLaborData(BUYERLIST);
+        } else {
+          setLaborData(res);
+        }
+      });
     }
-  }, [productionStudyData])
+  }, [laborData])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -97,7 +100,7 @@ function DisplayProductionStudy({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = productionStudyData.map((n) => n.name);
+      const newSelecteds = laborData.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -138,16 +141,11 @@ function DisplayProductionStudy({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteProductionStudy(id, function(res){
-      if(res.success) location.reload();
-    }).catch(function(error){
-      alert('error')
-    });
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - productionStudyData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - laborData.length) : 0;
 
-  const filteredData = applySortFilter(productionStudyData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(laborData, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -166,7 +164,7 @@ function DisplayProductionStudy({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={productionStudyData.length}
+              rowCount={laborData.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -175,13 +173,7 @@ function DisplayProductionStudy({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const {
-                    id,
-                    product_id,
-                    work_center_id,
-                    product_name,
-                    work_center_name
-                  } = row;
+                  const { id, name, email, phone_number, street, city, province, country, postal_code } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -198,9 +190,14 @@ function DisplayProductionStudy({ placeHolder }) {
                           onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{product_name}</TableCell>
-                      <TableCell align="left">{work_center_name}</TableCell>
+                      <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">{email}</TableCell>
+                      <TableCell align="left">{phone_number}</TableCell>
+                      <TableCell align="left">{street}</TableCell>
+                      <TableCell align="left">{city}</TableCell>
+                      <TableCell align="left">{province}</TableCell>
+                      <TableCell align="left">{country}</TableCell>
+                      <TableCell align="left">{postal_code}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -228,7 +225,7 @@ function DisplayProductionStudy({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={productionStudyData.length}
+        count={laborData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -238,4 +235,4 @@ function DisplayProductionStudy({ placeHolder }) {
   )
 }
 
-export default DisplayProductionStudy;
+export default Labor

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\InvoiceItem;
+use App\Models\Invoice\InvoiceItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\InvoiceItem as InvoiceItemOneCollection;
-use App\Http\Resources\Study\InvoiceItemCollection;
+use App\Http\Resources\Invoice\InvoiceItem as InvoiceItemOneCollection;
+use App\Http\Resources\Invoice\InvoiceItemCollection;
 
 class InvoiceItemController extends Controller
 {
@@ -24,7 +24,7 @@ class InvoiceItemController extends Controller
         return new InvoiceItemCollection($query);
     }
 
-        /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -85,7 +85,7 @@ class InvoiceItemController extends Controller
     {
       try {
         $InvoiceReceiptData = InvoiceItem::find($id);
-        return new oneInvoiceItem($InvoiceReceiptData);
+        return new InvoiceItemOneCollection($InvoiceReceiptData);
     } catch (Exception $th) {
         return response()->json([
           'success' => false,

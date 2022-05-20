@@ -24,7 +24,7 @@ class PurchaseRequisitionController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = PurReq::where('req_type', 'PurchaseReq')->with('request_item')->get();
+      $query = PurReq::with('request_item')->where('req_type', 'Purchase')->get();
 
       return new RequestCollection($query);
     }

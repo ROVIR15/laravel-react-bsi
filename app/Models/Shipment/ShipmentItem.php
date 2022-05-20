@@ -16,7 +16,12 @@ class ShipmentItem extends Model
     protected $fillable = [
         'id',
         'shipment_id',
-        'product_feature_id',
+        'order_item_id',
         'qty_shipped'
     ];
+
+    public function order_item(){
+      return $this->belongsTo('App\Models\Order\OrderItem')->with('product_feature');
+    }
+
 }

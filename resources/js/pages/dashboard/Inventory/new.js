@@ -1,39 +1,157 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Page from '../../../components/Page';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
-import { Button, Container, Card, CardHeader, CardContent, TextField } from '@mui/material';
-import CustomMultiSelect from '../../../components/CustomMultiSelect';
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
+import { styled } from '@mui/material/styles';
+
+// api
+import API from '../../../helpers';
+
+// Component
+import DialogBoxPF from './components/DBProductFeature';
+import DialogBoxF from './components/DBFacility';
+
+
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
 
 function Inventory() {
 
+    // Option Inquiry
+  const [options, setOptions] = useState([]);
+  const [options2, setOptions2] = useState([]);
+
+  //Dialog Interaction
+  const [openSO, setOpenSO] = useState(false);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSO = openSO && options.length === 0;
+  const loadingSH = openSH && options2.length === 0;
+  const [selectedValueSO, setSelectedValueSO] = React.useState({
+    name: '',
+    category: '',
+    size: '',
+    color: ''
+  });
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+    type: {
+      name: ''
+    }
+  });
+
+  // Preapre data from product
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loadingSO) {
+      return undefined;
+    }
+
+    setOptions([]);
+
+    (async () => {
+      if (active) {
+        API.getProductNotYetInInventoryItem((res) => {
+          if(!res) return
+          else setOptions(res.data);
+        })  
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingSO])
+
+  // Preapre data from facility
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loadingSH) {
+      return undefined;
+    }
+
+    setOptions2([]);
+
+    (async () => {
+      if (active) {
+        API.getFacility((res) => {
+          if(!res) return
+          else setOptions2(res.data);
+        })  
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingSH])
+
   const InventorySchema = Yup.object().shape({
-    name: Yup.string().required('Nama is required'),
-    unit_measurement: Yup.string().required('Satuan is required'),
-    gross_weight: Yup.string().required('Berat Kotor is required'),
-    category: Yup.string().required('Kategori is required'),
-    value: Yup.string().required('Nilai Produk is required')
+    product_feature_id: Yup.string().required('Nama is required'),
+    facility_id: Yup.string().required('Satuan is required'),
+    qty_on_hand: Yup.number().required('Berat Kotor is required'),
   });
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      unit_measurement: '',
-      gross_weight: '',
-      category: '',
-    //   feature
-      serial: '',
-      brand: '',
-      type: '',
-      code: '',
-      price: ''
+      product_feature_id: '',
+      facility_id: '',
+      qty_on_hand: 0
+    },
+    onSubmit: (values) => {
+      API.insertInventoryItem(values, function(res){
+        if(res.success) {
+          location.reload();
+          alert('success');
+        }
+        else alert('failed');
+      })
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+    // Dialog Box
+  const handleClose = (name, value) => {
+    if(name === 'product_feature_id') {
+      setOpenSO(false)
+      setSelectedValueSO(value);
+    }
+    if(name === 'facility_id') {
+      setOpenSH(false)
+      setSelectedValueSH(value);
+    }
+    setFieldValue(name, value.id);
+    setOptions([]);
+  };
+
+  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   return (
     <Page>
@@ -45,52 +163,66 @@ function Inventory() {
                 title="Product Information"
               />
               <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="name"
-                  type="text"
-                  label="Nama"
-                  {...getFieldProps('name')}
-                  error={Boolean(touched.name && errors.name)}
-                  helperText={touched.name && errors.name}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="category"
-                  type="text"
-                  label="Kategori"
-                  {...getFieldProps('category')}
-                  error={Boolean(touched.category && errors.category)}
-                  helperText={touched.category && errors.category}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="unit_measurement"
-                  type="text"
-                  label="Satuan"
-                  {...getFieldProps('unit_measurement')}
-                  error={Boolean(touched.unit_measurement && errors.unit_measurement)}
-                  helperText={touched.unit_measurement && errors.unit_measurement}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="gross_weight"
-                  type="text"
-                  label="Berat Kotor"
-                  {...getFieldProps('gross_weight')}
-                  error={Boolean(touched.gross_weight && errors.gross_weight)}
-                  helperText={touched.gross_weight && errors.gross_weight}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="value"
-                  type="text"
-                  label="Nilai Produk"
-                  {...getFieldProps('value')}
-                  error={Boolean(touched.value && errors.value)}
-                  helperText={touched.value && errors.value}
-                />
-              </CardContent>
+                <Paper>
+                  <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                    <ColumnBox>
+                      <SpaceBetweenBox>
+                        <Typography variant="h6"> Product </Typography>
+                        <Button
+                          onClick={() => setOpenSO(true)}
+                        >
+                          Select
+                        </Button>
+                      </SpaceBetweenBox>
+                      <div>
+                        <Typography variant="body1">
+                          {`${selectedValueSO.name} ${selectedValueSO.size} - ${selectedValueSO.color} `}
+                        </Typography>
+                        <Typography variant="caption">
+                          {`${selectedValueSO.category}`}
+                        </Typography>
+                      </div>
+                      <DialogBoxPF
+                        options={options}
+                        loading={loadingSO}
+                        error={Boolean(touched.product_feature_id && errors.product_feature_id)}
+                        helperText={touched.product_feature_id && errors.product_feature_id}
+                        selectedValue={values.product_feature_id}
+                        open={openSO}
+                        onClose={(value) => handleClose('product_feature_id', value)}
+                      />
+                    </ColumnBox>
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <ColumnBox>
+                      <SpaceBetweenBox>
+                        <Typography variant="h6"> Facility </Typography>
+                        <Button
+                          onClick={() => setOpenSH(true)}
+                        >
+                          Select
+                        </Button>
+                      </SpaceBetweenBox>
+                      <div>
+                        <Typography variant="body1">
+                          {selectedValueSH.name}
+                        </Typography>
+                        <Typography variant="caption">
+                          {selectedValueSH.type.name}
+                        </Typography>
+                      </div>
+                      <DialogBoxF
+                        options={options2}
+                        loading={loadingSH}
+                        error={Boolean(touched.facility_id && errors.facility_id)}
+                        helperText={touched.facility_id && errors.facility_id}
+                        selectedValue={values.facility_id}
+                        open={openSH}
+                        onClose={(value) => handleClose('facility_id', value)}
+                      />
+                    </ColumnBox>
+                  </Stack>
+                </Paper>
+            </CardContent>
             </Card>
             <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>
               
@@ -99,51 +231,15 @@ function Inventory() {
                 title="Product Feature"
               />
               <CardContent>
-              <TextField
-                fullWidth
-                autoComplete="serial"
-                type="text"
-                label="Serial Number"
-                {...getFieldProps('serial')}
-                error={Boolean(touched.serial && errors.serial)}
-                helperText={touched.serial && errors.serial}
-              />
-              <TextField
-                fullWidth
-                autoComplete="brand"
-                type="text"
-                label="Merek"
-                {...getFieldProps('brand')}
-                error={Boolean(touched.brand && errors.brand)}
-                helperText={touched.brand && errors.brand}
-              />
-              <TextField
-                fullWidth
-                autoComplete="type"
-                type="text"
-                label="Tipe"
-                {...getFieldProps('type')}
-                error={Boolean(touched.type && errors.type)}
-                helperText={touched.type && errors.type}
-              />
-              <TextField
-                fullWidth
-                autoComplete="code"
-                type="text"
-                label="Kode"
-                {...getFieldProps('code')}
-                error={Boolean(touched.code && errors.code)}
-                helperText={touched.code && errors.code}
-              />
-              <TextField
-                fullWidth
-                autoComplete="price"
-                type="text"
-                label="Harga"
-                {...getFieldProps('price')}
-                error={Boolean(touched.price && errors.price)}
-                helperText={touched.price && errors.price}
-              />     
+                <TextField
+                  fullWidth
+                  autoComplete="qty_on_hand"
+                  type="number"
+                  label="Quantity"
+                  {...getFieldProps('qty_on_hand')}
+                  error={Boolean(touched.qty_on_hand && errors.qty_on_hand)}
+                  helperText={touched.qty_on_hand && errors.qty_on_hand}
+                />
               </CardContent>
             </Card>
             <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
@@ -158,7 +254,6 @@ function Inventory() {
               </LoadingButton>
               <Button
                 size="large"
-                type="submit"
                 color="grey"
                 variant="contained"
                 sx={{ m: 1 }}

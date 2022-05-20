@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Card, Button, Stack} from '@mui/material';
+import {Box, Button, Stack} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 
@@ -9,14 +9,12 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-export default function ValidateRowModelControlGrid({ columns, rows, handleResetRows, handleAddRow, ...rest }) {
+export default function ValidateRowModelControlGrid({ columns, rows, handleUpdateAllRows, handleAddRow, ...rest }) {
   
   return (
-    <Card
+    <Box
       sx={{
-		height: 600,
-		padding: '2em',
-		bgColor: 'white',
+        height: 400,
         width: 1,
         '& .MuiDataGrid-cell--editing': {
           bgcolor: 'rgb(255,215,115, 0.19)',
@@ -38,15 +36,15 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleReset
         alignItems="flex-start"
         columnGap={1}
       >
-        <Button size="small" onClick={handleResetRows}>
-          Reset
+        <Button size="small" onClick={handleUpdateAllRows}>
+          Update
         </Button>
         <Button size="small" onClick={handleAddRow}>
           Add Data
         </Button>
       </Stack>
       <DataGrid rows={rows ? rows : mrows } columns={columns ? columns : estColumns} {...rest}/>
-    </Card>
+    </Box>
   );
 }
 

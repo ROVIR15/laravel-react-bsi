@@ -6,10 +6,13 @@ use Faker\Generator as Faker;
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
+use App\Models\RRQ\QuoteView;
 use App\Models\RRQ\QuoteItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RRQ\Quote as QuoteOneCollection;
+use App\Http\Resources\RRQ\QuoteView as QuoteViewOneCollection;
 use App\Http\Resources\RRQ\QuoteCollection;
+use App\Http\Resources\RRQ\QuoteViewCollection;
 
 class QuoteController extends Controller
 {
@@ -22,9 +25,25 @@ class QuoteController extends Controller
     public function index(Request $request, Quote $quote)
     {
       $param = $request->all();
-      $query = $quote->where('quote_type')->get();
+      $type = $request->query('type');
+      $query;
 
-      return new QuoteCollection($query);
+      switch ($type) {
+        case 'SO':
+          # code...
+          $query = Quote::where('quote_type', 'SO')->get();
+          break;
+        case 'PO':
+          # code...
+          $query = Quote::where('quote_type', 'PO')->get();
+          break;
+        default:
+          # code...
+          $query = Quote::all();
+          break;
+      }
+
+      return new QuoteViewCollection($query);
     }
 
     /**
@@ -52,7 +71,6 @@ class QuoteController extends Controller
           $quoteCreation = Quote::create([
             'id' => $id,
             'quote_type' => $param['quote_type'],
-            'request_id' => $param['inquiry_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
             'party_id' => $param['sold_to'],
@@ -67,7 +85,6 @@ class QuoteController extends Controller
             array_push($quoteItemsCreation, [
               'id' => $faker->unique()->numberBetween(1,8939),
               'quote_id' => $id,
-              'request_item_id' => $key['request_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']
@@ -97,7 +114,7 @@ class QuoteController extends Controller
     public function show($id)
     {
       try {
-        $query = Quote::with('quote_item')->find($id);
+        $query = Quote::find($id);
         return new QuoteOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

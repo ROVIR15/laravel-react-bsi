@@ -1,6 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -14,23 +26,42 @@ import API from '../../../helpers';
 //Component
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
-import AutoComplete from './components/AutoComplete';
+import DialogBox from './components/DialogBox';
 
 //Icons
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function RFQ() {
   // Option Inquiry
   const [options, setOptions] = useState([]);
+  const [options2, setOptions2] = useState([]);
+
+  //Dialog Interaction
+  const [openSO, setOpenSO] = useState(false);
+  const [openSH, setOpenSH] = useState(false);
+  const loading = (openSO || openM) && options.length === 0;
+  const loading2 = (openSH) && options2.length === 0;
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
-
-  //AutoComplete
-  const loading = open && options.length === 0;
-  const [open, setOpen] = useState(false);
 
   //Data Grid
   const [items, setItems] = useState([])
@@ -44,25 +75,28 @@ function RFQ() {
   const handleCloseModal = () => setOpenM(false);
 
   const RFQSchema = Yup.object().shape({
-    id: Yup.number().required('Inquiry References is required'),
-    purchase_req_id: Yup.number().required('Inquiry References is required'),
-    vendor_id: Yup.number().required('Inquiry References is required'),
+    po_number: Yup.string().required('Inquiry References is required'),
+    ship_to: Yup.number().required('Inquiry References is required'),
+    sold_to: Yup.number().required('Inquiry References is required'),
     issue_date: Yup.date().required('PO Date is required'),
     valid_thru: Yup.date().required('Valid To is required'),
+    delivery_date: Yup.date().required('Delivery Date is required')
   });
 
   const formik = useFormik({
     initialValues: {
       id: '',
-      purchase_req_id: '',
-      vendor_id: '',
+      po_number: '',
+      ship_to: '',
+      sold_to: '',
       issue_date: '',
-      valid_thru: ''
+      valid_thru: '',
+      delivery_date: '',
     },
     validationSchema: RFQSchema,
     onSubmit: (values) => {
       const _data = {
-        ...values, quote_items: items
+        ...values, quote_items: items, quote_type: 'PO'
       }
       API.insertQuote(_data, function(res){
         if(res.success) alert('success');
@@ -72,31 +106,26 @@ function RFQ() {
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
+  const { errors, touched, values, setFieldValue, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
-  useEffect(() => {
+  // Preapre data from product
+  React.useEffect(() => {
     let active = true;
 
+    if (!loading) {
+      return undefined;
+    }
+
+    setOptions([]);
+
     (async () => {
-
-      API.getInquiry((res) => {
+      if (active) {
+        API.getVendors((res) => {
+          console.log(res);
           if(!res) return
-		    if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
-
-      API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
-          setOptionsP([]);
-        } else {
-          setOptionsP(res.data);
-        }
-      })
-
+          else setOptions(res);
+        })  
+      }
     })();
 
     return () => {
@@ -104,29 +133,44 @@ function RFQ() {
     };
   }, [loading])
 
-  function changeData(data){
-    const quoteItem = data.inquiry_item.map(function(key, index){
-      return {
-        'id': index,
-        'PR_item_id' : key.id,
-        'product_id' : key.product.product_id,
-        'product_feature_id' : key.product_feature_id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
-        'qty' : key.qty,
-        'unit_price' : 0
+  // Preapre data from product
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loading2) {
+      return undefined;
+    }
+
+    setOptions2([]);
+
+    (async () => {
+      if (active) {
+        API.getBuyers((res) => {
+          if(!res) return
+          else setOptions2(res);
+        })  
       }
-    })
-    setValues({
-      id: data.id,
-      purchase_req_id: data.purchase_req_id,
-      vendor_id: data.vendor_id,
-      issue_date: data.issue_date,
-      valid_thru: data.valid_to,
-    })
-    setItems(quoteItem);
-  }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loading2])
+
+
+  // Dialog Box
+  const handleClose = (name, value) => {
+    if(name === 'sold_to') {
+      setOpenSO(false)
+      setSelectedValueSO(value);
+    }
+    if(name === 'ship_to') {
+      setOpenSH(false)
+      setSelectedValueSH(value);
+    }
+    setFieldValue(name, value.id);
+    setOptions([]);
+  };
 
   const deleteData = useCallback(
     (id) => () => {
@@ -217,23 +261,66 @@ function RFQ() {
               title="RFQ Information"
             />
             <CardContent>
-              <AutoComplete
-                fullWidth
-                autoComplete="purchase_req_id"
-                type="text"
-                label="Purchase Requisition ID"
-                error={Boolean(touched.purchase_req_id && errors.purchase_req_id)}
-                helperText={touched.purchase_req_id && errors.purchase_req_id}
-                options={options}
-                setOpen={setOpen}
-                loading={loading}
-                changeData={changeData}
-              />
+            <Paper>
+              <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penjual </Typography>
+                    <Button
+                      onClick={() => setOpenSO(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">
+                      {selectedValueSO.name}
+                    </Typography>
+                  </div>
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    selectedValue={selectedValueSO}
+                    open={openSO}
+                    onClose={(value) => handleClose('sold_to', value)}
+                  />
+                </ColumnBox>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Dikirim ke </Typography>
+                    <Button
+                      onClick={() => setOpenSH(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">
+                      {selectedValueSH.name}
+                    </Typography>
+                  </div>
+                  <DialogBox
+                    options={options2}
+                    loading={loading}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                    selectedValue={selectedValueSH}
+                    open={openSH}
+                    onClose={(value) => handleClose('ship_to', value)}
+                  />
+                </ColumnBox>
+
+              </Stack>
+            </Paper>
             </CardContent>
           </Card>
-          <Card sx={{ m: 2}}>
+
+          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
-              title="Information"
+              title="Item Overview"
             />
             <CardContent>
               <Grid container spacing={3}>
@@ -248,33 +335,16 @@ function RFQ() {
                     helperText={touched.po_number && errors.po_number}
                   />    
                 </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    autoComplete="vendor_id"
-                    type="text"
-                    label="Supplier"
-                    {...getFieldProps('vendor_id')}
-                    disabled
-                    error={Boolean(touched.vendor_id && errors.vendor_id)}
-                    helperText={touched.vendor_id && errors.vendor_id}
-                  />
-                </Grid>
               </Grid>       
             </CardContent>
-          </Card>
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
-            <CardContent>
-              <div style={{display: 'flex'}}>
+            <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
+            <div style={{display: 'flex'}}>
               <TextField
                 fullWidth
                 autoComplete="issue_date"
                 type="date"
-                label="Issue Date"
-                placeholder='creation'
+                placeholder='valid'
+                label="PO Date"
                 {...getFieldProps('issue_date')}
                 error={Boolean(touched.issue_date && errors.issue_date)}
                 helperText={touched.issue_date && errors.issue_date}
@@ -289,7 +359,16 @@ function RFQ() {
                 error={Boolean(touched.valid_thru && errors.valid_thru)}
                 helperText={touched.valid_thru && errors.valid_thru}
               />
-              </div>
+              <TextField
+                fullWidth
+                autoComplete="delivery_date"
+                type="date"
+                label='Tanggal Pengiriman'
+                {...getFieldProps('delivery_date')}
+                error={Boolean(touched.delivery_date && errors.delivery_date)}
+                helperText={touched.delivery_date && errors.delivery_date}
+              />
+            </div>
             <DataGrid 
               columns={columns} 
               rows={items}

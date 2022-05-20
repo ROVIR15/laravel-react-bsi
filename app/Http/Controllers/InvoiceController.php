@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\Invoice;
-use App\Models\Study\InvoiceItem;
+use App\Models\Invoice\Invoice;
+use App\Models\Invoice\InvoiceItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
 use App\Http\Resources\Study\InvoiceCollection;

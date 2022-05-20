@@ -56,6 +56,7 @@ class ProcessStudyController extends Controller
           'party_id' => $param['labor_id'],
           'process_id' => $param['process_id']
         ]);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

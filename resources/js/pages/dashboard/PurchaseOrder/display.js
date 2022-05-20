@@ -24,10 +24,11 @@ import API from '../../../helpers';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'order_id', label: 'Order ID', alignRight: false },
-    { id: 'rfq_id', label: 'Sold to', alignRight: false },
-    { id: 'vendor_id', label: 'Ship to', alignRight: false },
+    { id: 'po_number', label: 'Ref. Quote', alignRight: false },
+    { id: 'bought_from', label: 'Supplier', alignRight: false },
     { id: 'issue_date', label: 'Issue Date', alignRight: false },
-    { id: 'valid_thru', label: 'Valid Thru', alignRight: false }
+    { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
+    { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
   ];
 
 // ----------------------------------------------------------------------
@@ -62,9 +63,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function DisplaySalesOrder({ placeHolder }) {
+function PurchaseOrder({ placeHolder }) {
 
-  const [salesOrderData, setSalesOrderData] = useState([]);
+  const [purchaseOrderData, setpurchaseOrderData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -78,17 +79,17 @@ function DisplaySalesOrder({ placeHolder }) {
       return !array.length;
     }
 
-    if(isEmpty(salesOrderData)) {
-      API.getSalesOrder((res) => {
+    if(isEmpty(purchaseOrderData)) {
+      API.getPurchaseOrder((res) => {
 		  if(!res) return
 		  if(!res.data) {
-          setSalesOrderData(BUYERLIST);
+          setpurchaseOrderData(BUYERLIST);
         } else {
-          setSalesOrderData(res.data);
+          setpurchaseOrderData(res.data);
         }
       });
     }
-  }, [salesOrderData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -98,7 +99,7 @@ function DisplaySalesOrder({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = salesOrderData.map((n) => n.name);
+      const newSelecteds = purchaseOrderData.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -146,9 +147,9 @@ function DisplaySalesOrder({ placeHolder }) {
     });
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesOrderData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrderData.length) : 0;
 
-  const filteredData = applySortFilter(salesOrderData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -167,7 +168,7 @@ function DisplaySalesOrder({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={salesOrderData.length}
+              rowCount={purchaseOrderData.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -179,10 +180,11 @@ function DisplaySalesOrder({ placeHolder }) {
                   const {
                     id,
                     order_id,
-                    rfq_id,
-                    vendor_id,
+                    po_number,
+                    bought_from,
                     issue_date,
-                    valid_thru
+                    valid_thru,
+                    delivery_date
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -202,10 +204,11 @@ function DisplaySalesOrder({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{order_id}</TableCell>
-                      <TableCell align="left">{rfq_id}</TableCell>
-                      <TableCell align="left">{vendor_id}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
+                      <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -233,7 +236,7 @@ function DisplaySalesOrder({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={salesOrderData.length}
+        count={purchaseOrderData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -243,4 +246,4 @@ function DisplaySalesOrder({ placeHolder }) {
   )
 }
 
-export default DisplaySalesOrder;
+export default PurchaseOrder;

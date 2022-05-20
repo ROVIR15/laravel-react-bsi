@@ -27,10 +27,12 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ payload, open, options, handleClose, setComponent}) {
+export default function BasicModal({ payload, open, handleClose, setComponent}) {
   const [value, setValue] = React.useState([])
-  const loading = openX && options.length === 0;
+  
+  const [options, setOptions] = React.useState([])
   const [openX, setOpenX] = React.useState(false);
+  const loading = openX && options.length === 0;
 
   const handleDoneFill = () => {
     if(!value.length) {
@@ -50,6 +52,27 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
 
     handleClose();
   }
+
+  React.useEffect(() => {
+    let active = true;
+
+    (async () => {
+
+      API.getProductFeature((res) => {
+        if(!res) return
+        if(!res.data) {
+          setOptions([]);
+        } else {
+          setOptions(res.data);
+        }
+      })
+
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loading])
 
   return (
     <div>

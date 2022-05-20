@@ -4,7 +4,7 @@ import Page from '../../../../components/Page';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { useFormik, Form, FormikProvider } from 'formik';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { Card, CardHeader, CardContent, Container, Grid, Typography, Stack, Button } from '@mui/material'
 import { Link as RouterLink, useLocation, } from 'react-router-dom';
@@ -27,6 +27,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 function ProductionStudy() {
   const {id} = useParams();
+  const navigate = useNavigate();
 
   //AutoComplete props
   const [options, setOptions] = useState([]);
@@ -299,6 +300,15 @@ function ProductionStudy() {
         </Grid>
         <Grid item xs={12}>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end', marginTop: '1.5em' }}>
+            <Button
+              size="large"
+              color="info"
+              variant="contained"
+              onClick={() => navigate('/dashboard/ie-study/result/' + id + '/add')}
+              sx={{ m: 1 }}
+            >
+              Record
+            </Button>
             <LoadingButton
               size="large"
               type="submit"
@@ -306,7 +316,7 @@ function ProductionStudy() {
               loading={isSubmitting}
               sx={{ m: 1 }}
             >
-              Save
+              Update
             </LoadingButton>
             <Button
               size="large"

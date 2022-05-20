@@ -1,6 +1,6 @@
 import React, {useState, useMemo, useEffect} from 'react'
 import Page from '../../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, Divider, Paper, Button, Typography, Stack } from '@mui/material'
+import { Card, CardContent, Container, Grid, Divider, Paper, Button, Typography, Stack, CardHeader } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -20,12 +20,10 @@ import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
-//Dialog Component
-import DialogBox from './components/DialogBox';
-
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import data from '@iconify/icons-eva/plus-fill';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -64,16 +62,10 @@ function ObservationResult() {
     },
     validationSchema: ProductionStudySchema,
     onSubmit: (values) => {
-      const result_items = items.map(function(item){
-        return {
-          process_study_id: item.id,
-          items: [{name: 'test_1', result: item.test_1}, {name: 'test_2', result: item.test_2}, {name: 'test_3', result: item.test_3}]
-        }
-      });
 
       const _data = {
         production_study_id: id,
-        result_items
+        result_item: values
       };
 
       alert(JSON.stringify(_data));
@@ -97,14 +89,26 @@ function ObservationResult() {
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
 
+  const handleAddDataOnModal = (data) => {
+    const _data = {...data, production_study_id: id, seq_1: 0, seq_2: 0, seq_3: 0}
+    API.insertProcessStudy(_data, function(res){
+      if(!res.success) alert("failed");
+      else alert('Success');
+    })
+
+    handleUpdateAllRows();
+  }
+
   const processItems = useMemo(() => [
     { field: 'id', headerName: 'ID', editable: false, hideable: true },
     { field: 'process_name', headerName: 'Nama Process', editable: false, width: 200 },
     { field: 'labor_id', headerName: 'ID Pekerja', editable: false, hideable: true },
     { field: 'labor_name', headerName: 'Nama Pekerja', editable: false, width: 200 },
-    { field: 'test_1', headerName: 'Time 1', editable: true, width: 100 },
-    { field: 'test_2', headerName: 'Time 2', editable: true, width: 100 },
-    { field: 'test_3', headerName: 'Time 3', editable: true, width: 100 },
+    { field: 'seq_1', headerName: 'Time 1', editable: true, width: 100 },
+    { field: 'seq_2', headerName: 'Time 2', editable: true, width: 100 },
+    { field: 'seq_3', headerName: 'Time 3', editable: true, width: 100 },
+    { field: 'average', headerName: 'Average', editable: true, width: 100 },
+    { field: 'target', headerName: 'Target', editable: true, width: 100 },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -127,18 +131,15 @@ function ObservationResult() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
-        //update items state
-        setItems((prevItems) => {
-          const itemToUpdateIndex = parseInt(editedIds[0]);
-    
-          return prevItems.map((row, index) => {
-            if(row.id === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
-            } else {
-              return row
-            }
-          });
-        });
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value;
+
+        // update on firebase
+        API.updateProcessStudy(editedIds, data, function(res){
+          alert(JSON.stringify(res));
+        })
+
+        handleUpdateAllRows();
 
       } else {
         setEditRowData(model[editedIds[0]]);
@@ -149,6 +150,23 @@ function ObservationResult() {
     [editRowData]
   );
 
+  const handleUpdateAllRows = () => {
+    API.getAProductionStudy(id, function(res){
+      if(!res) alert("Something went wrong!");
+      const { id, product_id, product_name, work_center_id, work_center_name, process_list} = res.data
+      setValues({
+        id: id,
+        product_id,
+        product_name,
+        work_center_id,
+        work_center_name
+      });
+
+      setItems(process_list);
+    });
+  };
+
+
   const handleResetRows = () => {
     setItems([]);
   }
@@ -158,6 +176,11 @@ function ObservationResult() {
       setItems((prevItems) => {
         return prevItems.filter((x) => (x.id !== id))
       });
+
+      API.deleteProcessStudy(id, function(res){
+        if(!res.success) alert('Failed');
+        else alert('Success')
+      })
   })
 
   useEffect(() => {
@@ -165,14 +188,6 @@ function ObservationResult() {
 
     function isEmpty(array){
       return array.length === 0 || !Array.isArray(array);
-    }
-
-    function addAttemptResultCol(data) {
-      if(!isEmpty) return;
-      const done = data.map(function(item){
-        return {...item, test_1: 0, test_2: 0, test_3: 0}
-      })
-      return done;
     }
 
     API.getAProductionStudy(id, function(res){
@@ -184,14 +199,45 @@ function ObservationResult() {
         product_name,
         work_center_id,
         work_center_name
-      });      
+      });
+
+      setItems(process_list);
     });
 
-    API.getObservationStudyByProductionStudy(id, function(res){
-      if(!res) alert("Something went wrong!");
-      setItems(res.data)
-    })
   }, [id]);
+
+  function findUniqueProcess(data){
+    let a = [...new Set(data.map(item => item.process_id))];
+    return a.length;
+  }
+
+  function findAverageTime(data){
+    let a = 0;
+    data.map((item) => {
+      a = a + item.average;
+    })
+    a = (a/data.length);
+    return a.toFixed(2);
+  }
+
+  function findSumTarget(data){
+    let a = 0;
+    data.map((item) => {
+      a = a + item.target;
+    })
+    return a;
+  }
+
+  function findBalancing(data){
+    let totalTarget = 0;
+    data.map((item) => {
+      totalTarget = totalTarget + item.target;
+    })
+
+    let totalProcess = [...new Set(data.map(item => item.process_id))].length;
+
+    return totalTarget/totalProcess
+  }
 
   return (
     <Page>
@@ -200,7 +246,7 @@ function ObservationResult() {
         payload={[]}
         open={openM}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        setComponent={handleAddDataOnModal}
       />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -243,6 +289,53 @@ function ObservationResult() {
             </Stack>
           </Paper>
         </Grid>
+
+        {/* Item 4 */}
+        <Grid item xs={3}>
+          <Card>
+            <CardHeader
+              title="Total Target"
+            />
+            <CardContent>
+              <Typography variant="h4">{findSumTarget(items)}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={3}>
+          <Card>
+            <CardHeader
+              title="Total Process"
+            />
+            <CardContent>
+              <Typography variant="h4">{findUniqueProcess(items)}</Typography>            
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={3}>
+          <Card>
+            <CardHeader
+              title="Average Time"
+            />
+            <CardContent>
+              <Typography variant="h4">{findAverageTime(items)}</Typography>            
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={3}>
+          <Card>
+            <CardHeader
+              title="Target Balancing"
+            />
+            <CardContent>
+              <Typography variant="h4">{findBalancing(items)}</Typography>              
+            </CardContent>
+          </Card>
+        </Grid>
+
+
         <Grid item xs={12}>
           <DataGrid 
             columns={processItems}

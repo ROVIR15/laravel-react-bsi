@@ -234,6 +234,20 @@ const main = {
         cb(err.response)
       })
     },
+    getQuoteBySO(cb){
+      axios.get( uri + '/quote?type=SO').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getQuoteByPO(cb){
+      axios.get( uri + '/quote?type=PO').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
     getAQuote(id, cb){
       if(!id) console.error('ID not found')
       axios.get( uri + '/quote' + `/${id}`).then( function(res){
@@ -465,6 +479,131 @@ const main = {
         cb(err.response);
       });
     },
+    // Manufacture
+    insertManufactureOrder(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/manufacture', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getManufactureOrder(cb){
+      axios.get( uri + '/manufacture').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAManufactureOrder(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/manufacture' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteManufactureOrder(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/manufacture' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateManufactureOrder(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/manufacture' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Manufacture Operation
+    insertManufactureOperation(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/manufacture-operation', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getManufactureOperation(cb){
+      axios.get( uri + '/manufacture-operation').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAManufactureOperation(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/manufacture-operation' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteManufactureOperation(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/manufacture-operation' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateManufactureOperation(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/manufacture-operation' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Manufacture Operation
+    insertMOResult(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/operation-result', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getMOResult(cb){
+      axios.get( uri + '/operation-result').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAMOResult(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/operation-result' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+
+    //Manufacture Recorder
+    insertProductionRecord(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/production-record', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+
     // Work Center 
     insertWorkCenter(_data, cb){
       if(!_data) {
@@ -780,5 +919,442 @@ const main = {
         cb(err.response);
       });
     },
+    // Purchasing - Inquiry
+    insertInquiry(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/inquiry', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getInquiry(cb){
+      axios.get( uri + '/inquiry').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAInquiry(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/inquiry' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteInquiry(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/inquiry/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateInquiry(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/inquiry/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Purchasing - purchase-order
+    insertPurchaseOrder(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/purchase-order', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getPurchaseOrder(cb){
+      axios.get( uri + '/purchase-order').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAPurchaseOrder(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/purchase-order' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deletePurchaseOrder(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/purchase-order/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updatePurchaseOrder(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/purchase-order/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Purchasing - purchase-requisition
+    insertPurchaseRequisiton(_data, cb){
+        if(!_data) {
+            console.error('data not found');
+        }
+        axios.post( uri + '/purchase-requisition', { payload:  _data }, {headers} ).then( function(res) {
+          cb(res.data)
+        }).catch(function(err){
+            cb(err.response);
+        });
+      },
+      getPurchaseRequisiton(cb){
+        axios.get( uri + '/purchase-requisition').then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response)
+        })
+      },
+      getAPurchaseRequisiton(id, cb){
+        if(!id) console.error('ID not found')
+        axios.get( uri + '/purchase-requisition' + `/${id}`).then( function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      deletePurchaseRequisiton(id, cb){
+        if(!id) throw new Error('ID is required');
+        axios.delete( uri + '/purchase-requisition/' + id, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      updatePurchaseRequisiton(id, _data, cb){
+        if(!id) throw new Error('ID is required');
+        if(!_data) throw new Error('data is required');
+        axios.put( uri + '/purchase-requisition/' + id, { payload: _data}, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      // Purchasing - purchase-requisition
+      insertRFQ(_data, cb){
+        if(!_data) {
+            console.error('data not found');
+        }
+        axios.post( uri + '/request-for-quotation', { payload:  _data }, {headers} ).then( function(res) {
+          cb(res.data)
+        }).catch(function(err){
+          cb(err);
+        });
+      },
+      getRFQ(cb){
+        axios.get( uri + '/request-for-quotation').then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        })
+      },
+      getARFQ(id, cb){
+        if(!id) console.error('ID not found')
+        axios.get( uri + '/request-for-quotation' + `/${id}`).then( function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      deleteRFQ(id, cb){
+        if(!id) throw new Error('ID is required');
+        axios.delete( uri + '/request-for-quotation/' + id, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      updateRFQ(id, _data, cb){
+        if(!id) throw new Error('ID is required');
+        if(!_data) throw new Error('data is required');
+        axios.put( uri + '/request-for-quotation/' + id, { payload: _data}, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      // Purchasing - Supplier/Vendor
+      getVendors(cb){
+        axios.get( uri + '/vendor').then( function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      getVendor(id, cb){
+        if(!id) console.error('ID not found')
+        axios.get( uri + '/vendor' + `/${id}`).then( function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        });
+      },
+      setVendor(_data, cb){
+        if(!_data) {
+            console.error('data not found');
+        }
+        axios.post( uri + '/vendor', { payload:  _data }, {headers} ).then( function(res) {
+          cb(res.data)
+        }).catch(function(err){
+            cb(err.response);
+        });
+      },
+      deleteVendor(id, cb){
+        if(!id) throw new Error('ID is required');
+        axios.delete( uri + '/vendor/' + id, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        })
+      },
+      editVendor(id, _data, cb){
+        if(!id) throw new Error('ID is required');
+        if(!_data) throw new Error('data is required');
+        axios.put( uri + '/vendor/' + id, { payload: _data}, {headers}).then(function(res){
+          cb(res.data);
+        }).catch(function(err){
+          cb(err.response);
+        })
+      },
+    //PurchaseOrder Item
+    insertPurchaseOrderItem(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/order-item', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getAPurchaseOrderItem(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/order-item' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deletePurchaseOrderItem(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/order-item/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updatePurchaseOrderItem(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/order-item/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Goods Receipt
+    insertGoodsReceipt(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/goods-receipt', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getGoodsReceipt(cb){
+      axios.get( uri + '/goods-receipt').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAGoodsReceipt(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/goods-receipt' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateGoodsReceipt(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/goods-receipt'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteGoodsReceipt(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/goods-receipt/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Goods Receipt Items
+    insertGoodsReceiptItem(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/goods-receipt-item', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getGoodsReceiptItem(cb){
+      axios.get( uri + '/goods-receipt-item').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAGoodsReceiptItem(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/goods-receipt-item' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateGoodsReceiptItem(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/goods-receipt-item'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteGoodsReceiptItem(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/goods-receipt-item/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+
+    // Goods Receipt Items
+    insertShipment(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/shipment', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getShipment(cb){
+      axios.get( uri + '/shipment').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAShipment(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/shipment' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateShipment(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/shipment'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteShipment(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/goods-receipt-item/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+
+    //Inventory
+    getInventoryItem(cb){
+      axios.get( uri + '/inventory').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getProductNotYetInInventoryItem(cb){
+      axios.get( uri + '/goods-option').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    insertInventoryItem(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/inventory', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    // Item Issuance
+    insertItemIssuance(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/item-issuance', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    //Facility
+    getFacility(cb){
+      axios.get( uri + '/facility').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAFacility(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/facility' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    }
   }
 export default main;

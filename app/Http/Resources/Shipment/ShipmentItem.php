@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Shipment;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Order\OrderItem;
 
 class ShipmentItem extends JsonResource
 {
@@ -17,7 +18,7 @@ class ShipmentItem extends JsonResource
         return [
             'id' => $this->id,
             'shipment_id' => $this->shipment_id,
-            'product_feature_id' => $this->product_feature_id,
+            'order_item' => new OrderItem($this->order_item),
             'qty_shipped' => $this->qty_shipped
         ];
     }

@@ -1,6 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -14,23 +26,37 @@ import API from '../../../helpers';
 //Component
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
-import AutoComplete from './components/AutoComplete';
+import DialogBox from './components/DialogBox';
 
 //Icons
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function Quotation() {
   // Option Inquiry
   const [options, setOptions] = useState([]);
 
-  // Option for Product Items
-  const [optionsP, setOptionsP] = useState([])
-
-  //AutoComplete
-  const loading = open && options.length === 0;
-  const [open, setOpen] = useState(false);
+  //Dialog Interaction
+  const [openSO, setOpenSO] = useState(false);
+  const [openSH, setOpenSH] = useState(false);
+  const loading = (openSO || openSH) && options.length === 0;
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   //Data Grid
   const [items, setItems] = useState([])
@@ -44,7 +70,7 @@ function Quotation() {
   const handleCloseModal = () => setOpenM(false);
 
   const QuotationSchema = Yup.object().shape({
-    inquiry_id: Yup.number().required('Inquiry References is required'),
+    po_number: Yup.string().required('Inquiry References is required'),
     ship_to: Yup.number().required('Inquiry References is required'),
     sold_to: Yup.number().required('Inquiry References is required'),
     issue_date: Yup.date().required('PO Date is required'),
@@ -54,7 +80,6 @@ function Quotation() {
 
   const formik = useFormik({
     initialValues: {
-      inquiry_id: '',
       po_number: '',
       ship_to: '',
       sold_to: '',
@@ -65,7 +90,7 @@ function Quotation() {
     validationSchema: QuotationSchema,
     onSubmit: (values) => {
       const _data = {
-        ...values, quote_items: items
+        ...values, quote_items: items, quote_type: 'SO'
       }
       API.insertQuote(_data, function(res){
         if(res.success) alert('success');
@@ -75,31 +100,25 @@ function Quotation() {
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
+  const { errors, touched, values, setFieldValue, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
-  useEffect(() => {
+  // Preapre data from product
+  React.useEffect(() => {
     let active = true;
 
+    if (!loading) {
+      return undefined;
+    }
+
+    setOptions([]);
+
     (async () => {
-
-      API.getInquiry((res) => {
+      if (active) {
+        API.getBuyers((res) => {
           if(!res) return
-		    if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
-
-      API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
-          setOptionsP([]);
-        } else {
-          setOptionsP(res.data);
-        }
-      })
-
+          else setOptions(res);
+        })  
+      }
     })();
 
     return () => {
@@ -107,32 +126,21 @@ function Quotation() {
     };
   }, [loading])
 
-  function changeData(data){
-    const quoteItem = data.inquiry_item.map(function(key, index){
-      return {
-        'id': index,
-        'inquiry_item_id' : key.id,
-        'product_id' : key.product.product_id,
-        'product_feature_id' : key.product_feature_id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
-        'qty' : key.qty,
-        'unit_price' : 0
-      }
-    })
-    setValues({
-      inquiry_id: data.id,
-      po_number: data.po_number,
-      sold_to: data.sold_to,
-      ship_to: data.ship_to,
-      issue_date: data.po_date,
-      valid_thru: data.valid_to,
-      delivery_date: data.delivery_date,
-    })
-    setItems(quoteItem);
-  }
+  // Dialog Box
+  const handleClose = (name, value) => {
+    if(name === 'sold_to') {
+      setOpenSO(false)
+      setSelectedValueSO(value);
+    }
+    if(name === 'ship_to') {
+      setOpenSH(false)
+      setSelectedValueSH(value);
+    }
+    setFieldValue(name, value.id);
+    setOptions([]);
+  };
 
+  // Data Grid
   const deleteData = useCallback(
     (id) => () => {
       const rowToDeleteIndex = id;
@@ -185,7 +193,6 @@ function Quotation() {
   }
 
   const columns = useMemo(() => [
-    { field: 'inquiry_item_id', headerName: 'Inquiry Item ID', editable: false, visible: 'hide' },
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
     { field: 'name', headerName: 'Name', editable: false},
@@ -211,7 +218,6 @@ function Quotation() {
       <Modal 
         payload={items}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
         setComponent={setItems}
       />
@@ -222,23 +228,65 @@ function Quotation() {
               title="Quotation Information"
             />
             <CardContent>
-              <AutoComplete
-                fullWidth
-                autoComplete="inquiry_id"
-                type="text"
-                label="No Inquiry"
-                error={Boolean(touched.inquiry_id && errors.inquiry_id)}
-                helperText={touched.inquiry_id && errors.inquiry_id}
-                options={options}
-                setOpen={setOpen}
-                loading={loading}
-                changeData={changeData}
-              />
+            <Paper>
+              <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Pembeli </Typography>
+                    <Button
+                      onClick={() => setOpenSO(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">
+                      {selectedValueSO.name}
+                    </Typography>
+                  </div>
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    selectedValue={selectedValueSO}
+                    open={openSO}
+                    onClose={(value) => handleClose('sold_to', value)}
+                  />
+                </ColumnBox>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penerima </Typography>
+                    <Button
+                      onClick={() => setOpenSH(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">
+                      {selectedValueSH.name}
+                    </Typography>
+                  </div>
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.ship_to && errors.ship_to)}
+                    helperText={touched.ship_to && errors.ship_to}
+                    selectedValue={selectedValueSH}
+                    open={openSH}
+                    onClose={(value) => handleClose('ship_to', value)}
+                  />
+                </ColumnBox>
+
+              </Stack>
+            </Paper>
             </CardContent>
           </Card>
-          <Card sx={{ m: 2}}>
+          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
-              title="Information"
+              title="Item Overview"
             />
             <CardContent>
               <Grid container spacing={3}>
@@ -253,38 +301,9 @@ function Quotation() {
                     helperText={touched.po_number && errors.po_number}
                   />    
                 </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    autoComplete="sold_to"
-                    type="text"
-                    label="Pembeli"
-                    {...getFieldProps('sold_to')}
-                    disabled
-                    error={Boolean(touched.sold_to && errors.sold_to)}
-                    helperText={touched.sold_to && errors.sold_to}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    autoComplete="ship_to"
-                    type="text"
-                    label="Penerima"
-                    {...getFieldProps('ship_to')}
-                    error={Boolean(touched.ship_to && errors.ship_to)}
-                    helperText={touched.ship_to && errors.ship_to}
-                  />
-                </Grid>
               </Grid>       
             </CardContent>
-          </Card>
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
-            <CardContent>
+            <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
               <div style={{display: 'flex'}}>
               <TextField
                 fullWidth
@@ -316,6 +335,8 @@ function Quotation() {
                 helperText={touched.delivery_date && errors.delivery_date}
               />
               </div>
+            </CardContent>
+            <CardContent>
             <DataGrid 
               columns={columns} 
               rows={items}
@@ -338,7 +359,6 @@ function Quotation() {
             </LoadingButton>
             <Button
               size="large"
-              type="submit"
               color="grey"
               variant="contained"
               sx={{ m: 1 }}

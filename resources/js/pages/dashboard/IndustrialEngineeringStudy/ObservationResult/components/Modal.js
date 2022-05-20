@@ -44,11 +44,7 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
       handleClose();
       return
     }
-    setComponent((prevComponent) => {
-      const last = prevComponent.length-1;
-      const id = prevComponent.length === 0 ? 1 : prevComponent[last].id+1;
-      return prevComponent.concat({...value, id: id, test_1: 0, test_2: 0, test_3: 0})
-    })
+    setComponent(value);
     handleClose();
   }
 

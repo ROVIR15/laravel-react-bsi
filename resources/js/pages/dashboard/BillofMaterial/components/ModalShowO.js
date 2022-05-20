@@ -41,7 +41,7 @@ export default function BasicModal({ payload, updateIt, bom_id, open, options, h
       return {id: index, name: key.name, work_center_id: key.id, bom_id, seq: index}
     });
 
-    API.insertOpeation(_value, function(res){
+    API.insertOperation(_value, function(res){
       if(res.success) alert('success');
       else alert('failed')
     })

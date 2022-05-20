@@ -1,6 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -23,8 +35,26 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function SalesOrder() {
   const {id} = useParams();
+
+  //Dialog Interaction
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Quote
   const [options, setOptions] = useState([]);
@@ -98,6 +128,9 @@ function SalesOrder() {
       valid_thru: load.valid_thru,
       delivery_date: load.delivery_date,
     })
+    
+    setSelectedValueSO(load.party)
+    setSelectedValueSH(load.ship)
 
     const load2 = await axios.get('http://localhost:8000/api' + '/order-item' + `/${load.order_id}`)
     .then(function({data: {data}}) {
@@ -118,15 +151,6 @@ function SalesOrder() {
     let active = true;
 
     (async () => {
-
-      API.getInquiry((res) => {
-          if(!res) return
-		    if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
 
       API.getProductFeature((res) => {
         if(!res) return
@@ -264,73 +288,69 @@ function SalesOrder() {
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
-              title="Quotation Information"
+              title="Sales Order Information"
             />
-            <CardContent>
-              <TextField
-                fullWidth
-                autoComplete="id"
-                type="number"
-                label="Sales Order ID"
-                {...getFieldProps('id')}
-                error={Boolean(touched.id && errors.id)}
-                helperText={touched.id && errors.id}
-                disabled={true}
-              />
-              <TextField
-                fullWidth
-                autoComplete="po_number"
-                type="text"
-                label="Referenced Quote"
-                {...getFieldProps('po_number')}
-                error={Boolean(touched.po_number && errors.po_number)}
-                helperText={touched.po_number && errors.po_number}
-                disabled={true}
-              />
+            <CardContent sx={{paddingBottom: '6px'}}>
+              <Stack direction="row" spacing={1}>
+                <TextField
+                  fullWidth
+                  autoComplete="id"
+                  type="number"
+                  label="Sales Order ID"
+                  {...getFieldProps('id')}
+                  error={Boolean(touched.id && errors.id)}
+                  helperText={touched.id && errors.id}
+                  disabled={true}
+                />
+                <TextField
+                  fullWidth
+                  autoComplete="po_number"
+                  type="text"
+                  label="Referenced Quote"
+                  {...getFieldProps('po_number')}
+                  error={Boolean(touched.po_number && errors.po_number)}
+                  helperText={touched.po_number && errors.po_number}
+                  disabled={true}
+                />
+              </Stack>
             </CardContent>
-          </Card>
-          <Card sx={{ m: 2}}>
-            <CardHeader
-              title="Information"
-            />
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item xs={7}>
-                  <TextField
-                    fullWidth
-                    autoComplete="po_number"
-                    type="text"
-                    label="No PO"
-                    {...getFieldProps('po_number')}
-                    error={Boolean(touched.po_number && errors.po_number)}
-                    helperText={touched.po_number && errors.po_number}
-                  />    
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    autoComplete="sold_to"
-                    type="text"
-                    label="Pembeli"
-                    {...getFieldProps('sold_to')}
-                    disabled
-                    error={Boolean(touched.sold_to && errors.sold_to)}
-                    helperText={touched.sold_to && errors.sold_to}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    autoComplete="ship_to"
-                    type="text"
-                    label="Penerima"
-                    {...getFieldProps('ship_to')}
-                    error={Boolean(touched.ship_to && errors.ship_to)}
-                    helperText={touched.ship_to && errors.ship_to}
-                  />
-                </Grid>
-              </Grid>       
+            <CardContent sx={{paddingTop: '6px'}}>
+              <Paper>
+                <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Pembeli </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSO.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Penerima </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+
+                </Stack>
+              </Paper>
             </CardContent>
           </Card>
 

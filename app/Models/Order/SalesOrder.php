@@ -5,6 +5,7 @@
   use Carbon\Carbon;
   
   use Illuminate\Database\Eloquent\Model;
+  use App\Http\Resources\Party\Party;
   
   class SalesOrder extends Model
   {  
@@ -36,4 +37,13 @@
     public function order_item(){
       return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature');
     }
+
+    public function party(){
+        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id');
+    }
+
+    public function ship(){
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    }
+
   }

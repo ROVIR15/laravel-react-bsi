@@ -14,7 +14,7 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleReset
   return (
     <Box
       sx={{
-        height: 400,
+        height: 500,
         width: 1,
         '& .MuiDataGrid-cell--editing': {
           bgcolor: 'rgb(255,215,115, 0.19)',

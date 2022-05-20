@@ -134,10 +134,10 @@ class OperationController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy(X $x)
+    public function destroy($id)
     {
       try {
-        WorkCenter::find($id)->delete();
+        Operation::find($id)->delete();
         return response()->json([ 'success'=> true ], 200);
       } catch (Exception $th) {
         //throw $th;

@@ -17,7 +17,7 @@ export default function Asynchronous({ loading, options, label, open, setOpen, c
     React.useEffect(() => {
       if(!value) return
       let id = value.split(',')[0]
-      API.getAQuote(id, (res) => {
+      API.getARFQ(id, (res) => {
         if(!res) return
         if(!res.data) {
           changeData([]);

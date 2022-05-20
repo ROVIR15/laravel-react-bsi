@@ -28,7 +28,7 @@ class BOM extends Model
     }
 
     public function product_info(){
-        return $this->hasManyThrough('App\Models\Product\ProductFeature', 'App\Models\Manufacture\BOMItem', 'bom_id', 'id', 'id', 'id');
+        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id');
     }
 
     public function operation(){

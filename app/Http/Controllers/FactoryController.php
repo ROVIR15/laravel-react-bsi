@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product\Factory;
+use App\Models\Facility\Facility;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\FactoryCollection;
-use App\Http\Resources\Product\Factory as FactoryOneCollection;
+use App\Http\Resources\Facility\FacilityCollection;
+use App\Http\Resources\Facility\Facility as FacilityOneCollection;
 
 class FactoryController extends Controller
 {
@@ -19,9 +19,9 @@ class FactoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Factory();
+      $query = Facility::all();
 
-      return new FactoryCollection($query);
+      return new FacilityCollection($query);
     }
 
     /**
@@ -44,9 +44,10 @@ class FactoryController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Factory::create([
-          'id' => $faker->unique()->numberBetween(1,3811),
-          'factory_type' => $param['factory_type']
+        Facility::create([
+          'name' => $param['name'],
+          'type' => $param['type'],
+          'qty_on_hand' => $param['qty_on_hand']
         ]);
       } catch (Exception $th) {
         //throw $th;
@@ -69,9 +70,20 @@ class FactoryController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(X $x)
+    public function show($id)
     {
         //
+        try {
+          //code...
+          $query = Facility::find($id);
+          return new FacilityOneCollection($query);
+
+        } catch (Exception $th) {
+          return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+          ]);
+        }
     }
 
     /**
@@ -94,9 +106,9 @@ class FactoryController extends Controller
      */
     public function update($id, Request $request)
     {
-      $param = $request->all()['factory'];
+      $param = $request->all()['payload'];
       try {
-        Factory::find($id)->update($param);
+        Facility::find($id)->update($param);
       } catch (Exception $th) {
         return response()->json(
           [

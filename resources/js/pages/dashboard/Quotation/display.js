@@ -23,9 +23,10 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Nama', alignRight: false },
   { id: 'issue_date', label: 'Issue Date', alignRight: false },
-  { id: 'valid_from', label: 'Valid From', alignRight: false },
-  { id: 'valid_thru', label: 'Valid Thru', alignRight: false }
+  { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -70,23 +71,26 @@ function DisplayQuote({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+  const [flag, setFlag] = useState(0)
 
-    if(isEmpty(quoteData)) {
-      API.getQuote((res) => {
-		    if(!res) return
-		    if(!res.data) {
-          setQuoteData(BUYERLIST);
-        } else {
-          setQuoteData(res.data);
-        }
-      });
-    }
-  }, [quoteData])
+  useEffect(() => {
+
+  if(flag<3) {
+    API.getQuote((res) => {
+		  if(!res) {
+        setQuoteData(BUYERLIST);
+        setFlag(false);
+      }
+      else {
+        setQuoteData(res.data);
+        setFlag(true);
+      }
+      setFlag(prevFlag => prevFlag+1);
+      console.log(flag)
+    });
+  }
+
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -176,9 +180,10 @@ function DisplayQuote({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
+                    party,
                     issue_date,
                     valid_thru,
-                    valid_from
+                    delivery_date,
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -197,9 +202,10 @@ function DisplayQuote({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
-                      <TableCell align="left">{valid_from}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
+                      <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

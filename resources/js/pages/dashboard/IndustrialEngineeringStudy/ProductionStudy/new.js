@@ -251,7 +251,7 @@ function ProductionStudy() {
               <DialogBox
                 options={options}
                 loading={loadingP}
-                error={Boolean(touched.product_id && errors.product_feature_id)}
+                error={Boolean(touched.product_id && errors.product_id)}
                 helperText={touched.product_id && errors.product_id}
                 selectedValue={selectedValueP}
                 open={openDP}

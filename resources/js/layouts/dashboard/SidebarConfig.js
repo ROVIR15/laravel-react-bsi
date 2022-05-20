@@ -48,10 +48,10 @@ const sidebarConfig = [
       //   title: 'Shipment',
       //   path: '/dashboard/order/order-shipment'
       // },
-      // {
-      //   title: 'Outbound Delivery',
-      //   path: '/dashboard/order/outbound-delivery'
-      // },
+      {
+        title: 'Outbound Delivery',
+        path: '/dashboard/inventory/outbound-delivery'
+      },
       // {
       //   title: 'Goods Issue',
       //   path: '/dashboard/order/goods-isssue'
@@ -76,7 +76,7 @@ const sidebarConfig = [
       },
       {
         title: 'Manufacture Order',
-        path: '/dashboard/manufacture-order'
+        path: '/dashboard/production/manufacture-order'
       }
     ]
   },
@@ -136,10 +136,10 @@ const sidebarConfig = [
       //   title: 'Stock',
       //   path: '/dashboard/inventory/stocks'
       // },
-  //     {
-  //       title: 'Inventory Item',
-  //       path: '/dashboard/inventory/inventory-items'
-  //     },
+      {
+        title: 'Inventory Item',
+        path: '/dashboard/inventory/inventory-items'
+      },
       {
         title: 'Goods Receipt',
         path: '/dashboard/inventory/goods-receipt'
@@ -171,7 +171,18 @@ const sidebarConfig = [
         path: '/dashboard/purchasing/purchase-order'
       }
     ]
+  },
+  {
+    title: "Human Resources and Development",
+    icon: getIcon(peopleFill),
+    children: [
+      {
+        title: 'Labor',
+        path: '/dashboard/hrd/labor'
+      },
+    ]
   }
+
 ];
 
 export default sidebarConfig;

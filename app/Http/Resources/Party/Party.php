@@ -16,6 +16,10 @@ class Party extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'npwp' => $this->npwp,
+            'address' => $this->address,
             'party_type' => $this->party_type,
             'agreement_role_id' => $this->agreement_role_id            
         ];

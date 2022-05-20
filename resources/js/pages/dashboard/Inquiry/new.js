@@ -32,7 +32,7 @@ function Inquiry() {
 
   // Props of AutoComplete
   const loading = open && options.length === 0;
-  const [open, setOpen] = useState(false);a
+  const [open, setOpen] = useState(false);
 
   const InquirySchema = Yup.object().shape({
     id: Yup.string().required('Id is required'),

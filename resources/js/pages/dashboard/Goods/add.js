@@ -56,7 +56,6 @@ function Goods() {
   }
 
   const MenuItemList = (listArray) => {
-    console.log(listArray);
     if(!Array.isArray(listArray)) {
       return (
         <MenuItem value={1}>{"wkwkw"}</MenuItem>
@@ -74,7 +73,6 @@ function Goods() {
     if(cat.length > 0 || cat.length != 0) return
     else {
       API.getProductCategory(function(res){
-        console.log(res);
         setCat(res.data);
       })  
     }

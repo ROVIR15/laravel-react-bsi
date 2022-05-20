@@ -10,6 +10,7 @@ use App\Models\RRQ\QuoteItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RRQ\Quote as QuoteOneCollection;
 use App\Http\Resources\RRQ\QuoteCollection;
+use App\Http\Resources\RRQ\QuoteViewCollection;
 
 class RFQController extends Controller
 {
@@ -22,9 +23,9 @@ class RFQController extends Controller
     public function index(Request $request, Quote $quote)
     {
       $param = $request->all();
-      $query = $quote->where('quote_type', 'PurchaseReq')->get();
+      $query = $quote->where('quote_type', 'PO')->get();
 
-      return new QuoteCollection($query);
+      return new QuoteViewCollection($query);
     }
 
     /**
@@ -54,7 +55,7 @@ class RFQController extends Controller
             'request_id' => $param['request_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
-            'party_id' => $param['party_id'],
+            'party_id' => $param['bought_from'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
             'valid_thru' => $param['valid_thru'],

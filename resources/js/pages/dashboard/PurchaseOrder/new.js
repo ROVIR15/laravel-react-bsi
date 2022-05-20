@@ -1,6 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Divider,
+  Grid,
+  TextField, 
+  Typography, 
+  Paper, 
+  Stack, 
+  Button 
+} from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -21,10 +33,28 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+const ColumnBox = styled('div')(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}))
+
+const SpaceBetweenBox = styled('div')(({theme}) => ({
+  display: "flex", 
+  flexDirection: "row", 
+  alignItems: "center", 
+  justifyContent: "space-between", 
+  marginBottom: "8px"
+}))
+
 function SalesOrder() {
 
   // Option for Quote
   const [options, setOptions] = useState([]);
+
+  //Dialog Interaction
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
@@ -45,26 +75,30 @@ function SalesOrder() {
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
 
-  const SalesOrderSchema = Yup.object().shape({
-    rfq_id: Yup.string().required('Quote References is required'),
-    vendor_id: Yup.string().required('city is required'),
+  const PurchaseOrderSchema = Yup.object().shape({
+    quote_id: Yup.string().required('Quote References is required'),
+    po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
-    valid_thru: Yup.date().required('city is required')
+    valid_thru: Yup.date().required('city is required'),
+    delivery_date: Yup.date().required('province is required')
   });
 
   const formik = useFormik({
     initialValues: {
-      rfq_id: '',
-      vendor_id: '',
+      bought_from: '',
+      ship_to: '',
+      quote_id: '',
+      po_number: '',
       issue_date: '',
-      valid_thru: ''
+      valid_thru: '',
+      delivery_date: ''
     },
-    validationSchema: SalesOrderSchema,
+    validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
       const _data = {
         ...values, order_items: items
       }
-      API.insertSalesOrder(_data, function(res){
+      API.insertPurchaseOrder(_data, function(res){
         if(res.success) alert('success');
         else alert('failed')
       })
@@ -77,7 +111,7 @@ function SalesOrder() {
 
     (async () => {
 
-      API.getQuote((res) => {
+      API.getQuoteByPO((res) => {
           if(!res) return
 		    if(!res.data) {
           setOptions([]);
@@ -108,23 +142,28 @@ function SalesOrder() {
     const orderItem = data.quote_items.map(function(key, index){
       return {
         'id': index,
-        'RFQ_item_id' : key.id,
+        'quote_item_id' : key.id,
         'product_id' : key.product.id,
         'product_feature_id' : key.product_feature_id,
         'name' : key.product.name,
         'size' : key.product.size,
         'color' : key.product.color,
         'qty' : key.qty,
-        'delivery_date': key.delivery_date,
+        'shipment_estimated': null,
         'unit_price' : key.unit_price
       }
     })
     setValues({
-      rfq_id: data.rfq_id,
-      vendor_id: data.vendor_id,
+      quote_id: data.id,
+      po_number: data.po_number,
+      sold_to: data.sold_to,
+      ship_to: data.ship_to,
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
-    })
+      delivery_date: data.delivery_date,
+    });
+    setSelectedValueSO(data.party)
+    setSelectedValueSH(data.ship)
     setItems(orderItem);
   }
 
@@ -170,7 +209,7 @@ function SalesOrder() {
   );
 
   const handleUpdateAllRows = () => {
-    API.getAQuote(values.quote_id, function(res){
+    API.getARFQ(values.quote_id, function(res){
       console.log(JSON.stringify(res));
       if(!res) alert("Something went wrong!");
       var temp = res.data.quote_items;
@@ -230,41 +269,60 @@ function SalesOrder() {
             <CardHeader
               title="Purchase Order Information"
             />
-            <CardContent>
+            <CardContent sx={{paddingBottom: '6px'}}>
               <AutoComplete
                 fullWidth
-                autoComplete="rfq_id"
+                autoComplete="quote_id"
                 type="text"
                 label="No Quotation"
-                error={Boolean(touched.rfq_id && errors.rfq_id)}
-                helperText={touched.rfq_id && errors.rfq_id}
+                error={Boolean(touched.quote_id && errors.quote_id)}
+                helperText={touched.quote_id && errors.quote_id}
                 options={options}
                 setOpen={setOpen}
                 loading={loading}
                 changeData={changeData}
-              />
+              />               
             </CardContent>
-          </Card>
-          <Card sx={{ m: 2}}>
-            <CardHeader
-              title="Information"
-            />
             <CardContent>
-              <Grid container spacing={3}>
-                <Grid item xs={7}>
-                  <TextField
-                    fullWidth
-                    autoComplete="vendor_id"
-                    type="text"
-                    label="Vendor"
-                    {...getFieldProps('vendor_id')}
-                    error={Boolean(touched.vendor_id && errors.vendor_id)}
-                    helperText={touched.vendor_id && errors.vendor_id}
-                  />    
-                </Grid>
-              </Grid>       
-            </CardContent>
+              <Paper>
+                <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Pembeli </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSO.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Penerima </Typography>
+                      <Button
+                        disabled
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
+
+                </Stack>
+              </Paper>
+            </CardContent>            
           </Card>
+
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
             <CardHeader
               title="Item Overview"
@@ -290,6 +348,15 @@ function SalesOrder() {
                 {...getFieldProps('valid_thru')}
                 error={Boolean(touched.valid_thru && errors.valid_thru)}
                 helperText={touched.valid_thru && errors.valid_thru}
+              />
+              <TextField
+                fullWidth
+                autoComplete="delivery_date"
+                type="date"
+                label='Tanggal Pengiriman'
+                {...getFieldProps('delivery_date')}
+                error={Boolean(touched.delivery_date && errors.delivery_date)}
+                helperText={touched.delivery_date && errors.delivery_date}
               />
               </div>
             <DataGrid 

@@ -15,10 +15,19 @@ class Shipment extends Model
 
     protected $fillable = [
         'delivery_date',
-        'total_weight'
+        'order_id'
     ];
 
     public function item(){
         return $this->hasMany('App\Models\Shipment\ShipmentItem');
     }
+
+    public function buyer(){
+        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id');
+    }
+
+    public function ship(){
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    }
+
 }

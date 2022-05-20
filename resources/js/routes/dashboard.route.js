@@ -20,7 +20,9 @@ import {
   InvoiceReceipt,
   ProcessLayout,
   PSLayout,
-  ORLayout
+  ORLayout,
+  LaborLayout,
+  MOLayout
 } from '../pages/dashboard';
 
 // Add Pages
@@ -42,6 +44,9 @@ import AddIR from '../pages/dashboard/InvoiceReceipt/new';
 import AddProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/add';
 import AddPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/new';
 import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/new';
+import AddLabor from '../pages/dashboard/Labor/new';
+import AddMO from '../pages/dashboard/ManufactureOrder/new';
+import AddOD from '../pages/dashboard/OutboundDelivery/new';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -59,7 +64,11 @@ import DisplayGR from '../pages/dashboard/GoodsReceipt/display';
 import DisplayIR from '../pages/dashboard/InvoiceReceipt/display';
 import DisplayProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/display';
 import DisplayPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/display';
-import DisplayOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/display';
+import DisplayLabor from '../pages/dashboard/Labor/display';
+
+import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
+import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
+import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -74,13 +83,21 @@ import ShowPurchaseReq from '../pages/dashboard/PurchaseRequisition/show';
 import ShowRFQ from '../pages/dashboard/RFQ/show';
 import ShowPO from '../pages/dashboard/PurchaseOrder/show';
 import ShowGR from '../pages/dashboard/GoodsReceipt/show';
-import ShowIR from '../pages/dashboard/InvoiceReceipt/show';
 import ShowProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/show';
 import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/show';
-import ShowOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/show';
+import ShowLabor from '../pages/dashboard/Labor/show';
+import ShowMO from '../pages/dashboard/ManufactureOrder/show';
+import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
+import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
+import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
+
+//Play MOW
+import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
+import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
+import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
 export default function TestRouter() {
   return useRoutes([
@@ -140,8 +157,8 @@ export default function TestRouter() {
           element: <InventoryLayout />,
           children: [
             { path: ':id', element: <p>show</p>},
-            { path: 'add', element: <p>new</p>},
-            { path: 'display', element: <p>display</p>},
+            { path: 'add', element: <AddInventory/>},
+            { path: 'display', element: <DisplayInventoryItem />},
             { path: 'edit', element: <p>edit</p>}
           ]
         },
@@ -177,6 +194,23 @@ export default function TestRouter() {
           ]
         },
         { 
+          path: 'production/manufacture-order', 
+          element: <MOLayout />,
+          children: [
+            { path: ':id', element: <ShowMO />},
+            { path: 'add', element: <AddMO />},
+            { path: 'display', element: <DisplayMO />},
+            {
+              path: ':id/operation/:manufacture_operation_id', 
+              element: <PlayMOW />,
+            },
+            { 
+              path: ':id/operation/:manufacture_operation_id/finish',  
+              element: <FinishMOW />
+            }
+          ]
+        },
+        { 
           path: 'purchasing/vendor', 
           element: <VendorLayout />,
           children: [
@@ -201,6 +235,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowRFQ />},
             { path: 'add', element: <AddRFQ />},
             { path: 'display', element: <DisplayRFQ />},
+            { path: 'document/:id', element: <DocumentRFQ/>}
           ]
         },
         { 
@@ -219,6 +254,17 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGR />},
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
+            { path: 'document/:id', element: <DocumentGR/>}
+          ]
+        },
+        { 
+          path: 'inventory/outbound-delivery', 
+          element: <OutboundDeliveryLayout />,
+          children: [
+            { path: ':id', element: <ShowOD />},
+            { path: 'add', element: <AddOD />},
+            { path: 'display', element: <DisplayOD />},
+            { path: 'document/:id', element: <DocumentGR/>}
           ]
         },
         { 
@@ -253,9 +299,33 @@ export default function TestRouter() {
           path: 'ie-study/result', 
           element: <ORLayout />,
           children: [
-            { path: ':id/edit', element: <ShowOR />},
-            { path: ':id/add', element: <AddOR />},
-            { path: 'display', element: <DisplayOR />},
+            { path: ':id/add', element: <AddOR />}
+          ]
+        },
+        //Industrial Engineering Human Resources Route
+        { 
+          path: 'hrd/labor', 
+          element: <LaborLayout />,
+          children: [
+            { path: ':id', element: <ShowLabor />},
+            { path: 'add', element: <AddLabor />},
+            { path: 'display', element: <DisplayLabor />},
+          ]
+        },
+        { 
+          path: 'hrd/production-study', 
+          element: <PSLayout />,
+          children: [
+            { path: ':id', element: <ShowPS />},
+            { path: 'add', element: <AddPS />},
+            { path: 'display', element: <DisplayPS />},
+          ]
+        },
+        { 
+          path: 'hrd/result', 
+          element: <ORLayout />,
+          children: [
+            { path: ':id/add', element: <AddOR />}
           ]
         },
         { path: '*', element: <Navigate to="/404" /> }

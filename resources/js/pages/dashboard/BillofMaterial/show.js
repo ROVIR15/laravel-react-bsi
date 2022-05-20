@@ -294,8 +294,22 @@ function BillOfMaterial() {
       });
 
       handleUpdateAllComponentRows();
+  });
 
+  const deleteDataOperation = React.useCallback(
+    (id) => () => {
+
+      setOperation((prevOperation) => {
+        return prevOperation.filter((x) => (x.id !== id))
+      });
+
+      API.deleteOperation(id, (res)=> {
+        alert('success')
+      });
+
+      handleUpdateAllOperationRows();
   })
+
 
   /**
    * Handling Data Grid for a Operation BOM
@@ -344,22 +358,13 @@ function BillOfMaterial() {
         work_center_id
       }
     })
+    
     setOperation(o);
   };
-
 
   const handleResetOperationRows = () => {
     setComponent([]);
   }
-
-  const deleteDataOperation = React.useCallback(
-    (id) => () => {
-      setOperation((prevOperation) => {
-        return prevOperation.filter((x) => (x.id !== id))
-      });
-
-      handleUpdateAllOperationRows();
-  })
 
   return (
     <Page>

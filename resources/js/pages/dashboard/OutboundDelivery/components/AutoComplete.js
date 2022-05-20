@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import API from '../../../../../helpers';
+import API from '../../../../helpers';
 import { isArray } from 'lodash';
 
 function sleep(delay = 0) {
@@ -12,8 +12,21 @@ function sleep(delay = 0) {
   });
 }
 
-export default function Asynchronous({ label, loading, options, name, open, setOpen, choosen, changeData }) {
+export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
     const [value, setValue] = React.useState(null);
+
+    React.useEffect(() => {
+      if(!value) return
+      let id = value.split('-')[0]
+      API.getASalesOrder(id, (res) => {
+        if(!res) return
+        if(!res.data) {
+          changeData([]);
+        } else {
+          changeData(res.data);
+        }
+      })
+    }, [value])
 
     return (
     <Autocomplete
@@ -25,13 +38,13 @@ export default function Asynchronous({ label, loading, options, name, open, setO
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ id, name }) => (`${id} - ${name}`)}
+      getOptionLabel={({ po_number, id}) => (`${id} - ${po_number}`)}
       options={options}
       loading={loading}
       value={choosen} 
       onInputChange={async (event, newInputValue) => {
-        await changeData(name, parseInt(newInputValue.split('-')[0]));
-      }
+          await setValue(newInputValue);
+        }
       }
       renderInput={(params) => (
         <TextField

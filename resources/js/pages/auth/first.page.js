@@ -3,11 +3,11 @@ import Page from '../../components/Page';
 
 import { styled } from '@mui/material/styles';
 
-import {Box, Divider, Grid, Paper, Typography} from '@mui/material';
+import {Box, Divider, Grid, Paper, Stack, Typography} from '@mui/material';
 import { MHidden } from '../../components/@material-extend';
 
 // Components
-import Table from './components/Table'
+import Table from './components/TableINV'
 
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -62,8 +62,9 @@ function FirstPage(){
   return (
       <MHidden width="mdDown">
         <RootStyle>
-          <PaperStyled sx={{}}>
-            {/* Product Info */}
+          <PaperStyled sx={{ width: "210mm", height: "279mm"}}>
+            {/* Header Info */}
+            <Stack direction="column" spacing={2}>
             <Grid container sx={{
               boxSizing: "border-box",
               display: "flex",
@@ -71,147 +72,116 @@ function FirstPage(){
               width: "100%",
             }}>
               <Grid item md={6} sx={{width: '50%', marginBottom: '1em'}}>
-                <Box>
-                  <Typography variant="h3">BSI Indonesia</Typography>                
-                </Box>
+                <Box
+                  component="img"
+                  src="https://1.bp.blogspot.com/-Jl8W1ycfiDY/Xa_nji0dXaI/AAAAAAAALrw/j4oS4c5mQmkO89tCzn6o9PcrU_0W9V3JgCLcBGAsYHQ/s1600/FB_IMG_1571808912832.jpg"
+                  sx={{width: '15%', height: '80px', marginLeft: '0.75 em'}}
+                />
               </Grid>
               <Grid item={6} sx={{width: '50%', marginBottom: '1em'}}>
                 <Box sx={{textAlign: 'right'}}>
-                  <IDontKnow>Bill of Material</IDontKnow>
-                  <Typography variant="h3">BOM-SO-1-A</Typography>
+                  <IDontKnow>INVOICE</IDontKnow>
+                  <Typography variant="h3">INV-1-A</Typography>
                 </Box>
               </Grid>
-              <Grid item
-                xs={12}
-                md={6}
-                lg={7}
-              >
-                <Box
-                  sx={{
-                    width: "65%", 
-                    lineHeight: "0", 
-                    display: "block", 
-                    overflow: "hidden", 
-                    position: "relative", 
-                    paddingTop: "100%", 
-                    cursor: "zoom-in",
-                    padding: '8px',
-                    margin: 'auto'
-                  }}
-                >
-                  <Box 
-                    component="img"
-                    src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"
-                    sx={{
-                      height: "75%", 
-                      objectFit: "cover",
-                      borderRadius: '16px',
-                    }}
-                  />
+            </Grid>
+            <Grid container direction="row" spacing={1}>
+              <Grid item xs={6}>
+                <Box>
+                  <div>
+                    <Typography
+                      variant="overline" 
+                      display="block" 
+                      gutterBottom
+                    >
+                      Invoice From
+                    </Typography>
+                    <Typography
+                      variant="h6" 
+                      gutterBottom 
+                      component="div"
+                    >
+                      {"wkwkwkwk"}
+                    </Typography>
+                  </div>
                 </Box>
               </Grid>
-              <Grid item
-                xs={12}
-                md={6}
-                lg={5}
-              >
-              <Box sx={{marginTop: '30px'}}>
-                <div>
-                  <Typography
-                    variant="overline" 
-                    display="block" 
-                    gutterBottom
-                  >
-                    Product Name
-                  </Typography>
-                  <Typography
-                    variant="h5" 
-                    gutterBottom 
-                    component="div"
-                  >
-                    Barang 1
-                  </Typography>
-                </div>
-
-                <div>
-                  <Typography
-                    variant="overline" 
-                    display="block" 
-                    gutterBottom
-                  >
-                    Variant
-                  </Typography>
-                  <Typography
-                    variant="h5" 
-                    gutterBottom 
-                    component="div"
-                  >
-                    Red - XL
-                  </Typography>
-                </div>
-
-                <div>
-                  <Typography
-                    variant="overline" 
-                    display="block" 
-                    gutterBottom
-                  >
-                    Expected Start Date
-                  </Typography>
-                  <Typography
-                    variant="h5" 
-                    gutterBottom 
-                    component="div"
-                  >
-                    28 March 2021
-                  </Typography>
-                </div>
-                <div>
-                  <Typography
-                    variant="overline" 
-                    display="block" 
-                    gutterBottom
-                  >
-                    Expected End Date
-                  </Typography>
-                  <Typography
-                    variant="h5" 
-                    gutterBottom 
-                    component="div"
-                  >
-                    28 March 2021
-                  </Typography>
-                </div>
-                <div>
-                  <Typography
-                    variant="overline" 
-                    display="block" 
-                    gutterBottom
-                  >
-                    Work Duration
-                  </Typography>
-                  <Typography
-                    variant="h5" 
-                    gutterBottom 
-                    component="div"
-                  >
-                    28 Days
-                  </Typography>
-                </div>
-              </Box>
+              <Grid item xs={6}>
+                <Box>
+                  <div>
+                    <Typography
+                      variant="overline" 
+                      display="block" 
+                      gutterBottom
+                    >
+                      Invoice To
+                    </Typography>
+                    <Typography
+                      variant="h6" 
+                      gutterBottom 
+                      component="div"
+                    >
+                      {"wkwkwkwkwk"}
+                    </Typography>
+                  </div>
+                </Box>
               </Grid>
-            </Grid>
-            <GridItemX >
-              <Table/>
-            </GridItemX>
-            <Divider fullWidth />
-            <Grid container>
-              <Box sx={{marginBottom: 15}}>
-                <Typography variant="h6">
-                  This Document Generated Automatically
-                </Typography>
-              </Box>
-            </Grid>
+
+              <Grid item xs={6}>
+                <Box>
+                  <div>
+                    <Typography
+                      variant="overline" 
+                      display="block" 
+                      gutterBottom
+                    >
+                      Issued Date
+                    </Typography>
+                    <Typography
+                      variant="h6" 
+                      gutterBottom 
+                      component="div"
+                    >
+                      {"wkwkwkwkwk"}
+                    </Typography>
+                  </div>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box>
+                  <div>
+                    <Typography
+                      variant="overline" 
+                      display="block" 
+                      gutterBottom
+                    >
+                      Due Date
+                    </Typography>
+                    <Typography
+                      variant="h6" 
+                      gutterBottom 
+                      component="div"
+                    >
+                      {"wkwkwkwkwk"}
+                    </Typography>
+                  </div>
+                </Box>
+              </Grid>
+
+              </Grid>
+              <GridItemX >
+                <Table/>
+              </GridItemX>
+
+              <Divider fullWidth />
+              <Grid container>
+                <Box sx={{marginBottom: 15}}>
+                  <Typography variant="h6">
+                    This Document Generated Automatically
+                  </Typography>
+                </Box>
+              </Grid>
+            </Stack>
           </PaperStyled>
         </RootStyle>
       </MHidden>

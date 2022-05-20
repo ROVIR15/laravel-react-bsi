@@ -2,6 +2,8 @@ import React from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 // Pages
 import FirstPage from '../pages/auth/first.page.js';
+import RFQTest from '../pages/auth/rfq-test.js';
+import GRTest from '../pages/auth/gr-test.js';
 import Test from '../pages/auth/dialog-test';
 import SecondPage from '../pages/auth/second.page.js';
 
@@ -13,7 +15,10 @@ export default function TestRouter() {
     {
       path: '/app',
       children: [
-        { path: 'first-page', element: <Test /> },
+        { path: 'document-test', element: <FirstPage /> },
+        { path: 'gr-test', element: <GRTest /> },
+        { path: 'rfq-test', element: <RFQTest /> },
+        { path: 'dialog-test', element: <Test /> },
         { path: 'second-page', element: <SecondPage /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product\Inventory;
+use App\Models\Inventory\Inventory;
+use App\Models\Inventory\InventoryItem;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\Inventory as InventoryCollection;
+use App\Http\Resources\Inventory\Inventory as InventoryOneCollection;
+use App\Http\Resources\Inventory\InventoryCollection;
 
 class InventoryController extends Controller
 {
@@ -18,9 +20,10 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Inventory();
+      $query = InventoryItem::with('product_feature', 'facility')->groupBy('product_feature_id')->get();
 
       return new InventoryCollection($query);
+      // return response()->json(['data' => $query]);
     }
 
     /**
@@ -41,7 +44,26 @@ class InventoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        $param = $request->all()['payload'];
+        try {
+          Inventory::create([
+            'facility_id' => $param['facility_id'],
+            'product_feature_id' => $param['product_feature_id'],
+            'qty_on_hand' => $param['qty_on_hand']
+          ]);
+        } catch (Exception $th) {
+          //throw $th;
+          return response()->json(
+            [
+              'success' => false,
+              'errors' => $e->getMessage()
+            ],
+            500
+          );
+        }
+        return response()->json([
+          'success' => true
+        ], 200);
     }
 
     /**
@@ -52,7 +74,7 @@ class InventoryController extends Controller
      */
     public function show(X $x)
     {
-        //
+        
     }
 
     /**

@@ -14,6 +14,6 @@ class OperationCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return $this->collection;
+        return parent::toArray($request);
     }
 }

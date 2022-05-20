@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Shipment;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Party\Party;
+use App\Http\Resources\Shipment\ShipmentItemCollection;
 
 class Shipment extends JsonResource
 {
@@ -17,8 +19,10 @@ class Shipment extends JsonResource
         return [
             'id' => $this->id,
             'delivery_date' => $this->delivery_date,
-            'total_weight' => $this->total_weight,
-            'items' => $this->item
+            'sales' => $this->sales_info,
+            'buyer' => new Party($this->buyer),
+            'ship' => new Party($this->ship),
+            'items' => new ShipmentItemCollection($this->item)
         ];
     }
 }

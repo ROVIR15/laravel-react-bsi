@@ -9,6 +9,7 @@
   use Illuminate\Http\Request;
   use App\Models\Product\Goods;
   use App\Models\Product\Product;
+  use App\Models\Inventory\Inventory;
   use App\Models\Product\ProductFeature;
   use App\Models\Product\ProductHasCategory;
 
@@ -26,22 +27,6 @@
      */
     public function index()
     {
-      // $query = DB::table("product as p")
-      // ->rightJoin("product_feature as pf", function($join){
-      //   $join->on("pf.product_id", "=", "p.id");
-      // })
-      // ->leftJoin("goods as g", function($join){
-      //   $join->on("g.id", "=", "p.id");
-      // })
-      // ->leftJoin("product_has_category as phc", function($join){
-      //   $join->on("phc.product_id", "=", "p.id");
-      // })
-      // ->leftJoin("product_category as pc", function($join){
-      //   $join->on("phc.product_category_id", "=", "pc.id");
-      // })
-      // ->select("pf.id", "pf.product_id as product_id", "pf.brand","g.name", "pf.size", "pf.color")
-      // ->get();
-
       $query = DB::table("product as p")
       ->rightJoin("goods as g", function($join){
         $join->on("g.id", "=", "p.goods_id");
@@ -104,22 +89,58 @@
         ]);
 
         $items = [];
+        $inventory_items = [];
 
         foreach ($feature_size as $key) {
           # code...
           foreach ($feature_color as $key2) {
             # code...
+            $id = $faker->unique()->numberBetween(1,8939);
             $temp = [
-              'id' => $faker->unique()->numberBetween(1,8939),
+              'id' => $id,
               'product_id' => $product['id'],
               'color' => $key2,
               'size' => $key
             ];
+
             array_push($items, $temp);
+
+            $facility_cat;
+            switch ($catParam) {
+              case 1:
+                # code...
+                $facility_cat = 1;
+                break;
+
+              case 2:
+                # code...
+                $facility_cat = 2;
+                break;
+
+              case 3:
+                # code...
+                $facility_cat = 3;
+                break;
+                
+              default:
+                # code...
+                $facility_cat = 6;
+                break;
+            }
+
+            $inventory = [
+              'facility_id' => $facility_cat,
+              'product_feature_id' => $id,
+              'qty_on_hand' => 0
+            ];
+
+            array_push($inventory_items, $inventory);
           }
         }
 
         ProductFeature::insert($items);
+        Inventory::insert($inventory_items);
+        
       } catch (Exception $th) {
         return response()->json([
           'success'=> false,
@@ -142,21 +163,9 @@
       try {
         $tes = $product->where('goods_id', $id)->get();
         $goods = $goods->find($tes[0]['goods_id']);
-        // $data = DB::table("goods as g")
-        // ->join("product as p", function($join){
-        //   $join->on("g.id", "=", "p.goods_id");
-        // })
-        // ->join("product_has_category as phpc", function($join){
-        //   $join->on("p.id", "=", "phpc.product_id");
-        // })
-        // ->join("product_category as pc", function($join){
-        //   $join->on("phpc.product_category_id", "=", "pc.id");
-        // })
-        // ->select("p.id", "g.name as goods_name", "g.satuan as goods_unit", "g.value", "pc.name as product_category")
-        // ->where("p.id", "=", $id)->get();
-        // return response()->json($prod);
-        return new GoodsOneCollection($goods);
 
+        return new GoodsOneCollection($goods);
+        // return response()->json($feature);
       } catch (Exception $th) {
         //throw $th;
         return response()->json([

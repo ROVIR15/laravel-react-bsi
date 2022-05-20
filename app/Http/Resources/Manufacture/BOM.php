@@ -3,6 +3,10 @@
 namespace App\Http\Resources\Manufacture;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Product\ProductFeature;
+use App\Http\Resources\Manufacture\WorkCenterCollection;
+use App\Http\Resources\Manufacture\OperationCollections;
+use App\Http\Resources\Manufacture\BOMItemCollection;
 
 class BOM extends JsonResource
 {
@@ -23,9 +27,9 @@ class BOM extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'company_name' => $this->company_name,
-            'bom_items' => $this->bom_items,
-            'product_info' => $this->product_info,
-            'operations' => $this->operation
+            'bom_items' => new BOMItemCollection($this->bom_items),
+            'product_info' => new ProductFeature($this->product_info),
+            'operations' => new OperationCollection($this->operation)
         ];
     }
 }

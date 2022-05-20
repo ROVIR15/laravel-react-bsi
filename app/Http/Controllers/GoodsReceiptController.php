@@ -6,9 +6,14 @@
 
   use App\Models\Inventory\GoodsReceiptItems;
   use App\Models\Inventory\GoodsReceipt;
+  use App\Models\Inventory\Inventory;
+  use App\Models\Inventory\GRView;
+  use App\Models\Inventory\GRItemView;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Inventory\GoodsReceiptCollection;
   use App\Http\Resources\Inventory\GoodsReceipt as oneGoodsReceipt;
+  use App\Http\Resources\Inventory\GRView as oneGoodsReceiptView;
+  use App\Http\Resources\Inventory\GRViewCollection;
   use Illuminate\Http\Request;
   
   class GoodsReceiptController extends Controller
@@ -22,7 +27,7 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = GoodsReceipt::all();
+        $query = GRView::all();
 
         return new GoodsReceiptCollection($query);
     }
@@ -50,7 +55,8 @@
       try {
         //Goods Receipt Creation
         $goodsReceipt = GoodsReceipt::create([
-            'purchase_order_id' => $param['purchase_order_id']
+            'purchase_order_id' => $param['purchase_order_id'],
+            'facility_id' => $param['facility_id']
         ]);
 
         //Create purchase order item
@@ -59,13 +65,26 @@
         foreach($param['GR_items'] as $key){
           array_push($GRItems, [
             'goods_receipt_id' => $goodsReceipt->id,
-            'order_item_id' => $key['order_item_id'],
+            'order_item_id' => $key['po_item_id'],
             'qty_received' => $key['qty_received'],
             'qty_on_receipt' => $key['qty_on_receipt']
           ]);
         }
 
         GoodsReceiptItems::insert($GRItems);
+
+        // Move In
+        $movement_in = [];
+
+        foreach($param['GR_items'] as $key){
+          array_push($movement_in, [
+            'product_feature_id' => $key['product_feature_id'],
+            'facility_id' => $param['facility_id'],
+            'qty_on_hand' => $key['qty_received']
+          ]);
+        }
+
+        Inventory::insert($movement_in);
 
       } catch (Exception $e) {
         //throw $th;
@@ -92,8 +111,8 @@
     public function show($id)
     {
       try {
-        $GoodsReceiptData = GoodsReceipt::find($id);
-        return new oneGoodsReceipt($GoodsReceiptData);
+        $GoodsReceiptData = GRView::with('party', 'items', 'facility')->find($id);
+        return new oneGoodsReceiptView($GoodsReceiptData);
     } catch (Exception $th) {
         return response()->json([
           'success' => false,
