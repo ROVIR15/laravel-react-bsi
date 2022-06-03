@@ -83,6 +83,7 @@ class ManufactureController extends Controller
           $temp = [
             'manufacture_id' => $stored2->id,
             'product_feature_id' => $item['product_feature_id'],
+            'qty_keep' => 0,
             'qty_to_be_consumed' => $item['qty_to_be_consumed']
           ];
 
@@ -117,12 +118,14 @@ class ManufactureController extends Controller
     public function show($id)
     {
       try {
-        $query = ManufactureHasBOM::with(
+        $query = Manufacture::with(
             'bom',
-            'manufacture'
-        )->where('manufacture_id', $id)->get();
+            'operation',
+            'component',
+            'logs'
+        )->where('id', $id)->get();
         // return response()->json($query);
-        return new ManufactureShowOneCollection($query[0]);
+        return new ManufactureOneCollection($query[0]);
     } catch (Exception $th) {
         return response()->json([
           'success' => false,

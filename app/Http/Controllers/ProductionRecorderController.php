@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory\Inventory;
+use App\Models\Manufacture\Action;
 
 class ProductionRecorderController extends Controller
 {
@@ -41,7 +42,12 @@ class ProductionRecorderController extends Controller
           Inventory::create([
             'facility_id' => $param['facility_id'],
             'product_feature_id' => $param['product_feature_id'],
-            'qty_on_hand' => $param['qty_rejected']
+            'qty_on_hand' => $param['qty_rejected']*-1
+          ]);
+
+          Action::create([
+            'manufacture_operation_id' => $param['manufacture_operation_id'],
+            'action_type_id' => 4
           ]);
 
         } catch (Exception $th) {

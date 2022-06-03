@@ -18,7 +18,8 @@ class ManufactureShow extends JsonResource
     {
         return [
             'bom' => new BOM($this->bom),
-            'manufacture' => new Manufacture($this->manufacture)
+            'manufacture' => new Manufacture($this->manufacture),
+            'logs' => $this->logs
         ];
     }
 }

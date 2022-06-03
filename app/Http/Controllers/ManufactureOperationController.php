@@ -91,7 +91,7 @@ class ManufactureOperationController extends Controller
     {
         try {
             //code...
-            $query = ManufactureOperation::with('result', 'operation')->find($id);
+            $query = ManufactureOperation::with('result', 'operation', 'status')->find($id);
             return new OperationResultOneCollection($query);
         } catch (Exception $th) {
             //throw $th;

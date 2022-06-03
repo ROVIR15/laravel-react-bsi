@@ -19,6 +19,7 @@ class ManufactureComponent extends JsonResource
             'id' => $this->id,
             'manufacture_id' => $this->manufacture_id,
             'product_feature' => new ProductFeature($this->inventory_item),
+            'qty_keep' => $this->qty_keep,
             'qty_to_be_consumed' => $this->qty_to_be_consumed
         ];
     }
