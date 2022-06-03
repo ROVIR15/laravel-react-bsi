@@ -15,6 +15,7 @@ class Invoice extends Model
 
     protected $fillable = [
         'invoice_date',
+        'sold_to',
         'description'
     ];
 }
