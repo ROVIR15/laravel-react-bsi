@@ -354,6 +354,7 @@ export default function VerticalLinearStepper() {
       qty_produced: 0
     },
     onSubmit: (values)=> {
+      // alert(JSON.stringify(values));
       API.insertProductionRecord(values, (res) => {
         if(!res) return undefined;
         if(!res.success) alert('failed')

@@ -1,15 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import Page from '../../../components/Page';
 import { 
-  Box,
   Card, 
   CardHeader, 
   CardContent, 
   Container, 
-  Divider,
   Grid,
-  Tab,
-  TextField, 
   Typography, 
   Button, 
   CardActions
@@ -20,7 +16,7 @@ import { styled } from '@mui/material/styles';
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
-import { LoadingButton } from '@mui/lab';
+import { useCountdown } from '../../../helpers/hooks/useCountDown'
 
 //api
 import API from '../../../helpers';
@@ -28,6 +24,7 @@ import API from '../../../helpers';
 //component
 import DataGrid from './components/DGWork';
 import DialogBox from './components/DBRecord';
+import ShowCounter from './components/ShowCounter';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 
 const ColumnBox = styled('div')(({theme}) => ({
@@ -39,12 +36,17 @@ const ColumnBox = styled('div')(({theme}) => ({
 function Labor() {
   const { id, manufacture_operation_id } =  useParams()
   const { pathname } = useLocation();
+  
   const navigate = useNavigate();
 
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: '',
     qty_produced: 0,
-    result: []
+    result: [],
+    status: {
+      action: 'none',
+      time: null
+    }
   });
 
   const LaborSchema = Yup.object().shape({
@@ -89,7 +91,7 @@ function Labor() {
     
     if(!payload) return;
 
-    const { operation, result } = payload;
+    const { operation, status, result } = payload;
     let resultNew = result.map((item) => {
       return {
         id: item.id,
@@ -101,7 +103,7 @@ function Labor() {
       }
     })
 
-    setSelectedValueSH({...selectedValueSH, name: operation.work_center.name, result: resultNew })
+    setSelectedValueSH({...selectedValueSH, name: operation.work_center.name, result: resultNew, status })
   }
 
   /**
@@ -153,13 +155,114 @@ function Labor() {
     return
   }
 
+  // handle Action
+  const handlePlay = () => {
+    const _data = {
+      'action_type_id': 1,
+      manufacture_operation_id
+    } 
+    API.insertAction(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.success) alert('Failed');
+      else alert('Success');
+    });
+
+    handleUpdate();
+  }
+
+  const handlePause = () => {
+    const _data = {
+      'action_type_id': 2,
+      manufacture_operation_id
+    } 
+    API.insertAction(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.success) alert('Failed');
+      else alert('Success');
+    });
+
+    handleUpdate();
+  }
+
+  const handleResume = () => {
+    const _data = {
+      'action_type_id': 3,
+      manufacture_operation_id
+    } 
+    API.insertAction(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.success) alert('Failed');
+      else alert('Success');
+    });
+
+    handleUpdate();
+  }
+
+  const isStartActive = () => {
+    if (selectedValueSH.status.action === 'none') return false;
+    else return true;
+  }
+
+  const isPauseActive = () => {
+    if(selectedValueSH.status.action === 'resume') return false;
+    else if (selectedValueSH.status.action === 'start') return false;
+    else if (selectedValueSH.status.action === 'none') return true;
+    else return true;
+  }
+
+  const isResumeActive = () => {
+    if(selectedValueSH.status.action === 'start') return true;
+    else if (selectedValueSH.status.action === 'resume') return true;
+    else if (selectedValueSH.status.action === 'finish') return true;
+    else if (selectedValueSH.status.action === 'none') return true;
+    else return false;
+  }
+
+  const isRecordInactive = () => {
+    if(selectedValueSH.status.action === 'pause') return true;
+    else if(selectedValueSH.status.action === 'finish') return true;
+    else return false;
+  }
+
+  const cannotNextStep = () => {
+    if(selectedValueSH.status.action === 'pause') return true;
+    else if(selectedValueSH.status.action === 'finish') return true;
+    else return false;
+  }
+  
+  // TimeCounter
+
+  const handleUpdate = () => {
+    API.getAManufactureOperation(manufacture_operation_id, (res) => {
+      if(!res) return;
+      changeData(res.data);
+    })
+  }
+
+  const [ days, hours, minutes, seconds ] = useCountdown(manufacture_operation_id, selectedValueSH.status);
+
   return (
     <Page>
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+          <Card >
+            <CardHeader
+              title="Timer"
+            />
+            <CardContent>
+                <ShowCounter
+                  days={days}
+                  hours={hours}
+                  minutes={minutes}
+                  seconds={seconds}
+                />
+            </CardContent>
+          </Card>            
+          </Grid>
+          <Grid item xs={8}>
           <Card >
             <CardHeader
               title="Manufacture Order Information"
@@ -189,19 +292,42 @@ function Labor() {
               </Grid>
             </CardContent>
             <CardActions sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
+              <Button
+                onClick={handlePlay}
                 size="small"
                 variant="contained"
-                onClick={handleOpenDBRecord}
+                color="primary"
+                sx={{ m: 1 }}
+                disabled={isStartActive()}
+              >
+                Play
+              </Button>
+              <Button
+                onClick={handleResume}
+                size="small"
+                variant="contained"
+                color="primary"
+                disabled={isResumeActive()}
                 sx={{ m: 1 }}
               >
-                Record
-              </LoadingButton>
+                Resume
+              </Button>
+              <Button
+                onClick={handlePause}
+                size="small"
+                variant="contained"
+                color="warning"
+                disabled={isPauseActive()}
+                sx={{ m: 1 }}
+              >
+                Pause
+              </Button>
               <Button
                 onClick={handleSubmitAlt}
                 size="small"
                 color="grey"
                 variant="contained"
+                disabled={cannotNextStep()}
                 sx={{ m: 1 }}
               >
                 Done
@@ -216,6 +342,15 @@ function Labor() {
         <Grid item xs={12}>
           <Card>
             <CardContent>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={handleOpenDBRecord}
+                disabled={isRecordInactive()}
+                sx={{ m: 1 }}
+              >
+                Record
+              </Button>
               <DataGrid rows={selectedValueSH.result} columns={resultColumns} />
             </CardContent>
           </Card>

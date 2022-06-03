@@ -112,18 +112,10 @@ function Labor() {
   const componentColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
     { field: 'name', headerName: 'Name', editable: false },
-    { field: 'size', headerName: 'Size', editable: true},
-    { field: 'color', headerName: 'Color', editable: true },
+    { field: 'size', headerName: 'Size', editable: false},
+    { field: 'color', headerName: 'Color', editable: false },
     { field: 'brand', headerName: 'Brand', editable: false },
-    { field: 'qty_to_be_consumed', headerName: 'Quantity', editable: true },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-        />,
-      ]
-    }
+    { field: 'qty_to_be_consumed', headerName: 'Quantity', editable: false },
   ], []);
   
   const operationColumns = useMemo(() => [

@@ -6,12 +6,11 @@ import {
   CardHeader, 
   CardContent, 
   Container, 
-  Divider,
   Grid,
   Tab,
-  TextField, 
   Typography, 
-  Button 
+  Stack,
+  Button
 } from '@mui/material';
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { GridActionsCellItem } from '@mui/x-data-grid';
@@ -38,12 +37,56 @@ import DialogBox from './components/DBBOMOpt';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import ArrowRightFill from '@iconify/icons-eva/arrow-right-fill';
+import ConsumeIcon from '@iconify/icons-ic/baseline-takeout-dining'
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
   flexDirection: "column",
   width: "100%"
-}))
+}));
+
+function statusOfComponent(qty_keep, qty_to_be_consumed){
+  if(qty_keep > qty_to_be_consumed) return "Invalid"
+  if(qty_keep === qty_to_be_consumed) return "Ready"
+  else return "Insufficient"
+}
+
+function calculate_stock_left(qty_available, current_keep, qty_to_be_consumed){
+
+  const _currentless = (current_keep - qty_to_be_consumed)*-1
+  const _available = qty_available - _currentless
+
+  console.log(_currentless,
+    _available,
+    qty_to_be_consumed)
+
+  let _keep, _less;
+
+  if (qty_available <= 0) return { qty_keep: 0, qty_less: _currentless*-1, qty_consumed: 0, status: statusOfComponent(current_keep, qty_to_be_consumed)}
+
+  if (_currentless === qty_to_be_consumed ) {
+    _keep = parseInt(current_keep) + parseInt(qty_available);
+    _less = _keep - qty_to_be_consumed
+    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${_less}`)
+    return { qty_keep: _keep, qty_less: _less, qty_consumed: parseInt(qty_available), status: statusOfComponent(_keep, qty_to_be_consumed)}
+  }
+
+  if (_available > 0 && qty_available > _currentless) {
+    _keep = parseInt(current_keep) + parseInt(_currentless);
+    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${0}`)
+    return { qty_keep: _keep, qty_less: 0, qty_consumed: parseInt(_currentless), status: statusOfComponent(_keep, qty_to_be_consumed)}
+  }
+
+  if (_availabe > 0 && qty_available < _currentless) {
+    _keep = parseInt(current_keep) + parseInt(_available);
+    _less = parseInt(current_keep) - parseInt(qty_to_be_consumed);
+    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${_less}`)
+    return { qty_keep: _keep, qty_consumed: parseInt(_currentless), qty_less: _less, status: statusOfComponent(_keep, qty_to_be_consumed)}
+  }
+
+  
+}
+
 
 function Labor() {
 
@@ -62,7 +105,7 @@ function Labor() {
     qty: 0,
     company_name: '',
     operations: [],
-    bom_items: [],
+    components: [],
     start_date: '',
     end_date: '',
     product_info: {
@@ -103,16 +146,34 @@ function Labor() {
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
-    { field: 'qty_to_be_consumed', headerName: 'Quantity', editable: true },
+    { field: 'qty_to_be_consumed', headerName: 'Qty Consume', editable: true },
+    { field: 'qty_keep', headerName: 'Qty Keep', editable: false },
+    { field: 'qty_less', headerName: 'Qty Less', editable: false },
+    { field: 'status', headerName: 'Status', editable: false },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
+          icon={<Icon icon={ConsumeIcon} width={24} height={24} />}
+          onClick={() => handleCheckStock(params)}
+          disabled={params.row.qty_less === 0}
+          label="Consume"
         />,
       ]
     }
-  ], []);
+  ], [handleCheckStock]);
+
+  // Consume
+
+  function handleCheckStock(params){
+    API.getAStock(params.id, function(res){
+      if(!res) return undefined;
+      if(!res.data) return undefined;
+      else {
+        const { qty_on_hand } = res.data;
+        checkQuantity(params.id, qty_on_hand);
+      }
+    });
+  }
   
   const operationColumns = useMemo(() => [
     { field: 'id', headerName: 'ID', editable: false, hideable: true, width: 30},
@@ -134,20 +195,6 @@ function Labor() {
     }
   ], [handlePlay]);
   
-  const deleteDataComponent = React.useCallback(
-    (id) => () => {
-      setComponent((prevComponent) => {
-        return prevComponent.filter((x) => (x.id !== id))
-      });
-  });
-
-  const deleteDataOperation = React.useCallback(
-    (id) => () => {
-      setOperation((prevOperation) => {
-        return prevOperation.filter((x) => (x.id !== id))
-      });
-  });
-
   const handlePlay = React.useCallback(
     (id) => () => {
       let path = pathname + `/operation/${id}`
@@ -155,7 +202,7 @@ function Labor() {
     }
   )
   
-  const changeData = ({bom, manufacture: { operations, components }}) => {
+  const changeData = ({bom, operations, components }) => {
 
     const operation = operations.map(function({id, operation }){
       return {
@@ -168,10 +215,15 @@ function Labor() {
       }
     })
 
-    const component = components.map(function({ product_feature, qty_to_be_consumed }){
+    const component = components.map(function({ id, product_feature, qty_keep, qty_to_be_consumed }){
+      const lessqty = qty_keep - qty_to_be_consumed
       return {
         ...product_feature,
-        qty_to_be_consumed
+        manufacture_component_id: id,
+        qty_to_be_consumed,
+        qty_keep,
+        qty_less: lessqty,
+        status: statusOfComponent(qty_keep, qty_to_be_consumed)
       }
     });
 
@@ -187,8 +239,71 @@ function Labor() {
       product_info = bom.product_info;
     }
 
-    setSelectedValueSH({...bom, operations: operation, bom_items: component, product_info }); 
+    setSelectedValueSH({...bom, operations: operation, components: component, product_info }); 
     setFieldValue('bom_id', bom.id);
+  }
+
+  const checkQuantity = (id, qty_stock) => {
+    const { components } = selectedValueSH;
+
+    const temp_components = components.map(function(component){
+      if(component.id === id ) {
+        const _temp = calculate_stock_left(qty_stock, component.qty_keep, component.qty_to_be_consumed);
+        return {...component, ..._temp}
+      }
+      else return component;
+    });
+    
+    setSelectedValueSH({...selectedValueSH, components: temp_components});
+  }
+
+  const checkQuantityOfInventoryItem = (array) => {
+    const { components } = selectedValueSH;
+
+    var _temp = [];
+
+    components.map(function(component){
+      array.map(function(item){
+        const result = calculate_stock_left(item.qty_on_hand, component.qty_keep, component.qty_to_be_consumed);
+        if(component.id === item.product_feature_id) _temp.push({...component, ...result});
+      });
+    });
+
+    setSelectedValueSH({...selectedValueSH, components: _temp})
+  }
+
+  const checkStock = () => {
+    const { components } = selectedValueSH;
+
+    const _data = components.map(function(component){
+      const { id } = component;
+      return { product_feature_id: id }
+    });
+
+    API.getStock(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.data) return undefined;
+      else {
+        checkQuantityOfInventoryItem(res.data);
+      }
+    })
+  }
+
+  const lockInventoryStock = () => {
+    const { components } = selectedValueSH;
+
+    const _data = components.map(function(component){
+      const { manufacture_component_id, qty_keep, qty_consumed, facility_id, id } = component;
+      return { id: manufacture_component_id, qty_keep, qty_consumed, facility_id, product_feature_id: id};
+    });
+
+    API.insertManufactureComponent(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.data) return undefined;
+      else {
+        console.log(res.data);
+      }
+    })
   }
 
   const formik = useFormik({
@@ -242,6 +357,26 @@ function Labor() {
   return (
     <Page>
       <Container>
+      <Stack sx={{marginBottom: '20px'}} direction="row" justifyContent="space-between">
+        <div>
+        <Button
+          onClick={checkStock}
+        >
+          Check Stock
+        </Button>
+        <Button
+          onClick={lockInventoryStock}
+        >
+          Lock Stock
+        </Button>
+        </div>
+        <Button
+          size='medium'
+          variant='outlined'
+        >
+          Mark as Done
+        </Button>
+      </Stack>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -343,7 +478,7 @@ function Labor() {
                   <TabPanel value="2">
                     <DataGridC
                       columns={componentColumns}
-                      rows={selectedValueSH.bom_items}
+                      rows={selectedValueSH.components}
                     />
                   </TabPanel>
                 </TabContext>
