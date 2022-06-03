@@ -26,7 +26,7 @@ class Manufacture extends Model
     }
 
     public function operation(){
-        return $this->hasMany('App\Models\Manufacture\ManufactureOperation')->with('operation');
+        return $this->hasMany('App\Models\Manufacture\ManufactureOperation', 'manufacture_id', 'id')->with('operation');
     }
 
     public function component(){
@@ -35,5 +35,9 @@ class Manufacture extends Model
 
     public function status(){
         return $this->hasMany('App\Models\Manufacture\ManufactureStatus', 'id', 'manufacture_id')->with('status_type');
+    }
+
+    public function logs(){
+        return $this->hasManyThrough('App\Models\Manufacture\ManufactureOperationActionView', 'App\Models\Manufacture\ManufactureOperation', 'id', 'manufacture_id', 'id');
     }
 }

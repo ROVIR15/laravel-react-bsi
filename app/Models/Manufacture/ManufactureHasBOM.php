@@ -27,4 +27,8 @@ class ManufactureHasBOM extends Model
             'component'
         );
     }
+
+    public function logs(){
+        return $this->hasMany('App\Models\Manufacture\ManufactureOperationActionView', 'manufacture_id', 'manufacture_id');
+    }
 }

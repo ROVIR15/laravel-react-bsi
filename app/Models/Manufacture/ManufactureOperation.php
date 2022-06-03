@@ -31,4 +31,7 @@ class ManufactureOperation extends Model
         return $this->belongsTo('App\Models\Manufacture\Manufacture', 'manufacture_id', 'id');
     }
 
+    public function status(){
+        return $this->hasMany('App\Models\Manufacture\ManufactureOperationActionView')->orderBy('time', 'desc');
+    }
 }

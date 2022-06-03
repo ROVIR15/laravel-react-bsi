@@ -16,6 +16,7 @@ class ManufactureComponent extends Model
     protected $fillable = [
         'manufacture_id',
         'product_feature_id',
+        'qty_keep',
         'qty_to_be_consumed',
     ];
 
