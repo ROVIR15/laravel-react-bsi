@@ -565,7 +565,50 @@ const main = {
         cb(err.response);
       });
     },
-    // Manufacture Operation
+    // Manufacture Component
+    insertManufactureComponent(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/manufacture-component', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getManufactureComponent(cb){
+      axios.get( uri + '/manufacture-component').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAManufactureComponent(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/manufacture-component' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteManufactureComponent(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/manufacture-component' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateManufactureComponent(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/manufacture-component' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },    
+    // Manufacture Observation Result
     insertMOResult(_data, cb){
       if(!_data) {
           console.error('data not found');
@@ -1354,6 +1397,89 @@ const main = {
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
+      });
+    },
+    // Sales Invoice
+    insertSalesInvoice(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/sales-invoice', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getSalesInvoice(cb){
+      axios.get( uri + '/sales-invoice').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getASalesInvoice(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/sales-invoice' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteSalesInvoice(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/sales-invoice/' + id, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSalesInvoice(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/sales-invoice/' + id, { payload: _data}, {headers}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Action on Manufacture Order
+    insertAction(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/action', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getAnAction(manufacture_operation, cb){
+      if(!manufacture_operation) {
+          console.error('data not found');
+      }
+      axios.get( uri + `/action?manufacture_operation=${manufacture_operation}`, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Consume
+    getAStock(id, cb){
+      if(!id) return undefined;
+      axios.get( uri + `/consume/${id}`, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getStock(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/consume', { payload:  _data }, {headers} ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
       });
     }
   }
