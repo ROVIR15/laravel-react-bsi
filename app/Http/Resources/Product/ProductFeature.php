@@ -27,7 +27,8 @@ class ProductFeature extends JsonResource
             'color' => $this->color,
             'size' => $this->size,
             'category' => $cat->name,
-            'price_component_id' => $this->price_component_id
+            'price_component_id' => $this->price_component_id,
+            'facility_id' => $this->inventory->facility_id
         ];
     }
 }

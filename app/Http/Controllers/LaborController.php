@@ -84,7 +84,7 @@ class LaborController extends Controller
 
         $_pr = PartyRoles::create([
           'id' => $faker->unique()->numberBetween(1,2303),
-          'party_id' => $parties['id'],
+          'party_id' => $parties->id,
           'relationship_id' => 3
         ]);
 
