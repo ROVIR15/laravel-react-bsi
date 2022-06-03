@@ -13,7 +13,8 @@ import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import lockFill from '@iconify/icons-eva/lock-fill';
 import personAddFill from '@iconify/icons-eva/person-add-fill';
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
-
+import cardOutlined from '@iconify/icons-eva/credit-card-outline';
+import dollarCircle from '@iconify/icons-ant-design/dollar-circle-filled';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -181,8 +182,17 @@ const sidebarConfig = [
         path: '/dashboard/hrd/labor'
       },
     ]
+  },
+  {
+    title: "Finance",
+    icon: getIcon(dollarCircle),
+    children: [
+      {
+        title: 'Invoice',
+        path: '/dashboard/finance/invoice'
+      },
+    ]
   }
-
 ];
 
 export default sidebarConfig;
