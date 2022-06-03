@@ -39,7 +39,7 @@ function Labor() {
     validationSchema: LaborSchema,
     onSubmit: ({ name, npwp, email, address, city, province, country, postal_code}) => {
       const data = {
-        name, email, npwp, type: "Labor", address: {
+        name, email, npwp, type: "Person", address: {
           street: address,
           city, province, country, postal_code
         }
