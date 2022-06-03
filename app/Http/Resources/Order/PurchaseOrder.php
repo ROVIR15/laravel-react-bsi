@@ -2,8 +2,8 @@
   
   namespace App\Http\Resources\Order;
   use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Order\OrderItemCollection;
-use App\Http\Resources\Party\Party;
+  use App\Http\Resources\Order\OrderItemCollection;
+  use App\Http\Resources\Party\Party;
   
   class PurchaseOrder extends JsonResource
   {

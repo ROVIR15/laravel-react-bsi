@@ -15,11 +15,16 @@ class OperationResult extends JsonResource
      */
     public function toArray($request)
     {
+        $tempStatus = (object) [
+            'action' => 'none'
+        ];
+        if(count($this->status)) $tempStatus = $this->status[0];
         return [
             'id' => $this->id, 
             'manufacture' => $this->manufacture, 
             'operation' => $this->operation, 
-            'result' => new MOResultCollection($this->result)
+            'result' => new MOResultCollection($this->result),
+            'status' => $tempStatus
         ];
     }
 }
