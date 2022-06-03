@@ -18,3 +18,5 @@ export { default as PSLayout } from './IndustrialEngineeringStudy/ProductionStud
 export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationResult';
 export { default as LaborLayout } from './Labor';
 export { default as MOLayout } from './ManufactureOrder';
+
+export { default as InvLayout } from './Finance/Invoice';

@@ -49,6 +49,9 @@ const SpaceBetweenBox = styled('div')(({theme}) => ({
 function OutboundDelivery() {
   const {id} = useParams();
 
+  // Status Item Issuance
+  const [postGoodsIssue, setPostGoodsIssue] = useState(false);
+
   // Option Inquiry
   const [options, setOptions] = useState([]);
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
@@ -117,10 +120,15 @@ function OutboundDelivery() {
       return order - ship;
     }
 
+    function isDone(param){
+      return param > 0;
+    }
+
     const items = data.items.data.map(function(key, index){
       let left = qtyLeft(key.order_item.qty, key.qty_shipped)
       return {
         'id': key.id,
+        'shipment_id': key.shipment_id,
         'product_feature_id': key.order_item.product_feature.id,
         'name' : key.order_item.product_feature.name,
         'size' : key.order_item.product_feature.size,
@@ -140,6 +148,13 @@ function OutboundDelivery() {
 
     setSelectedValueSH(data.party)
     setSelectedValueSO(data.ship)
+
+    if(isDone(data.issued_goods)){
+      setPostGoodsIssue(true);
+    } else {
+      setPostGoodsIssue(false);
+    }
+
     setItems(items);
   }
 
@@ -201,6 +216,27 @@ function OutboundDelivery() {
   const handleResetRows = () => {
     setItems([]);
   }
+
+  /**
+   * Post Goods Issue
+   */
+
+  const handleItemsIssuance = (event) => {
+    event.preventDefault();
+
+    API.insertItemIssuance(items, (res) => {
+      if(!res) return undefined;
+      if(!res.success) alert('Error');
+      else alert('Success');
+    });
+
+
+  }
+
+
+  /**
+   * Columns Table of Component
+   */
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'ID', editable: false},
@@ -327,6 +363,16 @@ function OutboundDelivery() {
             </CardContent>
           </Card>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+            <Button
+              size="large"
+              color="secondary"
+              variant="contained"
+              disabled={postGoodsIssue}
+              onClick={handleItemsIssuance}
+              sx={{ m: 1 }}
+            >
+              Post Goods Issued
+            </Button>
             <LoadingButton
               size="large"
               type="submit"
