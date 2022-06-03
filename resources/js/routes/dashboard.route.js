@@ -22,7 +22,8 @@ import {
   PSLayout,
   ORLayout,
   LaborLayout,
-  MOLayout
+  MOLayout,
+  InvLayout
 } from '../pages/dashboard';
 
 // Add Pages
@@ -47,6 +48,7 @@ import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResu
 import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
 import AddOD from '../pages/dashboard/OutboundDelivery/new';
+import AddInv from '../pages/dashboard/Finance/Invoice/new';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -70,6 +72,8 @@ import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
 import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
 import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
+import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
+
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
 import ShowGoods from '../pages/dashboard/Goods/show';
@@ -88,11 +92,13 @@ import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStud
 import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
 import ShowOD from '../pages/dashboard/OutboundDelivery/show';
+import ShowInv from '../pages/dashboard/Finance/Invoice/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
 import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
+import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
@@ -326,6 +332,17 @@ export default function TestRouter() {
           element: <ORLayout />,
           children: [
             { path: ':id/add', element: <AddOR />}
+          ]
+        },
+        // Finance
+        { 
+          path: 'finance/invoice', 
+          element: <InvLayout />,
+          children: [
+            { path: 'add', element: <AddInv /> },
+            { path: ':id', element: <ShowInv /> },
+            { path: 'display', element: <DisplayInv /> },
+            { path: 'document/:id', element: <DocumentINV/>}
           ]
         },
         { path: '*', element: <Navigate to="/404" /> }
