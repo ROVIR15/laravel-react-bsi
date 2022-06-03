@@ -330,7 +330,7 @@ function ObservationResult() {
               title="Target Balancing"
             />
             <CardContent>
-              <Typography variant="h4">{findBalancing(items)}</Typography>              
+              <Typography variant="h4">{findBalancing(items).toFixed()}</Typography>              
             </CardContent>
           </Card>
         </Grid>
