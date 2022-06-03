@@ -54,7 +54,8 @@ class SalesInvoiceController extends Controller
         
         $invoice = Invoice::create([
           'invoice_date' => $param['invoice_date'],
-          'description' => $param['description']
+          'sold_to' => $param['sold_to'],
+          'description' => 'done'
         ]);
 
         SalesInvoice::create([

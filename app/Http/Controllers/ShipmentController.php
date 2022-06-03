@@ -22,7 +22,7 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info')->get();
+      $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info', 'issued_goods')->get();
 
       return new ShipmentCollection($query);
     }

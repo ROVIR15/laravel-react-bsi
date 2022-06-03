@@ -53,6 +53,7 @@ class ItemIssuanceController extends Controller
           # code...
           array_push($payloadItems, [
             'shipment_item_id' => $item['id'],
+            'shipment_id' => $item['shipment_id'],
             'item_issued' => $item['qty_ship']
           ]);
         }

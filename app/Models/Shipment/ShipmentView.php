@@ -25,4 +25,8 @@ class ShipmentView extends Model
         return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id', 'id');
     }
 
+    public function issued_goods(){
+        return $this->hasMany('App\Models\Shipment\ItemIssuance', 'shipment_id', 'id');
+    }
+
 }

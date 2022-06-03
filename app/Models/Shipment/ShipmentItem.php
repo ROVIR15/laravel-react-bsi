@@ -23,5 +23,4 @@ class ShipmentItem extends Model
     public function order_item(){
       return $this->belongsTo('App\Models\Order\OrderItem')->with('product_feature');
     }
-
 }

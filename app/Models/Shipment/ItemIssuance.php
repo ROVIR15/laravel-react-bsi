@@ -17,4 +17,8 @@ class ItemIssuance extends Model
         'shipment_item_id',
         'item_issued'
     ];
+
+    public function shipment(){
+        return $this->belongsTo('App\Models\Shipment\Shipment', 'shipment_id', 'id');
+    }
 }

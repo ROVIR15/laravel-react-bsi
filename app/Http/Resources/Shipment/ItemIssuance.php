@@ -16,6 +16,7 @@ class ItemIssuance extends JsonResource
     {
         return [
             'id' => $this->id,
+            'shipment_id' => $this->shipment_id,
             'shipment_item_id' => $this->shipment_item_id,
             'item_issued' => $this->item_issued
         ];
