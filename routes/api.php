@@ -60,6 +60,7 @@ Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store'
 // Manufacture
 Route::resource('manufacture', 'ManufactureController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('manufacture-operation', 'ManufactureOperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::resource('manufacture-component', 'ManufactureComponentController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('operation-result', 'MOperationResultController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('production-record', 'ProductionRecorderController')->only(['store']);
 
@@ -143,3 +144,9 @@ Route::resource('invoice-item', 'InvoiceItemController')->only(['index', 'show',
 
 // Facilitiy
 Route::resource('facility', 'FactoryController')->only(['index', 'show', 'store']);
+
+// Action on Manufacturing Order
+Route::resource('action', 'ActionController')->only(['index', 'show', 'store']);
+
+// Consume
+Route::resource('consume', 'ConsumeInventoryController')->only(['store', 'show']);
