@@ -32,4 +32,8 @@ class ProductFeature extends Model
     public function goods(){
         return $this->hasOneThrough('App\Models\Product\Goods', 'App\Models\Product\Product', 'goods_id', 'id');
     }
+
+    public function inventory(){
+        return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id');
+    }
 }
