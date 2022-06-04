@@ -20,7 +20,7 @@ class Inventory extends JsonResource
             'id' => $this->product_feature_id,
             'facility' => new Facility($this->facility),
             'product' => new ProductFeature($this->product_feature),
-            'qty_on_hand' => $this->qty
+            'qty_on_hand' => $this->qty_on_hand
         ];
     }
 }
