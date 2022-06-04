@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Grid,
   Paper,
   Stack,
   Typography
@@ -13,43 +14,44 @@ const PaperStyle = styled(Paper)(({ theme }) => ({
 
 function ShowCounter({ days, hours, minutes, seconds }){
   return (
-        <Stack 
+        <Grid
+          container 
           direction="row"
           spacing={2}
         >
-          <PaperStyle>
+          <Grid item xs={6} sm={3} sx={{ textAlign: 'center'}}>
             <Typography variant="h5">
               {days}
             </Typography>
             <Typography variant="body1">
               Days
             </Typography>
-          </PaperStyle>
-          <PaperStyle>
+          </Grid>
+          <Grid item xs={6} sm={3} sx={{ textAlign: 'center'}}>
             <Typography variant="h5">
               {hours}
             </Typography>
             <Typography variant="body1">
               Hours
             </Typography>
-          </PaperStyle>
-          <PaperStyle>
+          </Grid>
+          <Grid item xs={6} sm={3} sx={{ textAlign: 'center'}}>
             <Typography variant="h5">
               {minutes}
             </Typography>
             <Typography variant="body1">
               Minutes
             </Typography>
-          </PaperStyle>
-          <PaperStyle>
+          </Grid>
+          <Grid item xs={6} sm={3} sx={{ textAlign: 'center'}}>
             <Typography variant="h5">
               {seconds}
             </Typography>
             <Typography variant="body1">
               Seconds
             </Typography>
-          </PaperStyle>
-        </Stack>
+          </Grid>
+        </Grid>
   )
 }
 
