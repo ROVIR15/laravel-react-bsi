@@ -84,9 +84,19 @@ function calculate_stock_left(qty_available, current_keep, qty_to_be_consumed){
     return { qty_keep: _keep, qty_consumed: parseInt(_currentless), qty_less: _less, status: statusOfComponent(_keep, qty_to_be_consumed)}
   }
 
-  
 }
 
+function isReadyToBePlay(array){
+
+  if(array.length === 0) return false;
+  
+  const _data = array.filter(function(item){
+    const { qty_less } = item;
+    return parseInt(qty_less) < 0;
+  });
+
+  return _data.length === 0;
+}
 
 function Labor() {
 
@@ -98,6 +108,9 @@ function Labor() {
 
   // Option State
   const [options, setOptions] = useState([]);
+
+  // Ready to be Play
+  const [ready, setReady] = useState(false)
 
   //Dialog Interaction
   const [selectedValueSH, setSelectedValueSH] = React.useState({
@@ -188,6 +201,7 @@ function Labor() {
       getActions: (params) => [
         <GridActionsCellItem
           icon={<Icon icon={ArrowRightFill} width={24} height={24} />}
+          disabled={!isReadyToBePlay(selectedValueSH.components)}
           label="Play"
           onClick={handlePlay(params.id)}
         />
@@ -227,6 +241,11 @@ function Labor() {
       }
     });
 
+    const readyToPlay = isReadyToBePlay(component);
+    setReady(readyToPlay);
+
+    console.log(readyToPlay);
+
     let product_info = {
       name: '',
       size: '',
@@ -265,7 +284,10 @@ function Labor() {
     components.map(function(component){
       array.map(function(item){
         const result = calculate_stock_left(item.qty_on_hand, component.qty_keep, component.qty_to_be_consumed);
-        if(component.id === item.product_feature_id) _temp.push({...component, ...result});
+        if(component.id === item.product_feature_id) {
+          if(component.qty_keep === component.qty_to_be_consumed && item.qty_on_hand <= 0) _temp.push({...component, qty_consumed: 0});
+          else _temp.push({...component, ...result});
+        }
       });
     });
 
@@ -297,11 +319,16 @@ function Labor() {
       return { id: manufacture_component_id, qty_keep, qty_consumed, facility_id, product_feature_id: id};
     });
 
-    API.insertManufactureComponent(_data, (res) => {
+    let _temp = _data.filter(function(component){
+      const { qty_consumed } = component;
+      return parseInt(qty_consumed) > 0;
+    })
+
+    API.updateManufactureComponent(id, _temp, (res) => {
       if(!res) return undefined;
-      if(!res.data) return undefined;
+      if(!res.success) alert('failed')
       else {
-        console.log(res.data);
+        alert('success');
       }
     })
   }
@@ -328,8 +355,6 @@ function Labor() {
         operations,
         components
       }
-
-      alert(JSON.stringify(data));
       
       API.insertManufactureOrder(data, function(res){
         if(res.success) alert('Success');
