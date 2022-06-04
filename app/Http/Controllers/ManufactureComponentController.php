@@ -37,40 +37,33 @@ class ManufactureComponentController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
-      
-      $_param = (array) [];
-      $_changes = (array) [];
 
       try {
         //code...
-        foreach ($param as $component) {
-            # code...
-          if($component['qty_consumed'] <= 0) return;
-          $data = ManufactureComponent::find($component['id']);
-          if($data['qty_keep'] >= $data['qty_to_be_consumed']) {
-            $data->qty_keep;
-          } else {
-            $data->qty_keep = $component['qty_keep'];
-            Inventory::create([
-              'facility_id' => $component['facility_id'],
-              'product_feature_id' => $component['product_feature_id'],
-              'qty_on_hand' => $component['qty_consumed']*-1
-            ]);
-          }
-          $data->save();
-        }
+        ManufactureComponent::create([
+          'manufacture_id' => $param['manufacture_id'],
+          'product_feature_id' => $param['product_feature_id'],
+          'qty_keep' => $param['qty'],
+          'qty_to_be_consumed' => $param['qty']
+        ]);
+
+        Inventory::create([
+          'facility_id' => $param['facility_id'],
+          'product_feature_id' => $param['product_feature_id'],
+          'qty_on_hand' => $param['qty']*-1
+        ]);
 
         return response()->json([
-          'success' => true
-        ], 200);
-      } catch (Exception $th) {
-          //throw $th;
-          return response()->json([
-              'success' => false,
-              'error' => $th->getMessage()
-          ], 500);
-      }
+          'success' => true,
+        ]);
 
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -104,7 +97,42 @@ class ManufactureComponentController extends Controller
      */
     public function update($id, Request $request)
     {
+      $param = $request->all()['payload'];
+      
+      $_param = (array) [];
+      $_changes = (array) [];
 
+      try {
+        //code...
+        foreach ($param as $component) {
+            # code...
+          if($component['qty_consumed'] <= 0) return;
+          
+          $data = ManufactureComponent::find($component['id']);
+          
+          if($data['qty_keep'] >= $data['qty_to_be_consumed']) {
+            $data->qty_keep;
+          } else {
+            $data->qty_keep = $component['qty_keep'];
+            Inventory::create([
+              'facility_id' => $component['facility_id'],
+              'product_feature_id' => $component['product_feature_id'],
+              'qty_on_hand' => $component['qty_consumed']*-1
+            ]);
+          }
+          $data->save();
+        }
+
+        return response()->json([
+          'success' => true
+        ], 200);
+      } catch (Exception $th) {
+          //throw $th;
+          return response()->json([
+              'success' => false,
+              'error' => $th->getMessage()
+          ], 500);
+      }
     }
 
     /**
@@ -115,15 +143,6 @@ class ManufactureComponentController extends Controller
      */
     public function destroy($id)
     {
-      try {
-        InvoiceRoleType::find($id)->delete();
-        return response()->json([ 'success'=> true ], 200);
-      } catch (Exception $th) {
-        //throw $th;
-        return response()->json([
-          'success' => false,
-          'errors' => $th->getMessage()
-        ]);
-      }
+
     }
 }
