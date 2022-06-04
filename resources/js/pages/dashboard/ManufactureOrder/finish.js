@@ -360,10 +360,25 @@ export default function VerticalLinearStepper() {
         if(!res.success) alert('failed')
         else alert('success');
       })
+      handleFinishAction();
       handleResetS();
       handleReset();
     }
-  })
+  });
+
+  const handleFinishAction = () => {
+    const _data = {
+      'action_type_id': 4,
+      manufacture_operation_id
+    } 
+    API.insertAction(_data, (res) => {
+      if(!res) return undefined;
+      if(!res.success) alert('Failed');
+      else alert('Success');
+    });
+
+    handleUpdate();
+  }
 
   const { errors, touched, values, isSubmitting, setSubmitting, handleReset, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
