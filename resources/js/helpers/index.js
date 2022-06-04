@@ -602,7 +602,7 @@ const main = {
     updateManufactureComponent(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/manufacture-component' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/manufacture-component/' + id, { payload: _data}, {headers}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1482,5 +1482,6 @@ const main = {
           cb(err.response);
       });
     }
+    //
   }
 export default main;
