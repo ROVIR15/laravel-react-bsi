@@ -7,6 +7,7 @@ import GRTest from '../pages/auth/gr-test.js';
 import Test from '../pages/auth/dialog-test';
 import SecondPage from '../pages/auth/second.page.js';
 import TimeCounter from '../pages/auth/time-counter';
+import Drawer from '../pages/auth/drawer-test';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -23,7 +24,8 @@ export default function TestRouter() {
         { path: 'second-page', element: <SecondPage /> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
-        { path: 'timer', element: <TimeCounter/>}
+        { path: 'timer', element: <TimeCounter/>},
+        { path: 'drawer', element: <Drawer/>}
       ]
     }
   ]);
