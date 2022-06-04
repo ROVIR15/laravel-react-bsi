@@ -6,11 +6,11 @@ import {
   CardContent, 
   Container, 
   Grid,
-  Typography, 
+  Typography,
+  Stack,
   Button, 
   CardActions
 } from '@mui/material';
-import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -24,6 +24,7 @@ import API from '../../../helpers';
 //component
 import DataGrid from './components/DGWork';
 import DialogBox from './components/DBRecord';
+import DialogBoxConsumeProduct from './components/DialogBox-ConsumeProduct';
 import ShowCounter from './components/ShowCounter';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 
@@ -129,6 +130,7 @@ function Labor() {
   /**
    * Dialog Box For Record
    */
+
   const [openDBRecord, setOpenDBRecord] = useState(false);
 
   const handleOpenDBRecord = () => {
@@ -146,6 +148,24 @@ function Labor() {
       changeData(res.data);
     });
   }
+
+  /**------------------------------ END ---------------------------------*/
+
+  /**
+   * Dialog Box For Consume Product
+   */
+
+  const [openDBConsumeProduct, setDBConsumeProduct] = useState(false);
+
+  const handleOpenDBConsumeProduct = () => {
+    setDBConsumeProduct(true);
+  }
+
+  const handleCloseDBConsumeProduct = () => {
+    setDBConsumeProduct(false);
+  }
+
+  /**------------------------------ END ---------------------------------*/
 
   // handle submit (alternative)
   const handleSubmitAlt = () => {
@@ -244,6 +264,15 @@ function Labor() {
   return (
     <Page>
       <Container>
+      <Stack sx={{marginBottom: '20px'}} direction="row" justifyContent="space-between">
+        <div>
+          <Button
+            onClick={handleOpenDBConsumeProduct}
+          >
+            Consume Material
+          </Button>
+        </div>
+      </Stack>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -338,6 +367,7 @@ function Labor() {
         </Grid>
 
         <DialogBox open={openDBRecord} handleClose={handleCloseDBRecord} />
+        <DialogBoxConsumeProduct open={openDBConsumeProduct} handleClose={handleCloseDBConsumeProduct} />
         
         <Grid item xs={12}>
           <Card>
