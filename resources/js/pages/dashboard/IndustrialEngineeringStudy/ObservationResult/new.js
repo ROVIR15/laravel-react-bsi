@@ -214,7 +214,7 @@ function ObservationResult() {
   function findAverageTime(data){
     let a = 0;
     data.map((item) => {
-      a = a + item.average;
+      a = a + parseInt(item.average);
     })
     a = (a/data.length);
     return a.toFixed(2);
