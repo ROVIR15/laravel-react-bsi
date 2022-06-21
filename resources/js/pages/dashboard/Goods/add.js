@@ -5,10 +5,20 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
-import { Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Stack, Select, TextField, MenuList } from '@mui/material';
+import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, MenuList } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import CustomMultiSelect from '../../../components/CustomMultiSelect';
 //API
 import API from '../../../helpers'
+
+const UploadPaper = styled(Button)(({theme}) => ({
+    outline: "none", 
+    padding: "40px 8px", 
+    borderRadius: "8px", 
+    backgroundColor: "rgb(244, 246, 248)", 
+    border: "1px dashed rgba(145, 158, 171, 0.32)",
+    height: '100%'
+}));
 
 function Goods() {
   const [cat, setCat] = useState([]);
@@ -69,6 +79,27 @@ function Goods() {
     }
   }
 
+  /**
+   * Handle Upload File
+   */
+  const [file, setFile] = useState(null);
+
+  const handleUploadFile = (event) => {
+    // Create an object of formData
+    const formData = new FormData();
+    
+    // Update the formData object
+    formData.append(
+      "file",
+      file,
+      file.name
+    );
+  }
+
+  const handleOnFileChange = (event) => {
+    setFile(event.target.files[0]);
+  }
+
   useEffect(() => {
     if(cat.length > 0 || cat.length != 0) return
     else {
@@ -84,7 +115,30 @@ function Goods() {
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item xs={5}>
+              <Paper sx={{padding: 2, height: '100%'}}>
+                <label htmlFor='upload-file'>
+                <input 
+                  accept="image/*" 
+                  multiple 
+                  id="upload-file" 
+                  type="file" 
+                  onChange={handleOnFileChange}
+                  style={{display: 'none'}}
+                />
+                <UploadPaper 
+                  component="span" 
+                  onChange={handleUploadFile}
+                  fullWidth
+                >
+                    <Typography variant="h5">
+                      Drop or Select File
+                  </Typography>
+                </UploadPaper>
+                </label>
+              </Paper>
+            </Grid>
+            <Grid item xs={7}>
               <Card >
                 <CardHeader
                   title="Product Information"
@@ -92,7 +146,7 @@ function Goods() {
                 <CardContent>
                 <Grid container spacing={2}>
                   
-                  <Grid item xs={6}>
+                  <Grid item xs={12}>
                     <TextField
                       fullWidth
                       autoComplete="name"
@@ -104,20 +158,7 @@ function Goods() {
                     />
                   </Grid>
 
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      autoComplete="brand"
-                      type="text"
-                      label="Brand"
-                      {...getFieldProps('brand')}
-                      error={Boolean(touched.brand && errors.brand)}
-                      helperText={touched.brand && errors.brand}
-                    />
-                  </Grid>
-
-
-                  <Grid item xs={9}>
+                  <Grid item xs={7}>
                     <FormControl fullWidth>
                       <InputLabel >Kategori</InputLabel>
                       <Select
@@ -138,7 +179,19 @@ function Goods() {
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      autoComplete="brand"
+                      type="text"
+                      label="Brand"
+                      {...getFieldProps('brand')}
+                      error={Boolean(touched.brand && errors.brand)}
+                      helperText={touched.brand && errors.brand}
+                    />
+                  </Grid>
+
+                  <Grid item xs={7}>
                     <TextField
                       fullWidth
                       autoComplete="unit_measurement"
@@ -150,7 +203,7 @@ function Goods() {
                     />
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={7}>
                     <TextField
                       fullWidth
                       autoComplete="value"
