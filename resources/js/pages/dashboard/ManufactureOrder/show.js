@@ -244,8 +244,6 @@ function Labor() {
     const readyToPlay = isReadyToBePlay(component);
     setReady(readyToPlay);
 
-    console.log(readyToPlay);
-
     let product_info = {
       name: '',
       size: '',
