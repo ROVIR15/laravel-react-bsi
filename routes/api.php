@@ -24,6 +24,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'AuthController@logout');
 });
 
+Route::resource('upload', 'UploadController')->only(['store']);
+
+Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
 //Party
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
