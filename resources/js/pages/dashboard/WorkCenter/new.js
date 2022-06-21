@@ -146,7 +146,7 @@ function WorkCenter() {
                       fullWidth
                       autoComplete="work_hours"
                       type="text"
-                      label="Jam Kerja (Jam)"
+                      label="Hari Kerja"
                       {...getFieldProps('work_hours')}
                       error={Boolean(touched.work_hours && errors.work_hours)}
                       helperText={touched.work_hours && errors.cost_per_hour}
@@ -159,7 +159,7 @@ function WorkCenter() {
                       fullWidth
                       autoComplete="cost_per_hour"
                       type="text"
-                      label="Biaya Produksi per Jam"
+                      label="Biaya Produksi per Hari"
                       {...getFieldProps('cost_per_hour')}
                       error={Boolean(touched.cost_per_hour && errors.cost_per_hour)}
                       helperText={touched.cost_per_hour && errors.cost_per_hour}
