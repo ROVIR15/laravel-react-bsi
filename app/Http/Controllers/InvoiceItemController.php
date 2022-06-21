@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice\InvoiceItem;
-use App\Http\Controllers\Controller;s
+use App\Http\Controllers\Controller;
 use App\Http\Resources\Invoice\InvoiceItem as InvoiceItemOneCollection;
 use App\Http\Resources\Invoice\InvoiceItemCollection;
 
