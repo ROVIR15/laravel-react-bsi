@@ -17,8 +17,8 @@ class CreateOrderItemHasGoodsTable extends Migration {
 			$table->integer('order_item_id');
 			$table->integer('order_item_order_id');
 			$table->integer('goods_id')->index('fk_order_item_has_goods_goods1_idx');
-			$table->primary(['order_item_id','order_item_order_id','goods_id']);
 			$table->index(['order_item_id','order_item_order_id'], 'fk_order_item_has_goods_order_item1_idx');
+			$table->primary(['order_item_id','order_item_order_id','goods_id']);
 		});
 	}
 
