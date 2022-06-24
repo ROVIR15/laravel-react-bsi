@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\User;
+
 class AuthController extends Controller
 {
     /**
@@ -26,11 +28,15 @@ class AuthController extends Controller
         }
 
         $accessToken = Auth::user()->createToken('auth-token')->accessToken;
+        $user = User::where('id', Auth::user()->id)->with('pages')->first();
 
         return response()->json([
-            'success' => true,
-            'access_token' => $accessToken
-        ]);
+            'data' => [
+              'success' => true,
+              'access_token' => $accessToken,
+              'user' => $user  
+            ]
+        ], 200);
     }
 
     public function logout(Request $request)

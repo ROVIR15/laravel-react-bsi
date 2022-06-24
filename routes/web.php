@@ -16,7 +16,11 @@ Route::get('/', function () {
 });
 
 Route::view('/app/{path?}', 'app');
+Route::view('/auth/{path?}', 'dashboard')->where('path', '.*');
 Route::view('/dashboard/{path?}', 'dashboard')->where('path', '.*');
-Auth::routes();
+// Auth::routes([
+//   'register' => false,
+//   'login' => false
+// ]);
 
 Route::get('/home', 'HomeController@index')->name('home');

@@ -37,4 +37,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function pages(){
+        return $this->hasMany('App\Models\General\PagesAccess', 'users_id', 'id');
+    }
 }
