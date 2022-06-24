@@ -96,7 +96,6 @@ function Document(){
 
   const { bom_id, bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
 
-  console.log(new Date(start_date))
   return (
       <MHidden width="mdDown">
           <PaperStyled elevation={2} sx={{}}>

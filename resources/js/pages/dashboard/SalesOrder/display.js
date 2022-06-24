@@ -142,7 +142,7 @@ function DisplaySalesOrder({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteSalesOrder(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setSalesOrderData([]);
     }).catch(function(error){
       alert('error')
     });

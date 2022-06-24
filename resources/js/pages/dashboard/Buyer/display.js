@@ -83,7 +83,6 @@ function DisplayBuyer({ placeHolder }) {
     if(isEmpty(buyerData)) {
       API.getBuyers((res) => {
         if(isEmpty(res)) {
-          console.error('Nothing');
           setBuyerData(BUYERLIST);
         } else {
           setBuyerData(res);

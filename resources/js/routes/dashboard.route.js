@@ -113,7 +113,7 @@ export default function TestRouter() {
   const access_token = localStorage.getItem('_token');
 
   return useRoutes([
-    { path: '/auth', children: [
+    { path: '/', children: [
         { path: 'register', element: <Register /> },        
         { path: 'login', element: <Login /> },
       ]
@@ -125,6 +125,7 @@ export default function TestRouter() {
         { 
           path: 'order/buyer',
           element: <BuyerLayout />,
+          redirect: 'order/buyer/display',
           children: [
             { path: ':id', element: <ShowBuyer/>},
             { path: 'add', element: <AddBuyer/>},

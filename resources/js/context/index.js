@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     const access_token = JSON.parse(localStorage.getItem('access_token'));
     if( !userStorage || !access_token ) {
       localStorage.clear();
-      navigate('/auth/login');
+      navigate('/login');
     } else {
       const { name, email } = userStorage;
       setUser({name, email, access_token});  
@@ -113,8 +113,9 @@ export const AuthProvider = ({ children }) => {
 
     AUTHAPI.logout(at, function(res){
       if(res.success){
-        localStorage.clear();
-        navigate('/auth/login');
+        localStorage.removeItem('user');
+        localStorage.removeItem('_token');
+        navigate('/login');
       };
     });
     // sessionsApi.logout().then(() => setUser(undefined));

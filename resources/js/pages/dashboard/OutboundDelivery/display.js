@@ -153,7 +153,7 @@ function OutboundDelivery({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteGoodsReceipt(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setGoodsReceipt([]);
       else alert('error');
     });
   }

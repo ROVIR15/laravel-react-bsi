@@ -82,7 +82,6 @@ function DisplayBuyer({ placeHolder }) {
       API.getGoods((res) => {
 		if(!res) return
 		if(!res.success) {
-          console.error('Nothing');
           setGoodsData(BUYERLIST);
         } else {
           setGoodsData(res.data);
@@ -140,7 +139,7 @@ function DisplayBuyer({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteGoods(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setGoodsData([]);
     }).catch(function(error){
       alert('error')
     });

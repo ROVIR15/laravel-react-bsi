@@ -139,7 +139,7 @@ function Invoice({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteGoodsReceipt(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) getSalesInvoice([]);
       else alert('error');
     });
   }

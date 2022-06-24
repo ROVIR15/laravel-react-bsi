@@ -102,7 +102,6 @@ function Quotation() {
         else alert('failed')
       })
       setSubmitting(false);
-      location.reload();
     }
   })
 
@@ -388,7 +387,6 @@ function Quotation() {
               onEditRowsModelChange={handleEditRowsModelChange}
               handleUpdateAllRows={handleUpdateAllRows}
               handleAddRow={handleOpenModal}
-              handleUpdateAllRows={false}
             />
             </CardContent>
           </Card>

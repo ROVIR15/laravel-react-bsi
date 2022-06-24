@@ -138,7 +138,7 @@ function DisplayPurchaseReq({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteInquiry(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setInquiryData([]);
     }).catch(function(error){
       alert('error')
     });

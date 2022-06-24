@@ -12,15 +12,15 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
-Route::view('/app/{path?}', 'app');
-Route::view('/auth/{path?}', 'dashboard')->where('path', '.*');
+// Route::view('/app/{path?}', 'app');
+Route::view('/{path?}', 'dashboard')->where('path', '.*');
 Route::view('/dashboard/{path?}', 'dashboard')->where('path', '.*');
 // Auth::routes([
 //   'register' => false,
 //   'login' => false
 // ]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');

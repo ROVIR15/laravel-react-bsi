@@ -72,13 +72,19 @@ function DisplayInventory({ placeHolder }) {
   // GET Data Inventory Item
 
   useEffect(() => {
+    function isEmpty(array){
+      if(!Array.isArray(array)) return true;
+      return !array.length;
+    }
 
-    API.getInventoryItem(function(res){
-      if(!res) setData(INVENTORYLIST);
-      setData(res.data);
-    })
-  
-  }, [])
+    if(isEmpty(data)) {
+      API.getInventoryItem(function(res){
+        if(isEmpty(res.data)) setData(INVENTORYLIST);
+        else setData(res.data);
+      })
+    }
+
+  }, [data])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

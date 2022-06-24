@@ -142,7 +142,7 @@ function DisplayRFQ({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteQuote(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setQuoteData([]);
     }).catch(function(error){
       alert('error')
     });

@@ -57,14 +57,14 @@ function Vendor() {
           >
             Display
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             component='div'
             onClick={handleClick}
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Show Snackbar
-          </Button>
+          </Button> */}
         </Stack>
       </Stack>
       <Outlet/>

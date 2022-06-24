@@ -143,7 +143,7 @@ function DisplayWorkCenter({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteInquiry(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setWorkCenter([]);
     }).catch(function(error){
       alert('error')
     });

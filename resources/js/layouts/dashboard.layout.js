@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography'
 import { Outlet, useNavigate } from 'react-router-dom';
 
+import Page from '../components/Page';
+
 DashboardLayout.propTypes = {
   children: PropTypes.node
 };
@@ -12,11 +14,13 @@ export default function DashboardLayout({ children }){
    
   const navigate = useNavigate();
 
-  if(!userStorage) navigate('/auth/login');
+  if(!userStorage) navigate('/login');
+
+  document.title="Dashboard | BSI Information System"
   return (
-    <div>
+    <Page title="Dashboard | BSI Information System">
       <Typography variant="h1" color="initial"> Dashboard Layout </Typography>
       <Outlet/>
-    </div>
+    </Page>
   )
 }

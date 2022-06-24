@@ -73,7 +73,7 @@ function Goods() {
   const deleteData = useCallback(
     (id) => () => {
       API.deleteProductFeature(id, function(res){
-        location.reload();
+        handleUpdateAllRows();
       }).catch(function(error){
         alert('Fail');
       });

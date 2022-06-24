@@ -141,7 +141,7 @@ function PurchaseOrder({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteSalesOrder(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setpurchaseOrderData([]);
     }).catch(function(error){
       alert('error')
     });

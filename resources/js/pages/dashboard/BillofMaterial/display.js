@@ -75,17 +75,17 @@ function DisplayBOM({ placeHolder }) {
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
-    if(!isEmpty(bomData)) return;
-    API.getBOM((res) => {
-      console.log(res);
-      if(!res) return
-      if(!res.data) {
-        console.error('Nothing');
-        setBomData(BUYERLIST);
-      } else {
-        setBomData(res.data);
-      }
-    });
+    if(isEmpty(bomData)){
+      API.getBOM((res) => {
+        if(!res) return
+        if(!res.data) {
+          console.error('Nothing');
+          setBomData(BUYERLIST);
+        } else {
+          setBomData(res.data);
+        }
+      });
+    }
   }, [bomData])
 
   const handleRequestSort = (event, property) => {
@@ -137,7 +137,7 @@ function DisplayBOM({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteBOM(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setBomData([]);
     })
   }
 

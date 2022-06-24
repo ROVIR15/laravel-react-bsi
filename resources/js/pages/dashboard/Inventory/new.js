@@ -129,7 +129,6 @@ function Inventory() {
     onSubmit: (values) => {
       API.insertInventoryItem(values, function(res){
         if(res.success) {
-          location.reload();
           alert('success');
         }
         else alert('failed');
