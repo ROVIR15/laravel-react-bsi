@@ -26,6 +26,9 @@ import {
   InvLayout
 } from '../pages/dashboard';
 
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
+
 // Add Pages
 import AddBuyer from '../pages/dashboard/Buyer/new';
 import AddInquiry from '../pages/dashboard/Inquiry/new';
@@ -106,10 +109,18 @@ import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
 import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
 export default function TestRouter() {
+
+  const access_token = localStorage.getItem('_token');
+
   return useRoutes([
+    { path: '/auth', children: [
+        { path: 'register', element: <Register /> },        
+        { path: 'login', element: <Login /> },
+      ]
+    },
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: (access_token ? <DashboardLayout /> : <Navigate replace to="/auth/login" />),
       children: [
         { 
           path: 'order/buyer',

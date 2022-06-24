@@ -9,6 +9,9 @@ import { BrowserRouter } from 'react-router-dom';
 import TestRouter from './routes/auth.route';
 import ScrollToTop from './components/ScrollToTop';
 
+//Auth
+import { AuthProvider } from './context'
+
 // Notistack
 import { SnackbarProvider } from 'notistack'
 
@@ -16,11 +19,13 @@ function MainApp(){
   return (
     <HelmetProvider>
         <BrowserRouter>
-          <ThemeConfig>
-            <ScrollToTop/>
-            <GlobalStyles/>
-            <TestRouter />
-          </ThemeConfig>
+          <AuthProvider>
+            <ThemeConfig>
+              <ScrollToTop/>
+                <GlobalStyles/>
+              <TestRouter />
+            </ThemeConfig>
+          </AuthProvider>
         </BrowserRouter>
     </HelmetProvider>
   )

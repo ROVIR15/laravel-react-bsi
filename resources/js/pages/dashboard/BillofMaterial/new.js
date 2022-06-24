@@ -1,6 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
+import { 
+  Box,
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Grid, 
+  TextField,
+  Tab, 
+  Button 
+} from '@mui/material'
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
@@ -60,6 +71,15 @@ function BillOfMaterial() {
   //Data Grid Opration of BOM
   const [editRowsModelO, setEditRowsModelO] = React.useState({});
   const [editRowDataO, setEditRowDataO] = React.useState({});
+
+  /**
+   * TAB Panel
+   */
+  const [valueTab, setValueTab] = React.useState('1');
+
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
+  };
 
   const BOMSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -381,38 +401,42 @@ function BillOfMaterial() {
                 </CardContent>
               </Card>
             </Grid>
+
             <Grid item xs={12}>
-              <Card >
-                <CardHeader
-                  title="Components"
-                />
+              <Card>
                 <CardContent>
-                  <DataGrid 
-                    columns={goodsColumns}
-                    rows={component}
-                    handleAddRow={handleOpenModal}
-                    onEditRowsModelChange={handleEditComponentRowsModelChange}
-                    handleResetRows={handleResetComponentRows}
-                  />
+                  <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={valueTab}>
+                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                          <Tab label="Work" value="1" />
+                          <Tab label="Component" value="2" />
+                        </TabList>
+                      </Box>
+                      <TabPanel value="1">
+                        <DataGrid 
+                          columns={operationColumns}
+                          rows={operation}
+                          handleAddRow={handleOpenModalO}
+                          onEditRowsModelChange={handleEditOperationRowsModelChange}
+                          handleResetRows={handleResetOperationRows}
+                        />
+                      </TabPanel>
+                      <TabPanel value="2">
+                        <DataGrid 
+                          columns={goodsColumns}
+                          rows={component}
+                          handleAddRow={handleOpenModal}
+                          onEditRowsModelChange={handleEditComponentRowsModelChange}
+                          handleResetRows={handleResetComponentRows}
+                        />
+                      </TabPanel>
+                    </TabContext>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12}>
-              <Card >
-                <CardHeader
-                  title="Operations"
-                />
-                <CardContent>
-                  <DataGrid 
-                    columns={operationColumns}
-                    rows={operation}
-                    handleAddRow={handleOpenModalO}
-                    onEditRowsModelChange={handleEditOperationRowsModelChange}
-                    handleResetRows={handleResetOperationRows}
-                  />
-                </CardContent>
-              </Card>
-            </Grid>
+
             <Grid item xs={12}>
               <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
                 <LoadingButton

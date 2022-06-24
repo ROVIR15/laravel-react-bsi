@@ -23,7 +23,8 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'Nama', alignRight: false },
+  { id: 'po_number', label: 'PO Number', alignRight: false },
+  { id: 'name', label: 'Buyer', alignRight: false },
   { id: 'issue_date', label: 'Issue Date', alignRight: false },
   { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
@@ -56,7 +57,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -180,6 +181,7 @@ function DisplayQuote({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
+                    po_number,
                     party,
                     issue_date,
                     valid_thru,
@@ -202,6 +204,7 @@ function DisplayQuote({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>

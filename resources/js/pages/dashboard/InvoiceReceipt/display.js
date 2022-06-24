@@ -23,11 +23,11 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'no_invoice', label: 'Sold to', alignRight: false },
-  { id: 'amount', label: 'Ship to', alignRight: false },
-  { id: 'tax_amount', label: 'PO Number', alignRight: false },
-  { id: 'invoice_date', label: 'PO Date', alignRight: false },
-  { id: 'posting_date', label: 'Delivery Date', alignRight: false }
+  { id: 'no_invoice', label: 'No Invoice', alignRight: false },
+  { id: 'amount', label: 'Amount', alignRight: false },
+  { id: 'tax_amount', label: 'Tax Amount', alignRight: false },
+  { id: 'invoice_date', label: 'Invoice Date', alignRight: false },
+  { id: 'posting_date', label: 'Created Date', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -57,7 +57,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.no_invoice.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }

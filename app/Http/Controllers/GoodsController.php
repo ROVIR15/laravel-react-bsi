@@ -37,7 +37,7 @@
       ->leftJoin("product_category as pc", function($join){
         $join->on("phc.product_category_id", "=", "pc.id");
       })
-      ->select("g.id", "g.brand as brand", "g.name", "g.satuan as unit_measurement", "g.value", "pc.name as category")
+      ->select("g.id", "g.brand as brand", "g.name", "g.imageUrl", "g.satuan as unit_measurement", "g.value", "pc.name as category")
       ->get();
 
       return response()->json([
@@ -75,7 +75,8 @@
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value'],
-          'brand' => $goodsParam['brand']
+          'brand' => $goodsParam['brand'],
+          'imageUrl' => $goodsParam['imageUrl']
         ]);
 
         $product = Product::create([

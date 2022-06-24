@@ -23,10 +23,10 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
+    { id: 'po_number', label: 'PO Number', alignRight: false },
     { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'sold_to', label: 'Sold to', alignRight: false },
     { id: 'ship_to', label: 'Ship to', alignRight: false },
-    { id: 'po_number', label: 'PO Number', alignRight: false },
     { id: 'issue_date', label: 'Issue Date', alignRight: false },
     { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
     { id: 'valid_thru', label: 'Valid Thru', alignRight: false }
@@ -205,10 +205,10 @@ function DisplaySalesOrder({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{order_id}</TableCell>
                       <TableCell align="left">{sold_to}</TableCell>
                       <TableCell align="left">{ship_to}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
 import account from '../../_mocks_/account';
+import useAuth from '../../context';
 
 // ----------------------------------------------------------------------
 
@@ -42,13 +43,27 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
+  const [state, setState] = useState({ name: '' });
+  const { user } = useAuth();
 
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
+
+    if(user) setState({...state, name: user.name});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  let newSidebar = [];
+
+  if(user){
+    sidebarConfig.map(function(x){
+      user.pages.map(function(page){
+        if(page.page_name === x.name) newSidebar.push(x);
+      });
+    })  
+  }
 
   const renderContent = (
     <Scrollbar
@@ -65,20 +80,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={state.name} alt={state.name} />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {state.name}
               </Typography>
             </Box>
           </AccountStyle>
         </Link>
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
+      <NavSection navConfig={newSidebar} />
     </Scrollbar>
   );
 

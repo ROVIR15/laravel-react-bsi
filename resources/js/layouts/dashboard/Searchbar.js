@@ -66,6 +66,7 @@ export default function Searchbar() {
             <Input
               autoFocus
               fullWidth
+              disabled
               disableUnderline
               placeholder="Search…"
               startAdornment={
@@ -79,7 +80,7 @@ export default function Searchbar() {
               }
               sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
             />
-            <Button variant="contained" onClick={handleClose}>
+            <Button variant="contained" disabled onClick={handleClose}>
               Search
             </Button>
           </SearchbarStyle>

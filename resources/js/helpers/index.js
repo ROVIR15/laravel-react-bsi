@@ -1,9 +1,12 @@
 import React from 'react'
 import axios from 'axios';
 
-const uri = "http://localhost:8000/api";
-const headers = {"ContentType" : "application/json"};
-const headersWIthAuth = {"ContentType" : "application/json", };
+const at = localStorage.getItem('_token');
+
+axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
+const uri = process.env.MIX_API_URL;
 
 const main = {
     login(_u, _p, cb){
@@ -11,8 +14,8 @@ const main = {
             console.error('user not found');
         }
         axios.post( uri + '/login', 
-                    {email: _u, password: _p}, 
-                    {headers}).then( function(res){
+                    {email: _u, password: _p}
+                ).then( function(res){
                         cb(res.data);
         }).catch(function(err){
             cb(err.response)
@@ -37,7 +40,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/buyer', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/buyer', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -45,7 +48,7 @@ const main = {
     },
     deleteBuyer(id, cb){
         if(!id) throw new Error('ID is required');
-        axios.delete( uri + '/buyer/' + id, {headers}).then(function(res){
+        axios.delete( uri + '/buyer/' + id).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -54,7 +57,7 @@ const main = {
     editBuyer(id, _data, cb){
         if(!id) throw new Error('ID is required');
         if(!_data) throw new Error('data is required');
-        axios.put( uri + '/buyer/' + id, { payload: _data}, {headers}).then(function(res){
+        axios.put( uri + '/buyer/' + id, { payload: _data}).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -65,7 +68,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/goods', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/goods', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -90,7 +93,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.put(uri + '/goods'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+      axios.put(uri + '/goods'+ `/${id}`, { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -98,7 +101,7 @@ const main = {
     },
     deleteGoods(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/goods/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/goods/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -123,7 +126,7 @@ const main = {
     updateProductFeature(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/product-feature/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/product-feature/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -131,7 +134,7 @@ const main = {
     },
     deleteProductFeature(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/product-feature/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/product-feature/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -142,7 +145,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/inquiry', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/inquiry', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -165,7 +168,7 @@ const main = {
     },
     deleteInquiry(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/inquiry/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/inquiry/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -174,7 +177,7 @@ const main = {
     updateInquiry(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/inquiry/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/inquiry/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -185,7 +188,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/request-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/request-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -201,7 +204,7 @@ const main = {
     },
     deleteRequestItem(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/request-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/request-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -210,7 +213,7 @@ const main = {
     updateRequestItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/request-item/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/request-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -221,7 +224,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/quote', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/quote', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -258,7 +261,7 @@ const main = {
     },
     deleteQuote(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/quote/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/quote/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -267,7 +270,7 @@ const main = {
     updateQuote(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/quote/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/quote/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -278,7 +281,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/quote-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/quote-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -294,7 +297,7 @@ const main = {
     },
     deleteQuoteItem(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/quote-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/quote-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -303,7 +306,7 @@ const main = {
     updateQuoteItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/quote-item/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/quote-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -314,7 +317,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/sales-order', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/sales-order', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -337,7 +340,7 @@ const main = {
     },
     deleteSalesOrder(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/sales-order/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/sales-order/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -346,7 +349,7 @@ const main = {
     updateSalesOrder(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/sales-order/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/sales-order/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -357,7 +360,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/order-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/order-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -373,7 +376,7 @@ const main = {
     },
     deleteSalesOrderItem(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/order-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/order-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -382,7 +385,7 @@ const main = {
     updateSalesOrderItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/order-item/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/order-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -409,7 +412,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/bom', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -432,7 +435,7 @@ const main = {
     },
     deleteBOM(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/bom/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/bom/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -441,7 +444,7 @@ const main = {
     updateBOM(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/bom/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/bom/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -452,7 +455,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/bom-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -484,7 +487,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/manufacture', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/manufacture', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -507,7 +510,7 @@ const main = {
     },
     deleteManufactureOrder(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/manufacture' + id, {headers}).then(function(res){
+      axios.delete( uri + '/manufacture' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -516,7 +519,7 @@ const main = {
     updateManufactureOrder(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/manufacture' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/manufacture' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -527,7 +530,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/manufacture-operation', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/manufacture-operation', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -550,7 +553,7 @@ const main = {
     },
     deleteManufactureOperation(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/manufacture-operation' + id, {headers}).then(function(res){
+      axios.delete( uri + '/manufacture-operation' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -559,7 +562,7 @@ const main = {
     updateManufactureOperation(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/manufacture-operation' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/manufacture-operation' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -570,7 +573,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/manufacture-component', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/manufacture-component', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -593,7 +596,7 @@ const main = {
     },
     deleteManufactureComponent(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/manufacture-component' + id, {headers}).then(function(res){
+      axios.delete( uri + '/manufacture-component' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -602,7 +605,7 @@ const main = {
     updateManufactureComponent(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/manufacture-component/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/manufacture-component/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -613,7 +616,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/operation-result', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/operation-result', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -640,7 +643,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/production-record', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/production-record', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -652,7 +655,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/work-center', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/work-center', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -675,7 +678,7 @@ const main = {
     },
     deleteWorkCenter(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/work-center/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/work-center/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -684,7 +687,7 @@ const main = {
     updateWorkCenter(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/work-center/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/work-center/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -695,7 +698,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/operation', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/operation', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -718,7 +721,7 @@ const main = {
     },
     deleteOperation(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/operation/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/operation/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -727,7 +730,7 @@ const main = {
     updateOperation(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/operation/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/operation/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -738,7 +741,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/process', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/process', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -761,7 +764,7 @@ const main = {
     },
     deleteProcess(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/process/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/process/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -770,7 +773,7 @@ const main = {
     updateProcess(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/process/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/process/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -781,7 +784,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/production-study', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/production-study', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -804,7 +807,7 @@ const main = {
     },
     deleteProductionStudy(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/production-study/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/production-study/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -813,7 +816,7 @@ const main = {
     updateProductionStudy(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/production-study/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/production-study/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -824,7 +827,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/process-study', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/process-study', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -854,7 +857,7 @@ const main = {
     },
     deleteProcessStudy(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/process-study/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/process-study/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -863,7 +866,7 @@ const main = {
     updateProcessStudy(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/process-study/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/process-study/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -874,7 +877,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/observation-result', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/observation-result', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -904,7 +907,7 @@ const main = {
     },
     deleteObservationStudy(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/observation-result/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/observation-result/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -913,7 +916,7 @@ const main = {
     updateObservationStudy(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/observation-result/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/observation-result/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -924,7 +927,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/labor', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/labor', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -947,7 +950,7 @@ const main = {
     },
     deleteLabor(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/labor/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/labor/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -956,7 +959,7 @@ const main = {
     updateLabor(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/labor/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/labor/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -967,7 +970,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/inquiry', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/inquiry', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -990,7 +993,7 @@ const main = {
     },
     deleteInquiry(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/inquiry/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/inquiry/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -999,7 +1002,7 @@ const main = {
     updateInquiry(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/inquiry/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/inquiry/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1010,7 +1013,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/purchase-order', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/purchase-order', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1033,7 +1036,7 @@ const main = {
     },
     deletePurchaseOrder(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/purchase-order/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/purchase-order/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1042,7 +1045,7 @@ const main = {
     updatePurchaseOrder(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/purchase-order/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/purchase-order/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1053,7 +1056,7 @@ const main = {
         if(!_data) {
             console.error('data not found');
         }
-        axios.post( uri + '/purchase-requisition', { payload:  _data }, {headers} ).then( function(res) {
+        axios.post( uri + '/purchase-requisition', { payload:  _data } ).then( function(res) {
           cb(res.data)
         }).catch(function(err){
             cb(err.response);
@@ -1076,7 +1079,7 @@ const main = {
       },
       deletePurchaseRequisiton(id, cb){
         if(!id) throw new Error('ID is required');
-        axios.delete( uri + '/purchase-requisition/' + id, {headers}).then(function(res){
+        axios.delete( uri + '/purchase-requisition/' + id).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1085,7 +1088,7 @@ const main = {
       updatePurchaseRequisiton(id, _data, cb){
         if(!id) throw new Error('ID is required');
         if(!_data) throw new Error('data is required');
-        axios.put( uri + '/purchase-requisition/' + id, { payload: _data}, {headers}).then(function(res){
+        axios.put( uri + '/purchase-requisition/' + id, { payload: _data}).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1096,7 +1099,7 @@ const main = {
         if(!_data) {
             console.error('data not found');
         }
-        axios.post( uri + '/request-for-quotation', { payload:  _data }, {headers} ).then( function(res) {
+        axios.post( uri + '/request-for-quotation', { payload:  _data } ).then( function(res) {
           cb(res.data)
         }).catch(function(err){
           cb(err);
@@ -1119,7 +1122,7 @@ const main = {
       },
       deleteRFQ(id, cb){
         if(!id) throw new Error('ID is required');
-        axios.delete( uri + '/request-for-quotation/' + id, {headers}).then(function(res){
+        axios.delete( uri + '/request-for-quotation/' + id).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1128,7 +1131,7 @@ const main = {
       updateRFQ(id, _data, cb){
         if(!id) throw new Error('ID is required');
         if(!_data) throw new Error('data is required');
-        axios.put( uri + '/request-for-quotation/' + id, { payload: _data}, {headers}).then(function(res){
+        axios.put( uri + '/request-for-quotation/' + id, { payload: _data}).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1154,7 +1157,7 @@ const main = {
         if(!_data) {
             console.error('data not found');
         }
-        axios.post( uri + '/vendor', { payload:  _data }, {headers} ).then( function(res) {
+        axios.post( uri + '/vendor', { payload:  _data } ).then( function(res) {
           cb(res.data)
         }).catch(function(err){
             cb(err.response);
@@ -1162,7 +1165,7 @@ const main = {
       },
       deleteVendor(id, cb){
         if(!id) throw new Error('ID is required');
-        axios.delete( uri + '/vendor/' + id, {headers}).then(function(res){
+        axios.delete( uri + '/vendor/' + id).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1171,7 +1174,7 @@ const main = {
       editVendor(id, _data, cb){
         if(!id) throw new Error('ID is required');
         if(!_data) throw new Error('data is required');
-        axios.put( uri + '/vendor/' + id, { payload: _data}, {headers}).then(function(res){
+        axios.put( uri + '/vendor/' + id, { payload: _data}).then(function(res){
           cb(res.data);
         }).catch(function(err){
           cb(err.response);
@@ -1182,7 +1185,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/order-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/order-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
@@ -1198,7 +1201,7 @@ const main = {
     },
     deletePurchaseOrderItem(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/order-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/order-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1207,7 +1210,7 @@ const main = {
     updatePurchaseOrderItem(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/order-item/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/order-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1218,7 +1221,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/goods-receipt', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/goods-receipt', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1243,7 +1246,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.put(uri + '/goods-receipt'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+      axios.put(uri + '/goods-receipt'+ `/${id}`, { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1251,7 +1254,7 @@ const main = {
     },
     deleteGoodsReceipt(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/goods-receipt/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/goods-receipt/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1262,7 +1265,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/goods-receipt-item', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/goods-receipt-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1287,7 +1290,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.put(uri + '/goods-receipt-item'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+      axios.put(uri + '/goods-receipt-item'+ `/${id}`, { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1295,7 +1298,7 @@ const main = {
     },
     deleteGoodsReceiptItem(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/goods-receipt-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/goods-receipt-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1307,7 +1310,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/shipment', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/shipment', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1332,7 +1335,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.put(uri + '/shipment'+ `/${id}`, { payload:  _data }, {headers} ).then( function(res) {
+      axios.put(uri + '/shipment'+ `/${id}`, { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1340,7 +1343,7 @@ const main = {
     },
     deleteShipment(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/goods-receipt-item/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/goods-receipt-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1366,7 +1369,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/inventory', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/inventory', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1377,7 +1380,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/item-issuance', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/item-issuance', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err.response);
@@ -1404,7 +1407,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/sales-invoice', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/sales-invoice', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1427,7 +1430,7 @@ const main = {
     },
     deleteSalesInvoice(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/sales-invoice/' + id, {headers}).then(function(res){
+      axios.delete( uri + '/sales-invoice/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1436,7 +1439,7 @@ const main = {
     updateSalesInvoice(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/sales-invoice/' + id, { payload: _data}, {headers}).then(function(res){
+      axios.put( uri + '/sales-invoice/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1447,7 +1450,7 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/action', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/action', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1457,7 +1460,7 @@ const main = {
       if(!manufacture_operation) {
           console.error('data not found');
       }
-      axios.get( uri + `/action?manufacture_operation=${manufacture_operation}`, {headers} ).then( function(res) {
+      axios.get( uri + `/action?manufacture_operation=${manufacture_operation}` ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err.response);
@@ -1466,7 +1469,7 @@ const main = {
     // Consume
     getAStock(id, cb){
       if(!id) return undefined;
-      axios.get( uri + `/consume/${id}`, {headers} ).then( function(res) {
+      axios.get( uri + `/consume/${id}` ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -1476,10 +1479,18 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/consume', { payload:  _data }, {headers} ).then( function(res) {
+      axios.post( uri + '/consume', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
+      });
+    },
+    uploadImage(_formData, cb){
+      if(!_formData) return undefined;
+      axios.post(uri + '/upload', _formData).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
       });
     }
     //
