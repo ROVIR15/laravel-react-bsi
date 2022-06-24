@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const uri = "http://localhost:8000/api";
+const uri = process.env.MIX_API_URL;
 const headers = {"ContentType" : "application/json"}
 
 const auth = {
