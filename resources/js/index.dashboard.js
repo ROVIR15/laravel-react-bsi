@@ -16,6 +16,8 @@ import { SnackbarProvider } from 'notistack';
 import Slide from '@mui/material/Slide';
 import { styled } from "@mui/material";
 
+import { AuthProvider } from './context'
+
 const StyledSnackbarProvider = styled(SnackbarProvider)`
   &.SnackbarItem-contentRoot, &.SnackbarItem-variantSuccess {
     background-color: white;
@@ -27,19 +29,21 @@ function MainApp(){
   return (
     <HelmetProvider>
       <BrowserRouter>
-        <ThemeConfig>
-        <ScrollToTop/>
-        <GlobalStyles/>
-      <StyledSnackbarProvider
-        anchorOrigin={{
-             vertical: 'top',
-             horizontal: 'right',
-        }}
-        TransitionComponent={Slide}      
-      >
-        <DashboardRouter />
-      </StyledSnackbarProvider>
-        </ThemeConfig>
+        <AuthProvider>
+          <ThemeConfig>
+            <ScrollToTop/>
+              <GlobalStyles/>
+              <StyledSnackbarProvider
+                anchorOrigin={{
+                     vertical: 'top',
+                     horizontal: 'right',
+                }}
+                TransitionComponent={Slide}      
+              >
+              <DashboardRouter />
+            </StyledSnackbarProvider>
+          </ThemeConfig>
+        </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>
   )

@@ -28,6 +28,7 @@ const sidebarConfig = [
   },
   {
     title: 'Sales',
+    name: 'sales',
     icon: getIcon(briefcaseFill),
     children: [
       {
@@ -50,6 +51,7 @@ const sidebarConfig = [
   },
   {
     title: 'Production',
+    name: 'production',
     icon: getIcon(flashFill),
     children: [
       {
@@ -69,6 +71,7 @@ const sidebarConfig = [
   },
   {
     title: 'Industrial Engineering Study',
+    name: 'industrial_engineering',
     icon: getIcon(settingsOutline),
     children: [
       {
@@ -87,6 +90,7 @@ const sidebarConfig = [
   },
   {
     title: 'Material Management',
+    name: 'material',
     icon: getIcon(cubeFill),
     children: [
       {
@@ -101,6 +105,7 @@ const sidebarConfig = [
   },
   {
     title: 'Inventory Management',
+    name: 'inventory',
     icon: getIcon(archiveFill),
     children: [
       {
@@ -115,6 +120,7 @@ const sidebarConfig = [
   },
   {
     title: "Human Resources and Development",
+    name: 'human_resources',
     icon: getIcon(peopleFill),
     children: [
       {

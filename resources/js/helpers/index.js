@@ -1,9 +1,12 @@
 import React from 'react'
 import axios from 'axios';
 
+const at = localStorage.getItem('_token');
+
+axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 const uri = "http://localhost:8000/api";
-const headers = {"ContentType" : "application/json"};
-const headersWIthAuth = {"ContentType" : "application/json", };
 
 const main = {
     login(_u, _p, cb){
@@ -1480,6 +1483,14 @@ const main = {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
+      });
+    },
+    uploadImage(_formData, cb){
+      if(!_formData) return undefined;
+      axios.post('/upload', formData).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
       });
     }
     //

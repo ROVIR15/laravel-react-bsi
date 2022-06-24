@@ -1,8 +1,7 @@
 import axios from 'axios'
 
-const uri = process.env.TEST_API_URL
+const uri = "http://localhost:8000/api";
 const headers = {"ContentType" : "application/json"}
-const headersWIthAuth = {"ContentType" : "application/json", }
 
 const auth = {
     login(_u, _p, cb){
@@ -17,12 +16,15 @@ const auth = {
             cb(err.response)
         })
     },
-    logout(cb){
-        axios.post(uri + '/logout', 
-                    {headersWIthAuth}).then( function(res){
+    logout(at, cb){
+        const headersWIthAuth = {"ContentType" : "application/json", "Authorization": `Bearer ${at})}`}
+        axios.post(uri + '/logout', {},
+                    {headers: headersWIthAuth}).then( function(res){
                         cb(res.data);
         }).catch(function(err){
             cb(err.response);
         });
     }
 }
+
+export default auth;

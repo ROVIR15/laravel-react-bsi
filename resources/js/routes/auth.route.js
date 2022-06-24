@@ -17,15 +17,13 @@ export default function TestRouter() {
     {
       path: '/app',
       children: [
+        { path: 'timer', element: <TimeCounter/>},
+        { path: 'drawer', element: <Drawer/>},
         { path: 'document-test', element: <FirstPage /> },
         { path: 'gr-test', element: <GRTest /> },
         { path: 'rfq-test', element: <RFQTest /> },
         { path: 'dialog-test', element: <Test /> },
-        { path: 'second-page', element: <SecondPage /> },
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: 'timer', element: <TimeCounter/>},
-        { path: 'drawer', element: <Drawer/>}
+        { path: 'second-page', element: <SecondPage /> }
       ]
     }
   ]);
