@@ -94,6 +94,11 @@ function Goods() {
       file,
       file.name
     );
+
+    API.uploadImage(formData, function(res){
+      if(res.success) setFile(res.path);
+      else alert('error');
+    })
   }
 
   const handleOnFileChange = (event) => {

@@ -24,12 +24,11 @@ import API from '../../../helpers';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Work Center Name', alignRight: false },
-    { id: 'working_hours', label: 'Working Hours', alignRight: false },
+    { id: 'work_hours', label: 'Working Days', alignRight: false },
     { id: 'company_name', label: 'Company Name', alignRight: false },
-    { id: 'time_efficiency', label: 'Time Efficiency', alignRight: false },
     { id: 'prod_capacity', label: 'Prod. Capacity', alignRight: false },
     { id: 'oee_target', label: 'OEE Target', alignRight: false },
-    { id: 'cost_per_hour', label: 'Cost per Hour', alignRight: false },
+    { id: 'cost_per_hour', label: 'Cost per Day', alignRight: false },
     { id: 'description', label: 'Description', alignRight: false }
   ];
 
@@ -60,7 +59,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -183,9 +182,8 @@ function DisplayWorkCenter({ placeHolder }) {
                   const {
                     id,
                     name,
-                    working_hours,
+                    work_hours,
                     company_name,
-                    time_efficiency,
                     prod_capacity,
                     oee_target,
                     cost_per_hour,
@@ -209,9 +207,8 @@ function DisplayWorkCenter({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{working_hours}</TableCell>
+                      <TableCell align="left">{work_hours}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>
-                      <TableCell align="left">{time_efficiency}</TableCell>
                       <TableCell align="left">{prod_capacity}</TableCell>
                       <TableCell align="left">{oee_target}</TableCell>
                       <TableCell align="left">{cost_per_hour}</TableCell>

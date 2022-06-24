@@ -242,6 +242,7 @@ function Goods() {
           <Grid container spacing={3}>
             <Grid item xs={5}>
               <Paper sx={{padding: 2, height: '100%'}}>
+                <img src="/data_file/1.jpeg" alt="Image"/>
                 <label htmlFor='upload-file'>
                 <input 
                   accept="image/*" 
@@ -251,15 +252,11 @@ function Goods() {
                   onChange={handleOnFileChange}
                   style={{display: 'none'}}
                 />
-                <UploadPaper 
-                  component="span" 
-                  onChange={handleUploadFile}
-                  fullWidth
-                >
+                  <Button>
                     <Typography variant="h5">
-                      Drop or Select File
-                  </Typography>
-                </UploadPaper>
+                      Change File
+                    </Typography>
+                  </Button>
                 </label>
               </Paper>
             </Grid>

@@ -6,7 +6,15 @@ import IconButton from '@mui/material/IconButton';
 import { Icon } from '@iconify/react';
 import CloseCircle from '@iconify/icons-eva/close-circle-fill';
 
+import useAuth from '../../context';
+
+import { Navigate } from 'react-router-dom';
+
 export default function SimpleSnackbar() {
+  const { user } = useAuth();
+
+  if (!user) return <Navigate replace to="/auth/login" />;
+
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
