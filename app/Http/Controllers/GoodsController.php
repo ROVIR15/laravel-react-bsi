@@ -76,7 +76,7 @@
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value'],
           'brand' => $goodsParam['brand'],
-          'imageUrl' => $goodsParam['path']
+          'imageUrl' => $goodsParam['imageUrl']
         ]);
 
         $product = Product::create([

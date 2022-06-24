@@ -22,6 +22,7 @@ const UploadPaper = styled(Button)(({theme}) => ({
 
 function Goods() {
   const [cat, setCat] = useState([]);
+  const [file, setFile] = useState(null);
 
   const GoodsSchema = Yup.object().shape({
     name: Yup.string().required('Nama is required'),
@@ -46,7 +47,7 @@ function Goods() {
     onSubmit: ({ name, unit_measurement, value, brand, category, feature_one, feature_two }) => {
       const _new = {
         goods: {
-          name, unit: unit_measurement, value, brand
+          name, unit: unit_measurement, value, brand, imageUrl: file
         }, 
         category,
         feature_one: feature_one.split(','),
@@ -82,27 +83,24 @@ function Goods() {
   /**
    * Handle Upload File
    */
-  const [file, setFile] = useState(null);
 
-  const handleUploadFile = (event) => {
+  const handleOnFileChange = (event) => {
+    setFile(event.target.files[0]);
+
     // Create an object of formData
     const formData = new FormData();
     
     // Update the formData object
     formData.append(
       "file",
-      file,
-      file.name
+      event.target.files[0],
+      event.target.files[0].name
     );
 
     API.uploadImage(formData, function(res){
-      if(res.success) setFile(res.path);
-      else alert('error');
+      if(res.success) {setFile(res.path); alert(JSON.stringify(res))}
+      else {alert('error');}
     })
-  }
-
-  const handleOnFileChange = (event) => {
-    setFile(event.target.files[0]);
   }
 
   useEffect(() => {
@@ -114,6 +112,54 @@ function Goods() {
     }
   }, [cat])
 
+  function ShowImageWhenItsUploaded(){
+    if(file) {
+      return (
+        <Paper sx={{padding: 2, height: '100%'}}>
+          <img src={file} alt="Image"/>
+          <label htmlFor='upload-file'>
+          <input 
+            accept="image/*" 
+            multiple 
+            id="upload-file" 
+            type="file" 
+            onChange={handleOnFileChange}
+            style={{display: 'none'}}
+          />
+            <Button>
+              <Typography variant="h5">
+                Change File
+              </Typography>
+            </Button>
+          </label>
+        </Paper>
+      )
+    } else {
+      return (
+        <Paper sx={{padding: 2, height: '100%'}}>
+          <label htmlFor='upload-file'>
+          <input 
+            accept="image/*" 
+            multiple 
+            id="upload-file" 
+            type="file" 
+            onChange={handleOnFileChange}
+            style={{display: 'none'}}
+          />
+          <UploadPaper 
+            component="span" 
+            fullWidth
+          >
+              <Typography variant="h5">
+                Drop or Select File
+            </Typography>
+          </UploadPaper>
+          </label>
+        </Paper>
+      )
+    }
+  }
+
   return (
     <Page>
       <Container >
@@ -121,27 +167,7 @@ function Goods() {
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={5}>
-              <Paper sx={{padding: 2, height: '100%'}}>
-                <label htmlFor='upload-file'>
-                <input 
-                  accept="image/*" 
-                  multiple 
-                  id="upload-file" 
-                  type="file" 
-                  onChange={handleOnFileChange}
-                  style={{display: 'none'}}
-                />
-                <UploadPaper 
-                  component="span" 
-                  onChange={handleUploadFile}
-                  fullWidth
-                >
-                    <Typography variant="h5">
-                      Drop or Select File
-                  </Typography>
-                </UploadPaper>
-                </label>
-              </Paper>
+              <ShowImageWhenItsUploaded/>
             </Grid>
             <Grid item xs={7}>
               <Card >
