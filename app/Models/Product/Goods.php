@@ -18,7 +18,8 @@ class Goods extends Model
         'name',
         'satuan',
         'value',
-        'brand'
+        'brand',
+        'imageUrl'
     ];
 
     public function product(){

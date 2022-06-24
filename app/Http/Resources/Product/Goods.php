@@ -21,6 +21,7 @@ class Goods extends JsonResource
             'unit_measurement' => $this->satuan,
             'value' => $this->value,
             'brand' => $this->brand,
+            'imageUrl' => $this->imageUrl,
             'product_id' => DB::table("product as p")
             ->select('p.id')
             ->where('p.goods_id', '=', $this->id)
