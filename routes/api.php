@@ -151,4 +151,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Consume
     Route::resource('consume', 'ConsumeInventoryController')->only(['store', 'show']);
+    
+    // sampling study
+    Route::resource('sample-study', 'SamplingStudyController')->only(['store', 'show', 'index', 'update', 'destroy']);
+    Route::resource('sample-process', 'SampleProcessStudyController')->only(['store', 'update', 'destroy']);
 });

@@ -15,7 +15,8 @@ class Status extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => $this.collection
+            'success' => true,
+            'data' => $this->collection
         ];
     }
 }

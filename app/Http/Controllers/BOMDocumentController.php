@@ -98,6 +98,7 @@ class BOMDocumentController extends Controller
                 'total_overhead' => $query[0]->total_overhead,
                 'total_goods' => $query2[0]->total_goods
             ];
+            
             return response()->json([
                 'success' => true,
                 'data' => $data
