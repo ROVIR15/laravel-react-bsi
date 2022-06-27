@@ -83,6 +83,10 @@ const sidebarConfig = [
         path: '/dashboard/ie-study/production-study'
       },
       {
+        title: 'Sampling Study',
+        path: '/dashboard/ie-study/sampling-study'
+      },
+      {
         title: 'Observation Result',
         path: '/dashboard/ie-study/result'
       }

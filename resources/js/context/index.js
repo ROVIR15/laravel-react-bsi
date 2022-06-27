@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }) => {
     const userStorage = JSON.parse(localStorage.getItem('user'));
     const access_token = JSON.parse(localStorage.getItem('access_token'));
     if( !userStorage || !access_token ) {
-      localStorage.clear();
-      navigate('/login');
+      // localStorage.clear();
+      // navigate('/login');
     } else {
       const { name, email } = userStorage;
       setUser({name, email, access_token});  

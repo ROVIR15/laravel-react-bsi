@@ -14,11 +14,11 @@ export default function DashboardLayout({ children }){
    
   const navigate = useNavigate();
 
-  if(!userStorage) navigate('/login');
+  // if(!userStorage) navigate('/login');
 
   document.title="Dashboard | BSI Information System"
   return (
-    <Page title="Dashboard | BSI Information System">
+    <Page >
       <Typography variant="h1" color="initial"> Dashboard Layout </Typography>
       <Outlet/>
     </Page>

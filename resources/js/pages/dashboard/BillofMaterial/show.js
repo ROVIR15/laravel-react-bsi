@@ -514,16 +514,6 @@ function BillOfMaterial() {
                       </Box>
                       <TabPanel value="1">
                         <DataGrid 
-                          columns={goodsColumns}
-                          rows={component}
-                          handleAddRow={handleOpenModal}
-                          onEditRowsModelChange={handleEditComponentRowsModelChange}
-                          handleResetRows={handleResetComponentRows}
-                          handleUpdateAllRows={handleUpdateAllComponentRows}
-                        />
-                      </TabPanel>
-                      <TabPanel value="2">
-                        <DataGrid 
                           columns={operationColumns}
                           rows={operation}
                           handleAddRow={handleOpenModalO}
@@ -531,6 +521,16 @@ function BillOfMaterial() {
                           handleResetRows={handleResetComponentRows}
                           handleUpdateAllRows={handleUpdateAllOperationRows}
                         />
+                      </TabPanel>
+                      <TabPanel value="2">
+                        <DataGrid 
+                          columns={goodsColumns}
+                          rows={component}
+                          handleAddRow={handleOpenModal}
+                          onEditRowsModelChange={handleEditComponentRowsModelChange}
+                          handleResetRows={handleResetComponentRows}
+                          handleUpdateAllRows={handleUpdateAllComponentRows}
+                        />                        
                       </TabPanel>
                     </TabContext>
                   </Box>

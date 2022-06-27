@@ -20,6 +20,7 @@ import {
   InvoiceReceipt,
   ProcessLayout,
   PSLayout,
+  SSLayout,
   ORLayout,
   LaborLayout,
   MOLayout,
@@ -47,6 +48,7 @@ import AddGR from '../pages/dashboard/GoodsReceipt/new';
 import AddIR from '../pages/dashboard/InvoiceReceipt/new';
 import AddProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/add';
 import AddPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/new';
+import AddSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/new';
 import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/new';
 import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
@@ -69,6 +71,7 @@ import DisplayGR from '../pages/dashboard/GoodsReceipt/display';
 import DisplayIR from '../pages/dashboard/InvoiceReceipt/display';
 import DisplayProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/display';
 import DisplayPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/display';
+import DisplaySS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/display';
 import DisplayLabor from '../pages/dashboard/Labor/display';
 
 import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
@@ -92,6 +95,7 @@ import ShowPO from '../pages/dashboard/PurchaseOrder/show';
 import ShowGR from '../pages/dashboard/GoodsReceipt/show';
 import ShowProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/show';
 import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/show';
+import ShowSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/show';
 import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
 import ShowOD from '../pages/dashboard/OutboundDelivery/show';
@@ -120,7 +124,7 @@ export default function TestRouter() {
     },
     {
       path: '/dashboard',
-      element: (access_token ? <DashboardLayout /> : <Navigate replace to="/auth/login" />),
+      element: <DashboardLayout />,
       children: [
         { 
           path: 'order/buyer',
@@ -311,6 +315,15 @@ export default function TestRouter() {
             { path: ':id', element: <ShowPS />},
             { path: 'add', element: <AddPS />},
             { path: 'display', element: <DisplayPS />},
+          ]
+        },
+        { 
+          path: 'ie-study/sampling-study', 
+          element: <SSLayout />,
+          children: [
+            { path: 'add', element: <AddSS />},
+            { path: ':id', element: <ShowSS />},
+            { path: 'display', element: <DisplaySS />}
           ]
         },
         { 

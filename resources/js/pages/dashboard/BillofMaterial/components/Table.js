@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
+import { FormControl, Input, InputAdornment, InputLabel, TextField, Typography } from '@mui/material';
 
 import {fCurrency} from '../../../../utils/formatNumber';
 
@@ -31,6 +31,8 @@ function createData(
 
 export default function BasicTable({ payload }) {
 
+  const [margin, setMargin] = React.useState(0);
+  const [price, setPrice] = React.useState(0);
   const {total_labor, qty_to_produce, many_components, total_cost, total_overhead, total_goods} = payload;
 
   const rows = [
@@ -47,9 +49,14 @@ export default function BasicTable({ payload }) {
     return fCurrency(parseInt(total(_param1, _param2, _param3)/parseInt(qty)))
   }
 
+  function OfferingPrice(){
+    const price = parseInt(total(total_cost, total_overhead, total_goods)/parseInt(qty_to_produce));
+    return fCurrency(price * ((1+margin/100)));
+  }
+
   return (
     <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
-      <Table sx={{ minWidth: 120 }} aria-label="simple table">
+      <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell align="left">#</TableCell>
@@ -78,7 +85,7 @@ export default function BasicTable({ payload }) {
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="body1"> Total Costs Expected </Typography>
+                <Typography variant="inherit"> Total Costs Expected </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -91,7 +98,7 @@ export default function BasicTable({ payload }) {
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="body1"> Unit Produced </Typography>
+                <Typography variant="inherit"> Unit Produced </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -104,11 +111,44 @@ export default function BasicTable({ payload }) {
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="body1"> Cost per Product </Typography>
+                <Typography variant="inherit"> Cost per Product </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
                 <Typography variant="body1"> {costPerProduct(total_cost, total_overhead, total_goods, qty_to_produce)} </Typography>
+              </NoBorderCell>
+            </TableRow>
+            <TableRow
+              key="Total"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Margin </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+        <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+          <Input
+            id="filled-adornment-amount"
+            inputProps={{ style: {textAlign: 'end'}}}
+            onChange={(e) => setMargin(e.target.value)}
+            endAdornment={<InputAdornment position="end">%</InputAdornment>}
+          />
+        </FormControl>
+              </NoBorderCell>
+            </TableRow>
+            <TableRow
+              key="Total"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Offering Price </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {OfferingPrice()} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

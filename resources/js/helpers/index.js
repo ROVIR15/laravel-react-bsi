@@ -779,6 +779,34 @@ const main = {
         cb(err.response);
       });
     },
+    // Industrial Engineering Study - Process
+    insertSampleProcess(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/sample-process', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deleteSampleProcess(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/sample-process/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSampleProcess(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/sample-process/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     // Industrial Engineering Study - Production Study
     insertProductionStudy(_data, cb){
       if(!_data) {
@@ -817,6 +845,49 @@ const main = {
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
       axios.put( uri + '/production-study/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Industrial Engineering Study - Production Study
+    insertSamplingStudy(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/sample-study', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getSamplingStudy(cb){
+      axios.get( uri + '/sample-study').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getASamplingStudy(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/sample-study' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteSamplingStudy(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/sample-study/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSamplingStudy(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/sample-study/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
