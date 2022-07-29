@@ -14,7 +14,7 @@ class AddForeignKeysToModelHasRolesTable extends Migration {
 	{
 		Schema::table('model_has_roles', function(Blueprint $table)
 		{
-			$table->foreign('role_id')->references('id')->on('roles')->onUpdate('RESTRICT')->onDelete('CASCADE');
+			$table->foreign('role_id')->references('id')->on('roles')->onUpdate('NO ACTION')->onDelete('CASCADE');
 		});
 	}
 

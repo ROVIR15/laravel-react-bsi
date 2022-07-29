@@ -14,8 +14,8 @@ class AddForeignKeysToActionTable extends Migration {
 	{
 		Schema::table('action', function(Blueprint $table)
 		{
-			$table->foreign('action_type_id', 'fk_action_action_type_id1')->references('id')->on('action_type')->onUpdate('RESTRICT')->onDelete('RESTRICT');
-			$table->foreign('manufacture_operation_id', 'fk_action_manufacture_operation_idx')->references('id')->on('manufacture_operation')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+			$table->foreign('action_type_id', 'fk_action_action_type_id1')->references('id')->on('action_type')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('manufacture_operation_id', 'fk_action_manufacture_operation_idx')->references('id')->on('manufacture_operation')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
 

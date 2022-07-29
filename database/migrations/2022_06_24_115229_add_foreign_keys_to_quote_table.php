@@ -14,8 +14,8 @@ class AddForeignKeysToQuoteTable extends Migration {
 	{
 		Schema::table('quote', function(Blueprint $table)
 		{
-			$table->foreign('party_id', 'fk_quote_buyer1')->references('id')->on('party')->onUpdate('CASCADE')->onDelete('CASCADE');
-			$table->foreign('ship_to', 'fk_quote_buyer2')->references('id')->on('party')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('party_id', 'fk_quote_buyer1')->references('id')->on('party')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('ship_to', 'fk_quote_buyer2')->references('id')->on('party')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
 

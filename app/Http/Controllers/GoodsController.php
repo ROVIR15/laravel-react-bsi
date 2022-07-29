@@ -71,7 +71,6 @@
       
       try {
         $goods = Goods::create([
-          'id' => $faker->unique()->numberBetween(1,8939),
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value'],
@@ -81,7 +80,6 @@
 
         $product = Product::create([
           'goods_id' => $goods['id'],
-          'id' => $faker->unique()->numberBetween(1,8939)
         ]);
 
         $productHasCategory = ProductHasCategory::create([

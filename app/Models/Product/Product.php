@@ -10,7 +10,7 @@ class Product extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -18,7 +18,6 @@ class Product extends Model
         'goods_id',
         'name',
         'part_id',
-        'id'
     ];
 
     public function goods(){

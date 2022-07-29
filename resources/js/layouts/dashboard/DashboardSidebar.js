@@ -60,6 +60,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   if(user){
     sidebarConfig.map(function(x){
       user.pages.map(function(page){
+        console.log(x.name)
         if(page.page_name === x.name) newSidebar.push(x);
       });
     })  

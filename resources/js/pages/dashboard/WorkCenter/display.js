@@ -91,7 +91,7 @@ function DisplayWorkCenter({ placeHolder }) {
         });
       }
 
-  }, [workCenter])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

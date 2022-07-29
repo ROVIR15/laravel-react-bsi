@@ -10,11 +10,10 @@ class Goods extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
-    public $timestamps = false;
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'id',
         'name',
         'satuan',
         'value',

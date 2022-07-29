@@ -24,9 +24,7 @@ export const state = {
 export const AuthContext = createContext(state);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(
-    {"id":3,"name":"Alex","email":"alex@gmail.com","email_verified_at":null,"created_at":"2022-06-23 07:13:36","updated_at":"2022-06-23 07:13:36","pages":[{"id":7,"users_id":3,"page_name":"sales","insert":1,"delete":1,"edit":1},{"id":8,"users_id":3,"page_name":"human_resources","insert":1,"delete":1,"edit":1},{"id":9,"users_id":3,"page_name":"production","insert":1,"delete":1,"edit":1},{"id":10,"users_id":3,"page_name":"inventory","insert":1,"delete":1,"edit":1},{"id":11,"users_id":3,"page_name":"industrial_engineering","insert":1,"delete":1,"edit":1},{"id":12,"users_id":3,"page_name":"material","insert":1,"delete":1,"edit":1}]}
-  );
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
@@ -48,13 +46,13 @@ export const AuthProvider = ({ children }) => {
   // is over.
   useEffect(() => {
     const userStorage = JSON.parse(localStorage.getItem('user'));
-    const access_token = JSON.parse(localStorage.getItem('access_token'));
-    if( !userStorage || !access_token ) {
+    const access_token = localStorage.getItem('_token');
+    if( !userStorage && !access_token ) {
       // localStorage.clear();
-      // navigate('/login');
+      navigate('/login');
     } else {
-      const { name, email } = userStorage;
-      setUser({name, email, access_token});  
+      const { name, email, pages } = userStorage;
+      setUser({name, email, pages, access_token});  
     }
 
     // usersApi.getCurrentUser()

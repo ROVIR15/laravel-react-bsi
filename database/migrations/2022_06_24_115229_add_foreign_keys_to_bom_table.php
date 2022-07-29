@@ -14,8 +14,8 @@ class AddForeignKeysToBomTable extends Migration {
 	{
 		Schema::table('bom', function(Blueprint $table)
 		{
-			$table->foreign('product_feature_id', 'fk_bom_product_feature_id')->references('id')->on('product_feature')->onUpdate('CASCADE')->onDelete('CASCADE');
-			$table->foreign('product_id', 'fk_bom_product_id')->references('id')->on('product')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('product_feature_id', 'fk_bom_product_feature_id')->references('id')->on('product_feature')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('product_id', 'fk_bom_product_id')->references('id')->on('product')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
 

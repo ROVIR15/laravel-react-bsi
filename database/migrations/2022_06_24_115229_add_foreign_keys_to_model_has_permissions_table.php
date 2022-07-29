@@ -14,7 +14,7 @@ class AddForeignKeysToModelHasPermissionsTable extends Migration {
 	{
 		Schema::table('model_has_permissions', function(Blueprint $table)
 		{
-			$table->foreign('permission_id')->references('id')->on('permissions')->onUpdate('RESTRICT')->onDelete('CASCADE');
+			$table->foreign('permission_id')->references('id')->on('permissions')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 
