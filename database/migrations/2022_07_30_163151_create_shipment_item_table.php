@@ -16,7 +16,6 @@ class CreateShipmentItemTable extends Migration {
 		{
 			$table->integer('id', true);
 			$table->integer('shipment_id')->index('fk_shipment_item_order_shipment1_idx');
-			$table->integer('product_feature_id')->index('product_feature_index1');
 			$table->integer('order_item_id')->index('fk_shipment_item_order_item1_idx');
 			$table->integer('qty_shipped');
 		});

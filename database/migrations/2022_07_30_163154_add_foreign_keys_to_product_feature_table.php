@@ -14,7 +14,6 @@ class AddForeignKeysToProductFeatureTable extends Migration {
 	{
 		Schema::table('product_feature', function(Blueprint $table)
 		{
-			$table->foreign('product_id', 'fk_product_412')->references('id')->on('product')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('price_component_id', 'fk_product_feature_price_component1')->references('id')->on('price_component')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
@@ -29,7 +28,6 @@ class AddForeignKeysToProductFeatureTable extends Migration {
 	{
 		Schema::table('product_feature', function(Blueprint $table)
 		{
-			$table->dropForeign('fk_product_412');
 			$table->dropForeign('fk_product_feature_price_component1');
 		});
 	}

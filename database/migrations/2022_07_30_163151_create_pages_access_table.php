@@ -14,7 +14,7 @@ class CreatePagesAccessTable extends Migration {
 	{
 		Schema::create('pages_access', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->integer('id')->primary();
 			$table->bigInteger('users_id')->unsigned()->nullable()->index('fk_pages_access_users1_idx');
 			$table->integer('pages_id')->nullable()->index('fk_pages_access_pages1_idx');
 			$table->string('name', 45)->nullable();

@@ -14,13 +14,11 @@ class CreateGoodsTable extends Migration {
 	{
 		Schema::create('goods', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->integer('id')->primary();
 			$table->string('name', 100);
 			$table->string('satuan', 10);
 			$table->integer('value');
 			$table->string('brand', 50);
-			$table->text('imageUrl', 65535);
-			$table->timestamps();
 		});
 	}
 

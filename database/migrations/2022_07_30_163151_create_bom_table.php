@@ -15,7 +15,7 @@ class CreateBomTable extends Migration {
 		Schema::create('bom', function(Blueprint $table)
 		{
 			$table->integer('id')->primary();
-			$table->integer('product_id')->index('fk_product_id');
+			$table->integer('product_id')->index('fk_bom_product_id_idx');
 			$table->integer('product_feature_id')->nullable()->index('fk_bom_product_feature_id_idx');
 			$table->string('name', 45)->nullable();
 			$table->integer('qty')->nullable();
