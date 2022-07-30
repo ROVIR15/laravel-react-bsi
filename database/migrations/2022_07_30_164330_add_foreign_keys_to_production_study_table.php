@@ -14,6 +14,7 @@ class AddForeignKeysToProductionStudyTable extends Migration {
 	{
 		Schema::table('production_study', function(Blueprint $table)
 		{
+			$table->foreign('product_id', 'fk_production_study_product_feature1')->references('id')->on('product')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('work_center_id', 'fk_production_study_work_center1')->references('id')->on('work_center')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
@@ -28,6 +29,7 @@ class AddForeignKeysToProductionStudyTable extends Migration {
 	{
 		Schema::table('production_study', function(Blueprint $table)
 		{
+			$table->dropForeign('fk_production_study_product_feature1');
 			$table->dropForeign('fk_production_study_work_center1');
 		});
 	}

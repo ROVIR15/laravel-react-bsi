@@ -14,6 +14,7 @@ class AddForeignKeysToOrderItemHasGoodsTable extends Migration {
 	{
 		Schema::table('order_item_has_goods', function(Blueprint $table)
 		{
+			$table->foreign('goods_id', 'fk_order_item_has_goods_goods1')->references('id')->on('goods')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('order_item_id', 'fk_order_item_has_goods_order_item1')->references('id')->on('order_item')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
@@ -28,6 +29,7 @@ class AddForeignKeysToOrderItemHasGoodsTable extends Migration {
 	{
 		Schema::table('order_item_has_goods', function(Blueprint $table)
 		{
+			$table->dropForeign('fk_order_item_has_goods_goods1');
 			$table->dropForeign('fk_order_item_has_goods_order_item1');
 		});
 	}

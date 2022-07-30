@@ -14,6 +14,7 @@ class AddForeignKeysToProcessStudyTable extends Migration {
 	{
 		Schema::table('process_study', function(Blueprint $table)
 		{
+			$table->foreign('production_study_id', 'fk_process_study_2')->references('id')->on('production_study')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('process_id', 'fk_process_study_process1')->references('id')->on('process')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('party_id', 'fk_study_operation_party1')->references('id')->on('party')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
@@ -29,6 +30,7 @@ class AddForeignKeysToProcessStudyTable extends Migration {
 	{
 		Schema::table('process_study', function(Blueprint $table)
 		{
+			$table->dropForeign('fk_process_study_2');
 			$table->dropForeign('fk_process_study_process1');
 			$table->dropForeign('fk_study_operation_party1');
 		});
