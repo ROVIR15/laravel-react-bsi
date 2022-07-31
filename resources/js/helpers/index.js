@@ -1,9 +1,10 @@
 import React from 'react'
 import axios from 'axios';
 
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-
+// API URL 
 const uri = process.env.MIX_API_URL;
+
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const main = {
     login(_u, _p, cb){

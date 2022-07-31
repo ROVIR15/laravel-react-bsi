@@ -83,9 +83,8 @@ export const AuthProvider = ({ children }) => {
       }
       else setError(res.error);
     });
-
+    
     setLoading(false);
-
     console.log('logged in' )
   }
 
