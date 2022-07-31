@@ -1,9 +1,6 @@
 import React from 'react'
 import axios from 'axios';
 
-const at = localStorage.getItem('_token');
-
-axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const uri = process.env.MIX_API_URL;

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useMemo, useEffect, useContext } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
-
+import axios from 'axios';
 import AUTHAPI from '../helpers/api/auth';
 
 export const state = {
@@ -71,13 +71,14 @@ export const AuthProvider = ({ children }) => {
   // loading state is over.
   function login(email, password) {
     setLoading(true);
-    
     AUTHAPI.login(email, password, function(res){
+      localStorage.clear();
       const { success, access_token, user } = res.data;
       if(success) {
         setUser({...user, user, access_token})
         localStorage.setItem('_token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         navigate('/dashboard')
       }
       else setError(res.error);
@@ -113,6 +114,7 @@ export const AuthProvider = ({ children }) => {
       if(res.success){
         localStorage.removeItem('user');
         localStorage.removeItem('_token');
+        axios.defaults.headers.common['Authorization'] = `Bearer 333`;
         navigate('/login');
       };
     });
