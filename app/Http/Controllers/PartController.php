@@ -44,7 +44,6 @@ class PartController extends Controller
       $param = $request->all()['payload'];
       try {
         Part::create([
-          'id' => $faker->unique()->numberBetween(1,900),
           'part_type' => $param['part_type']
         ]);
       } catch (Exception $th) {

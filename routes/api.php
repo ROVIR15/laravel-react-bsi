@@ -155,4 +155,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     // sampling study
     Route::resource('sample-study', 'SamplingStudyController')->only(['store', 'show', 'index', 'update', 'destroy']);
     Route::resource('sample-process', 'SampleProcessStudyController')->only(['store', 'update', 'destroy']);
+
+    //Monitoring
+    Route::resource('monitoring-supermarket', 'MonitoringSupermarketController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-numbering', 'MonitoringNumberingController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-cutting', 'MonitoringCuttingController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-spreading', 'MonitoringSpreadingController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-sewing', 'MonitoringSewingController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-qc', 'MonitoringQcController')->only(['store', 'index', 'show']);
+    Route::resource('monitoring-fg', 'MonitoringFinishedGoodsController')->only(['store', 'index', 'show']);
+    Route::resource('role', 'RoleTypeController')->only(['index']);
 });

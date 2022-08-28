@@ -20,7 +20,7 @@
         'qty' => $this->qty,
         'unit_price' => $this->unit_price,
         'shipment_estimated' => $this->shipment_estimated,
-        'product_feature' => new ProductFeature($this->product_feature)
+        'product_feature' => $this->product_feature
       ];
     }
   }

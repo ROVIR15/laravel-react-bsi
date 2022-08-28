@@ -10,7 +10,7 @@ class InventoryItem extends Model
     protected $table = 'inventory_item_view';
 
     public function product_feature(){
-        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id');
+        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id')->with('product');
     }
 
     public function type(){

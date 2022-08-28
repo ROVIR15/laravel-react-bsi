@@ -41,7 +41,7 @@ class ManufactureOperationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $param = $request->all()['payload'];
         $current_date_time = Carbon::now()->toDateTimeString();
@@ -52,7 +52,7 @@ class ManufactureOperationController extends Controller
       
             foreach($param as $key){
               array_push($bomItemsCreation, [
-                'id' => $faker->unique()->numberBetween(1,8939),
+                
                 'bom_id' => $key['bom_id'],
                 'product_feature_id' => $key['product_feature_id'],
                 'qty' => $key['qty'],

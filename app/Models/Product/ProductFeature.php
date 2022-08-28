@@ -10,7 +10,7 @@ class ProductFeature extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -22,18 +22,14 @@ class ProductFeature extends Model
     ];
 
     public function product(){
-        return $this->belongsTo('App\Models\Product\Product');
+        return $this->belongsTo('App\Models\Product\Product')->with('goods');
     }
 
     public function product_category(){
-        return $this->hasOneThrough('App\Models\Product\ProductHasCategory', 'App\Models\Product\Product', 'id', 'product_id', 'product_id', 'id');
-    }
-
-    public function goods(){
-        return $this->hasOneThrough('App\Models\Product\Goods', 'App\Models\Product\Product', 'goods_id', 'id');
+        return $this->hasOneThrough('App\Models\Product\ProductHasCategory', 'App\Models\Product\Product', 'id', 'product_id', 'product_id', 'id')->with('category');
     }
 
     public function inventory(){
-        return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id');
+        return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id')->with('facility');
     }
 }

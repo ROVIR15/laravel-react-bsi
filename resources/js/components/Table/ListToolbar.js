@@ -47,7 +47,7 @@ ListToolbar.propTypes = {
   placeHolder: PropTypes.string
 };
 
-export default function ListToolbar({ numSelected, filterName, onFilterName, placeHolder }) {
+export default function ListToolbar({ numSelected, filterName, onFilterName, onDeletedSelected, placeHolder }) {
   return (
     <RootStyle
       sx={{
@@ -76,13 +76,16 @@ export default function ListToolbar({ numSelected, filterName, onFilterName, pla
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton
+            onClick={onDeletedSelected}
+          >
             <Icon icon={trash2Fill} />
           </IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton
+          >
             <Icon icon={roundFilterList} />
           </IconButton>
         </Tooltip>

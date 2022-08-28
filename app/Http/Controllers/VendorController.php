@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Exception;
 
@@ -29,21 +29,8 @@ class VendorController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Party::with('party_roles', 'address')->get();
 
-      $data = DB::table("party as p")
-      ->leftJoin("address as a", function($join){
-          $join->on("a.party_id", "=", "p.id");
-      })
-      ->join("party_roles as pr", function($join){
-          $join->on("pr.party_id", "=", "p.id");
-      })
-      ->leftJoin("relationship as r", function($join){
-          $join->on("pr.relationship_id", "=", "r.id");
-      })
-      ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-      ->where("r.name", "=", "Supplier")
-      ->get();
+      $data = DB::table("vendor_view")->get();
       return response()->json($data);
     //   return new BuyerCollection($query);
     }
@@ -64,7 +51,7 @@ class VendorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
@@ -75,11 +62,9 @@ class VendorController extends Controller
 
         if ($param['type'] === "Person") {
           $type = Person::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
           ]);
 
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
@@ -89,11 +74,9 @@ class VendorController extends Controller
 
         if ($param['type'] === "Organization") {
           $type = Organization::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
           ]);
 
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
@@ -102,13 +85,11 @@ class VendorController extends Controller
         }
 
         $_pr = PartyRoles::create([
-          'id' => $faker->unique()->numberBetween(1,2303),
           'party_id' => $parties['id'],
           'relationship_id' => 2
         ]);
 
         $_addr = Address::create([
-          'id' => $faker->unique()->numberBetween(1,1231),
           'party_id' => $parties['id'],
           'street' => $param['address']['street'],
           'city' => $param['address']['city'],
@@ -193,7 +174,7 @@ class VendorController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request, Faker $faker)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
@@ -209,7 +190,6 @@ class VendorController extends Controller
         if ($existingRecord['person_party_id'] === NULL && $partyType === "Person"){
             // Create new row of Person
             $_pt = Person::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
             ]);
 
             // Update data from party table record
@@ -224,7 +204,6 @@ class VendorController extends Controller
         } else if ($existingRecord['organization_party_id'] === NULL && $partyType === "Organization") {
             // Create new row of Person
             $_rt = Organization::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
             ]);
 
             // Update data from party table record

@@ -10,7 +10,7 @@ class WorkCenter extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamp = false;
 
     protected $fillable = [

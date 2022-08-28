@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 use Carbon\Carbon;
 
 use App\Models\RRQ\Request as PurReq;
@@ -45,14 +45,14 @@ class PurchaseRequisitionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
 
       try {
           //code...
         $purReqCreation = PurReq::create([
-          'id' => $faker->unique()->numberBetween(1,8939),
+          
           'req_type' => 'PurchaseReq',
           'party_id' => $param['party_id'],
           'ship_to' => $param['ship_to'],
@@ -66,7 +66,7 @@ class PurchaseRequisitionController extends Controller
 
         foreach($param['pr_items'] as $key){
           array_push($PRItemsCreation, [
-            'id' => $faker->unique()->numberBetween(1,8939),
+            
             'request_id' => $purReqCreation['id'],
             'product_feature_id' => $key['id'],
             'qty' => $key['qty'],

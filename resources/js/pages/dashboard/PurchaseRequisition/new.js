@@ -24,6 +24,9 @@ import AutoComplete from './components/AutoCompleteB';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+//Helper 
+import { productFeatureArrangedData } from '../../../helpers/data';
+
 function PurchaseReq() {
 
   //AutoComplete props
@@ -47,7 +50,7 @@ function PurchaseReq() {
     validationSchema: InquirySchema,
     onSubmit: (values) => {
       const _data = {...values, inquiry_item: items};
-      API.insertInquiry(_data, (res)=>{
+      API.insertPurchaseRequisiton(_data, (res)=>{
         if(!res.success) {
           alert('Failed');
         } else {
@@ -62,6 +65,7 @@ function PurchaseReq() {
 
   // Preapre data from product features
   React.useEffect(() => {
+
     let active = true;
 
       API.getProductFeature((res) => {
@@ -69,7 +73,8 @@ function PurchaseReq() {
 		    if(!res.data) {
           setOptions([]);
         } else {
-          setOptions(res.data);
+          const data = productFeatureArrangedData(res.data);
+          setOptions(data);
         }
       })
 

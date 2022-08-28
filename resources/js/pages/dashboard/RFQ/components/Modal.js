@@ -11,6 +11,8 @@ import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
 import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
 
+import { productFeatureArrangedData } from '../../../../helpers/data';
+
 const icon = <Icon icon={SquareOutline}/>;
 const checkedIcon = <Icon icon={CheckSquareOutline} />;
 
@@ -63,7 +65,8 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
         if(!res.data) {
           setOptions([]);
         } else {
-          setOptions(res.data);
+          const data = productFeatureArrangedData(res.data);
+          setOptions(data);
         }
       })
 

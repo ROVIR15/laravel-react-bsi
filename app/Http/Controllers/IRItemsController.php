@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   use Carbon\Carbon;
-  use Faker\Generator as Faker;
+  
 
   use App\Models\Inventory\InvoiceReceiptItems;
   use App\Http\Controllers\Controller;

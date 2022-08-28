@@ -10,7 +10,7 @@ class ManufactureHasBOM extends Model
     protected $table = 'manufacture_has_bom';
 
     public $timestamps = false;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'bom_id',

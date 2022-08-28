@@ -140,7 +140,7 @@ function PurchaseOrder({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
+    API.deletePurchaseOrder(id, function(res){
       if(res.success) setpurchaseOrderData([]);
     }).catch(function(error){
       alert('error')

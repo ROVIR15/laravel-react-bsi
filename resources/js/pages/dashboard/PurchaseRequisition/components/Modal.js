@@ -41,6 +41,8 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
     handleClose();
   }
 
+  console.log(options)
+
   return (
     <div>
       <Modal

@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   
-  use Faker\Generator as Faker;
+  
   use Carbon\Carbon;
 
   use App\Models\Manufacture\BOM;
@@ -45,16 +45,14 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $param = $request->all()['payload'];
         $current_date_time = Carbon::now()->toDateTimeString();
 
         try {
-            $bom_id = $faker->unique()->numberBetween(1, 9999);
             //BOM Creation
             $billOfMaterial = BOM::create([
-              'id' => $bom_id,
               'product_id' => $param['product_id'],
               'product_feature_id' => $param['product_feature_id'],
               'name' => $param['name'],
@@ -68,7 +66,6 @@
       
             foreach($param['components'] as $key){
               array_push($bomItemsCreation, [
-                'id' => $faker->unique()->numberBetween(1,8939),
                 'bom_id' => $bom_id,
                 'product_feature_id' => $key['id'],
                 'qty' => $key['qty'],
@@ -82,7 +79,6 @@
 
             foreach($param['operations'] as $key){
                 array_push($operationsCreation, [
-                  'id' => $faker->unique()->numberBetween(1,8939),
                   'name' => $key['name'],
                   'seq' => $key['seq'],
                   'work_center_id' => $key['work_center_id'],

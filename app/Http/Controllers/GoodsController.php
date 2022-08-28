@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
 
-  use Faker\Generator as Faker;
+  
   use Exception;
 
   use Illuminate\Support\Facades\DB;
@@ -27,18 +27,7 @@
      */
     public function index()
     {
-      $query = DB::table("product as p")
-      ->rightJoin("goods as g", function($join){
-        $join->on("g.id", "=", "p.goods_id");
-      })
-      ->leftJoin("product_has_category as phc", function($join){
-        $join->on("phc.product_id", "=", "p.id");
-      })
-      ->leftJoin("product_category as pc", function($join){
-        $join->on("phc.product_category_id", "=", "pc.id");
-      })
-      ->select("g.id", "g.brand as brand", "g.name", "g.imageUrl", "g.satuan as unit_measurement", "g.value", "pc.name as category")
-      ->get();
+      $query = Goods::with('product')->get();
 
       return response()->json([
         "success" => true,
@@ -62,7 +51,7 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $goodsParam = $request->all()['payload']['goods'];
       $catParam = $request->all()['payload']['category'];
@@ -94,9 +83,7 @@
           # code...
           foreach ($feature_color as $key2) {
             # code...
-            $id = $faker->unique()->numberBetween(1,8939);
             $temp = [
-              'id' => $id,
               'product_id' => $product['id'],
               'color' => $key2,
               'size' => $key
@@ -127,18 +114,18 @@
                 break;
             }
 
-            $inventory = [
-              'facility_id' => $facility_cat,
-              'product_feature_id' => $id,
-              'qty_on_hand' => 0
-            ];
+            // $inventory = [
+            //   'facility_id' => $facility_cat,
+            //   'product_feature_id' => $id,
+            //   'qty_on_hand' => 0
+            // ];
 
-            array_push($inventory_items, $inventory);
+            // array_push($inventory_items, $inventory);
           }
         }
 
         ProductFeature::insert($items);
-        Inventory::insert($inventory_items);
+        // Inventory::insert($inventory_items);
         
       } catch (Exception $th) {
         return response()->json([

@@ -35,6 +35,10 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+//helpers
+import {productItemArrangedData} from '../../../helpers/data'
+
+
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
   flexDirection: "column",
@@ -225,14 +229,15 @@ function RFQ() {
     API.getAQuote(id, function(res){
       if(!res.data) alert("Something went wrong!");
       const quoteItem = res.data.quote_items.map(function(key, index){
+        const {id, product_id, name, size, color} = productItemArrangedData(key.product)
         return {
           'id': key.id,
-          'inquiry_item_id' : key.inquiry_item_id,
-          'product_id' : key.product.product_id,
+          'inquiry_item_id' : key.request_item_id,
+          'product_id' : product_id,
           'product_feature_id' : key.product_feature_id,
-          'name' : key.product.name,
-          'size' : key.product.size,
-          'color' : key.product.color,
+          'name' : name,
+          'size' : size,
+          'color' : color,
           'qty' : key.qty,
           'unit_price' : key.unit_price
         }

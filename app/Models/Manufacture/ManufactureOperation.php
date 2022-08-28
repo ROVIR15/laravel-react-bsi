@@ -12,7 +12,7 @@ class ManufactureOperation extends Model
     protected $primaryKey = 'id';
 
     public $timestamp = false;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'manufacture_id',

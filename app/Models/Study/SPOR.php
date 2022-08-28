@@ -8,7 +8,7 @@ class SPOR extends Model
 {
     protected $table = 'study_process_observation_result';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [

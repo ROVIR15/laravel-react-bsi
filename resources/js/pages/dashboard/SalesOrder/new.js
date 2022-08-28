@@ -209,7 +209,6 @@ function SalesOrder() {
 
   const handleUpdateAllRows = () => {
     API.getAQuote(values.quote_id, function(res){
-      console.log(JSON.stringify(res));
       if(!res) alert("Something went wrong!");
       var temp = res.data.quote_items;
       temp = res.data.quote_items.map(function(_d){
@@ -229,6 +228,25 @@ function SalesOrder() {
       setItems(temp);
     })
   };
+
+
+  const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0})
+  const handlePopulate = () => {
+    const {y, z, aa} = populateState;
+    if(y === '' && z === 0) return;
+    const res = items.map(function(x){
+      return {...x, shipment_estimated: y, qty: z, unit_price: aa}
+    })
+    setItems(res);
+  }
+
+  const handleChangePopulate = (e) => {
+    const { name, value } = e.target;
+    if(name === 'z') setPopulateState({...populateState, z: value});
+    if(name === 'y') setPopulateState({...populateState, y: value});
+    if(name === 'aa') setPopulateState({...populateState, aa: value});
+    else return;
+  }
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
@@ -357,6 +375,32 @@ function SalesOrder() {
                 helperText={touched.delivery_date && errors.delivery_date}
               />
               </div>
+
+              {/* Populate */}
+              <div>
+                <Stack direction="row">
+                  <TextField
+                    type="number"
+                    label="Qty"
+                    name="z"
+                    onChange={handleChangePopulate}
+                  />
+                  <TextField
+                    type="number"
+                    label="Harga Barang"
+                    name="aa"
+                    onChange={handleChangePopulate}
+                  />
+                  <TextField
+                    type="date"
+                    label="Tanggal Kirim"
+                    name="y"
+                    onChange={handleChangePopulate}
+                  />
+                  <Button onClick={handlePopulate}>Populate</Button>
+                </Stack>
+              </div>
+
             <DataGrid 
               columns={columns} 
               rows={items}

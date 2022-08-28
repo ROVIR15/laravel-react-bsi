@@ -81,7 +81,7 @@ function Vendor({ placeHolder }) {
     }
 
     if(isEmpty(buyerData)) {
-      API.getBuyers((res) => {
+      API.getVendors((res) => {
         if(isEmpty(res)) {
           console.error('Nothing');
           setBuyerData(BUYERLIST);

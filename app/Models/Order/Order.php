@@ -10,7 +10,7 @@
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

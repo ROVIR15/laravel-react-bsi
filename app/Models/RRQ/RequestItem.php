@@ -10,7 +10,7 @@ class RequestItem extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamp = true;
 
     protected $fillable = [

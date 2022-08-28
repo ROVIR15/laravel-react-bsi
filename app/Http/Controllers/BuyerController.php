@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Exception;
 
@@ -64,7 +64,7 @@ class BuyerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
@@ -74,12 +74,9 @@ class BuyerController extends Controller
         $type;
 
         if ($param['type'] === "Person") {
-          $type = Person::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
-          ]);
+          $type = Person::create([]);
 
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
@@ -89,11 +86,9 @@ class BuyerController extends Controller
 
         if ($param['type'] === "Organization") {
           $type = Organization::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
           ]);
 
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
@@ -102,13 +97,11 @@ class BuyerController extends Controller
         }
 
         $_pr = PartyRoles::create([
-          'id' => $faker->unique()->numberBetween(1,2303),
           'party_id' => $parties['id'],
           'relationship_id' => 1
         ]);
 
         $_addr = Address::create([
-          'id' => $faker->unique()->numberBetween(1,1231),
           'party_id' => $parties['id'],
           'street' => $param['address']['street'],
           'city' => $param['address']['city'],
@@ -193,7 +186,7 @@ class BuyerController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request, Faker $faker)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
@@ -209,7 +202,6 @@ class BuyerController extends Controller
         if ($existingRecord['person_party_id'] === NULL && $partyType === "Person"){
             // Create new row of Person
             $_pt = Person::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
             ]);
 
             // Update data from party table record
@@ -224,7 +216,6 @@ class BuyerController extends Controller
         } else if ($existingRecord['organization_party_id'] === NULL && $partyType === "Organization") {
             // Create new row of Person
             $_rt = Organization::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
             ]);
 
             // Update data from party table record

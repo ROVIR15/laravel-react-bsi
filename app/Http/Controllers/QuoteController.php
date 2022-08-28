@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
@@ -62,7 +62,7 @@ class QuoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $param = $request->all()['payload'];
         try {
@@ -83,7 +83,7 @@ class QuoteController extends Controller
   
           foreach($param['quote_items'] as $key){
             array_push($quoteItemsCreation, [
-              'id' => $faker->unique()->numberBetween(1,8939),
+              
               'quote_id' => $id,
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],

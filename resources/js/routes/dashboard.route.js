@@ -112,6 +112,26 @@ import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
 import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
 import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
+//Monitoring
+import MonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/add'; //layout
+import DisplayMonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/display';
+import MonitoringSewing from '../pages/dashboard/Monitoring/Sewing/add'; //layout
+import MonitoringQC from '../pages/dashboard/Monitoring/QC/add'; //layout
+import DisplayMS from '../pages/dashboard/Monitoring/Sewing/display';
+import DisplayMQC from '../pages/dashboard/Monitoring/QC/display';
+
+import MonitoringSpread from '../pages/dashboard/Monitoring/Spreading/add'; //
+import DisplayMSpread from '../pages/dashboard/Monitoring/Spreading/display'; //
+
+import MonitoringCutting from '../pages/dashboard/Monitoring/Cutting/add'; //
+import DisplayMCutting from '../pages/dashboard/Monitoring/Cutting/display'; //
+
+import MonitoringNumbering from '../pages/dashboard/Monitoring/Numbering/add'; //
+import DisplayMNumbering from '../pages/dashboard/Monitoring/Numbering/display'; //
+
+import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add'; //
+import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
+
 export default function TestRouter() {
 
   const access_token = localStorage.getItem('_token');
@@ -331,6 +351,57 @@ export default function TestRouter() {
           element: <ORLayout />,
           children: [
             { path: ':id/add', element: <AddOR />}
+          ]
+        },
+        // Monitoring
+        { 
+          path: 'monitoring/', 
+          children: [
+            { path: 'main', element: <AddInv /> },
+            { path: 'cutting', children: [
+                { path: 'insert', element: <MonitoringSewing /> },
+                { path: 'display', element: <DisplayMS/>},
+                { path: 'spreading', 
+                  children: [
+                    { path: 'insert', element: <MonitoringSpread />},
+                    { path: 'display', element: <DisplayMSpread />},
+                  ]
+                },
+                { path: 'cutting', 
+                  children: [
+                    { path: 'insert', element: <MonitoringCutting />},
+                    { path: 'display', element: <DisplayMCutting />},
+                  ]
+                },
+                { path: 'numbering', 
+                  children: [
+                    { path: 'insert', element: <MonitoringNumbering />},
+                    { path: 'display', element: <DisplayMNumbering />},
+                  ]
+                }
+              ]
+            },
+            { path: 'supermarket', children: [
+                { path: 'insert', element: <MonitoringSupermarket /> },
+                { path: 'display', element: <DisplayMSupermarket />}
+              ]
+            },
+            { path: 'sewing', children: [
+                { path: 'insert', element: <MonitoringSewing /> },
+                { path: 'display', element: <DisplayMS/>}
+              ]
+            },
+            { path: 'qc', children: [
+                { path: 'insert', element: <MonitoringQC /> },
+                { path: 'display', element: <DisplayMQC/>}
+              ]
+            },
+            { path: 'finished-goods', 
+              children: [
+                { path: 'insert', element: <MonitoringFinishedGoods />},
+                { path: 'display', element: <DisplayMonitoringFinishedGoods />}
+              ]
+            }
           ]
         },
         //Industrial Engineering Human Resources Route

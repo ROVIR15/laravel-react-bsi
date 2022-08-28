@@ -10,7 +10,7 @@ class ShipmentRole extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
     
     protected $fillable = [

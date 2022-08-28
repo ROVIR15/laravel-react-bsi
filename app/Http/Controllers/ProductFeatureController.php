@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Product\ProductFeature;
@@ -19,9 +19,11 @@ class ProductFeatureController extends Controller
      */
     public function index(Request $request)
     {
-      $query = ProductFeature::with('product_category')->get();
+      $query = ProductFeature::with('product', 'product_category')->get();
 
-      return new ProductFeatureCollection($query);
+      return response()->json([
+        'data' => $query
+      ]);
     }
 
     /**
@@ -40,13 +42,13 @@ class ProductFeatureController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $productFeatureData = $request->all()['payload'];
 
       try {
         $data = ProductFeature::create([
-          'id' => $faker->unique()->numberBetween(1,8939),
+          
           'product_id' => $productFeatureData['product_id'],
           'size' => $productFeatureData['size'],
           'color' => $productFeatureData['color']

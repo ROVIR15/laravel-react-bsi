@@ -10,7 +10,7 @@
     protected $primaryKey = 'id';
 
     public $timestamps = true;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

@@ -35,6 +35,16 @@ export const AuthProvider = ({ children }) => {
   // If we change page, reset the error state.
   useEffect(() => {
     if (error) setError(null);
+    const userStorage = JSON.parse(localStorage.getItem('user'));
+    const access_token = localStorage.getItem('_token');
+    if( !userStorage && !access_token ) {
+      // localStorage.clear();
+      navigate('/login');
+    } else {
+      const { name, email, pages } = userStorage;
+      setUser({name, email, pages, access_token});  
+    }
+
   }, [location.pathname]);
 
   // Check if there is a currently active session
@@ -53,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       const { name, email, pages } = userStorage;
       setUser({name, email, pages, access_token});  
+      console.log(user, access_token);
     }
 
     // usersApi.getCurrentUser()

@@ -46,14 +46,12 @@ class ServiceController extends Controller
       
       try {
         $service = Service::create([
-          'id' => $faker->unique()->numberBetween(1,8939)
         ]);
 
         $products = $product->insert([
           'goods_id' => $service->id,
           'name' => $param['name'],
           'part_id' => $param['part_id'],
-          'id' => $faker->unique()->numberBetween(1,8939)
         ]);
       } catch (Exception $th) {
         return response()->json([

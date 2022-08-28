@@ -22,7 +22,7 @@ class QuoteItem extends JsonResource
             'product_feature_id' => $this->product_feature_id,
             'qty' => $this->qty,
             'unit_price' => $this->unit_price,
-            'product' => new ProductFeature($this->product_feature)
+            'product' => $this->product_feature
         ];
     }
 }

@@ -132,6 +132,60 @@ const sidebarConfig = [
         path: '/dashboard/hrd/labor'
       },
     ]
+  },
+  {
+    title: "Purchasing",
+    name: 'purchasing',
+    icon: getIcon(shoppingBagFill),
+    children: [
+      {
+        title: 'Vendor',
+        path: '/dashboard/purchasing/vendor'
+      },
+      {
+        title: 'Purchase Requisition',
+        path: '/dashboard/purchasing/purchase-requisition'
+      },
+      {
+        title: 'Request for Quotation',
+        path: '/dashboard/purchasing/request-for-quotation'
+      },
+      {
+        title: 'Purchase Order',
+        path: '/dashboard/purchasing/purchase-order'
+      }
+    ]
+  },
+  {
+    title: "Monitoring",
+    name: 'monitoring',
+    icon: getIcon(peopleFill),
+    children: [
+      {
+        title: 'Main',
+        path: '/dashboard/monitoring/main'
+      },
+      {
+        title: 'Cutting',
+        path: '/dashboard/monitoring/cutting'
+      },
+      {
+        title: 'Supermarket',
+        path: '/dashboard/monitoring/supermarket'
+      },
+      {
+        title: 'Sewing',
+        path: '/dashboard/monitoring/sewing'
+      },
+      {
+        title: 'QC',
+        path: '/dashboard/monitoring/qc'
+      },
+      {
+        title: 'Finished Goods',
+        path: '/dashboard/monitoring/finished-goods'
+      },
+    ]
   }
 ];
 

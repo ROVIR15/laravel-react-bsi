@@ -10,7 +10,7 @@ class Party extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
     
     protected $fillable = [
@@ -25,17 +25,17 @@ class Party extends Model
 
     public function person()
     {
-      return $this->hasMany('App\Models\Party\Person');
+      return $this->belongsTo('App\Models\Party\Person','person_party_id');
     }
 
     public function organization()
     {
-      return $this->hasMany('App\Models\Party\Organization');
+      return $this->hasMany('App\Models\Party\Organization', 'id', 'organization_party_id');
     }
 
     public function party_roles()
     {
-      return $this->hasMany('App\Models\Party\PartyRoles')->with('relationship');
+      return $this->hasMany('App\Models\Party\PartyRoles')->with('relationship', 'role_type');
     }
 
     public function address()

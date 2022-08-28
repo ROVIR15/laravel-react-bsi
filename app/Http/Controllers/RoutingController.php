@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
@@ -42,7 +42,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $productData = $request->all()['payload'];
       try {
@@ -51,7 +51,6 @@ class ProductController extends Controller
           'goods_id' => $productData['goods_id'],
           'name' => $productData['name'],
           'part_id' => $productData['part_id'],
-          'id' => $faker->unique()->numberBetween(982,2147)
         ]);
       } catch (Exception $th) {
         return response()->json([

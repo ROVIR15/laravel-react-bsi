@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
     protected $primaryKey = 'id';
 
     public $timestamps = false;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

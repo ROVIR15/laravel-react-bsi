@@ -10,7 +10,7 @@ class ProductHasCategory extends Model
 
     protected $primaryKey = '';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -19,6 +19,6 @@ class ProductHasCategory extends Model
     ];
 
     public function category(){
-        return $this->belongsTo('App\Models\Product\ProductCategory', 'product_category_id');
+        return $this->belongsTo('App\Models\Product\ProductCategory', 'product_category_id')->with('sub');
     }
 }

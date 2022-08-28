@@ -44,7 +44,7 @@ function Vendor() {
           city, province, country, postal_code
         }
       }
-      main.setBuyer(data, function(res){
+      main.setVendor(data, function(res){
         console.log(res);
         alert(JSON.stringify(res));
       });

@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   use Carbon\Carbon;
-  use Faker\Generator as Faker;
+  
 
   use Illuminate\Http\Request;
   use App\Models\Order\Order;
@@ -46,21 +46,19 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
       try {
         //Order Creation
         $order = Order::create([
-          'id' => $faker->unique()->numberBetween(1, 9999),
           'quote_id' => $param['quote_id'],
           'issue_date' => $param['issue_date'],
           'valid_thru' => $param['valid_thru']
         ]);
 
         $purchaseOrder = PurchaseOrder::create([
-          'id' => $faker->unique()->numberBetween(1, 3123),
           'order_id' => $order->id,
           'po_number' => $param['po_number'],
           'bought_from' => $param['sold_to'],
@@ -78,7 +76,7 @@
 
         foreach($param['order_items'] as $key){
           array_push($purchaseItemsCreation, [
-            'id' => $faker->unique()->numberBetween(1,8939),
+            
             'order_id' => $order->id,
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],

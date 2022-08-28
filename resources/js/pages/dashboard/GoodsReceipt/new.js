@@ -32,6 +32,9 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+// Helper
+import {productItemArrangedData} from '../../../helpers/data';
+
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
   flexDirection: "column",
@@ -153,16 +156,17 @@ function GoodsReceipt() {
 
   function changeData(data){
     const quoteItem = data.order_item.map(function(key, index){
+      const {id, product_id, name, size, color} = productItemArrangedData(key.product_feature)
       return {
         'id': index,
         'po_item_id' : key.id,
-        'product_id' : key.product_feature.product_id,
-        'product_feature_id' : key.product_feature.id,
-        'name' : key.product_feature.name,
-        'size' : key.product_feature.size,
-        'color' : key.product_feature.color,
-        'qty_received' : key.qty_received,
-        'qty_receipt' : key.qty_receipt,
+        'product_id' : product_id,
+        'product_feature_id' : id,
+        'name' : name,
+        'size' : size,
+        'color' : color,
+        'qty_received' : key.qty_received || 0,
+        'qty_receipt' : key.qty_receipt || 0,
         'qty_order' : key.qty
       }
     })

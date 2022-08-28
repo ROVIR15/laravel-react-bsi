@@ -991,6 +991,16 @@ const main = {
         cb(err.response);
       });
     },
+    // Party
+    getRoleType(param, cb){
+      if(!cb) return;
+      const paramUri = '/role' + `${param}`
+      axios.get(uri + paramUri).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      })
+    },
     // Human Resources - Labor
     insertLabor(_data, cb){
       if(!_data) {
@@ -1557,6 +1567,125 @@ const main = {
     uploadImage(_formData, cb){
       if(!_formData) return undefined;
       axios.post(uri + '/upload', _formData).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringCutting(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-cutting' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringCutting(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-cutting', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringSpreading(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-spreading' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringSpreading(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-spreading', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringNumbering(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-numbering' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringNumbering(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-numbering', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringSupermarket(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-supermarket' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringSupermarket(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-supermarket', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringSewing(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-sewing' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringSewing(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-sewing', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringQC(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-qc' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringQC(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-qc', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getMonitoringFG(param, cb){
+      if(!cb) return;
+      const paramUri = '/monitoring-fg' + `${param}`
+      axios.get(uri + paramUri ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertMonitoringFG(data, cb){
+      if(!data) return;
+      axios.post(uri + '/monitoring-fg', {payload: data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

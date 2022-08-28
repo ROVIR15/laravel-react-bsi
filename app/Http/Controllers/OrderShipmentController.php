@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Shipment\OrderShipment;
@@ -42,12 +42,11 @@ class OrderShipmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         OrderShipment::create([
-          'id' => $faker->unique()->numberBetween(1,3189),
           'order_id' => $param['order_id']
         ]);
       } catch (Exception $th) {

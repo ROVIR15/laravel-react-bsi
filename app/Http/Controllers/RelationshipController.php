@@ -44,7 +44,7 @@ class RelationshipController extends Controller
       $param = $request->all()['payload'];
       try {
         $query = Realationship::create([
-          'id' => $faker->unique()->numberBetween(1,2314),
+          
           'status_id' => $param['status_id']
         ]);
       } catch (Exception $th) {

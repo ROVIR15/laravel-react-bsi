@@ -20,4 +20,8 @@ export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationRes
 export { default as LaborLayout } from './Labor';
 export { default as MOLayout } from './ManufactureOrder';
 
+//Monitoring
+export { default as FinishedGoodsLayout } from './Monitoring/FinishedGoods';
+
+
 export { default as InvLayout } from './Finance/Invoice';

@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   
-  use Faker\Generator as Faker;
+  
   use App\Models\Order\OrderStatus;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\OrderStatusCollection;
@@ -40,12 +40,11 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $orderStatusData = $request->all()['payload'];
       try {
         OrderStatus::create([
-          'id' => $faker->unique()->numberBetween(78,7933),
           'order_id' => $orderStatusData['order_id'],
           'status_type' => $orderStatusData['status_type']
         ]);

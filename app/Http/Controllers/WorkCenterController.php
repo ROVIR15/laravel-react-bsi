@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 use App\Models\Manufacture\WorkCenter;
 
 use App\Http\Resources\Manufacture\WorkCenter as WorkCenterOneCollection;
@@ -41,12 +41,11 @@ class WorkCenterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         WorkCenter::create([
-          'id' => $faker->unique()->numberBetween(1,3189),
           'name' => $param['name'],
           'work_hours' => $param['work_hours'],
           'company_name' => $param['company_name'],

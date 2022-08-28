@@ -18,6 +18,9 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 import API from '../../../../helpers';
 import AutoComplete from './AutoComplete';
 
+// Helpers
+import { productFeatureArrangedData, productItemArrangedData } from '../../../../helpers/data'
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -40,7 +43,8 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
       return
     }
     const _value = value.map(function(x, index){
-      return {...x, product_feature_id: x.id, id: payload.length+index, inquiry_item_id: null, qty: 0, unit_price: 0}
+      const hha = productItemArrangedData(x);
+      return {...hha, product_feature_id: hha.id, id: payload.length+index, inquiry_item_id: null, qty: 0, unit_price: 0}
     })
     var _p = payload.concat(_value);
 
@@ -58,7 +62,7 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
 
     (async () => {
 
-      API.getProductFeature((res) => {
+      await API.getProductFeature((res) => {
         if(!res) return
         if(!res.data) {
           setOptions([]);
@@ -100,7 +104,7 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
             onClose={() => {
               setOpenX(false);
             }}
-            getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
+            getOptionLabel={({ brand, product: {goods: {name}}, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
             options={options}
             loading={loading}
             disableCloseOnSelect
@@ -113,7 +117,7 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
                   style={{ marginRight: 8 }}
                   checked={selected}
                 />
-                 {`${option.id} - ${option.name} ${option.color} - ${option.size}`}
+                 {`${option.id} - ${option.product.goods.name} ${option.color} - ${option.size}`}
               </li>
             )}
             renderInput={(params) => (

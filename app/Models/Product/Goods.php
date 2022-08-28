@@ -22,11 +22,7 @@ class Goods extends Model
     ];
 
     public function product(){
-        return $this->belongsTo('App\Models\Product\Product', 'id', 'goods_id');
-    }
-
-    public function productHasCategory(){
-        return $this->hasOneThrough('App\Models\Product\Product', 'App\Models\Product\ProductHasCategory');
+        return $this->belongsTo('App\Models\Product\Product', 'id', 'goods_id')->with('productCategory');
     }
 
     // public function ProductFeature(){

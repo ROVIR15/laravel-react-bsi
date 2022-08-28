@@ -77,7 +77,7 @@ function DisplayQuote({ placeHolder }) {
   useEffect(() => {
 
   if(flag<3) {
-    API.getQuote((res) => {
+    API.getQuoteBySO((res) => {
 		  if(!res) {
         setQuoteData(BUYERLIST);
         setFlag(false);

@@ -6,27 +6,23 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+
+import AutoComplete from './components/AutoComplete';
 
 //api
 import API from '../../../helpers';
+import { LaborSchema } from '../../../helpers/FormerSchema/LaborSchema';
 
 function Labor() {
-
-  const LaborSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    name: Yup.string().required('Name is required'),
-    npwp: Yup.string().required('NPWP is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('city is required'),
-    province: Yup.string().required('province is required'),
-    country: Yup.string().required('country is required'),
-    postal_code: Yup.string().required('postal_code is required'),
-    phone_number: Yup.string().required('Phone Number is required'),
+  const [choosen, setChoosen] = React.useState({
+    id: 0, name: '', role: ''
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
+      role_type_id: '',
       npwp: '',
       address: '',
       city: '',
@@ -37,12 +33,12 @@ function Labor() {
       phone_number: '',
     },
     validationSchema: LaborSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code}) => {
+    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
       const data = {
         name, email, npwp, type: "Person", address: {
           street: address,
           city, province, country, postal_code
-        }
+        }, role_type_id
       }
       API.insertLabor(data, function(res){
         if(res.success) alert('Success');
@@ -52,7 +48,40 @@ function Labor() {
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+
+// Auto Complete
+const [open, setOpen] = React.useState(false);
+
+const [options, setOptions] = React.useState([]);
+const loading = open && options.length === 0;
+
+React.useEffect(() => {
+  let active = true;
+
+  // get labor categories
+  if (!loading) {
+    return undefined;
+  }
+
+  API.getRoleType('?type=Employee', (res) => {
+    if(!res) return
+    if(!res.data) {
+      setOptions([]);
+    } else {
+      setOptions(res.data);
+    }
+  });
+
+  return () => {
+    active = false;
+  };
+}, [loading])
+
+const handleChangeAC = async (newValue) => {
+  setChoosen(newValue);
+  await setFieldValue('role_type_id', newValue.id);
+}
 
   return (
     <Page>
@@ -67,7 +96,7 @@ function Labor() {
           />
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   autoComplete="name"
@@ -76,6 +105,20 @@ function Labor() {
                   {...getFieldProps('name')}
                   error={Boolean(touched.name && errors.name)}
                   helperText={touched.name && errors.name}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <AutoComplete
+                  fullWidth
+                  autoComplete="role_type_id"
+                  type="text"
+                  label="Role Type"
+                  error={Boolean(touched.role_type_id && errors.role_type_id)}
+                  helperText={touched.role_type_id && errors.role_type_id}
+                  options={options}
+                  setOpen={setOpen}
+                  loading={loading}
+                  changeData={handleChangeAC}
                 />
               </Grid>
               <Grid item xs={6}>

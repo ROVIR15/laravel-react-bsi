@@ -201,9 +201,15 @@ function Goods() {
                       >
                         {
                           cat.map(function(x){
-                            return (
-                              <MenuItem value={x.id}>{x.name}</MenuItem>
-                            )
+                            if (x.sub === " ") {
+                              return (
+                              <MenuItem value={x.id}>{`${x.name}`}</MenuItem>
+                              ) 
+                            } else {
+                              return (
+                                <MenuItem value={x.id}>{`${x.name} - ${x.sub}`}</MenuItem>
+                              )
+                            }
                           })
                         }
                       </Select>

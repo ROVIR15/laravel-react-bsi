@@ -15,7 +15,9 @@ class ProductFeature extends JsonResource
      */
     public function toArray($request)
     {
-        $cat = ProductCategory::find($this->product_category->product_category_id);
+        $cat = ProductCategory::join('product_sub_category', 'sub_cat', '=', 'product_sub_category.id')
+        ->select('product_category.id', 'product_category.name as cat_name', 'product_sub_category.name as sub_cat_name')
+        ->find($this->product_category->product_category_id);
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
@@ -27,7 +29,8 @@ class ProductFeature extends JsonResource
             'imageUrl' => $this->product->goods['imageUrl'],
             'color' => $this->color,
             'size' => $this->size,
-            'category' => $cat->name,
+            'category' => $cat->cat_name,
+            'sub_category' => $cat->sub_cat_name,
             'price_component_id' => $this->price_component_id,
             'facility_id' => $this->inventory->facility_id
         ];

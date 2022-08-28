@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Product\ProductCategory;
@@ -20,7 +20,7 @@ class ProductCategoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ProductCategory::all();
+      $query = ProductCategory::with('sub')->get();
 
       return new ProductCategoryCollection($query);
     }
@@ -41,12 +41,11 @@ class ProductCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         ProductCategory::create([
-          'id' => $faker->unique()->numberBetween(1, 20),
           'name' => $param['name']
         ]);
       } catch (Exception $th) {

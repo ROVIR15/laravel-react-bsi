@@ -33,6 +33,9 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+//Helpers
+import {productFeatureArrangedData, productItemArrangedData} from '../../../helpers/data'
+
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
   flexDirection: "column",
@@ -125,7 +128,8 @@ function SalesOrder() {
         if(!res.data) {
           setOptionsP([]);
         } else {
-          setOptionsP(res.data);
+          const data = productFeatureArrangedData(res.data);
+          setOptionsP(data);
         }
       })
 
@@ -140,17 +144,18 @@ function SalesOrder() {
 
   function changeData(data){
     const orderItem = data.quote_items.map(function(key, index){
+      const {id, product_id, name, size, color} = productItemArrangedData(key.product)
       return {
-        'id': index,
+        'id': index+1,
         'quote_item_id' : key.id,
-        'product_id' : key.product.id,
-        'product_feature_id' : key.product_feature_id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
+        'product_id' : product_id,
+        'product_feature_id' : id,
+        'name' : name,
+        'size' : size,
+        'color' : color,
         'qty' : key.qty,
-        'shipment_estimated': null,
-        'unit_price' : key.unit_price
+        'delivery_date': null,
+        'unit_price' : key.unit_price,
       }
     })
     setValues({
@@ -185,14 +190,30 @@ function SalesOrder() {
       if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+        
+        function formatDate(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+      
+          if (month.length < 2) 
+              month = '0' + month;
+          if (day.length < 2) 
+              day = '0' + day;
+      
+          return [year, month, day].join('-');
+        }
+
+        console.log(editedIds, editedColumnName, formatDate(editRowData[editedColumnName].value))
 
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
     
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+            if(row.id === parseInt(itemToUpdateIndex)){
+              return {...row, [editedColumnName]: formatDate(editRowData[editedColumnName].value)}
             } else {
               return row
             }
