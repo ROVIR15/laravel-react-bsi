@@ -84,7 +84,7 @@ function FirstPage(){
       else setData(res.data);
     })
 
-    console.log(data)
+    
   }, [id]);
 
   return (

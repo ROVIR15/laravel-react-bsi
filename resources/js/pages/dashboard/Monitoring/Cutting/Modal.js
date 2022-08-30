@@ -40,11 +40,12 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
     }
 
     if(isEmpty(value) && order_id) {
-      API.getMonitoringCutting(order_id, (res) => {
+      API.getASalesOrder(order_id, (res) => {
 		  if(!res) return
 		  if(!res.data) {
           setValue(BUYERLIST);
         } else {
+          
           let ras = orderItemArrangedData(res.data.order_item)
           setValue(ras);
         }

@@ -88,14 +88,17 @@ function DisplayInventory({ placeHolder }) {
     }
 
     if(isEmpty(data)) {
-      let result = await axios.get( uri + '/inventory').then(function(res){
-        if(!isEmpty(res.data.data)) return inventoryItemArrangedItem(res.data.data);
-        else return([]);
-      }).catch(function(err){
-        return [];
-      })
+      try {
+        API.getInventoryItem(async (res) => {
+          if(isEmpty(res.data)) return undefined;
+          let ras = await inventoryItemArrangedItem(res.data);
+          setData(ras)
+        })  
 
-      setData(result);
+      } catch(e) {
+        alert('error');
+      }
+
     }
 
   }, [])
@@ -176,7 +179,7 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, qty_on_hand, facility_name} = row;
+                  const { id, info, qty_on_hand, facility_name} = row;
 
                   const isItemSelected = selected.indexOf(id) !== -1;
                   return (

@@ -16,10 +16,10 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 
 // Components
 import API from '../../../../helpers';
-import AutoComplete from './AutoComplete';
+import Table from './Table';
 
 // Helpers
-import { productFeatureArrangedData, productItemArrangedData } from '../../../../helpers/data'
+import { optionProductFeature, productItemArrangedData } from '../../../../helpers/data'
 
 const style = {
   position: 'absolute',
@@ -30,12 +30,11 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ payload, open, handleClose, setComponent}) {
+export default function BasicModal({ payload, open, handleClose, items, setItems}) {
   const [value, setValue] = React.useState([])
   
   const [options, setOptions] = React.useState([])
-  const [openX, setOpenX] = React.useState(false);
-  const loading = openX && options.length === 0;
+  const loading = open && options.length === 0;
 
   const handleDoneFill = () => {
     if(!value.length) {
@@ -52,7 +51,7 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
       return {...x, id: index}
     });
 
-    setComponent(_p);
+    setItems(_p);
 
     handleClose();
   }
@@ -60,19 +59,19 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
   React.useEffect(() => {
     let active = true;
 
-    (async () => {
+    if(!loading) {
+      return undefined
+    }
 
-      await API.getProductFeature((res) => {
+      API.getProductFeature(async (res) => {
         if(!res) return
         if(!res.data) {
           setOptions([]);
         } else {
-          setOptions(res.data);
+          let data =  await optionProductFeature(res.data);
+          setOptions(data);
         }
       })
-
-    })();
-
     return () => {
       active = false;
     };
@@ -89,41 +88,8 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Select Product to Inquiry Item
           </Typography>
-          <Autocomplete
-            multiple
-            limitTags={3}
-            id="checkboxes-tags-demo"
-            onChange={(event, newValue) => {
-              const x = newValue.filter((option) => payload.indexOf(option) === -1)
-              setValue(x);
-            }}
-            open={openX}
-            onOpen={() => {
-              setOpenX(true);
-            }}
-            onClose={() => {
-              setOpenX(false);
-            }}
-            getOptionLabel={({ brand, product: {goods: {name}}, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
-            options={options}
-            loading={loading}
-            disableCloseOnSelect
-            renderOption={(props, option, { selected }) =>
-              (
-              <li {...props}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                 {`${option.id} - ${option.product.goods.name} ${option.color} - ${option.size}`}
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField {...params} label="Component" />
-            )}
-          />
+          <Table list={options} selected={items} setSelected={setItems}/>
+
           <Button onClick={handleDoneFill}> Done </Button>
         </Card>
       </Modal>

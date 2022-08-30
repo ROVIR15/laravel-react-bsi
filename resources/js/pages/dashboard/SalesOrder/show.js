@@ -111,11 +111,11 @@ function SalesOrder() {
 
   useEffect(async () => {
     if(!id) return;
-    const load = await axios.get('http://localhost:8000/api' + '/sales-order' + `/${id}`)
+    const load = await axios.get(process.env.MIX_API_URL  + '/sales-order' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-        console.log(error);
+        alert(error);
     })
 
     setValues({
@@ -132,11 +132,11 @@ function SalesOrder() {
     setSelectedValueSO(load.party)
     setSelectedValueSH(load.ship)
 
-    const load2 = await axios.get('http://localhost:8000/api' + '/order-item' + `/${load.order_id}`)
+    const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${load.order_id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-        console.log(error);
+        alert(error);
     })
 
     var c = load2.map((key)=>{
@@ -240,7 +240,7 @@ function SalesOrder() {
   );
 
   const handleUpdateAllRows = async() => {
-    const load2 = await axios.get('http://localhost:8000/api' + '/order-item' + `/${values.order_id}`)
+    const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${values.order_id}`)
     .then(function({data: {data}}) {
       return(data);
     })

@@ -121,7 +121,6 @@ function RFQ() {
     (async () => {
       if (active) {
         API.getVendors((res) => {
-          console.log(res);
           if(!res) return
           else setOptions(res);
         })  
@@ -198,7 +197,6 @@ function RFQ() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-          console.log(itemToUpdateIndex)
     
           return prevItems.map((row, index) => {
             if(index === parseInt(itemToUpdateIndex)){

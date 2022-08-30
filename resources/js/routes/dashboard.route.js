@@ -113,22 +113,33 @@ import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
 import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
 //Monitoring
+import MonitoringFinishedGoodsLayout from '../pages/dashboard/Monitoring/FinishedGoods'; //
 import MonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/add'; //layout
 import DisplayMonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/display';
+
+import MonitoringSewingLayout from '../pages/dashboard/Monitoring/Sewing'; //
 import MonitoringSewing from '../pages/dashboard/Monitoring/Sewing/add'; //layout
-import MonitoringQC from '../pages/dashboard/Monitoring/QC/add'; //layout
 import DisplayMS from '../pages/dashboard/Monitoring/Sewing/display';
+
+import MonitoringQCLayout from '../pages/dashboard/Monitoring/QC'; //
+import MonitoringQC from '../pages/dashboard/Monitoring/QC/add'; //layout
 import DisplayMQC from '../pages/dashboard/Monitoring/QC/display';
 
+import CuttingLayout from '../pages/dashboard/Monitoring/cutting-layout';
+
+import MonitoringSpreadLayout from '../pages/dashboard/Monitoring/Spreading'; //
 import MonitoringSpread from '../pages/dashboard/Monitoring/Spreading/add'; //
 import DisplayMSpread from '../pages/dashboard/Monitoring/Spreading/display'; //
 
+import MonitoringCuttingLayout from '../pages/dashboard/Monitoring/Cutting'; //
 import MonitoringCutting from '../pages/dashboard/Monitoring/Cutting/add'; //
 import DisplayMCutting from '../pages/dashboard/Monitoring/Cutting/display'; //
 
+import MonitoringNumberingLayout from '../pages/dashboard/Monitoring/Numbering'; //
 import MonitoringNumbering from '../pages/dashboard/Monitoring/Numbering/add'; //
 import DisplayMNumbering from '../pages/dashboard/Monitoring/Numbering/display'; //
 
+import MonitoringSupermarketLayout from '../pages/dashboard/Monitoring/Supermarket'; //
 import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add'; //
 import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
 
@@ -358,22 +369,27 @@ export default function TestRouter() {
           path: 'monitoring/', 
           children: [
             { path: 'main', element: <AddInv /> },
-            { path: 'cutting', children: [
+            { path: 'cutting', 
+              element: <CuttingLayout/>,
+              children: [
                 { path: 'insert', element: <MonitoringSewing /> },
                 { path: 'display', element: <DisplayMS/>},
                 { path: 'spreading', 
+                  element: <MonitoringSpreadLayout/>,
                   children: [
                     { path: 'insert', element: <MonitoringSpread />},
                     { path: 'display', element: <DisplayMSpread />},
                   ]
                 },
                 { path: 'cutting', 
+                  element: <MonitoringCuttingLayout/>,
                   children: [
                     { path: 'insert', element: <MonitoringCutting />},
                     { path: 'display', element: <DisplayMCutting />},
                   ]
                 },
                 { path: 'numbering', 
+                  element: <MonitoringNumberingLayout/>,
                   children: [
                     { path: 'insert', element: <MonitoringNumbering />},
                     { path: 'display', element: <DisplayMNumbering />},
@@ -381,22 +397,29 @@ export default function TestRouter() {
                 }
               ]
             },
-            { path: 'supermarket', children: [
+            { path: 'supermarket', 
+              element: <MonitoringSupermarketLayout/>,
+              children: [
                 { path: 'insert', element: <MonitoringSupermarket /> },
                 { path: 'display', element: <DisplayMSupermarket />}
               ]
             },
-            { path: 'sewing', children: [
+            { path: 'sewing', 
+              element: <MonitoringSewingLayout/>,
+              children: [
                 { path: 'insert', element: <MonitoringSewing /> },
                 { path: 'display', element: <DisplayMS/>}
               ]
             },
-            { path: 'qc', children: [
+            { path: 'qc', 
+              element: <MonitoringQCLayout/>,
+              children: [
                 { path: 'insert', element: <MonitoringQC /> },
                 { path: 'display', element: <DisplayMQC/>}
               ]
             },
             { path: 'finished-goods', 
+              element: <MonitoringFinishedGoodsLayout/>,
               children: [
                 { path: 'insert', element: <MonitoringFinishedGoods />},
                 { path: 'display', element: <DisplayMonitoringFinishedGoods />}

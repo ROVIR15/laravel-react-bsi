@@ -94,7 +94,7 @@ function BillOfMaterial() {
       product_id: '',
       product_feature_id: '',
       company_name: '',
-      qty: '',
+      qty: 0,
       start_date: '',
       end_date: ''
     },
@@ -162,7 +162,10 @@ function BillOfMaterial() {
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
-    { field: 'qty', headerName: 'Quantity', editable: true },
+    { field: 'consumption', headerName: 'Konsumsi', editable: true },
+    { field: 'allowance', headerName: 'Allowance', editable: true },
+    { field: 'unit_price', headerName: 'Harga', editable: true },
+    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: (params) => (parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem

@@ -13,7 +13,7 @@ import AutoComplete from './components/AutoComplete';
 //api
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
-import { LaborSchema } from '../../../helpers/FormerSchema/LaborSchema';
+import { LaborSchema } from '../../../helpers/FormerSchema';
 import { laborArrangedData } from '../../../helpers/data';
 
 function Labor() {

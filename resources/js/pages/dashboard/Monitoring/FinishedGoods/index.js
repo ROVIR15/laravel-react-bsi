@@ -44,7 +44,7 @@ function FinishedGoods() {
           <Button
             variant="contained"
             component={RouterLink}
-            to={getPathname(pathname.split('/')) + '/add'}
+            to={getPathname(pathname.split('/')) + '/insert'}
             startIcon={<Icon icon={plusFill} />}
           >
             New

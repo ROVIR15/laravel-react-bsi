@@ -65,7 +65,7 @@ function WorkCenter() {
 // columns - Data grid
   const deleteData = useCallback(
    (id) => () => {
-     console.log(id);
+     ;
      setItems((prevItems) => {
        return prevItems.filter(function(x){
          return x.id != id
@@ -203,7 +203,7 @@ const [selectedValueSp, setSelectedValueSp] = React.useState({});
   }, [loadingSp])
 
   const handleCloseR = (name, value) => {
-    console.log(value)
+    
     setOpenSp(false)
     setSelectedValueSp(value);
     setFieldValue(name, value.id);

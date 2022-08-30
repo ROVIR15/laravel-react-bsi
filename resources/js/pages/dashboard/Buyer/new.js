@@ -6,28 +6,22 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
+import AutoComplete from './components/AutoComplete';
 
 //api
-import main from '../../../helpers';
+import API from '../../../helpers';
+import { BuyerSchema } from '../../../helpers/FormerSchema';
 
 function Buyer() {
-
-  const BuyerSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    name: Yup.string().required('Name is required'),
-    npwp: Yup.string().required('NPWP is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('city is required'),
-    province: Yup.string().required('province is required'),
-    country: Yup.string().required('country is required'),
-    postal_code: Yup.string().required('postal_code is required'),
-    phone_number: Yup.string().required('Phone Number is required'),
+  const [choosen, setChoosen] = React.useState({
+    id: 0, name: '', role: ''
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
       npwp: '',
+      role_type_id: '',
       address: '',
       city: '',
       province: '',
@@ -37,22 +31,55 @@ function Buyer() {
       phone_number: '',
     },
     validationSchema: BuyerSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code}) => {
+    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
       const data = {
-        name, email, npwp, type: "Person", address: {
+        name, email, npwp, type: choosen.name, address: {
           street: address,
           city, province, country, postal_code
-        }
+        }, role_type_id
       }
-      main.setBuyer(data, function(res){
-        console.log(res);
+      API.setBuyer(data, function(res){
+        
         alert(JSON.stringify(res));
       });
       setSubmitting(false);
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+
+// Auto Complete
+const [open, setOpen] = React.useState(false);
+
+const [options, setOptions] = React.useState([]);
+const loading = open && options.length === 0;
+
+React.useEffect(() => {
+  let active = true;
+
+  // get labor categories
+  if (!loading) {
+    return undefined;
+  }
+
+  API.getRoleType('?type=Buyer', (res) => {
+    if(!res) return
+    if(!res.data) {
+      setOptions([]);
+    } else {
+      setOptions(res.data);
+    }
+  });
+
+  return () => {
+    active = false;
+  };
+}, [loading])
+
+const handleChangeAC = async (newValue) => {
+  setChoosen(newValue);
+  await setFieldValue('role_type_id', newValue.id);
+}
 
   return (
     <Page>
@@ -67,7 +94,7 @@ function Buyer() {
           />
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   autoComplete="name"
@@ -78,6 +105,21 @@ function Buyer() {
                   helperText={touched.name && errors.name}
                 />
               </Grid>
+              <Grid item xs={6}>
+                <AutoComplete
+                  fullWidth
+                  autoComplete="role_type_id"
+                  type="text"
+                  label="Role Type"
+                  error={Boolean(touched.role_type_id && errors.role_type_id)}
+                  helperText={touched.role_type_id && errors.role_type_id}
+                  options={options}
+                  setOpen={setOpen}
+                  loading={loading}
+                  changeData={handleChangeAC}
+                />
+              </Grid>
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth

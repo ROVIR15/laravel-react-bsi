@@ -40,9 +40,7 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
     setComponent((prevComponent) => prevComponent.concat(value))
     handleClose();
   }
-
-  console.log(options)
-
+  
   return (
     <div>
       <Modal

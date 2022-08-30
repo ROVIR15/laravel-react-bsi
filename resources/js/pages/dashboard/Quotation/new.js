@@ -32,6 +32,7 @@ import DialogBox from './components/DialogBox';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { partyArrangedData } from '../../../helpers/data';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -116,7 +117,10 @@ function Quotation() {
       if (active) {
         API.getBuyers((res) => {
           if(!res) return
-          else setOptions(res);
+          else {
+            let data = partyArrangedData(res);
+            setOptions(data);
+          }
         })  
       }
     })();
@@ -167,7 +171,7 @@ function Quotation() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-          console.log(itemToUpdateIndex)
+          
     
           return prevItems.map((row, index) => {
             if(index === parseInt(itemToUpdateIndex)){
@@ -219,7 +223,8 @@ function Quotation() {
         payload={items}
         open={openM}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

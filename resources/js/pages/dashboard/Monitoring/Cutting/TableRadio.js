@@ -87,10 +87,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     setOrderBy(property);
   };
 
-  console.log(selected)
-
   const handleClick = (event, name) => {
-    console.log(name)
     let newSelected = name;
     setSelected(newSelected);
   };

@@ -10,7 +10,7 @@ class ProductHasCategory extends Model
 
     protected $primaryKey = '';
 
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [

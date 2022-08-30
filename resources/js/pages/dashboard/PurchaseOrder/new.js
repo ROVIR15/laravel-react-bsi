@@ -205,8 +205,6 @@ function SalesOrder() {
           return [year, month, day].join('-');
         }
 
-        console.log(editedIds, editedColumnName, formatDate(editRowData[editedColumnName].value))
-
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
@@ -231,7 +229,6 @@ function SalesOrder() {
 
   const handleUpdateAllRows = () => {
     API.getARFQ(values.quote_id, function(res){
-      console.log(JSON.stringify(res));
       if(!res) alert("Something went wrong!");
       var temp = res.data.quote_items;
       temp = res.data.quote_items.map(function(_d){

@@ -53,6 +53,12 @@ class PagesTableSeeder extends Seeder
                 'name' => 'material',
                 'description' => NULL,
             ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => 'monitoring',
+                'description' => NULL,
+            ),
         ));
         
         

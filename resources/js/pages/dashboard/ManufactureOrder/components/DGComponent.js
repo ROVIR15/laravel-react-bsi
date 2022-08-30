@@ -11,7 +11,7 @@ function validateEmail(email) {
 
 export default function ValidateRowModelControlGrid({ columns, rows, handleUpdateAllRows, handleAddRow, ...rest }) {
   useEffect(() => {
-	console.log('')
+	
   }, [rows])
   
   return (

@@ -16,11 +16,14 @@ class BOMItem extends Model
         'id',
         'bom_id',
         'product_feature_id',
-        'qty'
+        'qty',
+        'consumption',
+        'allowance',
+        'unit_price'
     ];
 
     public function product_feature(){
-        return $this->belongsTo('App\Models\Product\ProductFeature');
+        return $this->belongsTo('App\Models\Product\ProductFeature')->with('product');
     }
 
 }

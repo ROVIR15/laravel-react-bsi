@@ -29,22 +29,9 @@ class BuyerController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Party::with('party_roles', 'address')->get();
+      $query = PartyRoles::with('party', 'role_type', 'relationship')->where('relationship_id', 1)->get();
 
-      $data = DB::table("party as p")
-      ->leftJoin("address as a", function($join){
-          $join->on("a.party_id", "=", "p.id");
-      })
-      ->join("party_roles as pr", function($join){
-          $join->on("pr.party_id", "=", "p.id");
-      })
-      ->leftJoin("relationship as r", function($join){
-          $join->on("pr.relationship_id", "=", "r.id");
-      })
-      ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-      ->where("r.name", "=", "Buyer")
-      ->get();
-      return response()->json($data);
+      return response()->json($query);
     //   return new BuyerCollection($query);
     }
 
@@ -74,7 +61,11 @@ class BuyerController extends Controller
         $type;
 
         if ($param['type'] === "Person") {
-          $type = Person::create([]);
+          $type = Person::create([
+            'description' => ''            
+          ]);
+          
+          if(!$type['id']) return response()->json(['here' => 'not found id']);
 
           $parties = Party::create([
             'name' => $param['name'],
@@ -86,18 +77,22 @@ class BuyerController extends Controller
 
         if ($param['type'] === "Organization") {
           $type = Organization::create([
+            'description' => ''
           ]);
+
+          if(!$type['id']) return response()->json(['here' => 'not found id']);
 
           $parties = Party::create([
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
-            'organization_party_id' => $type['id']
+            'organization_party_id' => $type->id
           ]);
         }
 
         $_pr = PartyRoles::create([
           'party_id' => $parties['id'],
+          'role_type_id' => $param['role_type_id'],
           'relationship_id' => 1
         ]);
 
@@ -112,12 +107,13 @@ class BuyerController extends Controller
 
         return response()->json([
           'success' => true,
+          'type' => $type['id']
         ], 200);
       } catch (Exception $th) {
 
         return response()->json([
           'success' => false,
-          'error' => $th
+          'errors' => $th->getMessage()
         ]);
       }
     }
@@ -131,24 +127,7 @@ class BuyerController extends Controller
     public function show($id)
     {
       try {
-        $data = DB::table("party as p")
-        ->leftJoin("address as a", function($join){
-            $join->on("a.party_id", "=", "p.id");
-        })
-        ->join("party_roles as pr", function($join){
-            $join->on("pr.party_id", "=", "p.id");
-        })
-        ->leftJoin("relationship as r", function($join){
-            $join->on("pr.relationship_id", "=", "r.id");
-        })
-        ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-        ->where("r.name", "=", "Buyer")
-        ->where("p.id", "=", $id)
-        ->get();
-
-        if(!is_array($data) && count($data) === 0) {
-            throw new Exception("Not found");
-        }
+        $data = Party::where('id', $id)->with('party_roles', 'address', 'organization', 'person')->get()[0];
 
         return response()->json([
           "success" => true,
@@ -192,41 +171,12 @@ class BuyerController extends Controller
       try {
         $party = $param['party_info'];
         $address = $param['address'];
-        $partyType = $param['type']['party'];
+        $roles = $param['roles'];
 
         Party::find($id)->update($party);
         Address::where('party_id', $id)->update($address);
+        PartyRoles::where('party_id', $id)->update($roles);
 
-        $existingRecord = Party::find($id);
-
-        if ($existingRecord['person_party_id'] === NULL && $partyType === "Person"){
-            // Create new row of Person
-            $_pt = Person::create([
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'person_party_id' => $_pt['id'],
-              'organization_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Organization::where('id', $existingRecord['organization_party_id'])->delete();
-
-        } else if ($existingRecord['organization_party_id'] === NULL && $partyType === "Organization") {
-            // Create new row of Person
-            $_rt = Organization::create([
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'organization_party_id' => $_rt['id'],
-              'person_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Person::where('id', $existingRecord['person_party_id'])->delete();
-        }
         return response()->json([
           'success' => true
         ]);

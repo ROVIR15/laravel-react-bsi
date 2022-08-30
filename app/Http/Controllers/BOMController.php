@@ -117,7 +117,7 @@
     {
         try {
             //code...
-            $query = BOM::with('product_info', 'operation')->find($id);
+            $query = BOM::with('bom_items', 'operation', 'product', 'variant')->find($id);
             return new BOMOneCollection($query);
         } catch (Exception $th) {
             //throw $th;

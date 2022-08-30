@@ -13,6 +13,8 @@ import {fDate, dateDifference} from '../../../../utils/formatTime';
 
 // axios
 import axios from 'axios';
+import API from '../../../../helpers';
+import { bomDocumentArranged } from '../../../../helpers/data';
 
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -83,18 +85,26 @@ function Document(){
     total_goods: 0
   });
 
-  useEffect(async () => {
-    try {
-      const {data: {data, success}} = await axios.get('http://localhost:8000/api/bom-document' + `/${id}`);
-      if(!success) return
-      else setData(data);
-    } catch (error) {
-      alert('error');
+  useEffect(() => {
+    let active = true;
+
+      try {
+        API.getABOM(id, async (res) => {
+          if(!res) return undefined;
+          let ras = await bomDocumentArranged(res.data);
+          setData(ras);
+        })
+      } catch (error) {
+        alert('error');
+      }
+
+    return () => {
+      active = false;
     }
   }, [id]);
 
 
-  const { bom_id, bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
+  const { bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
 
   return (
       <MHidden width="mdDown">
@@ -190,7 +200,7 @@ function Document(){
                     gutterBottom 
                     component="div"
                   >
-                    {color} - {size}
+                    {`${color} - ${size}`}
                   </Typography>
                 </div>
 

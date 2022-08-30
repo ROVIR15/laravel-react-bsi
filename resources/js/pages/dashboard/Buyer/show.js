@@ -7,10 +7,13 @@ import * as Yup from 'yup';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { LoadingButton } from '@mui/lab';
+import AutoComplete from './components/AutoComplete';
 
 //api
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
+import { BuyerSchema } from '../../../helpers/FormerSchema';
+import { laborArrangedData } from '../../../helpers/data';
 
 function getEditPathname(array) {
   if(!array.length > 5) return null;
@@ -19,21 +22,10 @@ function getEditPathname(array) {
 
 function Buyer() {
   const {id} = useParams();
-
-  const {pathname} = useLocation();
-  
-  const BuyerSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    name: Yup.string().required('Name is required'),
-    npwp: Yup.string().required('NPWP is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('city is required'),
-    province: Yup.string().required('province is required'),
-    country: Yup.string().required('country is required'),
-    postal_code: Yup.string().required('postal_code is required'),
-    phone_number: Yup.string().required('Phone Number is required'),
+  const [choosen, setChoosen] = React.useState({
+    id: 0, name: '', role: ''
   });
-
+  
   const formik = useFormik({
     initialValues: {
       email : "",
@@ -47,7 +39,7 @@ function Buyer() {
       phone_number :"" 
     },
     validationSchema: BuyerSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code}) => {
+    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
       const data = {
         party_info: {
           name, email, npwp
@@ -55,9 +47,10 @@ function Buyer() {
         address: {
           street: address,
           city, province, country, postal_code
-        }, type: {
-          role: "Buyer",
-          party: "Person"
+        }, 
+        roles : {
+          role_type_id,
+          relationship_id: 1
         }
       }
       API.editBuyer(id, data, function(res){
@@ -67,28 +60,50 @@ function Buyer() {
     }
   })
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setValues, setSubmitting } = formik;
+  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setValues, setSubmitting, setFieldValue } = formik;
 
   useEffect(() => {
     if(!id) return;
     API.getBuyer(id, function(res){
-      console.log(res);
       if(!res.success) alert("Something went wrong!");
-      setValues({
-        ...values,
-        email: res.data[0].email,
-        name: res.data[0].name,
-        npwp: res.data[0].npwp,
-        address : res.data[0].street,
-        city: res.data[0].city,
-        province: res.data[0].province,
-        country: res.data[0].country,
-        postal_code: res.data[0].postal_code,
-        phone_number  : ""
-      });
+      const {role_type, ...arrangedData} = laborArrangedData(res.data);
+      setValues(arrangedData);
+      setChoosen(role_type)
     });
   }, [id]);
 
+// Auto Complete
+const [open, setOpen] = React.useState(false);
+
+const [options, setOptions] = React.useState([]);
+const loading = open && options.length === 0;
+
+React.useEffect(() => {
+  let active = true;
+
+  // get labor categories
+  if (!loading) {
+    return undefined;
+  }
+
+  API.getRoleType('?type=Buyer', (res) => {
+    if(!res) return
+    if(!res.data) {
+      setOptions([]);
+    } else {
+      setOptions(res.data);
+    }
+  });
+
+  return () => {
+    active = false;
+  };
+}, [loading])
+
+const handleChangeAC = async (newValue) => {
+  setChoosen(newValue);
+  await setFieldValue('role_type_id', newValue.id);
+}
 
   return (
     <Page>
@@ -103,7 +118,7 @@ function Buyer() {
           />
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   autoComplete="name"
@@ -112,6 +127,21 @@ function Buyer() {
                   {...getFieldProps('name')}
                   error={Boolean(touched.name && errors.name)}
                   helperText={touched.name && errors.name}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <AutoComplete
+                  fullWidth
+                  autoComplete="role_type_id"
+                  type="text"
+                  label="Role Type"
+                  error={Boolean(touched.role_type_id && errors.role_type_id)}
+                  helperText={touched.role_type_id && errors.role_type_id}
+                  options={options}
+                  setOpen={setOpen}
+                  choosen={choosen}
+                  loading={loading}
+                  changeData={handleChangeAC}
                 />
               </Grid>
               <Grid item xs={6}>

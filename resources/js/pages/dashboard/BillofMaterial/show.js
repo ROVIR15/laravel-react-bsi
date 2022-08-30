@@ -164,7 +164,10 @@ function BillOfMaterial() {
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
     { field: 'value', headerName: 'Value', editable: false},
-    { field: 'qty', headerName: 'Quantity', editable: true },
+    { field: 'consumption', headerName: 'Konsumsi', editable: true },
+    { field: 'allowance', headerName: 'Allowance', editable: true },
+    { field: 'unit_price', headerName: 'Harga', editable: true },
+    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: (params) => (parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -204,11 +207,11 @@ function BillOfMaterial() {
   useEffect(async () => {
     if(!id) return;
 
-    const load = await axios.get('http://localhost:8000/api' + '/bom' + `/${id}`)
+    const load = await axios.get(process.env.MIX_API_URL  + '/bom' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-        console.log(error);
+        alert(error);
     })
 
     setValues({
@@ -222,24 +225,25 @@ function BillOfMaterial() {
       company_name: load.company_name
     })
 
-    const load2 = await axios.get('http://localhost:8000/api' + '/bom-item' + `/${id}`)
+    const load2 = await axios.get(process.env.MIX_API_URL  + '/bom-item' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-      console.log(error);
+      alert(error);
     })
 
     var c = load2.map((key)=>{
-      const { product_feature } = key
-      return {...product_feature, product_feature_id: key.product_feature_id, id: key.id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
+      const { product_feature: { size, color, product : {goods}}, ...rest } = key
+      return {...goods, ...rest, size, color, product_feature_id: key.product_feature_id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
     })
+    console.log(c)
     setComponent(c);
 
-    const load4 = await axios.get('http://localhost:8000/api' + '/operation' + `/${id}`)
+    const load4 = await axios.get(process.env.MIX_API_URL  + '/operation' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-      console.log(error);
+      alert(error);
     })
 
     var o = load4.map((key)=>{
@@ -285,11 +289,11 @@ function BillOfMaterial() {
   );
 
   const handleUpdateAllComponentRows = async() => {
-    const load2 = await axios.get('http://localhost:8000/api' + '/bom-item' + `/${id}`)
+    const load2 = await axios.get(process.env.MIX_API_URL  + '/bom-item' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-      console.log(error);
+      alert(error);
     })
 
     var c = load2.map((key)=>{
@@ -361,11 +365,11 @@ function BillOfMaterial() {
   );
 
   const handleUpdateAllOperationRows = async() => {
-    const load4 = await axios.get('http://localhost:8000/api' + '/operation' + `/${id}`)
+    const load4 = await axios.get(process.env.MIX_API_URL  + '/operation' + `/${id}`)
     .then(function({data: {data}}) {
       return(data);
     }).catch((error) => {
-      console.log(error);
+      alert(error);
     })
 
     var o = load4.map((key)=>{

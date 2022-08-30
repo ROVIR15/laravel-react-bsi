@@ -18,12 +18,14 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { partyArrangedData } from '../../../helpers/data'
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
+  { id: 'role_type', label: 'Bagian', alignRight: false },
   { id: 'npwp', label: 'Phone Number', alignRight: false },
   { id: 'street', label: 'Address', alignRight: false },
   { id: 'city', label: 'City', alignRight: false },
@@ -83,10 +85,10 @@ function Vendor({ placeHolder }) {
     if(isEmpty(buyerData)) {
       API.getVendors((res) => {
         if(isEmpty(res)) {
-          console.error('Nothing');
           setBuyerData(BUYERLIST);
         } else {
-          setBuyerData(res);
+          const a = partyArrangedData(res);
+          setBuyerData(a);
         }
       });
     }
@@ -173,7 +175,7 @@ function Vendor({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, email, phone_number, street, city, province, country, postal_code } = row;
+                  const { id, role_type, name, email, phone_number, street, city, province, country, postal_code } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -192,6 +194,7 @@ function Vendor({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{email}</TableCell>
+                      <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
                       <TableCell align="left">{phone_number}</TableCell>
                       <TableCell align="left">{street}</TableCell>
                       <TableCell align="left">{city}</TableCell>

@@ -19,8 +19,8 @@ Route::get('/', function () {
 Route::view('/{path?}', 'dashboard')->where('path', '.*');
 Route::view('/dashboard/{path?}', 'dashboard')->where('path', '.*');
 // Auth::routes([
-//   'register' => false,
-//   'login' => false
+//   '/secret/register' => true,
+//   '/secret/login' => false
 // ]);
 
-// Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/secret/home', 'HomeController@index')->name('home');

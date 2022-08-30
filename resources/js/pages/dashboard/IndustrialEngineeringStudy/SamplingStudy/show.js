@@ -96,7 +96,7 @@ function SamplingStudy() {
   useEffect(() => {
     
     API.getASamplingStudy(id, function(res){
-      console.log(id);
+      ;
       if(!res) return;
       setValues({
         product_id: res.product.id,

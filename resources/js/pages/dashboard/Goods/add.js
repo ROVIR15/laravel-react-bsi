@@ -8,6 +8,8 @@ import { LoadingButton } from '@mui/lab';
 import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, MenuList } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CustomMultiSelect from '../../../components/CustomMultiSelect';
+
+import { isArray } from 'lodash'
 //API
 import API from '../../../helpers'
 
@@ -22,6 +24,7 @@ const UploadPaper = styled(Button)(({theme}) => ({
 
 function Goods() {
   const [cat, setCat] = useState([]);
+  const loading = cat.length === 0;
   const [file, setFile] = useState(null);
 
   const GoodsSchema = Yup.object().shape({
@@ -104,13 +107,23 @@ function Goods() {
   }
 
   useEffect(() => {
+    let active = true;
+
+    if(!loading){
+      return undefined
+    }
+
     if(cat.length > 0 || cat.length != 0) return
     else {
       API.getProductCategory(function(res){
         setCat(res.data);
-      })  
+      })
     }
-  }, [cat])
+
+    return () => {
+      active= false
+    }
+  }, [loading])
 
   function ShowImageWhenItsUploaded(){
     if(file) {
@@ -200,17 +213,19 @@ function Goods() {
                         helperText={touched.category && errors.category}
                       >
                         {
-                          cat.map(function(x){
-                            if (x.sub === " ") {
-                              return (
-                              <MenuItem value={x.id}>{`${x.name}`}</MenuItem>
-                              ) 
-                            } else {
-                              return (
-                                <MenuItem value={x.id}>{`${x.name} - ${x.sub}`}</MenuItem>
-                              )
-                            }
-                          })
+                          (!isArray(cat)? null : 
+                            cat.map(function(x){
+                              if (x.sub === " ") {
+                                return (
+                                <MenuItem value={x.id}>{`${x.name}`}</MenuItem>
+                                ) 
+                              } else {
+                                return (
+                                  <MenuItem value={x.id}>{`${x.name} - ${x.sub}`}</MenuItem>
+                                )
+                              }
+                            })
+                          )
                         }
                       </Select>
                     </FormControl>

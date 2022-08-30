@@ -192,8 +192,8 @@ function Labor({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{email}</TableCell>
-                      <TableCell align="left">{role_type.name}</TableCell>
-                      <TableCell align="left">{phone_number}</TableCell>
+                      <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
+                      <TableCell align="left">{phone_number? phone_number : '083012983'}</TableCell>
                       <TableCell align="left">{street}</TableCell>
                       <TableCell align="left">{city}</TableCell>
                       <TableCell align="left">{province}</TableCell>

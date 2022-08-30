@@ -27,11 +27,16 @@ class BOM extends Model
         return $this->hasMany('App\Models\Manufacture\BOMItem', 'bom_id');
     }
 
-    public function product_info(){
+    public function variant(){
         return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id');
+    }
+
+    public function product(){
+        return $this->belongsTo('App\Models\Product\Product', 'product_id', 'id')->with('goods');
     }
 
     public function operation(){
         return $this->hasMany('App\Models\Manufacture\Operation', 'bom_id');
     }
+    
 }

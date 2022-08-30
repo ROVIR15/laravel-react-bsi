@@ -14,6 +14,7 @@ class Organization extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'id'
+        'id',
+        'desc'
     ];
 }

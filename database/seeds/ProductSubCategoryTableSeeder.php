@@ -16,6 +16,33 @@ class ProductSubCategoryTableSeeder extends Seeder
 
         \DB::table('product_sub_category')->delete();
         
+        \DB::table('product_sub_category')->insert(array (
+            0 => 
+            array (
+                'id' => 1,
+                'name' => 'benang',
+            ),
+            1 => 
+            array (
+                'id' => 2,
+                'name' => 'accessoris',
+            ),
+            2 => 
+            array (
+                'id' => 3,
+                'name' => 'fabric',
+            ),
+            3 => 
+            array (
+                'id' => 4,
+                'name' => 'packing',
+            ),
+            4 => 
+            array (
+                'id' => 5,
+                'name' => ' ',
+            ),
+        ));
         
         
     }

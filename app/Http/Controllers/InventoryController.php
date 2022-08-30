@@ -20,7 +20,7 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = InventoryItem::with('product_feature', 'facility')->groupBy('product_feature_id')->get();
+      $query = Inventory::with('product_feature', 'facility')->groupBy('product_feature_id')->get();
 
       return new InventoryCollection($query);
       // return response()->json(['data' => $query]);

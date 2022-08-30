@@ -14,7 +14,6 @@ function getPathname(array){
 function ProductionStudy() {
   const { pathname } = useLocation();
 
-  console.log(getPathname(pathname.split('/')))
   return (
     <BuyerLayout>
     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

@@ -27,7 +27,6 @@ function Routing() {
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
-      console.log(values);
       alert(JSON.stringify(values));
     }
   })

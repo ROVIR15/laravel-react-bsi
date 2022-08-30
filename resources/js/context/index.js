@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
     } else {
       const { name, email, pages } = userStorage;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       setUser({name, email, pages, access_token});  
     }
 
@@ -63,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       const { name, email, pages } = userStorage;
       setUser({name, email, pages, access_token});  
-      console.log(user, access_token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     }
 
     // usersApi.getCurrentUser()

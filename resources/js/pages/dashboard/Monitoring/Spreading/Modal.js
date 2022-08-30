@@ -49,18 +49,6 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
           setValue(ras);
         }
       });
-
-      // API.getMonitoringQC(`?sales-order=${order_id}`, (res) => {
-		  // if(!res) return
-		  // if(!res.data) {
-      //     setValue(BUYERLIST);
-      //   } else {
-      //     let ras = optionFG(res.data)
-      //     setValue(ras);
-      //   }
-      // });
-
-      API.get
     }
   }, [order_id])
 

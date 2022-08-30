@@ -18,16 +18,17 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { rearrangeData } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   { id: 'category', label: 'Kategori', alignRight: false },
   { id: 'sub_category', label: 'Sub Kategori', alignRight: false },
   { id: 'value', label: 'Value', alignRight: false },
+  { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   { id: 'brand', label: 'Brand', alignRight: false },
 ];
 
@@ -79,15 +80,6 @@ function DisplayBuyer({ placeHolder }) {
       return !array.length;
     }
 
-    function rearrangeData(array){
-      if(isEmpty(array)) return 
-      let arranged = array.map((x) => {
-        const {product: {product_category: {category}}} = x;
-        return {...x, category: category.name, sub_category: category.sub.name}
-      })
-      return arranged;
-    }
-
     if(isEmpty(goodsData)) {
       API.getGoods((res) => {
 		if(!res) return
@@ -95,6 +87,7 @@ function DisplayBuyer({ placeHolder }) {
           setGoodsData(BUYERLIST);
         } else {
           let data = rearrangeData(res.data);
+          
           setGoodsData(data);
         }
       });
@@ -186,7 +179,7 @@ function DisplayBuyer({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, unit_measurement, category, sub_category, value, brand} = row;
+                  const { id, name, satuan, category, sub_category, value, brand} = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -205,10 +198,10 @@ function DisplayBuyer({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{unit_measurement}</TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{value}</TableCell>
+                      <TableCell align="left">{satuan}</TableCell>
                       <TableCell align="left">{brand}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />

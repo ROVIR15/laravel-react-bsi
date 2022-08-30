@@ -166,20 +166,6 @@ function GoodsReceipt() {
           alert(JSON.stringify(res));
         });
 
-        //update items state
-        // setItems((prevItems) => {
-        //   const itemToUpdateIndex = parseInt(editedIds[0]);
-        //   console.log(itemToUpdateIndex)
-    
-        //   return prevItems.map((row, index) => {
-        //     if(index === parseInt(itemToUpdateIndex)){
-        //       return {...row, [editedColumnName]: editRowData[editedColumnName].value}
-        //     } else {
-        //       return row
-        //     }
-        //   });
-        // });
-
         // update on field value
       } else {
         setEditRowData(model[editedIds[0]]);

@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import { FormControl, Input, InputAdornment, InputLabel, TextField, Typography } from '@mui/material';
 
 import {fCurrency} from '../../../../utils/formatNumber';
+import { sum } from 'lodash';
 
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 6
@@ -33,24 +34,15 @@ export default function BasicTable({ payload }) {
 
   const [margin, setMargin] = React.useState(0);
   const [price, setPrice] = React.useState(0);
-  const {total_labor, qty_to_produce, many_components, total_cost, total_overhead, total_goods} = payload;
+  const {total_labors, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items} = payload;
 
   const rows = [
-    createData('Labor', `${total_labor} Labor works on the projects`, total_cost),
-    createData('Material', `${many_components} Types of material to be consumpted`, total_goods),
-    createData('Overhead', `Additional cost to execute the project`, total_overhead),
+    createData('Labor', `${total_labors} Labor works on the projects`, total_cost_of_wc),
+    createData('Material', `${components_numbers} Types of material to be consumpted`, total_cost_of_items),
+    createData('Overhead', `Additional cost to execute the project`, total_overhead_cost),
   ];
 
-  function total(_param1, _param2, _param3){
-    return parseInt(_param1) + parseInt(_param2) + parseInt(_param3);
-  }
-
-  function costPerProduct(_param1, _param2, _param3, qty){
-    return fCurrency(parseInt(total(_param1, _param2, _param3)/parseInt(qty)))
-  }
-
-  function OfferingPrice(){
-    const price = parseInt(total(total_cost, total_overhead, total_goods)/parseInt(qty_to_produce));
+  function OfferingPrice(price){
     return fCurrency(price * ((1+margin/100)));
   }
 
@@ -80,7 +72,7 @@ export default function BasicTable({ payload }) {
             </TableRow>
           ))}
             <TableRow
-              key="Total"
+              key="total-cost"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <NoBorderCell align="right" colSpan={3}>
@@ -89,11 +81,11 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {fCurrency(total(total_cost, total_overhead, total_goods))} </Typography>
+                <Typography variant="body1"> {fCurrency(sum([total_cost_of_wc, total_overhead_cost, total_cost_of_items]))} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
-              key="Total"
+              key="unit_produced"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <NoBorderCell align="right" colSpan={3}>
@@ -106,6 +98,33 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
             </TableRow>
             <TableRow
+              key="cost_of_material"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Material Cost </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(average_of_product_cost)} </Typography>
+              </NoBorderCell>
+            </TableRow>
+            <TableRow
+              key="cm_cost"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> CM Cost </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(cm_cost)} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
+            <TableRow
               key="Total"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
@@ -115,11 +134,11 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {costPerProduct(total_cost, total_overhead, total_goods, qty_to_produce)} </Typography>
+                <Typography variant="body1"> {fCurrency(sum([cm_cost, average_of_product_cost]))} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
-              key="Total"
+              key="margin"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <NoBorderCell align="right" colSpan={3}>
@@ -148,7 +167,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {OfferingPrice()} </Typography>
+                <Typography variant="body1"> {OfferingPrice(sum([cm_cost, average_of_product_cost]))} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

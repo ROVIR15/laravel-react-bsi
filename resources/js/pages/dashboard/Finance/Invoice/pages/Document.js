@@ -115,8 +115,6 @@ function FirstPage(){
       }
     })
 
-    console.log(temp);
-
     setSelectedValueSO({
       name: payload.sold_to.name,
       address: `${payload.sold_to.address.street} ${payload.sold_to.address.city} ${payload.sold_to.address.province} ${payload.sold_to.address.country}`,

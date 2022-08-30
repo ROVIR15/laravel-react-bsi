@@ -163,7 +163,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
-                  console.log(isItemSelected, row.id, selected)
                   const {
                     id,
                     order_id,

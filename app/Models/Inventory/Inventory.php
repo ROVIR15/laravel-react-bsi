@@ -19,8 +19,9 @@ class Inventory extends Model
         'product_feature_id',
         'qty_on_hand'
     ];
+
     public function product_feature(){
-        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id');
+        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id')->with('product');
     }
 
     public function type(){

@@ -18,7 +18,7 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 import API from '../../../../helpers';
 
 import Table from './Table';
-import { orderItemArrangedData } from '../../../../helpers/data';
+import { optionNumbering, optionSupermarket, orderItemArrangedData } from '../../../../helpers/data';
 
 const style = {
   position: 'absolute',
@@ -40,13 +40,13 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
     }
 
     if(isEmpty(value) && order_id) {
-      API.getASalesOrder(order_id, (res) => {
+      API.getMonitoringSupermarket(`?sales-order=${order_id}`, (res) => {
 		  if(!res) return
 		  if(!res.data) {
           setValue(BUYERLIST);
         } else {
-          let ras = orderItemArrangedData(res.data.order_item)
-          setValue(ras);
+          let ras = optionSupermarket(res.data);
+          setValue(ras)
         }
       });
     }

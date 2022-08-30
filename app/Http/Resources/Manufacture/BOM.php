@@ -28,8 +28,9 @@ class BOM extends JsonResource
             'end_date' => $this->end_date,
             'company_name' => $this->company_name,
             'bom_items' => new BOMItemCollection($this->bom_items),
-            'product_info' => new ProductFeature($this->product_info),
-            'operations' => new OperationCollection($this->operation)
+            'operations' => new OperationCollection($this->operation),
+            'variants' => $this->variants,
+            'product' => $this->product
         ];
     }
 }

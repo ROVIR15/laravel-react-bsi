@@ -12,7 +12,7 @@ import AutoComplete from './components/AutoComplete';
 
 //api
 import API from '../../../helpers';
-import { LaborSchema } from '../../../helpers/FormerSchema/LaborSchema';
+import { LaborSchema } from '../../../helpers/FormerSchema';
 
 function Labor() {
   const [choosen, setChoosen] = React.useState({

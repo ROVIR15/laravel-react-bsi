@@ -55,6 +55,7 @@ class LaborController extends Controller
         $type;
 
         $type = Person::create([
+          'description' => ''
         ]);
 
         $parties = Party::create([

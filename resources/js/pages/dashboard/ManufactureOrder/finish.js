@@ -443,7 +443,6 @@ export default function VerticalLinearStepper() {
     if(!payload) alert(failed);
     else {
       let totalProducedQty = sumOfProducedQty(payload.result);
-      console.log(totalProducedQty, payload);
       setValues({
         manufacture_order_id: id,
         manufacture_operation_id,

@@ -32,7 +32,6 @@ function BuyerForm() {
     },
     validationSchema: BuyerSchema,
     onSubmit: (values) => {
-      console.log(values);
       alert(JSON.stringify(values));
     }
   })

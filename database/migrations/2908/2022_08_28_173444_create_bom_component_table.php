@@ -18,6 +18,9 @@ class CreateBomComponentTable extends Migration {
 			$table->integer('bom_id')->index('fk_bom_component_bom1_idx');
 			$table->integer('product_feature_id')->index('fk_bom_component_product_feature1_idx');
 			$table->integer('qty')->nullable();
+			$table->floatval('consumption')->nullable();
+			$table->floatval('allowance')->nullable();
+			$table->floatval('unit_price')->nullable();
 			$table->timestamps();
 		});
 	}

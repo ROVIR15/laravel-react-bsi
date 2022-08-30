@@ -38,7 +38,6 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
     const _value = value.map((key, index)=> {
       return {...key, id: index, name: key.name, work_center_id: key.id, seq: index}
     });
-    console.log(_value)
     setComponent((prevComponent) => prevComponent.concat(_value))
     handleClose();
   }

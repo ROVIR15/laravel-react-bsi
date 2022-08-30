@@ -87,7 +87,6 @@ function DisplayQuote({ placeHolder }) {
         setFlag(true);
       }
       setFlag(prevFlag => prevFlag+1);
-      console.log(flag)
     });
   }
 

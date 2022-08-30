@@ -20,7 +20,7 @@ import { useSnackbar } from 'notistack'
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
-  return '/' + array[1] + '/' + array[2] + '/' + array[3];
+  return '/' + array[1] + '/' + array[2] + '/' + array[3] + '/' + array[4];
 }
 
 function FinishedGoods() {
@@ -38,13 +38,13 @@ function FinishedGoods() {
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4" gutterBottom>
-          Finished Goods
+          Monitoring Spreading
         </Typography>
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
           <Button
             variant="contained"
             component={RouterLink}
-            to={getPathname(pathname.split('/')) + '/add'}
+            to={getPathname(pathname.split('/')) + '/insert'}
             startIcon={<Icon icon={plusFill} />}
           >
             New

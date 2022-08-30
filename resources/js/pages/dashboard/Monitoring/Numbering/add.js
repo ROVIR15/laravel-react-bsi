@@ -63,7 +63,7 @@ function WorkCenter() {
 // columns - Data grid
   const deleteData = useCallback(
    (id) => () => {
-     console.log(id);
+     ;
      setItems((prevItems) => {
        return prevItems.filter(function(x){
          return x.id != id

@@ -17,7 +17,7 @@ class PagesAccessViewTable extends Migration
         DB::statement("
         CREATE VIEW pages_access_view
         AS
-        select `bsi_db`.`users`.`id` AS `users_id`,`bsi_db`.`pages_access`.`pages_id` AS `pages_id`,`bsi_db`.`pages_access`.`name` AS `page_name` from (`bsi_db`.`users` join `bsi_db`.`pages_access` on((`bsi_db`.`pages_access`.`users_id` = `bsi_db`.`users`.`id`)))
+        select `bsi_db2`.`users`.`id` AS `users_id`,`bsi_db2`.`pages_access`.`pages_id` AS `pages_id`,`bsi_db2`.`pages_access`.`name` AS `page_name` from (`bsi_db2`.`users` join `bsi_db2`.`pages_access` on((`bsi_db2`.`pages_access`.`users_id` = `bsi_db2`.`users`.`id`)))
         ");
     }
 

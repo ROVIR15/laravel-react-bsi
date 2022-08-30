@@ -16,6 +16,44 @@ class ProductCategoryTableSeeder extends Seeder
 
         \DB::table('product_category')->delete();
         
+        \DB::table('product_category')->insert(array (
+            0 => 
+            array (
+                'id' => 1,
+                'sub_cat' => 5,
+                'name' => 'Finished Goods',
+            ),
+            1 => 
+            array (
+                'id' => 2,
+                'sub_cat' => 1,
+                'name' => 'Raw Material',
+            ),
+            2 => 
+            array (
+                'id' => 3,
+                'sub_cat' => 2,
+                'name' => 'Raw Material',
+            ),
+            3 => 
+            array (
+                'id' => 4,
+                'sub_cat' => 3,
+                'name' => 'Raw Material',
+            ),
+            4 => 
+            array (
+                'id' => 5,
+                'sub_cat' => 4,
+                'name' => 'Raw Material',
+            ),
+            5 => 
+            array (
+                'id' => 6,
+                'sub_cat' => 5,
+                'name' => 'Assembly Material',
+            ),
+        ));
         
         
     }

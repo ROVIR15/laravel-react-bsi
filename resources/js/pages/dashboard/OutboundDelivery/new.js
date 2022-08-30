@@ -84,7 +84,7 @@ function OutboundDelivery() {
       if(!res.data) {
         setOptions([]);
       } else {
-        console.log(res.data);
+        ;
         setOptions(res.data);
       }
     })
@@ -176,7 +176,6 @@ function OutboundDelivery() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-          console.log(itemToUpdateIndex)
     
           return prevItems.map((row, index) => {
             if(index === parseInt(itemToUpdateIndex)){
