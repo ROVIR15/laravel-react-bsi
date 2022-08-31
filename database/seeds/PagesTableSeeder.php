@@ -57,6 +57,12 @@ class PagesTableSeeder extends Seeder
             array (
                 'id' => 7,
                 'name' => 'monitoring',
+                'description' => 'this page for monitoring',
+            ),
+            7 => 
+            array (
+                'id' => 8,
+                'name' => 'purchasing',
                 'description' => NULL,
             ),
         ));

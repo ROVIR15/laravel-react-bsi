@@ -11,13 +11,13 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema bsi_new_model
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `bsi_new_model` DEFAULT CHARACTER SET latin1 ;
-USE `bsi_new_model` ;
+CREATE SCHEMA IF NOT EXISTS `bsi_db2` DEFAULT CHARACTER SET latin1 ;
+USE `bsi_db2` ;
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture`
+-- Table `bsi_db2`.`manufacture`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `party_id` INT NOT NULL,
   `qty` INT NULL,
@@ -28,16 +28,16 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture` (
   INDEX `fk_manufacture_party1_idx` (`party_id` ASC),
   CONSTRAINT `fk_manufacture_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_work_order`
+-- Table `bsi_db2`.`manufacture_work_order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_work_order` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_work_order` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `manufacture_id` INT NOT NULL,
   `work_center_id` INT NOT NULL,
@@ -48,21 +48,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_work_order` (
   INDEX `fk_manufacture_work_order_work_center1_idx` (`work_center_id` ASC),
   CONSTRAINT `fk_manufacture_work_order_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_work_order_work_center1`
     FOREIGN KEY (`work_center_id`)
-    REFERENCES `bsi_new_model`.`work_center` (`id`)
+    REFERENCES `bsi_db2`.`work_center` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_component`
+-- Table `bsi_db2`.`manufacture_component`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_component` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_component` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `manufacture_id` INT NOT NULL,
   `bom_item_id` INT NOT NULL,
@@ -74,21 +74,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_component` (
   INDEX `fk_manufacture_component_bom_item1_idx` (`bom_item_id` ASC),
   CONSTRAINT `fk_manufacture_consumption_item_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_component_bom_item1`
     FOREIGN KEY (`bom_item_id`)
-    REFERENCES `bsi_new_model`.`bom_item` (`id`)
+    REFERENCES `bsi_db2`.`bom_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_status_type`
+-- Table `bsi_db2`.`manufacture_status_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_status_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(45) NULL,
@@ -97,9 +97,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_status`
+-- Table `bsi_db2`.`manufacture_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_status` (
   `manufacture_status_type_id` INT NOT NULL,
   `manufacture_id` INT NOT NULL,
   PRIMARY KEY (`manufacture_status_type_id`, `manufacture_id`),
@@ -107,21 +107,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status` (
   INDEX `fk_manufacture_status_type_has_manufacture_manufacture_stat_idx` (`manufacture_status_type_id` ASC),
   CONSTRAINT `fk_manufacture_status_type_has_manufacture_manufacture_status1`
     FOREIGN KEY (`manufacture_status_type_id`)
-    REFERENCES `bsi_new_model`.`manufacture_status_type` (`id`)
+    REFERENCES `bsi_db2`.`manufacture_status_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_status_type_has_manufacture_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_has_bom`
+-- Table `bsi_db2`.`manufacture_has_bom`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_has_bom` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_has_bom` (
   `manufacture_id` INT NOT NULL,
   `bom_id` INT NOT NULL,
   PRIMARY KEY (`manufacture_id`, `bom_id`),
@@ -129,12 +129,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_has_bom` (
   INDEX `fk_manufacture_has_bom_manufacture1_idx` (`manufacture_id` ASC),
   CONSTRAINT `fk_manufacture_has_bom_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_has_bom_bom1`
     FOREIGN KEY (`bom_id`)
-    REFERENCES `bsi_new_model`.`bom` (`id`)
+    REFERENCES `bsi_db2`.`bom` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

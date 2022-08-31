@@ -11,13 +11,13 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema bsi_new_model
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `bsi_new_model` DEFAULT CHARACTER SET latin1 ;
-USE `bsi_new_model` ;
+CREATE SCHEMA IF NOT EXISTS `bsi_db2` DEFAULT CHARACTER SET latin1 ;
+USE `bsi_db2` ;
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`agreement`
+-- Table `bsi_db2`.`agreement`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`agreement` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`agreement` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -25,16 +25,16 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`agreement_role`
+-- Table `bsi_db2`.`agreement_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`agreement_role` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`agreement_role` (
   `id` INT(11) NOT NULL,
   `agreement_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_agreement_role_agreement1_idx` (`agreement_id` ASC),
   CONSTRAINT `fk_agreement_role_agreement1`
     FOREIGN KEY (`agreement_id`)
-    REFERENCES `bsi_new_model`.`agreement` (`id`)
+    REFERENCES `bsi_db2`.`agreement` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -42,9 +42,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`organization`
+-- Table `bsi_db2`.`organization`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`organization` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`organization` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -52,9 +52,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`person`
+-- Table `bsi_db2`.`person`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`person` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`person` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -62,9 +62,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`party`
+-- Table `bsi_db2`.`party`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`party` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`party` (
   `id` INT(11) NOT NULL,
   `person_party_id` INT(11) NULL DEFAULT NULL,
   `name` VARCHAR(50) NOT NULL,
@@ -78,17 +78,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`party` (
   INDEX `fk_party_organization1_idx` (`organization_party_id` ASC),
   CONSTRAINT `fk_party_agreement_role1`
     FOREIGN KEY (`agreement_role_id`)
-    REFERENCES `bsi_new_model`.`agreement_role` (`id`)
+    REFERENCES `bsi_db2`.`agreement_role` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_party_organization1`
     FOREIGN KEY (`organization_party_id`)
-    REFERENCES `bsi_new_model`.`organization` (`id`)
+    REFERENCES `bsi_db2`.`organization` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_party_person1`
     FOREIGN KEY (`person_party_id`)
-    REFERENCES `bsi_new_model`.`person` (`id`)
+    REFERENCES `bsi_db2`.`person` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -96,9 +96,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`address`
+-- Table `bsi_db2`.`address`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`address` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`address` (
   `id` INT(11) NOT NULL,
   `party_id` INT(11) NULL DEFAULT NULL,
   `city` VARCHAR(50) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`address` (
   INDEX `fk_address_party1_idx` (`party_id` ASC),
   CONSTRAINT `fk_address_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -118,16 +118,16 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`agreement_item`
+-- Table `bsi_db2`.`agreement_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`agreement_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`agreement_item` (
   `id` INT(11) NOT NULL,
   `agreement_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_agreement_item_agreement1_idx` (`agreement_id` ASC),
   CONSTRAINT `fk_agreement_item_agreement1`
     FOREIGN KEY (`agreement_id`)
-    REFERENCES `bsi_new_model`.`agreement` (`id`)
+    REFERENCES `bsi_db2`.`agreement` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -135,16 +135,16 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`price_component`
+-- Table `bsi_db2`.`price_component`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`price_component` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`price_component` (
   `id` INT(11) NOT NULL,
   `agreement_item_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_price_component_agreement_item1_idx` (`agreement_item_id` ASC),
   CONSTRAINT `fk_price_component_agreement_item1`
     FOREIGN KEY (`agreement_item_id`)
-    REFERENCES `bsi_new_model`.`agreement_item` (`id`)
+    REFERENCES `bsi_db2`.`agreement_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -152,9 +152,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`goods`
+-- Table `bsi_db2`.`goods`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`goods` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`goods` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
   `satuan` VARCHAR(10) NOT NULL,
@@ -166,9 +166,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`part`
+-- Table `bsi_db2`.`part`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`part` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`part` (
   `id` INT(11) NOT NULL,
   `part_type` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
@@ -177,9 +177,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`service`
+-- Table `bsi_db2`.`service`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`service` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`service` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -187,9 +187,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`product`
+-- Table `bsi_db2`.`product`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`product` (
   `id` INT(11) NOT NULL,
   `goods_id` INT(11) NULL DEFAULT NULL,
   `part_id` INT(11) NULL DEFAULT NULL,
@@ -200,17 +200,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product` (
   INDEX `fk_product_goods1` (`goods_id` ASC),
   CONSTRAINT `fk_product_goods1`
     FOREIGN KEY (`goods_id`)
-    REFERENCES `bsi_new_model`.`goods` (`id`)
+    REFERENCES `bsi_db2`.`goods` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_product_part1`
     FOREIGN KEY (`part_id`)
-    REFERENCES `bsi_new_model`.`part` (`id`)
+    REFERENCES `bsi_db2`.`part` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_product_service1`
     FOREIGN KEY (`service_id`)
-    REFERENCES `bsi_new_model`.`service` (`id`)
+    REFERENCES `bsi_db2`.`service` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -218,9 +218,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`product_feature`
+-- Table `bsi_db2`.`product_feature`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product_feature` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`product_feature` (
   `id` INT(11) NOT NULL,
   `product_id` INT(11) NULL DEFAULT NULL,
   `color` VARCHAR(45) NULL DEFAULT NULL,
@@ -231,12 +231,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product_feature` (
   INDEX `fk_product_feature_price_component1_idx` (`price_component_id` ASC),
   CONSTRAINT `fk_product_feature_price_component1`
     FOREIGN KEY (`price_component_id`)
-    REFERENCES `bsi_new_model`.`price_component` (`id`)
+    REFERENCES `bsi_db2`.`price_component` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_product_feature_product1`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -244,9 +244,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`bom`
+-- Table `bsi_db2`.`bom`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`bom` (
   `id` INT(11) NOT NULL,
   `product_id` INT(11) NOT NULL,
   `product_feature_id` INT(11) NULL DEFAULT NULL,
@@ -262,12 +262,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom` (
   INDEX `fk_bom_product_id_idx` (`product_id` ASC),
   CONSTRAINT `fk_bom_product_feature_id`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_bom_product_id`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -275,9 +275,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`bom_component`
+-- Table `bsi_db2`.`bom_component`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom_component` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`bom_component` (
   `id` INT(11) NOT NULL,
   `bom_id` INT(11) NOT NULL,
   `product_feature_id` INT(11) NOT NULL,
@@ -289,12 +289,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom_component` (
   INDEX `fk_bom_component_product_feature1_idx` (`product_feature_id` ASC),
   CONSTRAINT `fk_bom_component_bom1`
     FOREIGN KEY (`bom_id`)
-    REFERENCES `bsi_new_model`.`bom` (`id`)
+    REFERENCES `bsi_db2`.`bom` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_bom_component_product_feature1`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -302,9 +302,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`factory`
+-- Table `bsi_db2`.`factory`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`factory` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`factory` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
@@ -313,9 +313,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`request`
+-- Table `bsi_db2`.`request`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`request` (
   `id` INT(11) NOT NULL,
   `req_type` VARCHAR(15) NULL DEFAULT NULL,
   `party_id` INT(11) NULL DEFAULT NULL,
@@ -332,12 +332,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request` (
   INDEX `fk_request_buyer_shipment1` (`ship_to` ASC),
   CONSTRAINT `fk_request_buyer1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_request_buyer_shipment1`
     FOREIGN KEY (`ship_to`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -345,9 +345,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`quote`
+-- Table `bsi_db2`.`quote`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`quote` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`quote` (
   `id` INT(11) NOT NULL,
   `request_id` INT(11) NULL DEFAULT NULL,
   `po_number` VARCHAR(150) NOT NULL,
@@ -365,17 +365,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`quote` (
   INDEX `fk_quote_buyer2` (`ship_to` ASC),
   CONSTRAINT `fk_quote_buyer1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_quote_buyer2`
     FOREIGN KEY (`ship_to`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_quote_request1`
     FOREIGN KEY (`request_id`)
-    REFERENCES `bsi_new_model`.`request` (`id`)
+    REFERENCES `bsi_db2`.`request` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -383,9 +383,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`sales_order`
+-- Table `bsi_db2`.`sales_order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`sales_order` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`sales_order` (
   `id` INT(11) NOT NULL,
   `po_number` VARCHAR(50) NOT NULL,
   `order_id` INT(11) NULL DEFAULT NULL,
@@ -402,17 +402,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`sales_order` (
   INDEX `fk_sales_order_buyer2` (`ship_to` ASC),
   CONSTRAINT `fk_sales_order_buyer1`
     FOREIGN KEY (`sold_to`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_sales_order_buyer2`
     FOREIGN KEY (`ship_to`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_sales_order_order1`
     FOREIGN KEY (`order_id`)
-    REFERENCES `bsi_new_model`.`order` (`id`)
+    REFERENCES `bsi_db2`.`order` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -420,9 +420,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order`
+-- Table `bsi_db2`.`order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order` (
   `id` INT(11) NOT NULL,
   `sales_order_id` INT(11) NULL DEFAULT NULL,
   `purchase_order_id` INT(11) NULL DEFAULT NULL,
@@ -435,17 +435,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order` (
   INDEX `fk_order_quote1_idx` (`quote_id` ASC),
   CONSTRAINT `fk_order_purchase_order1`
     FOREIGN KEY (`purchase_order_id`)
-    REFERENCES `bsi_new_model`.`purchase_order` (`id`)
+    REFERENCES `bsi_db2`.`purchase_order` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_order_quote1`
     FOREIGN KEY (`quote_id`)
-    REFERENCES `bsi_new_model`.`quote` (`id`)
+    REFERENCES `bsi_db2`.`quote` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_sales_order1`
     FOREIGN KEY (`sales_order_id`)
-    REFERENCES `bsi_new_model`.`sales_order` (`id`)
+    REFERENCES `bsi_db2`.`sales_order` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -453,9 +453,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`purchase_order`
+-- Table `bsi_db2`.`purchase_order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`purchase_order` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`purchase_order` (
   `id` INT(11) NOT NULL,
   `order_id` INT(11) NULL DEFAULT NULL,
   `po_number` VARCHAR(45) NOT NULL,
@@ -469,7 +469,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`purchase_order` (
   INDEX `fk_purchase_order_order1_idx` (`order_id` ASC),
   CONSTRAINT `fk_purchase_order_order1`
     FOREIGN KEY (`order_id`)
-    REFERENCES `bsi_new_model`.`order` (`id`)
+    REFERENCES `bsi_db2`.`order` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -477,9 +477,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`goods_receipt`
+-- Table `bsi_db2`.`goods_receipt`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`goods_receipt` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`goods_receipt` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `purchase_order_id` INT(11) NULL DEFAULT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -488,7 +488,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`goods_receipt` (
   INDEX `fk_goods_receipt_purchase_order1_idx` (`purchase_order_id` ASC),
   CONSTRAINT `fk_goods_receipt_purchase_order1`
     FOREIGN KEY (`purchase_order_id`)
-    REFERENCES `bsi_new_model`.`purchase_order` (`id`)
+    REFERENCES `bsi_db2`.`purchase_order` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -497,9 +497,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_item`
+-- Table `bsi_db2`.`order_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_item` (
   `id` INT(11) NOT NULL,
   `order_id` INT(11) NOT NULL,
   `qty` INT(45) NULL DEFAULT NULL,
@@ -512,12 +512,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item` (
   INDEX `fk_order_item_product_id1_idx` (`product_feature_id` ASC),
   CONSTRAINT `fk_order_item_order_id1`
     FOREIGN KEY (`order_id`)
-    REFERENCES `bsi_new_model`.`order` (`id`)
+    REFERENCES `bsi_db2`.`order` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_order_item_product_id1`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -525,9 +525,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`goods_receipt_items`
+-- Table `bsi_db2`.`goods_receipt_items`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`goods_receipt_items` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`goods_receipt_items` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `goods_receipt_id` INT(11) NULL DEFAULT NULL,
   `order_item_id` INT(11) NULL DEFAULT NULL,
@@ -541,12 +541,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`goods_receipt_items` (
   INDEX `fk_goods_receipt_items_order_item1_idx` (`order_item_id` ASC, `order_item_order_id` ASC),
   CONSTRAINT `fk_goods_receipt_items_goods_receipt1`
     FOREIGN KEY (`goods_receipt_id`)
-    REFERENCES `bsi_new_model`.`goods_receipt` (`id`)
+    REFERENCES `bsi_db2`.`goods_receipt` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_goods_receipt_items_order_item1`
     FOREIGN KEY (`order_item_id` , `order_item_order_id`)
-    REFERENCES `bsi_new_model`.`order_item` (`id` , `order_id`)
+    REFERENCES `bsi_db2`.`order_item` (`id` , `order_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -555,9 +555,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`inventory_type`
+-- Table `bsi_db2`.`inventory_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`inventory_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`inventory_type` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -565,9 +565,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`inventory`
+-- Table `bsi_db2`.`inventory`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`inventory` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`inventory` (
   `id` INT(11) NOT NULL,
   `inventory_type_id` INT(11) NOT NULL,
   `product_id` INT(11) NOT NULL,
@@ -579,17 +579,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`inventory` (
   INDEX `fk_inventory_factory1_idx` (`factory_id` ASC),
   CONSTRAINT `fk_inventory_factory1`
     FOREIGN KEY (`factory_id`)
-    REFERENCES `bsi_new_model`.`factory` (`id`)
+    REFERENCES `bsi_db2`.`factory` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_inventory_inventory_type1`
     FOREIGN KEY (`inventory_type_id`)
-    REFERENCES `bsi_new_model`.`inventory_type` (`id`)
+    REFERENCES `bsi_db2`.`inventory_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_inventory_product1`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -597,9 +597,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`invoice_receipt`
+-- Table `bsi_db2`.`invoice_receipt`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`invoice_receipt` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`invoice_receipt` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `purchase_order_id` INT(11) NULL DEFAULT NULL,
   `amount` VARCHAR(45) NULL DEFAULT NULL,
@@ -612,7 +612,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`invoice_receipt` (
   INDEX `fk_invoice_receipt_purchase_order1_idx` (`purchase_order_id` ASC),
   CONSTRAINT `fk_invoice_receipt_purchase_order1`
     FOREIGN KEY (`purchase_order_id`)
-    REFERENCES `bsi_new_model`.`purchase_order` (`id`)
+    REFERENCES `bsi_db2`.`purchase_order` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -621,9 +621,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`invoice_receipt_items`
+-- Table `bsi_db2`.`invoice_receipt_items`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`invoice_receipt_items` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`invoice_receipt_items` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `invoice_receipt_id` INT(11) NULL DEFAULT NULL,
   `order_item_id` INT(11) NULL DEFAULT NULL,
@@ -637,12 +637,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`invoice_receipt_items` (
   INDEX `fk_invoice_receipt_items_order_item1_idx` (`order_item_id` ASC, `order_item_order_id` ASC),
   CONSTRAINT `fk_invoice_receipt_items_invoice_receipt1`
     FOREIGN KEY (`invoice_receipt_id`)
-    REFERENCES `bsi_new_model`.`invoice_receipt` (`id`)
+    REFERENCES `bsi_db2`.`invoice_receipt` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_invoice_receipt_items_order_item1`
     FOREIGN KEY (`order_item_id` , `order_item_order_id`)
-    REFERENCES `bsi_new_model`.`order_item` (`id` , `order_id`)
+    REFERENCES `bsi_db2`.`order_item` (`id` , `order_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -651,9 +651,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`shipment`
+-- Table `bsi_db2`.`shipment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`shipment` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `delivery_date` DATE NOT NULL,
   `total_weight` INT(11) NOT NULL,
@@ -666,9 +666,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`shipment_item`
+-- Table `bsi_db2`.`shipment_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`shipment_item` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `shipment_id` INT(11) NOT NULL,
   `product_feature_id` INT(11) NOT NULL,
@@ -678,12 +678,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_item` (
   INDEX `fk_product_feature` (`product_feature_id` ASC),
   CONSTRAINT `fk_shipment_item_product_feature`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_shipment_item_shipment1`
     FOREIGN KEY (`shipment_id`)
-    REFERENCES `bsi_new_model`.`shipment` (`id`)
+    REFERENCES `bsi_db2`.`shipment` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -692,9 +692,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`item_issuance`
+-- Table `bsi_db2`.`item_issuance`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`item_issuance` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`item_issuance` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `shipment_item_id` INT(11) NOT NULL,
   `item_issued` INT(11) NOT NULL,
@@ -704,7 +704,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`item_issuance` (
   INDEX `shipment` (`shipment_item_id` ASC),
   CONSTRAINT `shipment_item_fk`
     FOREIGN KEY (`shipment_item_id`)
-    REFERENCES `bsi_new_model`.`shipment_item` (`id`)
+    REFERENCES `bsi_db2`.`shipment_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -713,9 +713,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`work_center`
+-- Table `bsi_db2`.`work_center`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`work_center` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`work_center` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `company_name` VARCHAR(45) NULL DEFAULT NULL,
@@ -734,9 +734,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`machine_used_by_work_center`
+-- Table `bsi_db2`.`machine_used_by_work_center`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`machine_used_by_work_center` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`machine_used_by_work_center` (
   `id` INT(11) NOT NULL,
   `work_center_id` INT(11) NOT NULL,
   `product_id` INT(11) NOT NULL,
@@ -745,12 +745,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`machine_used_by_work_center` (
   INDEX `fk_machine_used_by_work_center_product1_idx` (`product_id` ASC),
   CONSTRAINT `fk_machine_used_by_work_center_product1`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_machine_used_by_work_center_work_center1`
     FOREIGN KEY (`work_center_id`)
-    REFERENCES `bsi_new_model`.`work_center` (`id`)
+    REFERENCES `bsi_db2`.`work_center` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -758,9 +758,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture`
+-- Table `bsi_db2`.`manufacture`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `party_id` INT(11) NOT NULL,
   `qty` INT(11) NULL DEFAULT NULL,
@@ -771,7 +771,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture` (
   INDEX `fk_manufacture_party1_idx` (`party_id` ASC),
   CONSTRAINT `fk_manufacture_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -779,9 +779,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_component`
+-- Table `bsi_db2`.`manufacture_component`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_component` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_component` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `manufacture_id` INT(11) NOT NULL,
   `bom_item_id` INT(11) NOT NULL,
@@ -793,12 +793,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_component` (
   INDEX `fk_manufacture_component_bom_item1_idx` (`bom_item_id` ASC),
   CONSTRAINT `fk_manufacture_component_bom_item1`
     FOREIGN KEY (`bom_item_id`)
-    REFERENCES `bsi_new_model`.`bom_item` (`id`)
+    REFERENCES `bsi_db2`.`bom_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_consumption_item_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -806,9 +806,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_has_bom`
+-- Table `bsi_db2`.`manufacture_has_bom`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_has_bom` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_has_bom` (
   `manufacture_id` INT(11) NOT NULL,
   `bom_id` INT(11) NOT NULL,
   PRIMARY KEY (`manufacture_id`, `bom_id`),
@@ -816,12 +816,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_has_bom` (
   INDEX `fk_manufacture_has_bom_manufacture1_idx` (`manufacture_id` ASC),
   CONSTRAINT `fk_manufacture_has_bom_bom1`
     FOREIGN KEY (`bom_id`)
-    REFERENCES `bsi_new_model`.`bom` (`id`)
+    REFERENCES `bsi_db2`.`bom` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_has_bom_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -829,9 +829,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_status_type`
+-- Table `bsi_db2`.`manufacture_status_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_status_type` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `description` VARCHAR(45) NULL DEFAULT NULL,
@@ -841,9 +841,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_status`
+-- Table `bsi_db2`.`manufacture_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_status` (
   `manufacture_status_type_id` INT(11) NOT NULL,
   `manufacture_id` INT(11) NOT NULL,
   PRIMARY KEY (`manufacture_status_type_id`, `manufacture_id`),
@@ -851,12 +851,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_status` (
   INDEX `fk_manufacture_status_type_has_manufacture_manufacture_stat_idx` (`manufacture_status_type_id` ASC),
   CONSTRAINT `fk_manufacture_status_type_has_manufacture_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_status_type_has_manufacture_manufacture_status1`
     FOREIGN KEY (`manufacture_status_type_id`)
-    REFERENCES `bsi_new_model`.`manufacture_status_type` (`id`)
+    REFERENCES `bsi_db2`.`manufacture_status_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -864,9 +864,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`manufacture_work_order`
+-- Table `bsi_db2`.`manufacture_work_order`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_work_order` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`manufacture_work_order` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `manufacture_id` INT(11) NOT NULL,
   `work_center_id` INT(11) NOT NULL,
@@ -877,12 +877,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`manufacture_work_order` (
   INDEX `fk_manufacture_work_order_work_center1_idx` (`work_center_id` ASC),
   CONSTRAINT `fk_manufacture_work_order_manufacture1`
     FOREIGN KEY (`manufacture_id`)
-    REFERENCES `bsi_new_model`.`manufacture` (`id`)
+    REFERENCES `bsi_db2`.`manufacture` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_manufacture_work_order_work_center1`
     FOREIGN KEY (`work_center_id`)
-    REFERENCES `bsi_new_model`.`work_center` (`id`)
+    REFERENCES `bsi_db2`.`work_center` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -890,9 +890,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`migrations`
+-- Table `bsi_db2`.`migrations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`migrations` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`migrations` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `migration` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `batch` INT(11) NOT NULL,
@@ -903,9 +903,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`permissions`
+-- Table `bsi_db2`.`permissions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`permissions` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`permissions` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `guard_name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
@@ -917,25 +917,25 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`model_has_permissions`
+-- Table `bsi_db2`.`model_has_permissions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`model_has_permissions` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`model_has_permissions` (
   `permission_id` INT(10) UNSIGNED NOT NULL,
   `model_type` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `model_id` BIGINT(20) UNSIGNED NOT NULL,
   INDEX `model_has_permissions_permission_id_foreign` (`permission_id` ASC),
   CONSTRAINT `model_has_permissions_permission_id_foreign`
     FOREIGN KEY (`permission_id`)
-    REFERENCES `bsi_new_model`.`permissions` (`id`)
+    REFERENCES `bsi_db2`.`permissions` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`roles`
+-- Table `bsi_db2`.`roles`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`roles` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`roles` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `guard_name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
@@ -947,25 +947,25 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`model_has_roles`
+-- Table `bsi_db2`.`model_has_roles`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`model_has_roles` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`model_has_roles` (
   `role_id` INT(10) UNSIGNED NOT NULL,
   `model_type` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `model_id` BIGINT(20) UNSIGNED NOT NULL,
   INDEX `model_has_roles_role_id_foreign` (`role_id` ASC),
   CONSTRAINT `model_has_roles_role_id_foreign`
     FOREIGN KEY (`role_id`)
-    REFERENCES `bsi_new_model`.`roles` (`id`)
+    REFERENCES `bsi_db2`.`roles` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`oauth_access_tokens`
+-- Table `bsi_db2`.`oauth_access_tokens`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`oauth_access_tokens` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`oauth_access_tokens` (
   `id` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL,
   `user_id` BIGINT(20) NULL DEFAULT NULL,
   `client_id` INT(10) UNSIGNED NOT NULL,
@@ -982,9 +982,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`oauth_auth_codes`
+-- Table `bsi_db2`.`oauth_auth_codes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`oauth_auth_codes` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`oauth_auth_codes` (
   `id` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL,
   `user_id` BIGINT(20) NOT NULL,
   `client_id` INT(10) UNSIGNED NOT NULL,
@@ -997,9 +997,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`oauth_clients`
+-- Table `bsi_db2`.`oauth_clients`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`oauth_clients` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`oauth_clients` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT(20) NULL DEFAULT NULL,
   `name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
@@ -1018,9 +1018,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`oauth_personal_access_clients`
+-- Table `bsi_db2`.`oauth_personal_access_clients`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`oauth_personal_access_clients` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`oauth_personal_access_clients` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `client_id` INT(10) UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -1033,9 +1033,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`oauth_refresh_tokens`
+-- Table `bsi_db2`.`oauth_refresh_tokens`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`oauth_refresh_tokens` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`oauth_refresh_tokens` (
   `id` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL,
   `access_token_id` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL,
   `revoked` TINYINT(1) NOT NULL,
@@ -1047,9 +1047,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`observation_result`
+-- Table `bsi_db2`.`observation_result`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`observation_result` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`observation_result` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `result` DECIMAL(2,0) NULL DEFAULT NULL,
@@ -1062,9 +1062,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`operation`
+-- Table `bsi_db2`.`operation`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`operation` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`operation` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `seq` INT(11) NULL DEFAULT NULL,
@@ -1077,12 +1077,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`operation` (
   INDEX `fk_operation_routing1_idx` (`bom_id` ASC),
   CONSTRAINT `fk_operation_bom1`
     FOREIGN KEY (`bom_id`)
-    REFERENCES `bsi_new_model`.`bom` (`id`)
+    REFERENCES `bsi_db2`.`bom` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_operation_work_center1`
     FOREIGN KEY (`work_center_id`)
-    REFERENCES `bsi_new_model`.`work_center` (`id`)
+    REFERENCES `bsi_db2`.`work_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1091,21 +1091,21 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_association`
+-- Table `bsi_db2`.`order_association`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_association` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_association` (
   `sales_order_id` INT(11) NOT NULL,
   `purchase_order_id` INT(11) NOT NULL,
   INDEX `fk_order_association_sales_order_idx` (`sales_order_id` ASC),
   INDEX `fk_order_association_purchase_order1_idx` (`purchase_order_id` ASC),
   CONSTRAINT `fk_order_association_purchase_order1`
     FOREIGN KEY (`purchase_order_id`)
-    REFERENCES `bsi_new_model`.`purchase_order` (`id`)
+    REFERENCES `bsi_db2`.`purchase_order` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_association_sales_order`
     FOREIGN KEY (`sales_order_id`)
-    REFERENCES `bsi_new_model`.`sales_order` (`id`)
+    REFERENCES `bsi_db2`.`sales_order` (`id`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1113,9 +1113,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_item_has_goods`
+-- Table `bsi_db2`.`order_item_has_goods`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_has_goods` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_item_has_goods` (
   `order_item_id` INT(11) NOT NULL,
   `order_item_order_id` INT(11) NOT NULL,
   `goods_id` INT(11) NOT NULL,
@@ -1124,12 +1124,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_has_goods` (
   INDEX `fk_order_item_has_goods_order_item1_idx` (`order_item_id` ASC, `order_item_order_id` ASC),
   CONSTRAINT `fk_order_item_has_goods_goods1`
     FOREIGN KEY (`goods_id`)
-    REFERENCES `bsi_new_model`.`goods` (`id`)
+    REFERENCES `bsi_db2`.`goods` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_item_has_goods_order_item1`
     FOREIGN KEY (`order_item_id` , `order_item_order_id`)
-    REFERENCES `bsi_new_model`.`order_item` (`id` , `order_id`)
+    REFERENCES `bsi_db2`.`order_item` (`id` , `order_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1137,21 +1137,21 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_item_has_product`
+-- Table `bsi_db2`.`order_item_has_product`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_has_product` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_item_has_product` (
   `order_item_id` INT(11) NOT NULL,
   `product_feature_id` INT(11) NOT NULL,
   INDEX `fk_order_item_has_product_feature_product_feature1_idx` (`product_feature_id` ASC),
   INDEX `fk_order_item_has_product_feature_order_item1_idx` (`order_item_id` ASC),
   CONSTRAINT `fk_order_item_has_product_feature_order_item1`
     FOREIGN KEY (`order_item_id`)
-    REFERENCES `bsi_new_model`.`order_item` (`id`)
+    REFERENCES `bsi_db2`.`order_item` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_order_item_has_product_feature_product_feature1`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1159,9 +1159,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_item_shipment`
+-- Table `bsi_db2`.`order_item_shipment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_shipment` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_item_shipment` (
   `order_item_id` INT(11) NOT NULL,
   `order_item_order_id` INT(11) NOT NULL,
   `shipment_item_id` INT(11) NOT NULL,
@@ -1172,17 +1172,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_shipment` (
   INDEX `fk_order_item_has_shipment_item_inventory_type1_idx` (`inventory_type_id` ASC),
   CONSTRAINT `fk_order_item_has_shipment_item_inventory_type1`
     FOREIGN KEY (`inventory_type_id`)
-    REFERENCES `bsi_new_model`.`inventory_type` (`id`)
+    REFERENCES `bsi_db2`.`inventory_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_item_has_shipment_item_order_item1`
     FOREIGN KEY (`order_item_id` , `order_item_order_id`)
-    REFERENCES `bsi_new_model`.`order_item` (`id` , `order_id`)
+    REFERENCES `bsi_db2`.`order_item` (`id` , `order_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_order_item_has_shipment_item_shipment_item1`
     FOREIGN KEY (`shipment_item_id`)
-    REFERENCES `bsi_new_model`.`shipment_item` (`id`)
+    REFERENCES `bsi_db2`.`shipment_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1190,9 +1190,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_role`
+-- Table `bsi_db2`.`order_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_role` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_role` (
   `id` INT(11) NOT NULL,
   `order_id` INT(11) NOT NULL,
   `created_at` DATETIME NOT NULL,
@@ -1201,7 +1201,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_role` (
   INDEX `fk_order_role_order1_idx` (`order_id` ASC),
   CONSTRAINT `fk_order_role_order1`
     FOREIGN KEY (`order_id`)
-    REFERENCES `bsi_new_model`.`order` (`id`)
+    REFERENCES `bsi_db2`.`order` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1209,9 +1209,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`order_status`
+-- Table `bsi_db2`.`order_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_status` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_status` (
   `id` INT(11) NOT NULL,
   `status_type` VARCHAR(45) NULL DEFAULT NULL,
   `order_id` INT(11) NOT NULL,
@@ -1221,7 +1221,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_status` (
   INDEX `fk_order_status_order1_idx` (`order_id` ASC),
   CONSTRAINT `fk_order_status_order1`
     FOREIGN KEY (`order_id`)
-    REFERENCES `bsi_new_model`.`order` (`id`)
+    REFERENCES `bsi_db2`.`order` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1229,9 +1229,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`part_bom`
+-- Table `bsi_db2`.`part_bom`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`part_bom` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`part_bom` (
   `id` INT(11) NOT NULL,
   `product_id` INT(11) NOT NULL,
   `qty_used` VARCHAR(45) NULL DEFAULT NULL,
@@ -1240,7 +1240,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`part_bom` (
   INDEX `fk_part_bom_product1_idx` (`product_id` ASC),
   CONSTRAINT `fk_part_bom_product1`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1248,9 +1248,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`relationship`
+-- Table `bsi_db2`.`relationship`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`relationship` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`relationship` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(15) NOT NULL,
   `description` VARCHAR(150) NOT NULL,
@@ -1260,9 +1260,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`party_roles`
+-- Table `bsi_db2`.`party_roles`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`party_roles` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`party_roles` (
   `id` INT(11) NOT NULL,
   `party_id` INT(11) NULL DEFAULT NULL,
   `relationship_id` INT(11) NOT NULL,
@@ -1271,12 +1271,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`party_roles` (
   INDEX `fk_party_roles_relantionship1_idx` (`relationship_id` ASC),
   CONSTRAINT `fk_party_roles_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_party_roles_relantionship1`
     FOREIGN KEY (`relationship_id`)
-    REFERENCES `bsi_new_model`.`relationship` (`id`)
+    REFERENCES `bsi_db2`.`relationship` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1284,9 +1284,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`password_resets`
+-- Table `bsi_db2`.`password_resets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`password_resets` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`password_resets` (
   `email` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `token` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -1296,9 +1296,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`process`
+-- Table `bsi_db2`.`process`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`process` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`process` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `description` VARCHAR(100) NULL DEFAULT NULL,
@@ -1309,9 +1309,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`production_study`
+-- Table `bsi_db2`.`production_study`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`production_study` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`production_study` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `product_feature_id` INT(11) NOT NULL,
   `work_center_id` INT(11) NOT NULL,
@@ -1326,9 +1326,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`process_study`
+-- Table `bsi_db2`.`process_study`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`process_study` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`process_study` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `production_study_id` INT(11) NOT NULL,
   `party_id` INT(11) NOT NULL,
@@ -1337,12 +1337,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`process_study` (
   INDEX `fk_study_operation_party1_idx` (`party_id` ASC),
   CONSTRAINT `fk_study_operation_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_study_operation_production_study1`
     FOREIGN KEY (`production_study_id`)
-    REFERENCES `bsi_new_model`.`production_study` (`id`)
+    REFERENCES `bsi_db2`.`production_study` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1351,21 +1351,21 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`process_has_study_operation`
+-- Table `bsi_db2`.`process_has_study_operation`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`process_has_study_operation` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`process_has_study_operation` (
   `process_id` INT(11) NOT NULL,
   `study_operation_id` INT(11) NOT NULL,
   INDEX `fk_process_has_study_operation_study_operation1_idx` (`study_operation_id` ASC),
   INDEX `fk_process_has_study_operation_process1_idx` (`process_id` ASC),
   CONSTRAINT `fk_process_has_study_operation_process1`
     FOREIGN KEY (`process_id`)
-    REFERENCES `bsi_new_model`.`process` (`id`)
+    REFERENCES `bsi_db2`.`process` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_process_has_study_operation_study_operation1`
     FOREIGN KEY (`study_operation_id`)
-    REFERENCES `bsi_new_model`.`process_study` (`id`)
+    REFERENCES `bsi_db2`.`process_study` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1373,9 +1373,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`product_category`
+-- Table `bsi_db2`.`product_category`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product_category` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`product_category` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`))
@@ -1384,21 +1384,21 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`product_has_category`
+-- Table `bsi_db2`.`product_has_category`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`product_has_category` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`product_has_category` (
   `product_id` INT(11) NULL DEFAULT NULL,
   `product_category_id` INT(11) NULL DEFAULT NULL,
   INDEX `fk_product_has_product_category_product_category1_idx` (`product_category_id` ASC),
   INDEX `fk_product_has_product_category_product1_idx` (`product_id` ASC),
   CONSTRAINT `fk_1`
     FOREIGN KEY (`product_id`)
-    REFERENCES `bsi_new_model`.`product` (`id`)
+    REFERENCES `bsi_db2`.`product` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_2`
     FOREIGN KEY (`product_category_id`)
-    REFERENCES `bsi_new_model`.`product_category` (`id`)
+    REFERENCES `bsi_db2`.`product_category` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1406,9 +1406,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`request_item`
+-- Table `bsi_db2`.`request_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`request_item` (
   `id` INT(11) NOT NULL,
   `request_id` INT(11) NOT NULL,
   `product_feature_id` INT(11) NULL DEFAULT NULL,
@@ -1420,12 +1420,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request_item` (
   INDEX `fk_request_item_product_feature1` (`product_feature_id` ASC),
   CONSTRAINT `fk_request_item_product_feature1`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_request_item_request1`
     FOREIGN KEY (`request_id`)
-    REFERENCES `bsi_new_model`.`request` (`id`)
+    REFERENCES `bsi_db2`.`request` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1433,9 +1433,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`quote_item`
+-- Table `bsi_db2`.`quote_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`quote_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`quote_item` (
   `id` INT(11) NOT NULL,
   `quote_id` INT(11) NULL DEFAULT NULL,
   `request_item_id` INT(11) NULL DEFAULT NULL,
@@ -1450,17 +1450,17 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`quote_item` (
   INDEX `fk_quote_item_product1` (`product_feature_id` ASC),
   CONSTRAINT `fk_quote_item_product1`
     FOREIGN KEY (`product_feature_id`)
-    REFERENCES `bsi_new_model`.`product_feature` (`id`)
+    REFERENCES `bsi_db2`.`product_feature` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_quote_item_quote1`
     FOREIGN KEY (`quote_id`)
-    REFERENCES `bsi_new_model`.`quote` (`id`)
+    REFERENCES `bsi_db2`.`quote` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_quote_item_request_item1`
     FOREIGN KEY (`request_item_id`)
-    REFERENCES `bsi_new_model`.`request_item` (`id`)
+    REFERENCES `bsi_db2`.`request_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1468,16 +1468,16 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`quote_role`
+-- Table `bsi_db2`.`quote_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`quote_role` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`quote_role` (
   `id` INT(11) NOT NULL,
   `quote_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_quote_role_quote1_idx` (`quote_id` ASC),
   CONSTRAINT `fk_quote_role_quote1`
     FOREIGN KEY (`quote_id`)
-    REFERENCES `bsi_new_model`.`quote` (`id`)
+    REFERENCES `bsi_db2`.`quote` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1485,9 +1485,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`request_has_party`
+-- Table `bsi_db2`.`request_has_party`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request_has_party` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`request_has_party` (
   `request_id` INT(11) NOT NULL,
   `party_id` INT(11) NOT NULL,
   PRIMARY KEY (`request_id`, `party_id`),
@@ -1495,12 +1495,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`request_has_party` (
   INDEX `fk_request_has_party_request1_idx` (`request_id` ASC),
   CONSTRAINT `fk_request_has_party_party1`
     FOREIGN KEY (`party_id`)
-    REFERENCES `bsi_new_model`.`party` (`id`)
+    REFERENCES `bsi_db2`.`party` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_request_has_party_request1`
     FOREIGN KEY (`request_id`)
-    REFERENCES `bsi_new_model`.`request` (`id`)
+    REFERENCES `bsi_db2`.`request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1508,9 +1508,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`requirement`
+-- Table `bsi_db2`.`requirement`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`requirement` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`requirement` (
   `id` INT(11) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -1518,9 +1518,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`requirement_has_request`
+-- Table `bsi_db2`.`requirement_has_request`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`requirement_has_request` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`requirement_has_request` (
   `requirement_id` INT(11) NOT NULL,
   `request_id` INT(11) NOT NULL,
   PRIMARY KEY (`requirement_id`, `request_id`),
@@ -1528,12 +1528,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`requirement_has_request` (
   INDEX `fk_requirement_has_request_requirement1_idx` (`requirement_id` ASC),
   CONSTRAINT `fk_requirement_has_request_request1`
     FOREIGN KEY (`request_id`)
-    REFERENCES `bsi_new_model`.`request` (`id`)
+    REFERENCES `bsi_db2`.`request` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_requirement_has_request_requirement1`
     FOREIGN KEY (`requirement_id`)
-    REFERENCES `bsi_new_model`.`requirement` (`id`)
+    REFERENCES `bsi_db2`.`requirement` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1541,9 +1541,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`requirement_has_request_item`
+-- Table `bsi_db2`.`requirement_has_request_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`requirement_has_request_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`requirement_has_request_item` (
   `requirement_id` INT(11) NOT NULL,
   `request_item_id` INT(11) NOT NULL,
   PRIMARY KEY (`requirement_id`, `request_item_id`),
@@ -1551,12 +1551,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`requirement_has_request_item` (
   INDEX `fk_requirement_has_request_item_requirement1_idx` (`requirement_id` ASC),
   CONSTRAINT `fk_requirement_has_request_item_request_item1`
     FOREIGN KEY (`request_item_id`)
-    REFERENCES `bsi_new_model`.`request_item` (`id`)
+    REFERENCES `bsi_db2`.`request_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_requirement_has_request_item_requirement1`
     FOREIGN KEY (`requirement_id`)
-    REFERENCES `bsi_new_model`.`requirement` (`id`)
+    REFERENCES `bsi_db2`.`requirement` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1564,29 +1564,29 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`role_has_permissions`
+-- Table `bsi_db2`.`role_has_permissions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`role_has_permissions` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`role_has_permissions` (
   `permission_id` INT(10) UNSIGNED NOT NULL,
   `role_id` INT(10) UNSIGNED NOT NULL,
   INDEX `role_has_permissions_permission_id_foreign` (`permission_id` ASC),
   INDEX `role_has_permissions_role_id_foreign` (`role_id` ASC),
   CONSTRAINT `role_has_permissions_permission_id_foreign`
     FOREIGN KEY (`permission_id`)
-    REFERENCES `bsi_new_model`.`permissions` (`id`)
+    REFERENCES `bsi_db2`.`permissions` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `role_has_permissions_role_id_foreign`
     FOREIGN KEY (`role_id`)
-    REFERENCES `bsi_new_model`.`roles` (`id`)
+    REFERENCES `bsi_db2`.`roles` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`routing`
+-- Table `bsi_db2`.`routing`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`routing` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`routing` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `bom_id` INT(45) NULL DEFAULT NULL,
@@ -1596,7 +1596,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`routing` (
   INDEX `bom_id` (`bom_id` ASC),
   CONSTRAINT `fk_routing_work_center1`
     FOREIGN KEY (`work_center_id`)
-    REFERENCES `bsi_new_model`.`work_center` (`id`)
+    REFERENCES `bsi_db2`.`work_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1604,9 +1604,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`shipment_receipt`
+-- Table `bsi_db2`.`shipment_receipt`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_receipt` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`shipment_receipt` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `shipment_item_id` INT(11) NOT NULL,
   `qty_accepted` INT(11) NOT NULL,
@@ -1616,7 +1616,7 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_receipt` (
   INDEX `shipment_receipt_has_order_item_shipment` (`shipment_item_id` ASC),
   CONSTRAINT `fk_shipment_receipt_has_shipment_item`
     FOREIGN KEY (`shipment_item_id`)
-    REFERENCES `bsi_new_model`.`shipment_item` (`id`)
+    REFERENCES `bsi_db2`.`shipment_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1625,16 +1625,16 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`shipment_role`
+-- Table `bsi_db2`.`shipment_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_role` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`shipment_role` (
   `id` INT(11) NOT NULL,
   `shipment_receipt_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_shipment_role_shipment_receipt1_idx` (`shipment_receipt_id` ASC),
   CONSTRAINT `fk_shipment_role_shipment_receipt1`
     FOREIGN KEY (`shipment_receipt_id`)
-    REFERENCES `bsi_new_model`.`shipment_receipt` (`id`)
+    REFERENCES `bsi_db2`.`shipment_receipt` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1642,9 +1642,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`status`
+-- Table `bsi_db2`.`status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`status` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`status` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
   `description` TEXT NOT NULL,
@@ -1654,9 +1654,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`study_process_observation_result`
+-- Table `bsi_db2`.`study_process_observation_result`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`study_process_observation_result` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`study_process_observation_result` (
   `study_operation_id` INT(11) NOT NULL,
   `observation_result_id` INT(11) NOT NULL,
   PRIMARY KEY (`study_operation_id`, `observation_result_id`),
@@ -1664,12 +1664,12 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`study_process_observation_result` (
   INDEX `fk_study_operation_has_observation_result_study_operation1_idx` (`study_operation_id` ASC),
   CONSTRAINT `fk_study_operation_has_observation_result_observation_result1`
     FOREIGN KEY (`observation_result_id`)
-    REFERENCES `bsi_new_model`.`observation_result` (`id`)
+    REFERENCES `bsi_db2`.`observation_result` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_study_operation_has_observation_result_study_operation1`
     FOREIGN KEY (`study_operation_id`)
-    REFERENCES `bsi_new_model`.`process_study` (`id`)
+    REFERENCES `bsi_db2`.`process_study` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -1677,9 +1677,9 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`users`
+-- Table `bsi_db2`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`users` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`users` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
   `email` VARCHAR(191) CHARACTER SET 'utf8mb4' NOT NULL,
@@ -1696,9 +1696,9 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`gl_type`
+-- Table `bsi_db2`.`gl_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`gl_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`gl_type` (
   `id` INT NOT NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(45) NULL,
@@ -1707,43 +1707,43 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`gl_budget_xref`
+-- Table `bsi_db2`.`gl_budget_xref`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`gl_budget_xref` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`gl_budget_xref` (
   `id` INT NOT NULL,
   `gl_type_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_general_ledger_accounts_gl_type1_idx` (`gl_type_id` ASC),
   CONSTRAINT `fk_general_ledger_accounts_gl_type1`
     FOREIGN KEY (`gl_type_id`)
-    REFERENCES `bsi_new_model`.`gl_type` (`id`)
+    REFERENCES `bsi_db2`.`gl_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`period_type`
+-- Table `bsi_db2`.`period_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`period_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`period_type` (
   `id` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`internal_organization`
+-- Table `bsi_db2`.`internal_organization`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`internal_organization` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`internal_organization` (
   `id` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`accounting_period`
+-- Table `bsi_db2`.`accounting_period`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`accounting_period` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`accounting_period` (
   `id` INT NOT NULL,
   `period_type_id` INT NOT NULL,
   `from_date` DATE NULL,
@@ -1754,42 +1754,42 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`accounting_period` (
   INDEX `fk_accounting_period_internal_organization1_idx` (`internal_organization_id` ASC),
   CONSTRAINT `fk_accounting_period_period_type1`
     FOREIGN KEY (`period_type_id`)
-    REFERENCES `bsi_new_model`.`period_type` (`id`)
+    REFERENCES `bsi_db2`.`period_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_accounting_period_internal_organization1`
     FOREIGN KEY (`internal_organization_id`)
-    REFERENCES `bsi_new_model`.`internal_organization` (`id`)
+    REFERENCES `bsi_db2`.`internal_organization` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`organization_gl_account`
+-- Table `bsi_db2`.`organization_gl_account`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`organization_gl_account` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`organization_gl_account` (
   `accounting_period_id` INT NOT NULL,
   `internal_organization_id` INT NOT NULL,
   INDEX `fk_organization_gl_account_accounting_period1_idx` (`accounting_period_id` ASC),
   INDEX `fk_organization_gl_account_internal_organization1_idx` (`internal_organization_id` ASC),
   CONSTRAINT `fk_organization_gl_account_accounting_period1`
     FOREIGN KEY (`accounting_period_id`)
-    REFERENCES `bsi_new_model`.`accounting_period` (`id`)
+    REFERENCES `bsi_db2`.`accounting_period` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_organization_gl_account_internal_organization1`
     FOREIGN KEY (`internal_organization_id`)
-    REFERENCES `bsi_new_model`.`internal_organization` (`id`)
+    REFERENCES `bsi_db2`.`internal_organization` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`organizational_gl_accounts`
+-- Table `bsi_db2`.`organizational_gl_accounts`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`organizational_gl_accounts` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`organizational_gl_accounts` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `internal_organization_id` INT NOT NULL,
   `general_ledger_accounts_id` INT NOT NULL,
@@ -1798,29 +1798,29 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`organizational_gl_accounts` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_internal_organization_has_general_ledger_accounts_internal1`
     FOREIGN KEY (`internal_organization_id`)
-    REFERENCES `bsi_new_model`.`internal_organization` (`id`)
+    REFERENCES `bsi_db2`.`internal_organization` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_internal_organization_has_general_ledger_accounts_general_1`
     FOREIGN KEY (`general_ledger_accounts_id`)
-    REFERENCES `bsi_new_model`.`gl_budget_xref` (`id`)
+    REFERENCES `bsi_db2`.`gl_budget_xref` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`table1`
+-- Table `bsi_db2`.`table1`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`table1` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`table1` (
 )
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`accounting_transaction`
+-- Table `bsi_db2`.`accounting_transaction`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`accounting_transaction` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`accounting_transaction` (
   `id` INT NOT NULL,
   `transaction_date` VARCHAR(45) NULL,
   `entry_date` VARCHAR(45) NULL,
@@ -1830,9 +1830,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`transaction_detail`
+-- Table `bsi_db2`.`transaction_detail`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`transaction_detail` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`transaction_detail` (
   `id` INT NOT NULL,
   `amount` VARCHAR(45) NULL,
   `flag` VARCHAR(45) NULL,
@@ -1843,21 +1843,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`transaction_detail` (
   INDEX `fk_transaction_detail_organizational_gl_accounts1_idx` (`organizational_gl_accounts_id` ASC),
   CONSTRAINT `fk_transaction_detail_accounting_transaction1`
     FOREIGN KEY (`accounting_transaction_id`)
-    REFERENCES `bsi_new_model`.`accounting_transaction` (`id`)
+    REFERENCES `bsi_db2`.`accounting_transaction` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_transaction_detail_organizational_gl_accounts1`
     FOREIGN KEY (`organizational_gl_accounts_id`)
-    REFERENCES `bsi_new_model`.`organizational_gl_accounts` (`id`)
+    REFERENCES `bsi_db2`.`organizational_gl_accounts` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`accounting_type`
+-- Table `bsi_db2`.`accounting_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`accounting_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`accounting_type` (
   `id` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   `accounting_transaction_id` INT NOT NULL,
@@ -1865,16 +1865,16 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`accounting_type` (
   INDEX `fk_accounting_type_accounting_transaction1_idx` (`accounting_transaction_id` ASC),
   CONSTRAINT `fk_accounting_type_accounting_transaction1`
     FOREIGN KEY (`accounting_transaction_id`)
-    REFERENCES `bsi_new_model`.`accounting_transaction` (`id`)
+    REFERENCES `bsi_db2`.`accounting_transaction` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_type`
+-- Table `bsi_db2`.`budget_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(45) NULL,
@@ -1883,18 +1883,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`period_type`
+-- Table `bsi_db2`.`period_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`period_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`period_type` (
   `id` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_period`
+-- Table `bsi_db2`.`budget_period`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_period` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_period` (
   `id` INT NOT NULL,
   `from_date` DATE NULL,
   `thru_date` DATE NULL,
@@ -1903,16 +1903,16 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_period` (
   INDEX `fk_budget_period_period_type1_idx` (`period_type_id` ASC),
   CONSTRAINT `fk_budget_period_period_type1`
     FOREIGN KEY (`period_type_id`)
-    REFERENCES `bsi_new_model`.`period_type` (`id`)
+    REFERENCES `bsi_db2`.`period_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget`
+-- Table `bsi_db2`.`budget`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `budget_type_id` INT NOT NULL,
   `budget_period_id` INT NOT NULL,
@@ -1921,21 +1921,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget` (
   INDEX `fk_budget_budget_period1_idx` (`budget_period_id` ASC),
   CONSTRAINT `fk_budget_budget_type1`
     FOREIGN KEY (`budget_type_id`)
-    REFERENCES `bsi_new_model`.`budget_type` (`id`)
+    REFERENCES `bsi_db2`.`budget_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_budget_period1`
     FOREIGN KEY (`budget_period_id`)
-    REFERENCES `bsi_new_model`.`budget_period` (`id`)
+    REFERENCES `bsi_db2`.`budget_period` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_item_type`
+-- Table `bsi_db2`.`budget_item_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_item_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_item_type` (
   `id` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -1943,9 +1943,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_item`
+-- Table `bsi_db2`.`budget_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_item` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_item` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `amount` VARCHAR(45) NULL,
   `budget_id` INT NOT NULL,
@@ -1955,21 +1955,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_item` (
   INDEX `fk_budget_item_budget_item_type1_idx` (`budget_item_type_id` ASC),
   CONSTRAINT `fk_budget_item_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_item_budget_item_type1`
     FOREIGN KEY (`budget_item_type_id`)
-    REFERENCES `bsi_new_model`.`budget_item_type` (`id`)
+    REFERENCES `bsi_db2`.`budget_item_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_status`
+-- Table `bsi_db2`.`budget_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_status` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_status` (
   `id` INT NOT NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(45) NULL,
@@ -1978,9 +1978,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_has_budget_status_type`
+-- Table `bsi_db2`.`budget_has_budget_status_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_has_budget_status_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_has_budget_status_type` (
   `budget_id` INT NOT NULL,
   `budget_status_type_id` INT NOT NULL,
   `comment` VARCHAR(45) NULL,
@@ -1989,37 +1989,37 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_has_budget_status_type` (
   INDEX `fk_budget_has_budget_status_type_budget1_idx` (`budget_id` ASC),
   CONSTRAINT `fk_budget_has_budget_status_type_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_has_budget_status_type_budget_status_type1`
     FOREIGN KEY (`budget_status_type_id`)
-    REFERENCES `bsi_new_model`.`budget_status` (`id`)
+    REFERENCES `bsi_db2`.`budget_status` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_role`
+-- Table `bsi_db2`.`budget_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_role` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_role` (
   `id` INT NOT NULL,
   `budget_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_budget_role_budget1_idx` (`budget_id` ASC),
   CONSTRAINT `fk_budget_role_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_revision`
+-- Table `bsi_db2`.`budget_revision`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_revision` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_revision` (
   `id` INT NOT NULL,
   `date_revised` DATE NULL,
   PRIMARY KEY (`id`))
@@ -2027,9 +2027,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_has_budget_revision`
+-- Table `bsi_db2`.`budget_has_budget_revision`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_has_budget_revision` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_has_budget_revision` (
   `budget_id` INT NOT NULL,
   `budget_revision_id` INT NOT NULL,
   `reason` VARCHAR(45) NULL,
@@ -2038,21 +2038,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_has_budget_revision` (
   INDEX `fk_budget_has_budget_revision_budget1_idx` (`budget_id` ASC),
   CONSTRAINT `fk_budget_has_budget_revision_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_has_budget_revision_budget_revision1`
     FOREIGN KEY (`budget_revision_id`)
-    REFERENCES `bsi_new_model`.`budget_revision` (`id`)
+    REFERENCES `bsi_db2`.`budget_revision` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_review_result_type`
+-- Table `bsi_db2`.`budget_review_result_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_review_result_type` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_review_result_type` (
   `id` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   `comment` VARCHAR(45) NULL,
@@ -2061,9 +2061,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_review`
+-- Table `bsi_db2`.`budget_review`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_review` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_review` (
   `budget_review_result_type_id` INT NOT NULL,
   `budget_id` INT NOT NULL,
   `review_date` DATE NULL,
@@ -2072,21 +2072,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_review` (
   INDEX `fk_budget_review_result_type_has_budget_budget_review_resul_idx` (`budget_review_result_type_id` ASC),
   CONSTRAINT `fk_budget_review_result_type_has_budget_budget_review_result_1`
     FOREIGN KEY (`budget_review_result_type_id`)
-    REFERENCES `bsi_new_model`.`budget_review_result_type` (`id`)
+    REFERENCES `bsi_db2`.`budget_review_result_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_review_result_type_has_budget_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_scenario`
+-- Table `bsi_db2`.`budget_scenario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_scenario` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_scenario` (
   `id` INT NOT NULL,
   `description` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
@@ -2094,9 +2094,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_scenario_application`
+-- Table `bsi_db2`.`budget_scenario_application`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_scenario_application` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_scenario_application` (
   `budget_item_id` INT NOT NULL,
   `budget_id` INT NOT NULL,
   `amount_change` INT NULL,
@@ -2106,21 +2106,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_scenario_application` (
   INDEX `fk_budget_item_has_budget_budget_item1_idx` (`budget_item_id` ASC),
   CONSTRAINT `fk_budget_item_has_budget_budget_item1`
     FOREIGN KEY (`budget_item_id`)
-    REFERENCES `bsi_new_model`.`budget_item` (`id`)
+    REFERENCES `bsi_db2`.`budget_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_item_has_budget_budget1`
     FOREIGN KEY (`budget_id`)
-    REFERENCES `bsi_new_model`.`budget` (`id`)
+    REFERENCES `bsi_db2`.`budget` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_scenario_rule`
+-- Table `bsi_db2`.`budget_scenario_rule`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_scenario_rule` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_scenario_rule` (
   `budget_scenario_id` INT NOT NULL,
   `budget_item_type_id` INT NOT NULL,
   PRIMARY KEY (`budget_scenario_id`, `budget_item_type_id`),
@@ -2128,21 +2128,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_scenario_rule` (
   INDEX `fk_budget_scenario_has_budget_item_type_budget_scenario1_idx` (`budget_scenario_id` ASC),
   CONSTRAINT `fk_budget_scenario_has_budget_item_type_budget_scenario1`
     FOREIGN KEY (`budget_scenario_id`)
-    REFERENCES `bsi_new_model`.`budget_scenario` (`id`)
+    REFERENCES `bsi_db2`.`budget_scenario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_scenario_has_budget_item_type_budget_item_type1`
     FOREIGN KEY (`budget_item_type_id`)
-    REFERENCES `bsi_new_model`.`budget_item_type` (`id`)
+    REFERENCES `bsi_db2`.`budget_item_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`payment`
+-- Table `bsi_db2`.`payment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`payment` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`payment` (
   `id` INT NOT NULL,
   `effective_date` DATE NULL,
   `ref_num` INT NULL,
@@ -2153,9 +2153,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`payment_budget_alloc`
+-- Table `bsi_db2`.`payment_budget_alloc`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`payment_budget_alloc` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`payment_budget_alloc` (
   `payment_id` INT NOT NULL,
   `budget_item_id` INT NOT NULL,
   PRIMARY KEY (`payment_id`, `budget_item_id`),
@@ -2163,21 +2163,21 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`payment_budget_alloc` (
   INDEX `fk_payment_has_budget_item_payment1_idx` (`payment_id` ASC),
   CONSTRAINT `fk_payment_has_budget_item_payment1`
     FOREIGN KEY (`payment_id`)
-    REFERENCES `bsi_new_model`.`payment` (`id`)
+    REFERENCES `bsi_db2`.`payment` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_payment_has_budget_item_budget_item1`
     FOREIGN KEY (`budget_item_id`)
-    REFERENCES `bsi_new_model`.`budget_item` (`id`)
+    REFERENCES `bsi_db2`.`budget_item` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bsi_new_model`.`budget_item_type_has_general_ledger_accounts`
+-- Table `bsi_db2`.`budget_item_type_has_general_ledger_accounts`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_item_type_has_general_ledger_accounts` (
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`budget_item_type_has_general_ledger_accounts` (
   `budget_item_type_id` INT NOT NULL,
   `general_ledger_accounts_id` INT NOT NULL,
   PRIMARY KEY (`budget_item_type_id`, `general_ledger_accounts_id`),
@@ -2185,113 +2185,113 @@ CREATE TABLE IF NOT EXISTS `bsi_new_model`.`budget_item_type_has_general_ledger_
   INDEX `fk_budget_item_type_has_general_ledger_accounts_budget_item_idx` (`budget_item_type_id` ASC),
   CONSTRAINT `fk_budget_item_type_has_general_ledger_accounts_budget_item_t1`
     FOREIGN KEY (`budget_item_type_id`)
-    REFERENCES `bsi_new_model`.`budget_item_type` (`id`)
+    REFERENCES `bsi_db2`.`budget_item_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_budget_item_type_has_general_ledger_accounts_general_ledge1`
     FOREIGN KEY (`general_ledger_accounts_id`)
-    REFERENCES `bsi_new_model`.`gl_budget_xref` (`id`)
+    REFERENCES `bsi_db2`.`gl_budget_xref` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-USE `bsi_new_model` ;
+USE `bsi_db2` ;
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`bom_component_views`
+-- Placeholder table for view `bsi_db2`.`bom_component_views`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom_component_views` (`bom_id` INT, `bom_component_id` INT, `product_id` INT, `product_feature_id` INT, `bom_name` INT, `goods_name` INT, `size` INT, `color` INT, `qty_to_be_consumpted` INT, `price` INT, `total_goods_value` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`bom_component_views` (`bom_id` INT, `bom_component_id` INT, `product_id` INT, `product_feature_id` INT, `bom_name` INT, `goods_name` INT, `size` INT, `color` INT, `qty_to_be_consumpted` INT, `price` INT, `total_goods_value` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`bom_operation_wc_view`
+-- Placeholder table for view `bsi_db2`.`bom_operation_wc_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`bom_operation_wc_view` (`bom_id` INT, `operation_id` INT, `operation_name` INT, `work_center_name` INT, `labor_alloc` INT, `cost_per_hour` INT, `work_hours` INT, `calculated_cost` INT, `overhead_cost` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`bom_operation_wc_view` (`bom_id` INT, `operation_id` INT, `operation_name` INT, `work_center_name` INT, `labor_alloc` INT, `cost_per_hour` INT, `work_hours` INT, `calculated_cost` INT, `overhead_cost` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`buyer_view`
+-- Placeholder table for view `bsi_db2`.`buyer_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`buyer_view` (`id` INT, `name` INT, `email` INT, `npwp` INT, `type` INT, `street` INT, `city` INT, `province` INT, `country` INT, `postal_code` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`buyer_view` (`id` INT, `name` INT, `email` INT, `npwp` INT, `type` INT, `street` INT, `city` INT, `province` INT, `country` INT, `postal_code` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`item_issuance_view`
+-- Placeholder table for view `bsi_db2`.`item_issuance_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`item_issuance_view` (`shipment_id` INT, `shipment_item_id` INT, `product_feature_id` INT, `product` INT, `qty_shipped` INT, `item_issued` INT, `created_at` INT, `updated_at` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`item_issuance_view` (`shipment_id` INT, `shipment_item_id` INT, `product_feature_id` INT, `product` INT, `qty_shipped` INT, `item_issued` INT, `created_at` INT, `updated_at` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`order_item_shipment_1`
+-- Placeholder table for view `bsi_db2`.`order_item_shipment_1`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`order_item_shipment_1` (`shipment_id` INT, `shipment_item_id` INT, `order_id` INT, `product_feature_id` INT, `qty_ordered` INT, `qty_shipped` INT, `lefted` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`order_item_shipment_1` (`shipment_id` INT, `shipment_item_id` INT, `order_id` INT, `product_feature_id` INT, `qty_ordered` INT, `qty_shipped` INT, `lefted` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`products_view`
+-- Placeholder table for view `bsi_db2`.`products_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`products_view` (`product_feature_id` INT, `product_id` INT, `name` INT, `color` INT, `size` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`products_view` (`product_feature_id` INT, `product_id` INT, `name` INT, `color` INT, `size` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`shipment_receipt_view`
+-- Placeholder table for view `bsi_db2`.`shipment_receipt_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`shipment_receipt_view` (`shipment_id` INT, `shipment_item_id` INT, `product_feature_id` INT, `qty_shipped` INT, `qty_accepted` INT, `created_at` INT, `updated_at` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`shipment_receipt_view` (`shipment_id` INT, `shipment_item_id` INT, `product_feature_id` INT, `qty_shipped` INT, `qty_accepted` INT, `created_at` INT, `updated_at` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bsi_new_model`.`supplier_view`
+-- Placeholder table for view `bsi_db2`.`supplier_view`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bsi_new_model`.`supplier_view` (`id` INT, `name` INT, `email` INT, `npwp` INT, `type` INT, `street` INT, `city` INT, `province` INT, `country` INT, `postal_code` INT);
+CREATE TABLE IF NOT EXISTS `bsi_db2`.`supplier_view` (`id` INT, `name` INT, `email` INT, `npwp` INT, `type` INT, `street` INT, `city` INT, `province` INT, `country` INT, `postal_code` INT);
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`bom_component_views`
+-- View `bsi_db2`.`bom_component_views`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`bom_component_views`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`bom_component_views` AS select `bsi_new_model`.`bom`.`id` AS `bom_id`,`bsi_new_model`.`bom_component`.`id` AS `bom_component_id`,`bsi_new_model`.`product`.`id` AS `product_id`,`bsi_new_model`.`product_feature`.`id` AS `product_feature_id`,`bsi_new_model`.`bom`.`name` AS `bom_name`,`bsi_new_model`.`goods`.`name` AS `goods_name`,`bsi_new_model`.`product_feature`.`size` AS `size`,`bsi_new_model`.`product_feature`.`color` AS `color`,`bsi_new_model`.`bom_component`.`qty` AS `qty_to_be_consumpted`,`bsi_new_model`.`goods`.`value` AS `price`,(`bsi_new_model`.`goods`.`value` * `bsi_new_model`.`bom_component`.`qty`) AS `total_goods_value` from ((((`bsi_new_model`.`bom` left join `bsi_new_model`.`bom_component` on((`bsi_new_model`.`bom`.`id` = `bsi_new_model`.`bom_component`.`bom_id`))) join `bsi_new_model`.`product_feature` on((`bsi_new_model`.`bom_component`.`product_feature_id` = `bsi_new_model`.`product_feature`.`id`))) join `bsi_new_model`.`product` on((`bsi_new_model`.`product_feature`.`product_id` = `bsi_new_model`.`product`.`id`))) join `bsi_new_model`.`goods` on((`bsi_new_model`.`product`.`goods_id` = `bsi_new_model`.`goods`.`id`)));
+DROP TABLE IF EXISTS `bsi_db2`.`bom_component_views`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`bom_component_views` AS select `bsi_db2`.`bom`.`id` AS `bom_id`,`bsi_db2`.`bom_component`.`id` AS `bom_component_id`,`bsi_db2`.`product`.`id` AS `product_id`,`bsi_db2`.`product_feature`.`id` AS `product_feature_id`,`bsi_db2`.`bom`.`name` AS `bom_name`,`bsi_db2`.`goods`.`name` AS `goods_name`,`bsi_db2`.`product_feature`.`size` AS `size`,`bsi_db2`.`product_feature`.`color` AS `color`,`bsi_db2`.`bom_component`.`qty` AS `qty_to_be_consumpted`,`bsi_db2`.`goods`.`value` AS `price`,(`bsi_db2`.`goods`.`value` * `bsi_db2`.`bom_component`.`qty`) AS `total_goods_value` from ((((`bsi_db2`.`bom` left join `bsi_db2`.`bom_component` on((`bsi_db2`.`bom`.`id` = `bsi_db2`.`bom_component`.`bom_id`))) join `bsi_db2`.`product_feature` on((`bsi_db2`.`bom_component`.`product_feature_id` = `bsi_db2`.`product_feature`.`id`))) join `bsi_db2`.`product` on((`bsi_db2`.`product_feature`.`product_id` = `bsi_db2`.`product`.`id`))) join `bsi_db2`.`goods` on((`bsi_db2`.`product`.`goods_id` = `bsi_db2`.`goods`.`id`)));
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`bom_operation_wc_view`
+-- View `bsi_db2`.`bom_operation_wc_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`bom_operation_wc_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`bom_operation_wc_view` AS select `op`.`bom_id` AS `bom_id`,`op`.`id` AS `operation_id`,`op`.`name` AS `operation_name`,`wc`.`name` AS `work_center_name`,`wc`.`labor_alloc` AS `labor_alloc`,`wc`.`cost_per_hour` AS `cost_per_hour`,`wc`.`work_hours` AS `work_hours`,((`wc`.`labor_alloc` * `wc`.`cost_per_hour`) * `wc`.`work_hours`) AS `calculated_cost`,`wc`.`overhead_cost` AS `overhead_cost` from ((`bsi_new_model`.`bom` join `bsi_new_model`.`operation` `op` on((`op`.`bom_id` = `bsi_new_model`.`bom`.`id`))) join `bsi_new_model`.`work_center` `wc` on((`wc`.`id` = `op`.`work_center_id`)));
+DROP TABLE IF EXISTS `bsi_db2`.`bom_operation_wc_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`bom_operation_wc_view` AS select `op`.`bom_id` AS `bom_id`,`op`.`id` AS `operation_id`,`op`.`name` AS `operation_name`,`wc`.`name` AS `work_center_name`,`wc`.`labor_alloc` AS `labor_alloc`,`wc`.`cost_per_hour` AS `cost_per_hour`,`wc`.`work_hours` AS `work_hours`,((`wc`.`labor_alloc` * `wc`.`cost_per_hour`) * `wc`.`work_hours`) AS `calculated_cost`,`wc`.`overhead_cost` AS `overhead_cost` from ((`bsi_db2`.`bom` join `bsi_db2`.`operation` `op` on((`op`.`bom_id` = `bsi_db2`.`bom`.`id`))) join `bsi_db2`.`work_center` `wc` on((`wc`.`id` = `op`.`work_center_id`)));
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`buyer_view`
+-- View `bsi_db2`.`buyer_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`buyer_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`buyer_view` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`email` AS `email`,`p`.`npwp` AS `npwp`,`r`.`name` AS `type`,`a`.`street` AS `street`,`a`.`city` AS `city`,`a`.`province` AS `province`,`a`.`country` AS `country`,`a`.`postal_code` AS `postal_code` from (((`bsi_new_model`.`party` `p` left join `bsi_new_model`.`address` `a` on((`a`.`party_id` = `p`.`id`))) join `bsi_new_model`.`party_roles` `pr` on((`pr`.`party_id` = `p`.`id`))) left join `bsi_new_model`.`relationship` `r` on((`pr`.`relationship_id` = `r`.`id`))) where (`r`.`name` = 'Buyer');
+DROP TABLE IF EXISTS `bsi_db2`.`buyer_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`buyer_view` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`email` AS `email`,`p`.`npwp` AS `npwp`,`r`.`name` AS `type`,`a`.`street` AS `street`,`a`.`city` AS `city`,`a`.`province` AS `province`,`a`.`country` AS `country`,`a`.`postal_code` AS `postal_code` from (((`bsi_db2`.`party` `p` left join `bsi_db2`.`address` `a` on((`a`.`party_id` = `p`.`id`))) join `bsi_db2`.`party_roles` `pr` on((`pr`.`party_id` = `p`.`id`))) left join `bsi_db2`.`relationship` `r` on((`pr`.`relationship_id` = `r`.`id`))) where (`r`.`name` = 'Buyer');
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`item_issuance_view`
+-- View `bsi_db2`.`item_issuance_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`item_issuance_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`item_issuance_view` AS select `si`.`shipment_id` AS `shipment_id`,`bsi_new_model`.`item_issuance`.`shipment_item_id` AS `shipment_item_id`,`pf`.`id` AS `product_feature_id`,concat(`bsi_new_model`.`goods`.`name`,' ',`pf`.`size`,' ',`pf`.`color`) AS `product`,`si`.`qty_shipped` AS `qty_shipped`,`bsi_new_model`.`item_issuance`.`item_issued` AS `item_issued`,`bsi_new_model`.`item_issuance`.`created_at` AS `created_at`,`bsi_new_model`.`item_issuance`.`updated_at` AS `updated_at` from ((((`bsi_new_model`.`item_issuance` join `bsi_new_model`.`shipment_item` `si` on((`si`.`id` = `bsi_new_model`.`item_issuance`.`shipment_item_id`))) join `bsi_new_model`.`product_feature` `pf` on((`pf`.`id` = `si`.`product_feature_id`))) join `bsi_new_model`.`product` `p` on((`p`.`id` = `pf`.`product_id`))) join `bsi_new_model`.`goods` on((`bsi_new_model`.`goods`.`id` = `p`.`goods_id`))) group by `si`.`id`;
+DROP TABLE IF EXISTS `bsi_db2`.`item_issuance_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`item_issuance_view` AS select `si`.`shipment_id` AS `shipment_id`,`bsi_db2`.`item_issuance`.`shipment_item_id` AS `shipment_item_id`,`pf`.`id` AS `product_feature_id`,concat(`bsi_db2`.`goods`.`name`,' ',`pf`.`size`,' ',`pf`.`color`) AS `product`,`si`.`qty_shipped` AS `qty_shipped`,`bsi_db2`.`item_issuance`.`item_issued` AS `item_issued`,`bsi_db2`.`item_issuance`.`created_at` AS `created_at`,`bsi_db2`.`item_issuance`.`updated_at` AS `updated_at` from ((((`bsi_db2`.`item_issuance` join `bsi_db2`.`shipment_item` `si` on((`si`.`id` = `bsi_db2`.`item_issuance`.`shipment_item_id`))) join `bsi_db2`.`product_feature` `pf` on((`pf`.`id` = `si`.`product_feature_id`))) join `bsi_db2`.`product` `p` on((`p`.`id` = `pf`.`product_id`))) join `bsi_db2`.`goods` on((`bsi_db2`.`goods`.`id` = `p`.`goods_id`))) group by `si`.`id`;
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`order_item_shipment_1`
+-- View `bsi_db2`.`order_item_shipment_1`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`order_item_shipment_1`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`order_item_shipment_1` AS select `bsi_new_model`.`shipment`.`id` AS `shipment_id`,`bsi_new_model`.`shipment_item`.`id` AS `shipment_item_id`,`bsi_new_model`.`order_item`.`order_id` AS `order_id`,`bsi_new_model`.`order_item`.`product_feature_id` AS `product_feature_id`,`bsi_new_model`.`order_item`.`qty` AS `qty_ordered`,`bsi_new_model`.`shipment_item`.`qty_shipped` AS `qty_shipped`,if(((`bsi_new_model`.`order_item`.`qty` - `bsi_new_model`.`shipment_item`.`qty_shipped`) < 0),0,(`bsi_new_model`.`order_item`.`qty` - `bsi_new_model`.`shipment_item`.`qty_shipped`)) AS `lefted` from ((`bsi_new_model`.`shipment_item` join `bsi_new_model`.`shipment` on((`bsi_new_model`.`shipment`.`id` = `bsi_new_model`.`shipment_item`.`shipment_id`))) join `bsi_new_model`.`order_item` on((`bsi_new_model`.`shipment_item`.`product_feature_id` = `bsi_new_model`.`order_item`.`product_feature_id`)));
+DROP TABLE IF EXISTS `bsi_db2`.`order_item_shipment_1`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`order_item_shipment_1` AS select `bsi_db2`.`shipment`.`id` AS `shipment_id`,`bsi_db2`.`shipment_item`.`id` AS `shipment_item_id`,`bsi_db2`.`order_item`.`order_id` AS `order_id`,`bsi_db2`.`order_item`.`product_feature_id` AS `product_feature_id`,`bsi_db2`.`order_item`.`qty` AS `qty_ordered`,`bsi_db2`.`shipment_item`.`qty_shipped` AS `qty_shipped`,if(((`bsi_db2`.`order_item`.`qty` - `bsi_db2`.`shipment_item`.`qty_shipped`) < 0),0,(`bsi_db2`.`order_item`.`qty` - `bsi_db2`.`shipment_item`.`qty_shipped`)) AS `lefted` from ((`bsi_db2`.`shipment_item` join `bsi_db2`.`shipment` on((`bsi_db2`.`shipment`.`id` = `bsi_db2`.`shipment_item`.`shipment_id`))) join `bsi_db2`.`order_item` on((`bsi_db2`.`shipment_item`.`product_feature_id` = `bsi_db2`.`order_item`.`product_feature_id`)));
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`products_view`
+-- View `bsi_db2`.`products_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`products_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`products_view` AS select `pf`.`id` AS `product_feature_id`,`pf`.`product_id` AS `product_id`,`bsi_new_model`.`goods`.`name` AS `name`,`pf`.`color` AS `color`,`pf`.`size` AS `size` from ((`bsi_new_model`.`goods` join `bsi_new_model`.`product` `p` on((`p`.`goods_id` = `bsi_new_model`.`goods`.`id`))) join `bsi_new_model`.`product_feature` `pf` on((`pf`.`product_id` = `p`.`id`))) order by `pf`.`id`;
+DROP TABLE IF EXISTS `bsi_db2`.`products_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`products_view` AS select `pf`.`id` AS `product_feature_id`,`pf`.`product_id` AS `product_id`,`bsi_db2`.`goods`.`name` AS `name`,`pf`.`color` AS `color`,`pf`.`size` AS `size` from ((`bsi_db2`.`goods` join `bsi_db2`.`product` `p` on((`p`.`goods_id` = `bsi_db2`.`goods`.`id`))) join `bsi_db2`.`product_feature` `pf` on((`pf`.`product_id` = `p`.`id`))) order by `pf`.`id`;
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`shipment_receipt_view`
+-- View `bsi_db2`.`shipment_receipt_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`shipment_receipt_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`shipment_receipt_view` AS select `si`.`shipment_id` AS `shipment_id`,`bsi_new_model`.`shipment_receipt`.`shipment_item_id` AS `shipment_item_id`,`si`.`product_feature_id` AS `product_feature_id`,`si`.`qty_shipped` AS `qty_shipped`,`bsi_new_model`.`shipment_receipt`.`qty_accepted` AS `qty_accepted`,`bsi_new_model`.`shipment_receipt`.`created_at` AS `created_at`,`bsi_new_model`.`shipment_receipt`.`updated_at` AS `updated_at` from (`bsi_new_model`.`shipment_receipt` join `bsi_new_model`.`shipment_item` `si` on((`si`.`id` = `bsi_new_model`.`shipment_receipt`.`shipment_item_id`)));
+DROP TABLE IF EXISTS `bsi_db2`.`shipment_receipt_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`shipment_receipt_view` AS select `si`.`shipment_id` AS `shipment_id`,`bsi_db2`.`shipment_receipt`.`shipment_item_id` AS `shipment_item_id`,`si`.`product_feature_id` AS `product_feature_id`,`si`.`qty_shipped` AS `qty_shipped`,`bsi_db2`.`shipment_receipt`.`qty_accepted` AS `qty_accepted`,`bsi_db2`.`shipment_receipt`.`created_at` AS `created_at`,`bsi_db2`.`shipment_receipt`.`updated_at` AS `updated_at` from (`bsi_db2`.`shipment_receipt` join `bsi_db2`.`shipment_item` `si` on((`si`.`id` = `bsi_db2`.`shipment_receipt`.`shipment_item_id`)));
 
 -- -----------------------------------------------------
--- View `bsi_new_model`.`supplier_view`
+-- View `bsi_db2`.`supplier_view`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `bsi_new_model`.`supplier_view`;
-USE `bsi_new_model`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_new_model`.`supplier_view` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`email` AS `email`,`p`.`npwp` AS `npwp`,`r`.`name` AS `type`,`a`.`street` AS `street`,`a`.`city` AS `city`,`a`.`province` AS `province`,`a`.`country` AS `country`,`a`.`postal_code` AS `postal_code` from (((`bsi_new_model`.`party` `p` left join `bsi_new_model`.`address` `a` on((`a`.`party_id` = `p`.`id`))) join `bsi_new_model`.`party_roles` `pr` on((`pr`.`party_id` = `p`.`id`))) left join `bsi_new_model`.`relationship` `r` on((`pr`.`relationship_id` = `r`.`id`))) where (`r`.`name` = 'Supplier');
+DROP TABLE IF EXISTS `bsi_db2`.`supplier_view`;
+USE `bsi_db2`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bsi_db2`.`supplier_view` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`email` AS `email`,`p`.`npwp` AS `npwp`,`r`.`name` AS `type`,`a`.`street` AS `street`,`a`.`city` AS `city`,`a`.`province` AS `province`,`a`.`country` AS `country`,`a`.`postal_code` AS `postal_code` from (((`bsi_db2`.`party` `p` left join `bsi_db2`.`address` `a` on((`a`.`party_id` = `p`.`id`))) join `bsi_db2`.`party_roles` `pr` on((`pr`.`party_id` = `p`.`id`))) left join `bsi_db2`.`relationship` `r` on((`pr`.`relationship_id` = `r`.`id`))) where (`r`.`name` = 'Supplier');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
