@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -80,8 +80,8 @@ function DisplayQuote({ placeHolder }) {
 
   if(flag<3) {
     API.getMonitoringSupermarket('', (res) => {
-		  if(!res) {
-        setQuoteData(BUYERLIST);
+		  if(!isEmpty(res.data)) {
+        setQuoteData([]);
         setFlag(false);
       }
       else {
