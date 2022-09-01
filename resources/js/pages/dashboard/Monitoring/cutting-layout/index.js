@@ -62,9 +62,10 @@ function Labor() {
         </Typography>
       </Stack> 
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4} lg={4}>
           <Paper 
             variant='outlined' 
+            component={RouterLinkN}
             to={getPathname(pathname.split('/')) + '/spreading'}
           >
             <BoxStyled m={2}>
@@ -73,7 +74,7 @@ function Labor() {
             </BoxStyled>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4} lg={4}>
           <Paper 
             variant='outlined' 
             component={RouterLinkN}
@@ -86,7 +87,7 @@ function Labor() {
           </Paper>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4} lg={4}>
           <Paper 
             variant='outlined' 
             component={RouterLinkN}

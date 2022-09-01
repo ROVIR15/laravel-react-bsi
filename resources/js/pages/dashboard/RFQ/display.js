@@ -90,7 +90,7 @@ function DisplayRFQ({ placeHolder }) {
         }
       });
     }
-  }, [quoteData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

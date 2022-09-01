@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -90,7 +90,7 @@ function Labor({ placeHolder }) {
         }
       });
     }
-  }, [laborData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -170,7 +170,7 @@ function Labor({ placeHolder }) {
               onSelectAllClick={handleSelectAllClick}
             />
             <TableBody>
-              {filteredData
+              {isEmpty(laborData) ? null : filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   const { role_type, party: {id, name, email, phone_number, address: {street, city, province, country, postal_code}}} = row;

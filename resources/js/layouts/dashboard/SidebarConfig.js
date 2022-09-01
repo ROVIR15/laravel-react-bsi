@@ -17,6 +17,7 @@ import personAddFill from '@iconify/icons-eva/person-add-fill';
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
 import cardOutlined from '@iconify/icons-eva/credit-card-outline';
 import dollarCircle from '@iconify/icons-ant-design/dollar-circle-filled';
+import monitorOutline from '@iconify/icons-ant-design/monitor-outline';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -159,7 +160,7 @@ const sidebarConfig = [
   {
     title: "Monitoring",
     name: 'monitoring',
-    icon: getIcon(peopleFill),
+    icon: getIcon(monitorOutline),
     children: [
       {
         title: 'Main',

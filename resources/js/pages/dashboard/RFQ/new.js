@@ -146,7 +146,8 @@ function RFQ() {
       if (active) {
         API.getBuyers((res) => {
           if(!res) return
-          else setOptions2(res);
+          let data = partyArrangedData(res);
+          setOptions2(data);
         })  
       }
     })();
