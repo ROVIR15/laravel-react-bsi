@@ -15,6 +15,7 @@ class CreateMonitoringBsiSewingTable extends Migration {
 		Schema::create('monitoring_bsi_sewing', function(Blueprint $table)
 		{
 			$table->integer('id', true);
+			$table->date('supermarket_id');
 			$table->date('date');
 			$table->string('po_number', 50);
 			$table->integer('sales_order_id');

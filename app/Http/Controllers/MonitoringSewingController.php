@@ -20,9 +20,9 @@ class MonitoringSewingController extends Controller
       $query = [];
 
       if($param){
-        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading), sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature', 'qc')->where('sales_order_id', $request->query('sales-order'))->get();
+        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature', 'qc')->where('sales_order_id', $request->query('sales-order'))->get();
       } else {
-        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading), sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id')->with('sales_order', 'product_feature', 'qc')->get();
+        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id')->with('sales_order', 'product_feature', 'qc')->get();
       }
 
       return response()->json(['data' => $query]);
