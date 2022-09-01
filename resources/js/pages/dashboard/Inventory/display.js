@@ -179,7 +179,7 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, info, qty_on_hand, facility_name} = row;
+                  const { id, info: { product: {goods}, color, size}, qty_on_hand, facility_name} = row;
 
                   const isItemSelected = selected.indexOf(id) !== -1;
                   return (
@@ -198,9 +198,9 @@ function DisplayInventory({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{''}</TableCell>
-                      <TableCell align="left">{''}</TableCell>
-                      <TableCell align="left">{''}</TableCell>
+                      <TableCell align="left">{goods.name}</TableCell>
+                      <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{''}</TableCell>
                       <TableCell align="left">{''}</TableCell>
                       <TableCell align="left">{facility_name}</TableCell>

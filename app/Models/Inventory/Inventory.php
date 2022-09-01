@@ -21,7 +21,7 @@ class Inventory extends Model
     ];
 
     public function product_feature(){
-        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id')->with('product');
+        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id', 'id')->with('product', 'product_category');
     }
 
     public function type(){

@@ -566,7 +566,7 @@ export function optionSupermarket(array){
       numbering,
       qty_loading: qty
     }
-    if (!isEmpty(sewing)) return { ...res, qty_loading: qty - sewing[0].output_sewing}
+    if (!isEmpty(sewing)) return { ...res, qty_loading: res.qty_loading - sewing[0].output_sewing}
     return res;
   })
 
