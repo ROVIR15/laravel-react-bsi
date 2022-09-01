@@ -536,7 +536,7 @@ export function optionSupermarket(array){
       order_item_id,
       sales_order_id,
       po_number,
-      qty_loading,
+      qty,
       numbering,
       product_feature: {
         color,
@@ -562,7 +562,7 @@ export function optionSupermarket(array){
       size,
       name,
       numbering,
-      qty_loading
+      qty_loading: qty
     }
   })
 
