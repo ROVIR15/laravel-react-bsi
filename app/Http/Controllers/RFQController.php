@@ -49,9 +49,7 @@ class RFQController extends Controller
         $param = $request->all()['payload'];
         try {
           //code...
-          $id = $faker->unique()->numberBetween(1,8939);
           $rfqCreation = Quote::create([
-            'id' => $id,
             'request_id' => $param['request_id'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
@@ -66,8 +64,7 @@ class RFQController extends Controller
   
           foreach($param['quote_items'] as $key){
             array_push($rfqItemsCreation, [
-              
-              'quote_id' => $id,
+              'quote_id' => $rfqCreation['id'],
               'request_item_id' => $key['request_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],

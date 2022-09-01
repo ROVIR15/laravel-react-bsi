@@ -152,11 +152,9 @@ function Quotation() {
         ...items.slice(0, rowToDeleteIndex),
         ...items.slice(rowToDeleteIndex + 1),
       ];
-
       a = a.map(function(x, index){
-        return {...x, id: index}
+        return {...x, id: index+1}
       });
-
       setItems(a);
     })
 
@@ -172,9 +170,8 @@ function Quotation() {
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
           
-    
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
+            if(row.id === parseInt(itemToUpdateIndex)){
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
             } else {
               return row
@@ -197,8 +194,7 @@ function Quotation() {
   }
 
   const columns = useMemo(() => [
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
+    { field: 'id', headerName: 'ID', editable: false},
     { field: 'name', headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },

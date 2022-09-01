@@ -67,9 +67,7 @@ class QuoteController extends Controller
         $param = $request->all()['payload'];
         try {
           //code...
-          $id = $faker->unique()->numberBetween(1,8939);
           $quoteCreation = Quote::create([
-            'id' => $id,
             'quote_type' => $param['quote_type'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
@@ -83,8 +81,7 @@ class QuoteController extends Controller
   
           foreach($param['quote_items'] as $key){
             array_push($quoteItemsCreation, [
-              
-              'quote_id' => $id,
+              'quote_id' => $quoteCreation['id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']

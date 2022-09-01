@@ -36,26 +36,6 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
   const [options, setOptions] = React.useState([])
   const loading = open && options.length === 0;
 
-  const handleDoneFill = () => {
-    if(!value.length) {
-      handleClose();
-      return
-    }
-    const _value = value.map(function(x, index){
-      const hha = productItemArrangedData(x);
-      return {...hha, product_feature_id: hha.id, id: payload.length+index, inquiry_item_id: null, qty: 0, unit_price: 0}
-    })
-    var _p = payload.concat(_value);
-
-    _p = _p.map(function(x, index){
-      return {...x, id: index}
-    });
-
-    setItems(_p);
-
-    handleClose();
-  }
-
   React.useEffect(() => {
     let active = true;
 
@@ -85,12 +65,10 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
             Select Product to Inquiry Item
           </Typography>
           <Table list={options} selected={items} setSelected={setItems}/>
-
-          <Button onClick={handleDoneFill}> Done </Button>
         </Card>
       </Modal>
     </div>

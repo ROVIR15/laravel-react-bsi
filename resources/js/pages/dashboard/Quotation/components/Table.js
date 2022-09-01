@@ -77,7 +77,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.name);
+      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
     }
@@ -85,7 +85,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.map(e => e.id).indexOf(name.id);
+    name = {...name, product_feature_id: name.id, id: selected.length+1}
+    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.id);
     let newSelected = [];
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
@@ -99,6 +100,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         selected.slice(selectedIndex + 1)
       );
     }
+    console.log(newSelected)
     setSelected(newSelected);
   };
 
@@ -160,7 +162,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
+                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  console.log(isItemSelected, row.id)
                   const {
                     id,
                     name,
