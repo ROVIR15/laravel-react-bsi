@@ -113,6 +113,8 @@ import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
 import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
 //Monitoring
+import Ininih from '../pages/dashboard/Monitoring';
+
 import MonitoringFinishedGoodsLayout from '../pages/dashboard/Monitoring/FinishedGoods'; //
 import MonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/add'; //layout
 import DisplayMonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/display';
@@ -368,7 +370,7 @@ export default function TestRouter() {
         { 
           path: 'monitoring/', 
           children: [
-            { path: 'main', element: <AddInv /> },
+            { path: 'main', element: <Ininih /> },
             { path: 'cutting', 
               element: <CuttingLayout/>,
               children: [

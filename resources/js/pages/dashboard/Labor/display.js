@@ -81,14 +81,18 @@ function Labor({ placeHolder }) {
       return !array.length;
     }
 
-    if(isEmpty(laborData)) {
-      API.getLabor((res) => {
-        if(isEmpty(res)) {
-          setLaborData(BUYERLIST);
-        } else {
-          setLaborData(res);
-        }
-      });
+    try {
+      if(isEmpty(laborData)) {
+        API.getLabor((res) => {
+          if(isEmpty(res)) {
+            return undefined
+          } else {
+            setLaborData(res);
+          }
+        });
+      }  
+    } catch (e) {
+      alert(e);
     }
   }, [])
 

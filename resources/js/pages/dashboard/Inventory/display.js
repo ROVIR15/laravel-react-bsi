@@ -91,8 +91,10 @@ function DisplayInventory({ placeHolder }) {
       try {
         API.getInventoryItem(async (res) => {
           if(isEmpty(res.data)) return undefined;
-          let ras = await inventoryItemArrangedItem(res.data);
-          setData(ras)
+          else {
+            let ras = await inventoryItemArrangedItem(res.data);
+            setData(ras)
+          }
         })  
 
       } catch(e) {
