@@ -567,6 +567,7 @@ export function optionSupermarket(array){
       qty_loading: qty
     }
     if (!isEmpty(sewing)) return { ...res, qty_loading: qty - sewing[0].output_sewing}
+    return res;
   })
 
   return arranged;

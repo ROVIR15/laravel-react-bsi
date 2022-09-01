@@ -46,6 +46,7 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
           setValue(BUYERLIST);
         } else {
           let ras = optionSupermarket(res.data);
+          console.log(ras)
           setValue(ras)
         }
       });

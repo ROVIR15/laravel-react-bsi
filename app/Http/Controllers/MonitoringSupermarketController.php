@@ -19,9 +19,9 @@ class MonitoringSupermarketController extends Controller
       $query = [];
 
       if($param){
-        $query = Supermarket::groupBy('date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature')->where('sales_order_id', $request->query('sales-order'))->get();
+        $query = Supermarket::groupBy('date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature', 'sewing')->where('sales_order_id', $request->query('sales-order'))->get();
       } else {
-        $query = Supermarket::groupBy('date', 'po_number', 'product_feature_id')->with('sales_order', 'product_feature')->get();
+        $query = Supermarket::groupBy('date', 'po_number', 'product_feature_id')->with('sales_order', 'product_feature', 'sewing')->get();
       }
 
       return response()->json(['data' => $query]);
