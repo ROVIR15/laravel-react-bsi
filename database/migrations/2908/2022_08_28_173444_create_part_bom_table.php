@@ -14,7 +14,7 @@ class CreatePartBomTable extends Migration {
 	{
 		Schema::create('part_bom', function(Blueprint $table)
 		{
-			$table->integer('id');
+			$table->integer('id', true);
 			$table->integer('product_id')->index('fk_part_bom_product1_idx');
 			$table->string('qty_used', 45)->nullable();
 			$table->string('description', 45)->nullable();
