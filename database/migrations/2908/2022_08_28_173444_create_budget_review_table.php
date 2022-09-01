@@ -17,7 +17,6 @@ class CreateBudgetReviewTable extends Migration {
 			$table->integer('budget_review_result_type_id')->index('fk_budget_rev2');
 			$table->integer('budget_id')->index('fk_budget_rev1');
 			$table->date('review_date')->nullable();
-			$table->primary(['budget_review_result_type_id','budget_id']);
 		});
 	}
 

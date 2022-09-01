@@ -17,7 +17,6 @@ class CreateBudgetHasBudgetRevisionTable extends Migration {
 			$table->integer('budget_id')->index('fk_budget2');
 			$table->integer('budget_revision_id')->index('fk_budget1');
 			$table->string('reason', 45)->nullable();
-			$table->primary(['budget_id','budget_revision_id']);
 		});
 	}
 

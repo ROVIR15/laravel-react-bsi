@@ -18,7 +18,6 @@ class CreatePartBomTable extends Migration {
 			$table->integer('product_id')->index('fk_part_bom_product1_idx');
 			$table->string('qty_used', 45)->nullable();
 			$table->string('description', 45)->nullable();
-			$table->primary(['id','product_id']);
 		});
 	}
 

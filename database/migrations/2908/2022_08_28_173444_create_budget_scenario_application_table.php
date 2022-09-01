@@ -18,7 +18,6 @@ class CreateBudgetScenarioApplicationTable extends Migration {
 			$table->integer('budget_id')->index('fk_bs_1');
 			$table->integer('amount_change')->nullable();
 			$table->decimal('percentage', 2, 0)->nullable();
-			$table->primary(['budget_item_id','budget_id']);
 		});
 	}
 

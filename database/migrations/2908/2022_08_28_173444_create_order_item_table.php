@@ -20,7 +20,6 @@ class CreateOrderItemTable extends Migration {
 			$table->integer('unit_price')->nullable();
 			$table->date('shipment_estimated')->nullable();
 			$table->integer('product_feature_id')->nullable()->index('fk_order_item_product_id1_idx');
-			$table->primary(['id','order_id']);
 		});
 	}
 

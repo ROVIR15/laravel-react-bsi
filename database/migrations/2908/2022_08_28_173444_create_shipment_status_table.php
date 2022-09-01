@@ -16,7 +16,6 @@ class CreateShipmentStatusTable extends Migration {
 		{
 			$table->integer('shipment_type_status_id')->index('fk_shipment_type_status_has_shipment_shipment_type_status1_idx');
 			$table->integer('shipment_id')->index('fk_shipment_type_status_has_shipment_shipment1_idx');
-			$table->primary(['shipment_type_status_id','shipment_id']);
 		});
 	}
 

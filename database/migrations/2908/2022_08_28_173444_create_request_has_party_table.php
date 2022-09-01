@@ -16,7 +16,6 @@ class CreateRequestHasPartyTable extends Migration {
 		{
 			$table->integer('request_id')->index('fk_request_has_party_request1_idx');
 			$table->integer('party_id')->index('fk_request_has_party_party1_idx');
-			$table->primary(['request_id','party_id']);
 		});
 	}
 

@@ -17,7 +17,6 @@ class CreateBudgetStatusTypeTable extends Migration {
 			$table->integer('budget_id')->index('fk_budget_has_budget_status_type_budget1_idx');
 			$table->integer('budget_status_type_id')->index('fk_budget_has_budget_status_type_budget_status_type1_idx');
 			$table->string('comment', 45)->nullable();
-			$table->primary(['budget_id','budget_status_type_id']);
 		});
 	}
 

@@ -16,7 +16,6 @@ class CreatePaymentBudgetAllocTable extends Migration {
 		{
 			$table->integer('payment_id')->index('fk_payment_has_budget_item_payment1_idx');
 			$table->integer('budget_item_id')->index('fk_payment_has_budget_item_budget_item1_idx');
-			$table->primary(['payment_id','budget_item_id']);
 		});
 	}
 
