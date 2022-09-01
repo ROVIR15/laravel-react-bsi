@@ -66,7 +66,7 @@
       
             foreach($param['components'] as $key){
               array_push($bomItemsCreation, [
-                'bom_id' => $bom_id,
+                'bom_id' => $billOfMaterial['id'],
                 'product_feature_id' => $key['id'],
                 'qty' => $key['qty'],
                 'created_at' => $current_date_time
@@ -82,7 +82,7 @@
                   'name' => $key['name'],
                   'seq' => $key['seq'],
                   'work_center_id' => $key['work_center_id'],
-                  'bom_id' => $bom_id,
+                  'bom_id' => $billOfMaterial['id'],
                   'created_at' => $current_date_time
                 ]);
             }

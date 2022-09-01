@@ -142,7 +142,14 @@ function DisplayBuyer({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
+    try {
+      API.deleteBuyer(id, function(res){
+        if(!res.success) alert('error');
+        else alert('success');
+      })
+    } catch (e) {
+      alert(e);
+    }
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - buyerData.length) : 0;
