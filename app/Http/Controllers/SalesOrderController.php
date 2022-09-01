@@ -53,6 +53,7 @@
       try {
         //Order Creation
         $order = Order::create([
+          'quote_id' => $param['quote_id']
         ]);
 
         $salesOrder = SalesOrder::create([
