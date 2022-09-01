@@ -37,4 +37,8 @@ class Supermarket extends Model
     public function sales_order(){
         return $this->belongsTo('App\Models\Order\SalesOrder')->with('product_feature');
     }
+
+    public function sewing(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'supermarket_id', 'id')->selectRaw('sum(output) as output_sewing, supermarket_id')->groupBy('supermarket_id');
+    }
 }

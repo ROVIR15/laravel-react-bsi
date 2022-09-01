@@ -547,10 +547,11 @@ export function optionSupermarket(array){
           }
         },
         ...product_feature
-      }
+      },
+      sewing
     } = x;
     
-    return {
+    let res = {
       id,
       supermarket_id: id, 
       date,
@@ -565,6 +566,7 @@ export function optionSupermarket(array){
       numbering,
       qty_loading: qty
     }
+    if (!isEmpty(sewing)) return { ...res, qty_loading: qty - sewing[0].output_sewing}
   })
 
   return arranged;
