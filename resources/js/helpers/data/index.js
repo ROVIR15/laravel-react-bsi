@@ -551,7 +551,8 @@ export function optionSupermarket(array){
     } = x;
     
     return {
-      id, 
+      id,
+      supermarket_id: id, 
       date,
       order_id,
       order_item_id,

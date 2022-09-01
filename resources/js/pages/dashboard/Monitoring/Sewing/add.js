@@ -134,28 +134,6 @@ function WorkCenter() {
     [editRowData]
   );
 
-  const handleUpdateAllRows = () => {
-    API.getAQuote(values.quote_id, function(res){
-      if(!res) alert("Something went wrong!");
-      var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function(_d){
-        return {
-          'id': index,
-          'quote_item_id' : key.id,
-          'product_id' : key.product.id,
-          'product_feature_id' : key.product_feature_id,
-          'name' : key.product.name,
-          'size' : key.product.size,
-          'color' : key.product.color,
-          'qty' : key.qty,
-          'shipment_estimated': null,
-          'unit_price' : key.unit_price
-        }
-      })
-      setItems(temp);
-    })
-  };
-
 //   Dialog Box
 
 const [options, setOptions] = useState([]);
