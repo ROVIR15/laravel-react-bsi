@@ -190,7 +190,8 @@
         Goods::find($id)->update([
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
-          'value' => $goodsParam['value']
+          'value' => $goodsParam['value'],
+          'imageUrl' => $goodsParam['imageUrl']
         ]);
         ProductHasCategory::where('product_id', $existingProduct['id'])
         ->update([

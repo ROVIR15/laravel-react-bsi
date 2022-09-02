@@ -52,13 +52,13 @@ function Goods() {
       unit_measurement: '',
       category: '',
       value: '',
-      brand: '',
+      brand: ''
     },
     validationSchema: GoodsSchema,
     onSubmit: ({ name, unit_measurement, value, brand, category}) => {
       const _new = {
         goods: {
-          name, unit: unit_measurement, value, brand
+          name, unit: unit_measurement, value, brand, imageUrl: file
         }, 
         category
       }
@@ -170,37 +170,6 @@ function Goods() {
       ]
     }
   ], [deleteData]);
-
-  const opt = [
-  {
-    label: "XXXX",
-    sub: [
-      {
-        value: "Red"
-      }, 
-      {
-        value: "Green"
-      }, 
-      {
-        value: "Blue"
-      }, 
-    ]
-  },
-  {
-    label: "Turunan",
-    sub: [
-      {
-        value: "12"
-      }, 
-      {
-        value: "13"
-      }, 
-      {
-        value: "14"
-      }, 
-    ]
-  }
-  ]
 
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
