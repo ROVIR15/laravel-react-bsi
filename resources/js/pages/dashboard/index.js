@@ -19,6 +19,7 @@ export { default as SSLayout } from './IndustrialEngineeringStudy/SamplingStudy'
 export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationResult';
 export { default as LaborLayout } from './Labor';
 export { default as MOLayout } from './ManufactureOrder';
+export { default as MachineLayout } from './Machine';
 
 //Monitoring
 export { default as FinishedGoodsLayout } from './Monitoring/FinishedGoods';

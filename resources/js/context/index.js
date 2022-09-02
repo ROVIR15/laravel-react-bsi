@@ -3,6 +3,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import AUTHAPI from '../helpers/api/auth';
 
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  p: 4,
+};
+
 export const state = {
 	user: {
 	  email: '',
@@ -27,7 +40,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [loadingInitial, setLoadingInitial] = useState(true);
+  // const [loadingInitial, setLoadingInitial] = useState(true);
+
+  const loadingInitial = !user || loading;
 
   const navigate = useNavigate();
   const location = useLocation();  
@@ -147,6 +162,7 @@ export const AuthProvider = ({ children }) => {
       user,
       loading,
       error,
+      loadingInitial,
       login,
       signUp,
       logout,
@@ -158,7 +174,18 @@ export const AuthProvider = ({ children }) => {
   // assert for the presence of a current user.
   return (
     <AuthContext.Provider value={memoedValue}>
-      {children}
+      <Modal
+        open={loadingInitial}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Card sx={style}>
+          <Typography id="modal-modal-title" variant="h3" component="h3">
+            PLEASE WAIT ...
+          </Typography>
+        </Card>
+      </Modal>
+      {loadingInitial ? null : children}
     </AuthContext.Provider>
   );
 }

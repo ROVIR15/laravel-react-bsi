@@ -103,8 +103,8 @@ const sidebarConfig = [
         path: '/dashboard/material/goods'
       },
       {
-        title: 'Invoice Receipt',
-        path: '/dashboard/material/invoice-receipt'
+        title: 'Machine',
+        path: '/dashboard/material/machine'
       }
     ]
   },
