@@ -24,7 +24,8 @@ import {
   ORLayout,
   LaborLayout,
   MOLayout,
-  InvLayout
+  InvLayout,
+  MachineLayout
 } from '../pages/dashboard';
 
 import Login from '../pages/auth/Login';
@@ -54,6 +55,7 @@ import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
 import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
+import AddMachine from '../pages/dashboard/Machine/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -79,6 +81,7 @@ import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
 import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
+import DisplayMachine from '../pages/dashboard/Machine/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -100,6 +103,7 @@ import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
 import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
+import ShowMachine from '../pages/dashboard/Machine/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -146,8 +150,6 @@ import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add
 import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
 
 export default function TestRouter() {
-
-  const access_token = localStorage.getItem('_token');
 
   return useRoutes([
     { path: '/', children: [
@@ -329,6 +331,15 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGR />},
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
+          ]
+        },
+        {
+          path: 'material/machine',
+          element: <MachineLayout />,
+          children: [
+            { path: ':id', element: <ShowMachine />},
+            { path: 'add', element: <AddMachine />},
+            { path: 'display', element: <DisplayMachine />},
           ]
         },
         //Industrial Engineering Study Route

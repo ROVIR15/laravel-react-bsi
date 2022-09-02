@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, MenuList } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import CustomMultiSelect from '../../../components/CustomMultiSelect';
 
 import { isArray } from 'lodash'
 //API
@@ -31,9 +30,7 @@ function Machine() {
     name: Yup.string().required('Nama is required'),
     unit_measurement: Yup.string().required('Satuan is required'),
     category: Yup.string().required('Kategori is required'),
-    value: Yup.string().required('Nilai Produk is required'),
-    feature_one: Yup.string().required('Size Produk is required'),
-    feature_two: Yup.string().required('Color Produk is required'),
+    value: Yup.string().required('Nilai Produk is required')
   });
 
   const formik = useFormik({
@@ -43,22 +40,24 @@ function Machine() {
       category: '',
       value: '',
       brand: '',
-      feature_one: '',
-      feature_two: ''
     },
     validationSchema: GoodsSchema,
-    onSubmit: ({ name, unit_measurement, value, brand, category, feature_one, feature_two }) => {
+    onSubmit: ({ name, unit_measurement, value, brand, category}) => {
       const _new = {
         goods: {
           name, unit: unit_measurement, value, brand, imageUrl: file
-        }, 
-        category,
-        feature_one: feature_one.split(','),
-        feature_two: feature_two.split(',')
+        },
+        category
       }
-      API.insertGoods(_new, function(res){
-        handleReset();
-      })
+      try {
+        API.insertGoods(_new, function(res){
+          if(!res.success) alert('Failed');
+          else alert('Success');
+          handleReset();
+        })  
+      } catch (e){
+        alert('error');
+      }
       setSubmitting(false);
     }
   });
@@ -267,42 +266,6 @@ function Machine() {
                     />
                   </Grid>
 
-                </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Card>
-                <CardHeader
-                  title="Product Feature"
-                />
-                <CardContent>
-                <Grid container spacing={3}>
-                  <Grid item xs={8}>
-                    <TextField
-                      fullWidth
-                      autoComplete="feature_one"
-                      type="text"
-                      placeholder="Input ukuran pisah dengan koma"
-                      label="Size"
-                      {...getFieldProps('feature_one')}
-                      error={Boolean(touched.feature_one && errors.feature_one)}
-                      helperText={touched.feature_one && errors.feature_one}
-                    />
-                  </Grid>
-                  <Grid item xs={8}>
-                    <TextField
-                      fullWidth
-                      autoComplete="feature_two"
-                      type="text"
-                      placeholder="Input warna pisah dengan koma"
-                      label="Warna"
-                      {...getFieldProps('feature_two')}
-                      error={Boolean(touched.feature_two && errors.feature_two)}
-                      helperText={touched.feature_two && errors.feature_two}
-                    />
-                  </Grid>
                 </Grid>
                 </CardContent>
               </Card>

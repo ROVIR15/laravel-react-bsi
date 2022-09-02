@@ -8,18 +8,13 @@ import { useParams } from 'react-router-dom';
 
 import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, FormControl, InputLabel, Paper, Select, MenuItem, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
-import { Link as RouterLink, useLocation, } from 'react-router-dom';
 import { GridActionsCellItem } from '@mui/x-data-grid';
-
-// Components
-import DataGrid from '../../../components/DataGrid';
 
 //API
 import API from '../../../helpers'
 
 //Icons
 import { Icon } from '@iconify/react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 const UploadPaper = styled(Button)(({theme}) => ({
@@ -36,7 +31,6 @@ function Machine() {
   
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
-  const [items, setItems] = useState([]);
   const [cat, setCat] = useState([]);
 
   const GoodsSchema = Yup.object().shape({
@@ -62,74 +56,19 @@ function Machine() {
         }, 
         category
       }
-      API.updateGoods(id, _new, function(res){
-        if(res.success) alert('success');
-        else alert('failed')
-      })
-      setSubmitting(false);
+      try {
+        API.updateGoods(id, _new, function(res){
+          if(res.success) alert('success');
+          else alert('failed')
+        })
+        setSubmitting(false);  
+      } catch (error) {
+        alert('error')
+      }
     }
   });
 
-  const deleteData = useCallback(
-    (id) => () => {
-      API.deleteProductFeature(id, function(res){
-        handleUpdateAllRows();
-      }).catch(function(error){
-        alert('Fail');
-      });
-    }, []
-  )
-
-  const handleEditRowsModelChange = React.useCallback(
-    (model) => {
-      const editedIds = Object.keys(model);
-      // user stops editing when the edit model is empty
-      if (editedIds.length === 0) {
-        const editedIds = Object.keys(editRowsModel);
-        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
-
-        const data = new Object();
-        data[editedColumnName] = editRowData[editedColumnName].value;
-        // update on firebase
-        API.updateProductFeature(editedIds, data, function(res){
-          alert(JSON.stringify(res));
-        })
-      } else {
-        setEditRowData(model[editedIds[0]]);
-      }
-  
-      setEditRowsModel(model);
-    },
-    [editRowData]
-  );
-
-  const handleUpdateAllRows = () => {
-    API.getAGoods(id, function(res){
-      if(!res) alert("Something went wrong!");
-      var temp = res.data.goods_items;
-      temp = temp.map(function(x){
-        return {...x, name: res.data.name, brand: res.data.brand}
-      });
-      setItems(temp);
-    }).catch(function(error){
-      alert('Error');
-    });
-  };
-
-  const handleAddRow = () => {
-    const _new = {
-      product_id: values.product_id,
-      size: 'Isi',
-      color: 'Color'
-    }
-    API.newProductFeature(_new, function(res){
-      const {success, data} = res;
-      if(!success) alert('error');
-      setItems((prevItems) => [...prevItems, {...data, name: values.name, brand: values.brand}]);
-    }).catch(function(err){
-      alert('error');
-    });
-  };
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
   /**
    * Handle Upload File
@@ -152,26 +91,6 @@ function Machine() {
       else {alert('error');}
     })
   }
-
-  const columns = useMemo(() => [
-    { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false },
-    { field: 'size', headerName: 'Size', editable: true},
-    { field: 'color', headerName: 'Color', editable: true },
-    { field: 'brand', headerName: 'Brand', editable: false },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-          onClick={deleteData(params.id)}
-          showInMenu
-        />
-      ]
-    }
-  ], [deleteData]);
-
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, setValues } = formik;
 
   useEffect(() => {
     if(cat.length > 0 || cat.length != 0) return
@@ -206,11 +125,6 @@ function Machine() {
           brand: res.data.brand,
         });
         setFile(res.data.imageUrl);
-        var temp = res.data.goods_items;
-        temp = temp.map(function(x){
-          return {...x, name: res.data.name, brand: res.data.brand}
-        });
-        setItems(temp);
       });  
     } catch (e) {
       alert(e);
@@ -328,7 +242,7 @@ function Machine() {
                     />
                   </Grid>
 
-                  <Grid item xs={8}>
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="unit_measurement"
@@ -340,7 +254,7 @@ function Machine() {
                     />
                   </Grid>
 
-                  <Grid item xs={8}>
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="value"
@@ -353,23 +267,6 @@ function Machine() {
                   </Grid>
 
                 </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Card>
-                <CardHeader
-                  title="Product Feature"
-                />
-                <CardContent>
-                  <DataGrid 
-                    columns={columns} 
-                    rows={items}
-                    onEditRowsModelChange={handleEditRowsModelChange}
-                    handleUpdateAllRows={handleUpdateAllRows}
-                    handleAddRow={handleAddRow}
-                  />
                 </CardContent>
               </Card>
             </Grid>
