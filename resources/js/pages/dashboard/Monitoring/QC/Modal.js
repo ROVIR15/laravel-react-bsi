@@ -62,7 +62,7 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
       >
         <Card sx={style}>
           <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Product to Inquiry Item
+            Select Sewing Output
           </Typography>
 
           <Table list={value} selected={selected} setSelected={setSelected}/>
