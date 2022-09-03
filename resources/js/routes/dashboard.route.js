@@ -477,6 +477,27 @@ export default function TestRouter() {
             { path: 'document/:id', element: <DocumentINV/>}
           ]
         },
+        { path: 'inputer-spreading', 
+          element: <MonitoringSpread /> 
+        },
+        { path: 'inputer-cutting', 
+          element: <MonitoringCutting /> 
+        },
+        { path: 'inputer-numbering', 
+          element: <MonitoringNumbering /> 
+        },
+        { path: 'inputer-supermarket', 
+          element: <MonitoringSupermarket /> 
+        },
+        { path: 'inputer-sewing', 
+          element: <MonitoringSewing /> 
+        },
+        { path: 'inputer-qc', 
+          element: <MonitoringQC /> 
+        },
+        { path: 'inputer-finished-goods', 
+          element: <MonitoringFinishedGoods />
+        },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     }
