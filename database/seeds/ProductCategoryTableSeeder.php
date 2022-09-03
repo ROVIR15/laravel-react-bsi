@@ -53,6 +53,18 @@ class ProductCategoryTableSeeder extends Seeder
                 'sub_cat' => 5,
                 'name' => 'Assembly Material',
             ),
+            6 => 
+            array (
+                'id' => 7,
+                'sub_cat' => 6,
+                'name' => 'Inventory',
+            ),
+            7 => 
+            array (
+                'id' => 8,
+                'sub_cat' => 7,
+                'name' => 'Inventory',
+            ),
         ));
         
         

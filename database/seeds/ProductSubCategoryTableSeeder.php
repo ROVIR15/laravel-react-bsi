@@ -42,6 +42,16 @@ class ProductSubCategoryTableSeeder extends Seeder
                 'id' => 5,
                 'name' => ' ',
             ),
+            5 => 
+            array (
+                'id' => 6,
+                'name' => 'Mesin',
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => 'Komputer',
+            ),
         ));
         
         
