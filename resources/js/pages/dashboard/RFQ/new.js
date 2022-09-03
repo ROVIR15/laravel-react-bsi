@@ -32,6 +32,7 @@ import DialogBox from './components/DialogBox';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { partyArrangedData } from '../../../helpers/data';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -118,14 +119,19 @@ function RFQ() {
 
     setOptions([]);
 
-    (async () => {
-      if (active) {
-        API.getVendors((res) => {
+    if (active) {
+      try {
+        API.getVendors(async (res) => {
           if(!res) return
-          else setOptions(res);
-        })  
+          else {
+            let data = await partyArrangedData(res);
+            setOptions(data);
+          }
+        }) 
+      } catch (e) {
+        alert('error')
       }
-    })();
+    }
 
     return () => {
       active = false;
@@ -142,16 +148,19 @@ function RFQ() {
 
     setOptions2([]);
 
-    (async () => {
-      if (active) {
-        API.getBuyers((res) => {
+    if (active) {
+      try {
+        API.getBuyers(async (res) => {
           if(!res) return
-          let data = partyArrangedData(res);
-          setOptions2(data);
-        })  
+          else {
+            let data = await partyArrangedData(res);
+            setOptions2(data);
+          }
+        }) 
+      } catch (e) {
+        alert('error')
       }
-    })();
-
+    }
     return () => {
       active = false;
     };
@@ -170,6 +179,7 @@ function RFQ() {
     }
     setFieldValue(name, value.id);
     setOptions([]);
+    setOptions2([]);
   };
 
   const deleteData = useCallback(
@@ -200,7 +210,7 @@ function RFQ() {
           const itemToUpdateIndex = parseInt(editedIds[0]);
     
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
+            if(row.id === parseInt(itemToUpdateIndex)){
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
             } else {
               return row
@@ -247,11 +257,10 @@ function RFQ() {
     <Page>
       <Container>
       <Modal 
-        payload={items}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -303,7 +312,7 @@ function RFQ() {
                   </div>
                   <DialogBox
                     options={options2}
-                    loading={loading}
+                    loading={loading2}
                     error={Boolean(touched.ship_to && errors.ship_to)}
                     helperText={touched.ship_to && errors.ship_to}
                     selectedValue={selectedValueSH}

@@ -8,61 +8,6 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Scrollbar from '../../../../components/Scrollbar';
 
-import API from '../../../../helpers';
-
-const content = [
-  {
-    one: "Party",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party2",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party3",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party4",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party5",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party6",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party7",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party6",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party7",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-];
-
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
   WebkitTapHighlightColor: "transparent", 
   backgroundColor: "transparent", 
@@ -123,7 +68,7 @@ function SimpleDialog(props) {
 
   return (
     <DialogStyled onClose={handleClose} open={open} fullWidth>
-      <DialogTitle>Choose Product</DialogTitle>
+      <DialogTitle>Select One</DialogTitle>
       <List sx={{ pt: 0 }}>
         <Scrollbar sx={{
             padding: '0px 12px 12px',

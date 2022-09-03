@@ -32,27 +32,6 @@ const style = {
 
 export default function BasicModal({ payload, quote_id, updateQuoteItem, open, options, handleClose, setComponent}) {
   const [value, setValue] = React.useState([])
-  const loading = openX && options.length === 0;
-  const [openX, setOpenX] = React.useState(false);
-
-  const handleDoneFill = () => {
-    if(!value.length) {
-      handleClose()
-      return
-    }
-    const _value = value.map(function(x, index){
-      return {...x, product_feature_id: x.id, id: payload.length+index, inquiry_item_id: null, quote_id, qty: 0, unit_price: 0}
-    })
-
-    API.insertQuoteItem(_value, function(res){
-      if(res.success) alert('success');
-      else alert('failed')
-    })
-
-    updateQuoteItem();
-
-    handleClose();
-  }
 
   return (
     <div>
