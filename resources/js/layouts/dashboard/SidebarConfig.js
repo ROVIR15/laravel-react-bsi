@@ -187,7 +187,42 @@ const sidebarConfig = [
         path: '/dashboard/monitoring/finished-goods'
       },
     ]
-  }
+  },
+  {
+    title: 'Spreading',
+    name: 'operator-spreading',
+    path: '/dashboard/inputer-spreading',
+  },
+  {
+    title: 'Cutting',
+    name: 'operator-cutting',
+    path: '/dashboard/inputer-cutting',
+  },
+  {
+    title: 'Numbering',
+    name: 'operator-numbering',
+    path: '/dashboard/inputer-numbering',
+  },
+  {
+    title: 'Supermarket',
+    name: 'operator-supermarket',
+    path: '/dashboard/inputer-supermarket',
+  },
+  {
+    title: 'Sewing',
+    name: 'operator-sewing',
+    path: '/dashboard/inputer-sewing',
+  },
+  {
+    title: 'QC',
+    name: 'operator-qc',
+    path: '/dashboard/inputer-qc',
+  },
+  {
+    title: 'Finished Goods',
+    name: 'operator-finished',
+    path: '/dashboard/inputer-finished-goods',
+  },
 ];
 
 export default sidebarConfig;
