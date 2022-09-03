@@ -340,7 +340,6 @@ const [id, setId] = React.useState(0);
               </LoadingButton>
               <Button
                 size="large"
-                type="submit"
                 color="grey"
                 variant="contained"
                 sx={{ m: 1 }}

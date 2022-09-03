@@ -236,7 +236,6 @@ function BillOfMaterial() {
       const { product_feature: { size, color, product : {goods}}, ...rest } = key
       return {...goods, ...rest, size, color, product_feature_id: key.product_feature_id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
     })
-    console.log(c)
     setComponent(c);
 
     const load4 = await axios.get(process.env.MIX_API_URL  + '/operation' + `/${id}`)
