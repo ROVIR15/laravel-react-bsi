@@ -12,50 +12,103 @@ class PagesTableSeeder extends Seeder
      */
     public function run()
     {
-                
+        
+
+        \DB::table('pages')->delete();
+        
         \DB::table('pages')->insert(array (
             0 => 
+            array (
+                'id' => 1,
+                'name' => 'sales',
+                'description' => NULL,
+            ),
+            1 => 
+            array (
+                'id' => 2,
+                'name' => 'human_resources',
+                'description' => NULL,
+            ),
+            2 => 
+            array (
+                'id' => 3,
+                'name' => 'production',
+                'description' => NULL,
+            ),
+            3 => 
+            array (
+                'id' => 4,
+                'name' => 'inventory',
+                'description' => NULL,
+            ),
+            4 => 
+            array (
+                'id' => 5,
+                'name' => 'industrial_engineering',
+                'description' => NULL,
+            ),
+            5 => 
+            array (
+                'id' => 6,
+                'name' => 'material',
+                'description' => NULL,
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => 'monitoring',
+                'description' => 'this page for monitoring',
+            ),
+            7 => 
+            array (
+                'id' => 8,
+                'name' => 'purchasing',
+                'description' => NULL,
+            ),
+            8 => 
             array (
                 'id' => 9,
                 'name' => 'operator-spreading',
                 'description' => NULL,
             ),
-            1 => 
+            9 => 
             array (
                 'id' => 10,
                 'name' => 'operator-cutting',
                 'description' => NULL,
             ),
-            2 => 
+            10 => 
             array (
                 'id' => 11,
                 'name' => 'operator-numbering',
                 'description' => NULL,
             ),
-            3 => 
+            11 => 
             array (
                 'id' => 12,
                 'name' => 'operator-supermarket',
                 'description' => NULL,
             ),
-            4 => 
+            12 => 
             array (
                 'id' => 13,
                 'name' => 'operator-sewing',
                 'description' => NULL,
             ),
-            5 => 
+            13 => 
             array (
                 'id' => 14,
                 'name' => 'operator-qc',
                 'description' => NULL,
             ),
-            6 => 
+            14 => 
             array (
                 'id' => 15,
                 'name' => 'operator-finished',
                 'description' => NULL,
             ),
         ));
+        
+        
     }
 }
