@@ -65,6 +65,48 @@ class PagesTableSeeder extends Seeder
                 'name' => 'purchasing',
                 'description' => NULL,
             ),
+            8 => 
+            array (
+                'id' => 9,
+                'name' => 'operator-spreading',
+                'description' => NULL,
+            ),
+            9 => 
+            array (
+                'id' => 10,
+                'name' => 'operator-cutting',
+                'description' => NULL,
+            ),
+            10 => 
+            array (
+                'id' => 11,
+                'name' => 'operator-numbering',
+                'description' => NULL,
+            ),
+            11 => 
+            array (
+                'id' => 12,
+                'name' => 'operator-supermarket',
+                'description' => NULL,
+            ),
+            12 => 
+            array (
+                'id' => 13,
+                'name' => 'operator-sewing',
+                'description' => NULL,
+            ),
+            13 => 
+            array (
+                'id' => 14,
+                'name' => 'operator-qc',
+                'description' => NULL,
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'name' => 'operator-finished',
+                'description' => NULL,
+            ),
         ));
         
         

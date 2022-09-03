@@ -83,6 +83,17 @@ class UsersTableSeeder extends Seeder
                 'created_at' => '2022-06-23 07:17:44',
                 'updated_at' => '2022-06-23 07:17:44',
             ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => 'Operator',
+                'email' => 'operator@bsi.com',
+                'email_verified_at' => NULL,
+                'password' => '$2y$10$KyH0D1DCRlyg0oJH/Y5JJul3rN6cR2OBBQjrjtz.sqj07RZpi1zIK',
+                'remember_token' => NULL,
+                'created_at' => '2022-09-03 01:51:26',
+                'updated_at' => '2022-09-03 01:51:26',
+            ),
         ));
         
         

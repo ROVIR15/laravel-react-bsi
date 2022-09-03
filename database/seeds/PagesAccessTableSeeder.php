@@ -156,7 +156,77 @@ class PagesAccessTableSeeder extends Seeder
                 'insert' => 1,
                 'delete' => 1,
                 'edit' => 1,
-            )
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'users_id' => 7,
+                'pages_id' => 9,
+                'name' => 'operator-spreading',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'users_id' => 7,
+                'pages_id' => 10,
+                'name' => 'operator-cutting',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            16 => 
+            array (
+                'id' => 17,
+                'users_id' => 7,
+                'pages_id' => 11,
+                'name' => 'operator-numbering',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            17 => 
+            array (
+                'id' => 18,
+                'users_id' => 7,
+                'pages_id' => 12,
+                'name' => 'operator-supermarket',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'users_id' => 7,
+                'pages_id' => 13,
+                'name' => 'operator-sewing',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'users_id' => 7,
+                'pages_id' => 14,
+                'name' => 'operator-qc',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            20 => 
+            array (
+                'id' => 21,
+                'users_id' => 7,
+                'pages_id' => 15,
+                'name' => 'operator-finished',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
         ));
         
         
