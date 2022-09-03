@@ -93,54 +93,65 @@ function WorkCenter() {
             </Card>
           </Grid>
           {/* Work Center Information */}
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
+          <Card>
+            <CardHeader
+              title="Rencana Penggunaan"
+            />
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item 
+                  sm={4} xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    autoComplete="oee_target"
+                    type="text"
+                    label="Kecepatan Produksi (operator/jam)"
+                    {...getFieldProps('oee_target')}
+                    error={Boolean(touched.oee_target && errors.oee_target)}
+                    helperText={touched.oee_target && errors.oee_target}
+                  />
+                </Grid>
+                <Grid item 
+                  sm={4} xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    autoComplete="labor_alloc"
+                    type="text"
+                    label="Alokasi Labor"
+                    {...getFieldProps('labor_alloc')}
+                    error={Boolean(touched.labor_alloc && errors.labor_alloc)}
+                    helperText={touched.labor_alloc && errors.labor_alloc}
+                  />
+                </Grid>
+                <Grid item 
+                  sm={4} xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    autoComplete="prod_capacity"
+                    type="text"
+                    label="Kapasitas Produksi"
+                    {...getFieldProps('prod_capacity')}
+                    error={Boolean(touched.prod_capacity && errors.prod_capacity)}
+                    helperText={touched.prod_capacity && errors.prod_capacity}
+                  />
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+          </Grid>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader
-                title="Detail Performance in Work Center"
+                title="Detail Biaya"
               />
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item 
-                    xs={4}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="overhead_cost"
-                      type="text"
-                      label="CM Cost"
-                      {...getFieldProps('overhead_cost')}
-                      error={Boolean(touched.overhead_cost && errors.overhead_cost)}
-                      helperText={touched.overhead_cost && errors.overhead_cost}
-                    />
-                  </Grid>
-                  <Grid item 
-                    xs={4}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="prod_capacity"
-                      type="text"
-                      label="Kapasitas Produksi"
-                      {...getFieldProps('prod_capacity')}
-                      error={Boolean(touched.prod_capacity && errors.prod_capacity)}
-                      helperText={touched.prod_capacity && errors.prod_capacity}
-                    />
-                  </Grid>
-                  <Grid item 
-                    xs={4}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="oee_target"
-                      type="text"
-                      label="Target Produksi (%)"
-                      {...getFieldProps('oee_target')}
-                      error={Boolean(touched.oee_target && errors.oee_target)}
-                      helperText={touched.oee_target && errors.oee_target}
-                    />
-                  </Grid>
-                  <Grid item 
-                    xs={4}
+                    sm={4} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -153,7 +164,21 @@ function WorkCenter() {
                     />
                   </Grid>
                   <Grid item 
-                    xs={4}
+                    sm={4} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="overhead_cost"
+                      type="text"
+                      label="CM Cost"
+                      {...getFieldProps('overhead_cost')}
+                      error={Boolean(touched.overhead_cost && errors.overhead_cost)}
+                      helperText={touched.overhead_cost && errors.overhead_cost}
+                    />
+                  </Grid>
+
+                  <Grid item 
+                    sm={4} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -165,21 +190,9 @@ function WorkCenter() {
                       helperText={touched.cost_per_hour && errors.cost_per_hour}
                     />
                   </Grid>
-                  <Grid item 
-                    xs={4}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="labor_alloc"
-                      type="text"
-                      label="Alokasi Labor"
-                      {...getFieldProps('labor_alloc')}
-                      error={Boolean(touched.labor_alloc && errors.labor_alloc)}
-                      helperText={touched.labor_alloc && errors.labor_alloc}
-                    />
-                  </Grid>
                   <Grid item
                     sm={12}
+                    xs={12}
                   >
                     <TextField
                       fullWidth
@@ -211,7 +224,6 @@ function WorkCenter() {
               </LoadingButton>
               <Button
                 size="large"
-                type="submit"
                 color="grey"
                 variant="contained"
                 sx={{ m: 1 }}
