@@ -16,3 +16,4 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 public/data_file/
+resources/.vscode/launch.json
