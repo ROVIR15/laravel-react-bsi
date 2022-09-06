@@ -24,7 +24,7 @@
     ];
 
     public function order(){
-      return $this->belongsTo('App\Models\Order\Order')->with('order_item');
+      return $this->belongsTo('App\Models\Order\Order');
     }
 
     public function product_feature(){
@@ -35,8 +35,12 @@
       return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature');
     }
 
+    public function bought(){
+      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
+    }
+
     public function party(){
-        return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
+      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
     }
 
     public function ship(){

@@ -52,13 +52,11 @@ class QuoteItemController extends Controller
   
             foreach($param as $key){
               array_push($quoteItemsCreation, [
-                
                 'quote_id' => $key['quote_id'],
                 'request_item_id' => $key['inquiry_item_id'],
                 'product_feature_id' => $key['product_feature_id'],
                 'qty' => $key['qty'],
                 'unit_price' => $key['unit_price'],
-                'created_at' => $current_date_time
               ]);
             }
 

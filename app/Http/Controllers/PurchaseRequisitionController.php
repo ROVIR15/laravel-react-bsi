@@ -52,21 +52,14 @@ class PurchaseRequisitionController extends Controller
       try {
           //code...
         $purReqCreation = PurReq::create([
-          
           'req_type' => 'PurchaseReq',
-          'party_id' => $param['party_id'],
-          'ship_to' => $param['ship_to'],
           'po_number' => $param['po_number'],
-          'po_date' => $param['po_date'],
-          'delivery_date' => $param['delivery_date'],
-          'valid_to' => $param['valid_to']
         ]);
 
         $PRItemsCreation = [];
 
         foreach($param['pr_items'] as $key){
           array_push($PRItemsCreation, [
-            
             'request_id' => $purReqCreation['id'],
             'product_feature_id' => $key['id'],
             'qty' => $key['qty'],

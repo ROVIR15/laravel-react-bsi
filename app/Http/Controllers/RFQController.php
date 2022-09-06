@@ -50,14 +50,13 @@ class RFQController extends Controller
         try {
           //code...
           $rfqCreation = Quote::create([
-            'request_id' => $param['request_id'],
+            'quote_type' => $param['quote_type'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
             'party_id' => $param['bought_from'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
-            'valid_thru' => $param['valid_thru'],
-            'quote_type' => $param['quote_type']
+            'valid_thru' => $param['valid_thru']
           ]);
           
           $rfqItemsCreation = [];
@@ -65,7 +64,6 @@ class RFQController extends Controller
           foreach($param['quote_items'] as $key){
             array_push($rfqItemsCreation, [
               'quote_id' => $rfqCreation['id'],
-              'request_item_id' => $key['request_item_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']

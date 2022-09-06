@@ -11,7 +11,7 @@ class QuoteItem extends Model
     protected $primaryKey = 'id';
 
     public $incrementing = true;
-    public $timestamp = false;
+    public $timestamp = true;
 
     protected $fillable = [
         'id',
@@ -19,8 +19,7 @@ class QuoteItem extends Model
         'request_item_id',
         'product_feature_id',
         'unit_price',
-        'qty',
-        'created_at'
+        'qty'
     ];
 
     public function product_feature(){
