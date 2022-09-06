@@ -29,7 +29,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ payload, open, handleClose, items, setItems}) {
+export default function BasicModal({ payload, open, handleClose, items, setItems, update}) {
   const [value, setValue] = React.useState([])
   
   const [options, setOptions] = React.useState([])
@@ -67,7 +67,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
           <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
             Select Product to Inquiry Item
           </Typography>
-          <Table list={options} selected={items} setSelected={setItems}/>
+          <Table list={options} update={update} selected={items} setSelected={setItems}/>
         </Card>
       </Modal>
     </div>

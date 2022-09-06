@@ -28,7 +28,7 @@ import API from '../../../helpers';
 //Component
 import DataGrid from '../../../components/DataGrid';
 import AutoComplete from './components/AutoComplete';
-import Modal from './components/Modal2';
+import Modal from './components/Modal';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -141,7 +141,7 @@ function SalesOrder() {
 
     var c = load2.map((key)=>{
       const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), ...key}
+      return {...product_feature, product_feature_id: product_feature.id, id: key.id, name: product_feature.product.goods.name, shipment_estimated: new Date(key.shipment_estimated), ...key}
     })
     setItems(c);
 

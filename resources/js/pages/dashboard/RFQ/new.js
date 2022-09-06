@@ -30,9 +30,9 @@ import DialogBox from './components/DialogBox';
 
 //Icons
 import { Icon } from '@iconify/react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../helpers/data';
+import { RFQSchema } from '../../../helpers/FormerSchema';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -75,21 +75,12 @@ function RFQ() {
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
 
-  const RFQSchema = Yup.object().shape({
-    po_number: Yup.string().required('Inquiry References is required'),
-    ship_to: Yup.number().required('Inquiry References is required'),
-    sold_to: Yup.number().required('Inquiry References is required'),
-    issue_date: Yup.date().required('PO Date is required'),
-    valid_thru: Yup.date().required('Valid To is required'),
-    delivery_date: Yup.date().required('Delivery Date is required')
-  });
-
   const formik = useFormik({
     initialValues: {
       id: '',
       po_number: '',
       ship_to: '',
-      sold_to: '',
+      bought_from: '',
       issue_date: '',
       valid_thru: '',
       delivery_date: '',
@@ -99,7 +90,7 @@ function RFQ() {
       const _data = {
         ...values, quote_items: items, quote_type: 'PO'
       }
-      API.insertQuote(_data, function(res){
+      API.insertRFQ(_data, function(res){
         if(res.success) alert('success');
         else alert('failed')
       })
@@ -109,7 +100,7 @@ function RFQ() {
 
   const { errors, touched, values, setFieldValue, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
-  // Preapre data from product
+  // Preapre data from vendor
   React.useEffect(() => {
     let active = true;
 
@@ -138,7 +129,7 @@ function RFQ() {
     };
   }, [loading])
 
-  // Preapre data from product
+  // Preapre data from buyer
   React.useEffect(() => {
     let active = true;
 
@@ -169,7 +160,7 @@ function RFQ() {
 
   // Dialog Box
   const handleClose = (name, value) => {
-    if(name === 'sold_to') {
+    if(name === 'bought_from') {
       setOpenSO(false)
       setSelectedValueSO(value);
     }
@@ -288,11 +279,11 @@ function RFQ() {
                   <DialogBox
                     options={options}
                     loading={loading}
-                    error={Boolean(touched.sold_to && errors.sold_to)}
-                    helperText={touched.sold_to && errors.sold_to}
+                    error={Boolean(touched.bought_from && errors.bought_from)}
+                    helperText={touched.bought_from && errors.bought_from}
                     selectedValue={selectedValueSO}
                     open={openSO}
-                    onClose={(value) => handleClose('sold_to', value)}
+                    onClose={(value) => handleClose('bought_from', value)}
                   />
                 </ColumnBox>
                 <Divider orientation="vertical" variant="middle" flexItem />

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
-  Card,
   Checkbox,
   Table,
   TableBody,
@@ -15,8 +14,12 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
+import { fDate } from '../../../../utils/formatTime';
+
 // api
 import API from '../../../../helpers';
+import { useLocation, useParams } from 'react-router-dom';
+import { isEditCondition } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -60,7 +63,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
+function TableD({ list, placeHolder, selected, setSelected, update}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -68,6 +71,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const { pathname } = useLocation();
+  const { id } = useParams();
+
+  let paramsId = id;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -85,11 +93,23 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id, id: selected.length+1}
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.id);
+    name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0}
+    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      if(isEditCondition(pathname.split('/'), id)) {
+        try {      
+          API.insertQuoteItem([name], function(res){
+            if(res.success) alert('success');
+            else alert('failed')
+          })
+          update();
+        } catch(e) {
+          alert(e);
+        }
+      } else {
+        newSelected = newSelected.concat(selected, name);
+      }
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -100,7 +120,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         selected.slice(selectedIndex + 1)
       );
     }
-    console.log(newSelected)
     setSelected(newSelected);
   };
 
@@ -163,7 +182,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  console.log(isItemSelected, row.id)
+                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
                     name,
@@ -182,6 +201,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
+                          disabled={disabled}
                           checked={isItemSelected}
                           onChange={(event) => handleClick(event, row)}
                         />

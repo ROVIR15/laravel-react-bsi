@@ -6,6 +6,12 @@ export function isEmpty(array){
   return !array.length;
 }
 
+export function isEditCondition(array, id){
+  if(!array.length) console.error('Require an Array type');
+  if(array[4].valueOf() === undefined) return false;
+  return parseInt(array[4]) === parseInt(id);
+}
+
 export function goodsDataArranged(array){
   if(isEmpty(array)) return 
   let arranged = array.map((x) => {

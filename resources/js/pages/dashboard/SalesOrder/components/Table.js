@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
-  Card,
   Checkbox,
   Table,
   TableBody,
@@ -15,6 +14,8 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
+import { fDate } from '../../../../utils/formatTime';
+
 // api
 import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
@@ -27,8 +28,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'category', label: 'Category', alignRight: false },
-    { id: 'sub_category', label: 'Sub Category', alignRight: false },
     { id: 'value', label: 'Value', alignRight: false },
   ];
 
@@ -64,7 +63,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, update, selected, setSelected}) {
+function TableD({ list, placeHolder, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -75,7 +74,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const { pathname } = useLocation();
   const { id } = useParams();
-  let paramsId = id;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -93,13 +91,12 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0}
     const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
-        try {
-          API.insertQuoteItem([name], function(res){
+        try {      
+          API.insertSalesOrderItem([name], function(res){
             if(res.success) alert('success');
             else alert('failed')
           })
@@ -139,7 +136,11 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    setSelected((prevSelected) => (prevSelected.filter((item) => (item.id !== id))));
+    API.deleteSalesOrder(id, function(res){
+      if(res.success) setSalesOrderData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
   const handleDeleteSelected = () => {
@@ -178,14 +179,11 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
                     name,
                     size,
                     color,
-                    category,
-                    sub_category,
                     value
                   } = row;
                   return (
@@ -199,7 +197,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
-                          disabled={disabled}
+                          disabled={isItemSelected && !isEditCondition(pathname.split('/'), id)}
                           checked={isItemSelected}
                           onChange={(event) => handleClick(event, row)}
                         />
@@ -208,8 +206,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{value}</TableCell>
                     </TableRow>
                   );

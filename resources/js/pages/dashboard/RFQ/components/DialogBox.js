@@ -76,7 +76,8 @@ function SimpleDialog(props) {
         }}>
         { 
           !opts ? "loading" : ( 
-          opts.map((item) => (
+          opts.map((item) => 
+          (
             <ListItemStyled 
               button 
               onClick={() => handleListItemClick(item)}

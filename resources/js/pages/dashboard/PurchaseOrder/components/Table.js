@@ -27,8 +27,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'category', label: 'Category', alignRight: false },
-    { id: 'sub_category', label: 'Sub Category', alignRight: false },
     { id: 'value', label: 'Value', alignRight: false },
   ];
 
@@ -64,7 +62,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, update, selected, setSelected}) {
+function TableD({ list, placeHolder, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -99,7 +97,9 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
-          API.insertQuoteItem([name], function(res){
+          let dateNow = new Date();
+          name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0, delivery_date: fDate(dateNow)}
+          API.insertPurchaseOrderItem([name], function(res){
             if(res.success) alert('success');
             else alert('failed')
           })
@@ -139,7 +139,11 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    setSelected((prevSelected) => (prevSelected.filter((item) => (item.id !== id))));
+    API.deleteSalesOrder(id, function(res){
+      if(res.success) setSalesOrderData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
   const handleDeleteSelected = () => {
@@ -184,8 +188,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                     name,
                     size,
                     color,
-                    category,
-                    sub_category,
                     value
                   } = row;
                   return (
@@ -208,8 +210,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{value}</TableCell>
                     </TableRow>
                   );

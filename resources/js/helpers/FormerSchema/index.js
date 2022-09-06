@@ -26,3 +26,32 @@ export const BuyerSchema = Yup.object().shape({
   phone_number: Yup.string().required('Phone Number is required'),
 });
 
+export const RFQSchema = Yup.object().shape({
+  po_number: Yup.string().required('Inquiry References is required'),
+  ship_to: Yup.number().required('Inquiry References is required'),
+  bought_from: Yup.number().required('Inquiry References is required'),
+  issue_date: Yup.date().required('PO Date is required'),
+  valid_thru: Yup.date().required('Valid To is required'),
+  delivery_date: Yup.date().required('Delivery Date is required')
+});
+
+export const QuotationSchema = Yup.object().shape({
+  po_number: Yup.string().required('Inquiry References is required'),
+  ship_to: Yup.number().required('Inquiry References is required'),
+  sold_to: Yup.number().required('Inquiry References is required'),
+  issue_date: Yup.date().required('PO Date is required'),
+  valid_thru: Yup.date().required('Valid To is required'),
+  delivery_date: Yup.date().required('Delivery Date is required')
+});
+
+export const PurchaseOrderSchema = Yup.object().shape({
+  order_id: Yup.string().required('Order ID is required'),
+  quote_id: Yup.string().required('Quote ID is required'),
+  bought_from: Yup.string().required('Supplier is required'),
+  ship_to: Yup.string().required('Penerima is required'),
+  po_number: Yup.string().required('PO Number is required'),
+  issue_date: Yup.date().required('province is required'),
+  valid_thru: Yup.date().required('city is required'),
+  delivery_date: Yup.date().required('province is required')
+});
+

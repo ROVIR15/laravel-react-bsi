@@ -27,13 +27,16 @@ import API from '../../../helpers';
 
 //Component
 import DataGrid from './components/DataGrid';
-import Modal from './components/Modal2';
+import Modal from './components/Modal';
 import DialogBox from './components/DialogBox';
 
 //Icons
 import { Icon } from '@iconify/react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+
+//helpers
+import {partyArrangedData, productItemArrangedData} from '../../../helpers/data'
+import { QuotationSchema } from '../../../helpers/FormerSchema';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -53,11 +56,13 @@ function Quotation() {
   const {id} = useParams();
   // Option Inquiry
   const [options, setOptions] = useState([]);
+  const [options2, setOptions2] = useState([]);
 
   //Dialog Interaction
   const [openSO, setOpenSO] = useState(false);
   const [openSH, setOpenSH] = useState(false);
   const loading = (openSO || openSH || openM) && options.length === 0;
+  const loading2 = (openSH) && options2.length === 0;
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
   const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
@@ -71,15 +76,6 @@ function Quotation() {
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
-
-  const QuotationSchema = Yup.object().shape({
-    po_number: Yup.string().required('Inquiry References is required'),
-    ship_to: Yup.number().required('Inquiry References is required'),
-    sold_to: Yup.number().required('Inquiry References is required'),
-    issue_date: Yup.date().required('PO Date is required'),
-    valid_thru: Yup.date().required('Valid To is required'),
-    delivery_date: Yup.date().required('Delivery Date is required')
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -107,7 +103,7 @@ function Quotation() {
 
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
 
-  // Preapre data from product
+  // Preapre data from vendor
   React.useEffect(() => {
     let active = true;
 
@@ -117,19 +113,54 @@ function Quotation() {
 
     setOptions([]);
 
-    (async () => {
-      if (active) {
-        API.getBuyers((res) => {
+    if (active) {
+      try {
+        API.getVendors(async (res) => {
           if(!res) return
-          else setOptions(res);
-        })  
+          else {
+            let data = await partyArrangedData(res);
+            setOptions(data);
+          }
+        }) 
+      } catch (e) {
+        alert('error')
       }
-    })();
+    }
 
     return () => {
       active = false;
     };
   }, [loading])
+
+
+  // Preapre data from buyer
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loading2) {
+      return undefined;
+    }
+
+    setOptions2([]);
+
+    if (active) {
+      try {
+        API.getBuyers(async (res) => {
+          if(!res) return
+          else {
+            let data = await partyArrangedData(res);
+            setOptions2(data);
+          }
+        }) 
+      } catch (e) {
+        alert('error')
+      }
+    }
+    return () => {
+      active = false;
+    };
+  }, [loading2])
+
 
   // Dialog Box
   const handleClose = (name, value) => {
@@ -223,15 +254,15 @@ function Quotation() {
     if(!id) return;
     API.getAQuote(id, function(res){
       if(!res.data) alert("Something went wrong!");
-
       const quoteItem = res.data.quote_items.map(function(key, index){
+        const {id, product_id, name, size, color} = productItemArrangedData(key.product)
         return {
           'id': key.id,
-          'product_id' : key.product.product_id,
+          'product_id' : product_id,
           'product_feature_id' : key.product_feature_id,
-          'name' : key.product.name,
-          'size' : key.product.size,
-          'color' : key.product.color,
+          'name' : name,
+          'size' : size,
+          'color' : color,
           'qty' : key.qty,
           'unit_price' : key.unit_price
         }
@@ -259,11 +290,11 @@ function Quotation() {
       <Container>
       <Modal 
         payload={items}
-        quote_id={id}
         open={openM}
-        options={options}
         handleClose={handleCloseModal}
-        updateQuoteItem={handleUpdateAllRows}
+        items={items}
+        setItems={setItems}
+        update={handleUpdateAllRows}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -314,8 +345,8 @@ function Quotation() {
                     </Typography>
                   </div>
                   <DialogBox
-                    options={options}
-                    loading={loading}
+                    options={options2}
+                    loading={loading2}
                     error={Boolean(touched.ship_to && errors.ship_to)}
                     helperText={touched.ship_to && errors.ship_to}
                     selectedValue={selectedValueSH}

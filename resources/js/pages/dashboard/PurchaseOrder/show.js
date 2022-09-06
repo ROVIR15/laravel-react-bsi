@@ -19,7 +19,6 @@ import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
 
-import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
@@ -28,13 +27,12 @@ import API from '../../../helpers';
 
 //Component
 import DataGrid from '../../../components/DataGrid';
-import AutoComplete from './components/AutoComplete';
-import Modal from './components/Modal2';
+import Modal from './components/Modal';
 
 //Icons
 import { Icon } from '@iconify/react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { PurchaseOrderSchema } from '../../../helpers/FormerSchema';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -79,17 +77,6 @@ function SalesOrder() {
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
 
-  const SalesOrderSchema = Yup.object().shape({
-    order_id: Yup.string().required('Order ID is required'),
-    quote_id: Yup.string().required('Quote ID is required'),
-    sold_to: Yup.string().required('Name is required'),
-    ship_to: Yup.string().required('Address is required'),
-    po_number: Yup.string().required('city is required'),
-    issue_date: Yup.date().required('province is required'),
-    valid_thru: Yup.date().required('city is required'),
-    delivery_date: Yup.date().required('province is required')
-  });
-
   const formik = useFormik({
     initialValues: {
       id: '',
@@ -101,7 +88,7 @@ function SalesOrder() {
       valid_thru: '',
       delivery_date: ''
     },
-    validationSchema: SalesOrderSchema,
+    validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
       API.updateSalesOrder(id, values, function(res){
         alert('success');
@@ -121,17 +108,18 @@ function SalesOrder() {
 
     setValues({
       id: load.id,
+      quote_id: load.quote_id,
       order_id: load.order_id,
       po_number: load.po_number,
-      bought_from: load.bought_from,
-      sold_to: load.sold_to,
+      bought_from: load.bought_from.id,
+      ship_to: load.ship_to.id,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
-      shipment_estimated: load.shipment_estimated,
+      delivery_date: load.delivery_date,
     })
 
-    setSelectedValueSO(load.party)
-    setSelectedValueSH(load.ship)
+    setSelectedValueSO(load.bought_from)
+    setSelectedValueSH(load.ship_to)
 
     const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${load.order_id}`)
     .then(function({data: {data}}) {
@@ -142,7 +130,7 @@ function SalesOrder() {
 
     var c = load2.map((key)=>{
       const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), ...key}
+      return {...product_feature, product_feature_id: product_feature.id, id: key.id, name: product_feature.product.goods.name, shipment_estimated: new Date(key.shipment_estimated), ...key}
     })
     setItems(c);
 
@@ -175,10 +163,7 @@ function SalesOrder() {
     (id) => () => {
       setItems((prevItems) => {
         const rowToDeleteIndex = id;
-        return [
-          ...items.slice(0, rowToDeleteIndex),
-          ...items.slice(rowToDeleteIndex + 1),
-        ];
+        return filter.map(x => x.id !== id);
       });
 
       API.deleteSalesOrderItem(id, (res)=> {
@@ -279,12 +264,12 @@ function SalesOrder() {
       <Container>
       <Modal 
         payload={items}
-        order_id={values.order_id}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
-        updateOrderItem={handleUpdateAllRows}
-      />        
+        items={items}
+        setItems={setItems}
+        update={handleUpdateAllRows}
+      />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>

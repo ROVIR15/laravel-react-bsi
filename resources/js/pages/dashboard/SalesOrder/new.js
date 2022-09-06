@@ -29,8 +29,10 @@ import AutoComplete from './components/AutoComplete';
 
 //Icons
 import { Icon } from '@iconify/react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+
+//Helpers
+import {productFeatureArrangedData, productItemArrangedData} from '../../../helpers/data'
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -139,14 +141,15 @@ function SalesOrder() {
 
   function changeData(data){
     const orderItem = data.quote_items.map(function(key, index){
+      const {id, product_id, name, size, color} = productItemArrangedData(key.product)
       return {
         'id': index,
         'quote_item_id' : key.id,
-        'product_id' : key.product.id,
-        'product_feature_id' : key.product_feature_id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
+        'product_id' : product_id,
+        'product_feature_id' : id,
+        'name' : name,
+        'size' : size,
+        'color' : color,
         'qty' : key.qty,
         'shipment_estimated': null,
         'unit_price' : key.unit_price
@@ -190,7 +193,7 @@ function SalesOrder() {
           const itemToUpdateIndex = parseInt(editedIds[0]);
     
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
+            if(row.id === parseInt(itemToUpdateIndex)){
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
             } else {
               return row

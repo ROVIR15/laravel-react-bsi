@@ -176,10 +176,7 @@ function SalesOrder() {
     (id) => () => {
       setItems((prevItems) => {
         const rowToDeleteIndex = id;
-        return [
-          ...items.slice(0, rowToDeleteIndex),
-          ...items.slice(rowToDeleteIndex + 1),
-        ];
+        return prevItems.filter((x) => x.id !== id)
       });
     })
 
@@ -275,11 +272,10 @@ function SalesOrder() {
     <Page>
       <Container>
       <Modal 
-        payload={items}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

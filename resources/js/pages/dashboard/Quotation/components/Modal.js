@@ -26,11 +26,10 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   p: 4,
 };
 
-export default function BasicModal({ payload, open, handleClose, items, setItems}) {
+export default function BasicModal({ payload, open, handleClose, update, items, setItems}) {
   const [value, setValue] = React.useState([])
   
   const [options, setOptions] = React.useState([])
@@ -50,6 +49,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         } else {
           let data =  await optionProductFeature(res.data);
           setOptions(data);
+          console.log(options);
         }
       })
     return () => {
@@ -68,7 +68,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
           <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
             Select Product to Inquiry Item
           </Typography>
-          <Table list={options} selected={items} setSelected={setItems}/>
+          <Table list={options} update={update} selected={items} setSelected={setItems}/>
         </Card>
       </Modal>
     </div>
