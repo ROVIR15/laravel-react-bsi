@@ -49,21 +49,20 @@ class ItemIssuanceController extends Controller
         $payloadItems = [];
         $invItems = [];
 
-        foreach ($param as $item) {
+        foreach ($param['items'] as $item) {
           # code...
           array_push($payloadItems, [
             'shipment_item_id' => $item['id'],
-            'shipment_id' => $item['shipment_id'],
-            'item_issued' => $item['qty_ship']
+            'item_issued' => $item['qty_shipped']
           ]);
         }
 
-        foreach ($param as $item) {
+        foreach ($param['items'] as $item) {
           # code...
           array_push($invItems, [
             'facility_id' => 1,
             'product_feature_id' => $item['product_feature_id'],
-            'qty_on_hand' =>  $item['qty_ship']*-1
+            'qty_on_hand' =>  $item['qty_shipped']*-1
           ]);
         }
 

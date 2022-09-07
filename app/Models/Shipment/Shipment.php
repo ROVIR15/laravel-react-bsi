@@ -18,16 +18,11 @@ class Shipment extends Model
         'order_id'
     ];
 
-    public function item(){
-        return $this->hasMany('App\Models\Shipment\ShipmentItem');
+    public function items(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
     }
 
-    public function buyer(){
-        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id');
+    public function order(){
+        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order');
     }
-
-    public function ship(){
-        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
-    }
-
 }

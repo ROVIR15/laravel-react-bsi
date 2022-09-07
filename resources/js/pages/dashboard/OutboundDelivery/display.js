@@ -18,15 +18,15 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { outboundShipmentArrangedData } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
   { id: 'buyer_name', label: 'Buyer', alignRight: false },
-  { id: 'receiver_name', label: 'Ship To', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -78,14 +78,21 @@ function OutboundDelivery({ placeHolder }) {
     }
 
     if(isEmpty(goodsReceipt)) {
-      API.getShipment((res) => {
-		    if(!res) return
-		    if(!res.data) {
-          setGoodsReceipt([]);
-        } else {
-          changeData(res.data);
-        }
-      });
+
+      try {
+        API.getShipment((res) => {
+          if(!res) return
+          if(!res.data) {
+            setGoodsReceipt([]);
+          } else {
+            let response = outboundShipmentArrangedData(res.data);
+            setGoodsReceipt(response);
+          }
+        });
+      } catch (error) {
+        alert(error)
+      }
+
     }
   }, [])
 
@@ -191,8 +198,8 @@ function OutboundDelivery({ placeHolder }) {
                   const {
                     id,
                     po_number,
-                    buyer_name,
-                    receiver_name,
+                    ship,
+                    party,
                     delivery_date
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
@@ -213,9 +220,8 @@ function OutboundDelivery({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{ship.name}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
-                      <TableCell align="left">{buyer_name}</TableCell>
-                      <TableCell align="left">{receiver_name}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

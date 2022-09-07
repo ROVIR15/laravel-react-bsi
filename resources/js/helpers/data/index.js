@@ -685,3 +685,40 @@ export function bomDocumentArranged(data){
 
   return {bom_id: id, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`}
 }
+
+
+// Shipment 
+
+export function outboundShipmentArrangedData(array){
+  if(!isArray(array)) return undefined;
+  if(isEmpty(array)) return undefined;
+  let response = array.map((x) => {
+    const { id, order_id, delivery_date, created_at, updated_at,
+      order: {sales_order_id, sales_order: { po_number, party, ship }} } = x;
+    
+      return ({id, order_id, sales_order_id, delivery_date, created_at, updated_at, po_number, party, ship})
+  })
+
+  return response;
+
+}
+
+export function outboundShipmentDetailedArrangedData(objectArray){
+  const { id, order_id, delivery_date, created_at, updated_at,
+    order: {sales_order_id, sales_order: { po_number, party, ship }}, items } = objectArray;
+
+  let shipment_items = items.map((item) => {
+    let { shipment_id, order_item_id,
+      qty_shipped,
+      order_item: {qty, product_feature}, ..._item
+    } = item;
+
+    let {id, value, ..._pf} = productItemArrangedData(product_feature);
+
+    return {..._pf, product_feature_id: id, id: _item.id, shipment_id, order_item_id, qty_shipped, qty_order: qty}
+  });
+
+  return ({ id, order_id, sales_order_id, delivery_date, created_at, updated_at, po_number, party, ship,
+    shipment_items
+  })
+}

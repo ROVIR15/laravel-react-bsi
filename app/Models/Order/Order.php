@@ -22,4 +22,12 @@
     public function order_item(){
       return $this->hasMany('App\Models\Order\OrderItem');
     }
+
+    public function sales_order(){
+      return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('party', 'ship');
+    }
+
+    public function purchase_order(){
+      return $this->belongsTo('App\Models\Order\PurchaseOrder', 'purchase_order_id')->with('party', 'ship');
+    }
   }

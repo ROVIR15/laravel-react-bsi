@@ -31,6 +31,9 @@ import AutoComplete from './components/AutoComplete';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { outboundShipmentDetailedArrangedData } from '../../../helpers/data';
+import { fDate } from '../../../utils/formatTime';
+import moment from 'moment';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -106,12 +109,26 @@ function OutboundDelivery() {
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
   useEffect(() => {
-    API.getAShipment(id, function(res){
-      if(!res) return;
-      else {
-        changeData(res.data);
-      }
-    })
+    try {
+      API.getAShipment(id, function(res){
+        if(!res) return;
+        else {
+          let response = outboundShipmentDetailedArrangedData(res.data);
+          setItems(response.shipment_items);
+          setSelectedValueSH(response.party);
+          setSelectedValueSO(response.ship);
+          setValues({
+            order_id: response.order_id,
+            po_number: response.po_number,
+            issue_date: moment(response.created_at).format('yyyy-MM-DD'),
+            delivery_date: response.delivery_date
+          })
+        }
+      })
+    } catch (error) {
+      alert(error)
+    }
+
   }, [id])
 
   function changeData(data){
@@ -210,12 +227,11 @@ function OutboundDelivery() {
   const handleItemsIssuance = (event) => {
     event.preventDefault();
 
-    API.insertItemIssuance(items, (res) => {
+    API.insertItemIssuance({items, shipment_id: parseInt(id)}, (res) => {
       if(!res) return undefined;
       if(!res.success) alert('Error');
       else alert('Success');
     });
-
 
   }
 
@@ -230,8 +246,7 @@ function OutboundDelivery() {
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty_order', headerName: 'Qty Order', editable: false },
-    { field: 'qty_ship', headerName: 'Qty On Ship', editable: true },
-    { field: 'qty_left', headerName: 'Qty Left', editable: true },
+    { field: 'qty_shipped', headerName: 'Qty On Ship', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem

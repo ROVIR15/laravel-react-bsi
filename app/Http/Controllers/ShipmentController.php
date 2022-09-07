@@ -22,9 +22,9 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info', 'issued_goods')->get();
+      $query = Shipment::with('order')->get();
 
-      return new ShipmentCollection($query);
+      return response()->json(['data' => $query]);
     }
 
     /**
@@ -86,8 +86,8 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info')->find($id);
-        return new ShipmentOneCollection($query);
+        $query = Shipment::with('items', 'order')->find($id);
+        return response()->json(['data' => $query]);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
