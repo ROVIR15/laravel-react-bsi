@@ -98,21 +98,28 @@ export const AuthProvider = ({ children }) => {
   // loading state is over.
   function login(email, password) {
     setLoading(true);
-    AUTHAPI.login(email, password, function(res){
-      localStorage.clear();
-      const { success, access_token, user } = res.data;
-      if(success) {
-        setUser({...user, user, access_token})
-        localStorage.setItem('_token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-        navigate('/dashboard')
-      }
-      else setError(res.error);
-    });
-    
+
+    try {
+      AUTHAPI.login(email, password, function(res){
+        localStorage.clear();
+        const { success, access_token, user, ...rest } = res.data;
+        if(success) {
+          setUser({...user, user, access_token})
+          localStorage.setItem('_token', access_token);
+          localStorage.setItem('user', JSON.stringify(user));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+          navigate('/dashboard');
+        } else {
+          setError(rest.error);
+        }
+      });
+    } catch(error) {
+      setError(error);
+    }
+
     setLoading(false);
-    console.log('logged in' )
+    console.log('logged in' );
+    return;
   }
 
   // Sends sign up details to the server. On success we just apply
@@ -174,18 +181,7 @@ export const AuthProvider = ({ children }) => {
   // assert for the presence of a current user.
   return (
     <AuthContext.Provider value={memoedValue}>
-      <Modal
-        open={loadingInitial}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Card sx={style}>
-          <Typography id="modal-modal-title" variant="h3" component="h3">
-            PLEASE WAIT ...
-          </Typography>
-        </Card>
-      </Modal>
-      {loadingInitial ? null : children}
+      {children}
     </AuthContext.Provider>
   );
 }

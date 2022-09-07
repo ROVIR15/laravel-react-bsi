@@ -14,20 +14,19 @@ import {
   TextField,
   IconButton,
   InputAdornment,
-  FormControlLabel
+  FormControlLabel,
+  Typography
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 import useAuth from '../../../context';
-
-import AUTHAPI from '../../../helpers/api/auth';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
 
-  const { login } = useAuth();
+  const { login, error } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,11 +48,17 @@ export default function LoginForm() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, handleReset, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
   };
+
+  React.useEffect(() => {
+    if(error) {
+      setSubmitting(false);
+    }
+  }, [error])
 
   return (
     <FormikProvider value={formik}>
@@ -99,6 +104,8 @@ export default function LoginForm() {
             Forgot password?
           </Link> */}
         </Stack>
+
+        {error ? (<Typography variant="h5" color="red"> Error Login. Try Again. You can do that</Typography>) : null }
 
         <LoadingButton
           fullWidth
