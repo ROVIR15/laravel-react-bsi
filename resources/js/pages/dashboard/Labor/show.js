@@ -27,33 +27,29 @@ function Labor() {
       email : "",
       role_type_id: 0,
       name : "",
-      npwp : "",
-      address : "",
-      city : "",
-      province : "",
-      country : "",
-      postal_code : "",
       phone_number :"" 
     },
     validationSchema: LaborSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
+    onSubmit: ({ name, npwp, email, role_type_id}) => {
       const data = {
         party_info: {
-          name, email, npwp
+          name, email, npwp: 0
         },
-        address: {
-          street: address,
-          city, province, country, postal_code
-        }, 
         roles : {
           role_type_id,
           relationship_id: 3
         }
       }
-      API.updateLabor(id, data, function(res){
-        setSubmitting(false);
-        alert(JSON.stringify(res));
-      });
+
+      try {
+        API.updateLabor(id, data, function(res){
+          setSubmitting(false);
+          alert(JSON.stringify(res));
+        });
+      } catch (e) {
+        alert(e);
+      }
+
     }
   })
 
@@ -107,7 +103,7 @@ const handleChangeAC = async (newValue) => {
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
         <Card >
           <CardHeader
@@ -126,7 +122,6 @@ const handleChangeAC = async (newValue) => {
                   helperText={touched.name && errors.name}
                 />
               </Grid>
-              
               <Grid item xs={6}>
                 <AutoComplete
                   fullWidth
@@ -142,97 +137,6 @@ const handleChangeAC = async (newValue) => {
                   changeData={handleChangeAC}
                 />
               </Grid>
-
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  autoComplete="npwp"
-                  type="text"
-                  label="NPWP"
-                  {...getFieldProps('npwp')}
-                  error={Boolean(touched.npwp && errors.npwp)}
-                  helperText={touched.npwp && errors.npwp}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-        <Card>
-          <CardHeader
-            title="Address Information"
-          />
-          <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                autoComplete="address"
-                type="text"
-                label="Alamat"
-                {...getFieldProps('address')}
-                error={Boolean(touched.address && errors.address)}
-                helperText={touched.address && errors.address}
-              />
-            </Grid>            
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="city"
-                type="text"
-                label="Kota"
-                {...getFieldProps('city')}
-                error={Boolean(touched.city && errors.city)}
-                helperText={touched.city && errors.city}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="province"
-                type="text"
-                label="Provinsi"
-                {...getFieldProps('province')}
-                error={Boolean(touched.province && errors.province)}
-                helperText={touched.province && errors.province}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="country"
-                type="text"
-                label="Country"
-                {...getFieldProps('country')}
-                error={Boolean(touched.country && errors.country)}
-                helperText={touched.country && errors.country}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="postal code"
-                type="text"
-                label="Postal Code"
-                {...getFieldProps('postal_code')}
-                error={Boolean(touched.postal_code && errors.postal_code)}
-                helperText={touched.postal_code && errors.postal_code}
-              />
-            </Grid>
-          </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card >
-            <CardHeader
-              title="Contact Information"
-            />
-            <CardContent>
-            <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -256,10 +160,10 @@ const handleChangeAC = async (newValue) => {
                 />
               </Grid>
             </Grid>
-            </CardContent>
-          </Card>
-
+          </CardContent>
+        </Card>
         </Grid>
+
         <Grid item xs={12}>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton
@@ -273,6 +177,7 @@ const handleChangeAC = async (newValue) => {
             </LoadingButton>
             <Button
               size="large"
+              type="submit"
               color="grey"
               variant="contained"
               sx={{ m: 1 }}

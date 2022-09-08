@@ -24,21 +24,13 @@ function Labor() {
       name: '',
       role_type_id: '',
       npwp: '',
-      address: '',
-      city: '',
-      province: '',
-      country: '',
-      postal_code: '',
       email: '',
       phone_number: '',
     },
     validationSchema: LaborSchema,
     onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
       const data = {
-        name, email, npwp, type: "Person", address: {
-          street: address,
-          city, province, country, postal_code
-        }, role_type_id
+        name, email, npwp: 0, type: "Person", role_type_id
       }
       API.insertLabor(data, function(res){
         if(res.success) alert('Success');
@@ -124,96 +116,6 @@ const handleChangeAC = async (newValue) => {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  autoComplete="npwp"
-                  type="text"
-                  label="NPWP"
-                  {...getFieldProps('npwp')}
-                  error={Boolean(touched.npwp && errors.npwp)}
-                  helperText={touched.npwp && errors.npwp}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-        <Card>
-          <CardHeader
-            title="Address Information"
-          />
-          <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                autoComplete="address"
-                type="text"
-                label="Alamat"
-                {...getFieldProps('address')}
-                error={Boolean(touched.address && errors.address)}
-                helperText={touched.address && errors.address}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="city"
-                type="text"
-                label="Kota"
-                {...getFieldProps('city')}
-                error={Boolean(touched.city && errors.city)}
-                helperText={touched.city && errors.city}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="province"
-                type="text"
-                label="Provinsi"
-                {...getFieldProps('province')}
-                error={Boolean(touched.province && errors.province)}
-                helperText={touched.province && errors.province}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="country"
-                type="text"
-                label="Country"
-                {...getFieldProps('country')}
-                error={Boolean(touched.country && errors.country)}
-                helperText={touched.country && errors.country}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="postal code"
-                type="text"
-                label="Postal Code"
-                {...getFieldProps('postal_code')}
-                error={Boolean(touched.postal_code && errors.postal_code)}
-                helperText={touched.postal_code && errors.postal_code}
-              />
-            </Grid>
-          </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card >
-            <CardHeader
-              title="Contact Information"
-            />
-            <CardContent>
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
                   autoComplete="email"
                   type="email"
                   label="Email address"
@@ -234,10 +136,10 @@ const handleChangeAC = async (newValue) => {
                 />
               </Grid>
             </Grid>
-            </CardContent>
-          </Card>
-
+          </CardContent>
+        </Card>
         </Grid>
+
         <Grid item xs={12}>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton

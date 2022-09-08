@@ -25,12 +25,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'role_type', label: 'Bagian', alignRight: false },
-  { id: 'npwp', label: 'Phone Number', alignRight: false },
-  { id: 'street', label: 'Address', alignRight: false },
-  { id: 'city', label: 'City', alignRight: false },
-  { id: 'province', label: 'Province', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'ZIP Code', alignRight: false }
+  { id: 'phone_number', label: 'Phone Number', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -177,7 +172,7 @@ function Labor({ placeHolder }) {
               {isEmpty(laborData) ? null : filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { role_type, party: {id, name, email, phone_number, address: {street, city, province, country, postal_code}}} = row;
+                  const { role_type, party: {id, name, email, phone_number }} = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -198,11 +193,6 @@ function Labor({ placeHolder }) {
                       <TableCell align="left">{email}</TableCell>
                       <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
                       <TableCell align="left">{phone_number? phone_number : '083012983'}</TableCell>
-                      <TableCell align="left">{street}</TableCell>
-                      <TableCell align="left">{city}</TableCell>
-                      <TableCell align="left">{province}</TableCell>
-                      <TableCell align="left">{country}</TableCell>
-                      <TableCell align="left">{postal_code}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
