@@ -18,7 +18,7 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
-import { rearrangeData } from '../../../helpers/data';
+import { machineList } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -84,15 +84,16 @@ function DisplayBuyer({ placeHolder }) {
       API.getGoods((res) => {
 		if(!res) return
 		if(!res.success) {
-          setGoodsData(BUYERLIST);
+          setGoodsData([]);
         } else {
-          let data = rearrangeData(res.data);
-          
+          console.log(res.data)
+          let data = machineList(res.data);
+          console.log(data);
           setGoodsData(data);
         }
       });
     }
-  }, [goodsData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
