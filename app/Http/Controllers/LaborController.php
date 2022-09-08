@@ -71,15 +71,6 @@ class LaborController extends Controller
           'relationship_id' => 3
         ]);
 
-        $_addr = Address::create([
-          'party_id' => $parties['id'],
-          'street' => $param['address']['street'],
-          'city' => $param['address']['city'],
-          'province' => $param['address']['province'],
-          'country' => $param['address']['country'],
-          'postal_code' => $param['address']['postal_code']
-        ]);
-
         return response()->json([
           'success' => true,
         ], 200);
@@ -148,11 +139,9 @@ class LaborController extends Controller
       $param = $request->all()['payload'];
       try {
         $party = $param['party_info'];
-        $address = $param['address'];
         $roles = $param['roles'];
 
         Party::find($id)->update($party);
-        Address::where('party_id', $id)->update($address);
         PartyRoles::where('party_id', $id)->update($roles);
 
         return response()->json([
