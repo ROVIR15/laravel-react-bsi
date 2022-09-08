@@ -21,4 +21,8 @@ class ProductHasCategory extends Model
     public function category(){
         return $this->belongsTo('App\Models\Product\ProductCategory', 'product_category_id')->with('sub');
     }
+
+    public function product(){
+        return $this->belongsTo('App\Models\Product\Product', 'product_id')->with('goods');
+    }
 }

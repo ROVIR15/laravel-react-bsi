@@ -165,4 +165,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('monitoring-qc', 'MonitoringQcController')->only(['store', 'index', 'show']);
     Route::resource('monitoring-fg', 'MonitoringFinishedGoodsController')->only(['store', 'index', 'show']);
     Route::resource('role', 'RoleTypeController')->only(['index']);
+
+    Route::resource('machine', 'MachineController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
 });
+
+
