@@ -347,7 +347,6 @@ const main = {
       });
     },
     updateQuoteItem(id, _data, cb){
-      if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
       axios.put( uri + '/quote-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);

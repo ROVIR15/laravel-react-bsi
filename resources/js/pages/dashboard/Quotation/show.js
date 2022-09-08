@@ -37,6 +37,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 //helpers
 import {partyArrangedData, productItemArrangedData} from '../../../helpers/data'
 import { QuotationSchema } from '../../../helpers/FormerSchema';
+import { isArray, isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -51,6 +52,12 @@ const SpaceBetweenBox = styled('div')(({theme}) => ({
   justifyContent: "space-between", 
   marginBottom: "8px"
 }))
+
+function findTotalQty(array){
+  if(!isArray(array)) return 0;
+  if(isEmpty(array)) return 0;
+  return array.reduce((initial, next) => initial + next.qty, 0);
+}
 
 function Quotation() {
   const {id} = useParams();
@@ -214,16 +221,17 @@ function Quotation() {
     API.getAQuote(id, function(res){
       if(!res) alert("Something went wrong!");
       var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function(_d){
+      temp = res.data.quote_items.map(function(key){
+        const {id, product_id, name, size, color} = productItemArrangedData(key.product)
         return {
-          id: _d.id,
-          product_id: _d.product.product_id,
-          product_feature_id: _d.product_feature_id,
-          name: _d.product.name,
-          size: _d.product.size,
-          color: _d.product.color,
-          qty: _d.qty,
-          unit_price: _d.unit_price
+          'id': key.id,
+          'product_id' : product_id,
+          'product_feature_id' : key.product_feature_id,
+          'name' : name,
+          'size' : size,
+          'color' : color,
+          'qty' : key.qty,
+          'unit_price' : key.unit_price
         }
       })
       setItems(temp);
@@ -284,6 +292,29 @@ function Quotation() {
       setItems(quoteItem);
     });
   }, [id]);
+
+  // Populate
+
+  const [populateState, setPopulateState] = useState({qty: 0, unit_price: 0})
+  const handlePopulate = () => {
+    let payload = {items : populateState, quote_id: parseInt(id)}
+    try {
+      API.updateQuoteItem(0, payload, (res) => {
+        if(!res.success) alert('failed');
+        alert('success')
+        handleUpdateAllRows();
+      })
+    } catch (e) {
+      alert(e)
+    }
+  }
+
+  const handleChangePopulate = (e) => {
+    const { name, value } = e.target;
+    if(name === 'qty') setPopulateState({...populateState, qty: value});
+    if(name === 'unit_price') setPopulateState({...populateState, unit_price: value});
+    else return;
+  }
 
   return (
     <Page>
@@ -411,6 +442,27 @@ function Quotation() {
               />
               </div>
             </CardContent>
+
+            <div>
+              <Stack direction="row">
+                <TextField
+                  type="number"
+                  label="Qty"
+                  name="qty"
+                  value={populateState.qty}
+                  onChange={handleChangePopulate}
+                />
+                <TextField
+                  type="number"
+                  label="Harga Barang"
+                  name="unit_price"
+                  value={populateState.unit_price}
+                  onChange={handleChangePopulate}
+                />
+                <Button onClick={handlePopulate}>Populate</Button>
+              </Stack>
+            </div>
+            
             <CardContent>
             <DataGrid 
               columns={columns} 
@@ -421,7 +473,13 @@ function Quotation() {
             />
             </CardContent>
           </Card>
-          <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+          <Card sx={{ p:2, display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+            <Typography
+              variant='h5'
+              sx={{flex: 1}}
+            >
+              Total Qty {findTotalQty(items)}
+            </Typography>
             <LoadingButton
               size="large"
               type="submit"

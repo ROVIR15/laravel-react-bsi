@@ -84,8 +84,8 @@ function SimpleDialog(props) {
               key={item.id}
             >
               <Typography variant="subtitle2">{item.name}</Typography>
-              <Typography component="span" variant="caption">{item.category}</Typography>
-              <Typography variant="body2">{item.brand}</Typography>
+              <Typography component="span" variant="caption">{item.street}</Typography>
+              <Typography variant="body2">{`${item.city} - ${item.province} - ${item.country}`}</Typography>
             </ListItemStyled>
           )))
         }

@@ -121,7 +121,13 @@ class QuoteItemController extends Controller
 
         try {
             //code...
-            QuoteItem::where('id', $id)->update($param);
+            if($id) {
+                QuoteItem::where('id', $id)->update($param);
+            }
+
+            if(!$id) {
+                QuoteItem::where('quote_id', $param['quote_id'])->update($param['items']);
+            }
         } catch (Exception $th) {
             //throw $th;
             return response()->json([

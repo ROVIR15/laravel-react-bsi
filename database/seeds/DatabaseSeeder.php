@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(FacilityTableSeeder::class);
         $this->call(RelationshipTableSeeder::class);
         $this->call(ShipmentTypeStatusTableSeeder::class);
+        $this->call(AgreementTypeTableSeeder::class);
     }
 }

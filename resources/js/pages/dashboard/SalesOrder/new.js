@@ -238,7 +238,10 @@ function SalesOrder() {
     const {y, z, aa} = populateState;
     if(y === '' && z === 0) return;
     const res = items.map(function(x){
-      return {...x, shipment_estimated: y, qty: z, unit_price: aa}
+      if(y !== '') x = {...x, shipment_estimated: y}
+      if(z !== 0) x = {...x, qty: z}
+      if(aa !== 0) x = {...x, unit_price: aa}
+      return x;
     })
     setItems(res);
   }
@@ -386,18 +389,21 @@ function SalesOrder() {
                     type="number"
                     label="Qty"
                     name="z"
+                    value={populateState.z}
                     onChange={handleChangePopulate}
                   />
                   <TextField
                     type="number"
                     label="Harga Barang"
                     name="aa"
+                    value={populateState.aa}
                     onChange={handleChangePopulate}
                   />
                   <TextField
                     type="date"
                     label="Tanggal Kirim"
                     name="y"
+                    value={populateState.y}
                     onChange={handleChangePopulate}
                   />
                   <Button onClick={handlePopulate}>Populate</Button>

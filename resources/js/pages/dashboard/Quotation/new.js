@@ -212,6 +212,26 @@ function Quotation() {
     }
   ], [deleteData]);
 
+// Populate
+const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0})
+const handlePopulate = () => {
+  const {y, z, aa} = populateState;
+  if(y === '' && z === 0) return;
+  const res = items.map(function(x){
+    if(z !== 0) x = {...x, qty: z}
+    if(aa !== 0) x = {...x, unit_price: aa}
+    return x;
+  })
+  setItems(res);
+}
+
+const handleChangePopulate = (e) => {
+  const { name, value } = e.target;
+  if(name === 'z') setPopulateState({...populateState, z: value});
+  if(name === 'aa') setPopulateState({...populateState, aa: value});
+  else return;
+}
+
   return (
     <Page>
       <Container>
@@ -304,6 +324,27 @@ function Quotation() {
                 </Grid>
               </Grid>       
             </CardContent>
+
+            <div>
+              <Stack direction="row">
+                <TextField
+                  type="number"
+                  label="Qty"
+                  name="z"
+                  value={populateState.z}
+                  onChange={handleChangePopulate}
+                />
+                <TextField
+                  type="number"
+                  label="Harga Barang"
+                  name="aa"
+                  value={populateState.aa}
+                  onChange={handleChangePopulate}
+                />
+                <Button onClick={handlePopulate}>Populate</Button>
+              </Stack>
+            </div>
+
             <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
               <div style={{display: 'flex'}}>
               <TextField
