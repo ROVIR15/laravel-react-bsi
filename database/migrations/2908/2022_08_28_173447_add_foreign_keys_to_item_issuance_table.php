@@ -14,6 +14,7 @@ class AddForeignKeysToItemIssuanceTable extends Migration {
 	{
 		Schema::table('item_issuance', function(Blueprint $table)
 		{
+			$table->foreign('shipment_id', 'fk_item_issuance_shipment1')->references('id')->on('shipment')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('shipment_item_id', 'fk_item_issuance_shipment_item1')->references('id')->on('shipment_item')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 		});
 	}
@@ -28,6 +29,7 @@ class AddForeignKeysToItemIssuanceTable extends Migration {
 	{
 		Schema::table('item_issuance', function(Blueprint $table)
 		{
+			$table->dropForeign('fk_item_issuance_shipment1');
 			$table->dropForeign('fk_item_issuance_shipment_item1');
 		});
 	}

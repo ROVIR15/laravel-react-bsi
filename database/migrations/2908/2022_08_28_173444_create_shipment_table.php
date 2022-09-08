@@ -16,6 +16,7 @@ class CreateShipmentTable extends Migration {
 		{
 			$table->integer('id', true);
 			$table->integer('order_id')->index('fk_order_id');
+			$table->string('type');
 			$table->date('delivery_date');
 			$table->timestamps();
 		});
