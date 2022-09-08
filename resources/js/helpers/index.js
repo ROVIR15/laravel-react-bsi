@@ -105,6 +105,51 @@ const main = {
         cb(err.response);
       });
     },
+
+    // Machine
+    insertMachine(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/machine', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getMachine(cb){
+      axios.get( uri + '/machine').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAMachine(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/machine' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateMachine(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/machine'+ `/${id}`, { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteMachine(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/machine/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     //Product Category
     getProductCategory(cb){
       axios.get( uri + '/product-category').then(function(res){

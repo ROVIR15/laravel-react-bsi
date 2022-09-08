@@ -590,17 +590,11 @@ export function calculateRestan(fabric_length, actual_spread_length){
 }
 
 export function laborArrangedData(data) {
-  const { id, email, name, npwp, address: {street, city, province, country, postal_code}, party_roles} = data;
+  const { id, email, name, party_roles} = data;
   return {
     name,
     email,
-    npwp,
     phone_number: '083231',
-    address: street,
-    city,
-    province, 
-    country,
-    postal_code,
     role_type_id: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type.id : null,
     role_type: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type : null
   }
@@ -721,4 +715,22 @@ export function outboundShipmentDetailedArrangedData(objectArray){
   return ({ id, order_id, sales_order_id, delivery_date, created_at, updated_at, po_number, party, ship,
     shipment_items
   })
+}
+
+// Machine
+
+export function machineList(array){
+  if(!isArray(array)) return undefined;
+  if(isEmpty(array)) return null;
+  return array.map((item) => {
+    let {product: {goods}, category} = item;
+
+    return {...goods, category: category.name, sub_category: category.sub.name}
+  });
+}
+
+export function machineData(obj){
+  if(!obj) return undefined;
+  let {product: {goods}, category} = obj;
+  return {...goods, category: category.id, sub_category: category.sub.name}
 }

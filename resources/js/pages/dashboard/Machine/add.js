@@ -50,7 +50,7 @@ function Machine() {
         category
       }
       try {
-        API.insertGoods(_new, function(res){
+        API.insertMachine(_new, function(res){
           if(!res.success) alert('Failed');
           else alert('Success');
           handleReset();
@@ -63,24 +63,6 @@ function Machine() {
   });
 
   const { errors, touched, values, isSubmitting, setSubmitting, handleReset, handleSubmit, getFieldProps, setFieldValue } = formik;
-
-  const handleMultiSelect = (name, value) => {
-    setFieldValue(name, value);
-  }
-
-  const MenuItemList = (listArray) => {
-    if(!Array.isArray(listArray)) {
-      return (
-        <MenuItem value={1}>{"wkwkw"}</MenuItem>
-      )
-    } else {
-      listArray.map(function(x){
-        return (
-          <MenuItem value={x.id}>{x.name}</MenuItem>
-        )
-      })
-    }
-  }
 
   /**
    * Handle Upload File

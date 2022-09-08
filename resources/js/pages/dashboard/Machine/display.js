@@ -18,7 +18,7 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
-import { rearrangeData } from '../../../helpers/data';
+import { machineList } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -81,16 +81,19 @@ function DisplayBuyer({ placeHolder }) {
     }
 
     if(isEmpty(goodsData)) {
-      API.getGoods((res) => {
-		if(!res) return
-		if(!res.success) {
-          setGoodsData(BUYERLIST);
-        } else {
-          let data = rearrangeData(res.data);
-          
-          setGoodsData(data);
-        }
-      });
+      try {
+        API.getMachine((res) => {
+		      if(!res) return
+		      if(!res.success) {
+            setGoodsData([]);
+          } else {
+            let data = machineList(res.data);
+            setGoodsData(data);
+          }
+        });
+      } catch (e) {
+        alert(e);
+      }
     }
   }, [goodsData])
 

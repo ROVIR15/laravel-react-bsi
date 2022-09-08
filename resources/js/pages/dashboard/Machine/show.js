@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useParams } from 'react-router-dom';
 
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, FormControl, InputLabel, Paper, Select, MenuItem, Typography } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Paper, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
@@ -16,6 +16,7 @@ import API from '../../../helpers'
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { machineData } from '../../../helpers/data';
 
 const UploadPaper = styled(Button)(({theme}) => ({
   outline: "none", 
@@ -26,16 +27,18 @@ const UploadPaper = styled(Button)(({theme}) => ({
   height: '100%'
 }));
 
+function costEachDay(work_hours, cost_per_hour, overhead_cost){
+  return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
+}
+
+
 function Machine() {
   const {id} = useParams();
-  
-  const [editRowsModel, setEditRowsModel] = React.useState({});
-  const [editRowData, setEditRowData] = React.useState({});
   const [cat, setCat] = useState([]);
 
   const GoodsSchema = Yup.object().shape({
     name: Yup.string().required('Nama is required'),
-    unit_measurement: Yup.string().required('Satuan is required'),
+    satuan: Yup.string().required('Satuan is required'),
     category: Yup.string().required('Kategori is required'),
     value: Yup.string().required('Nilai Produk is required'),
   });
@@ -43,16 +46,16 @@ function Machine() {
   const formik = useFormik({
     initialValues: {
       name: '',
-      unit_measurement: '',
+      satuan: '',
       category: '',
       value: '',
       brand: ''
     },
     validationSchema: GoodsSchema,
-    onSubmit: ({ name, unit_measurement, value, brand, category}) => {
+    onSubmit: ({ name, satuan, value, brand, category}) => {
       const _new = {
         goods: {
-          name, unit: unit_measurement, value, brand, imageUrl: file
+          name, unit: satuan, value, brand, imageUrl: file
         }, 
         category
       }
@@ -93,209 +96,222 @@ function Machine() {
   }
 
   useEffect(() => {
-    if(cat.length > 0 || cat.length != 0) return
-    else {
-      try {
-        API.getProductCategory(function(res){
-          setCat(res.data);
-        });
-      } catch {
-        alert('error');
-      }
-    }
-  }, [cat])
-
-  const loading = (values.product_id.valueOf()? false : true) && id;
-
-  useEffect(() => {
     if(!id) return;
 
-    if(!loading) return undefined;
     try {
-      API.getAGoods(id, function(res){
+      API.getAMachine(id, function(res){
         if(!res) alert("Something went wrong!");
-        setValues({
-          ...values,
-          product_id: res.data.product_id[0].id,
-          name: res.data.name,
-          unit_measurement: res.data.unit_measurement,
-          gross_weight: res.data.gross_weight,
-          category : res.data.category[0].id,
-          value: res.data.value,
-          brand: res.data.brand,
-        });
-        setFile(res.data.imageUrl);
+        let data = machineData(res.data);
+        setValues(data);
+        setFile(data.imageUrl);
       });  
     } catch (e) {
       alert(e);
     }
   }, [id]);
 
-  function ShowImageWhenItsUploaded(){
-    if(file) {
-      return (
-        <Paper sx={{padding: 2, height: '100%'}}>
-          <img src={file} alt="Image"/>
-          <label htmlFor='upload-file'>
-          <input 
-            accept="image/*" 
-            multiple 
-            id="upload-file" 
-            type="file" 
-            onChange={handleOnFileChange}
-            style={{display: 'none'}}
-          />
-            <Button>
-              <Typography variant="h5">
-                Change File
-              </Typography>
-            </Button>
-          </label>
-        </Paper>
-      )
-    } else {
-      return (
-        <Paper sx={{padding: 2, height: '100%'}}>
-          <label htmlFor='upload-file'>
-          <input 
-            accept="image/*" 
-            multiple 
-            id="upload-file" 
-            type="file" 
-            onChange={handleOnFileChange}
-            style={{display: 'none'}}
-          />
-          <UploadPaper 
-            component="span" 
-            fullWidth
-          >
-              <Typography variant="h5">
-                Drop or Select File
-            </Typography>
-          </UploadPaper>
-          </label>
-        </Paper>
-      )
-    }
-  }
 
   return (
     <Page>
-      <Container >
-        <FormikProvider value={formik}>
-          <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <Grid item xs={5}>
-              <ShowImageWhenItsUploaded/>
-            </Grid>
-
-            <Grid item xs={7}>
-              <Card >
-                <CardHeader
-                  title="Product Information"
-                />
-                <CardContent>
+      <Container>
+      <FormikProvider value={formik}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          {/* Work Center Information */}
+          <Grid item xs={12}>
+            <Card >
+              <CardHeader
+                title="Work Center Information"
+              />
+              <CardContent>
                 <Grid container spacing={2}>
-                  
-                  <Grid item xs={12}>
+                  <Grid item
+                    xs={6}
+                  >
                     <TextField
                       fullWidth
                       autoComplete="name"
                       type="text"
-                      label="Nama"
+                      label="Work Center Name"
                       {...getFieldProps('name')}
                       error={Boolean(touched.name && errors.name)}
                       helperText={touched.name && errors.name}
                     />
                   </Grid>
-
-                  <Grid item xs={7}>
-                    <FormControl fullWidth>
-                      <InputLabel >Kategori</InputLabel>
-                      <Select
-                        autoComplete="category"
-                        type="text"
-                        {...getFieldProps('category')}
-                        error={Boolean(touched.category && errors.category)}
-                        helperText={touched.category && errors.category}
-                      >
-                        {
-                          cat.map(function(x){
-                            return (
-                              <MenuItem value={x.id}>{x.name}</MenuItem>
-                            )
-                          })
-                        }
-                      </Select>
-                    </FormControl>
-                  </Grid>
-
-                  <Grid item xs={5}>
+                  <Grid item
+                    xs={6}
+                  >
                     <TextField
                       fullWidth
-                      autoComplete="brand"
+                      autoComplete="company_name"
                       type="text"
-                      label="Brand"
-                      {...getFieldProps('brand')}
-                      error={Boolean(touched.brand && errors.brand)}
-                      helperText={touched.brand && errors.brand}
-                    />
+                      label="Company Name"
+                      {...getFieldProps('company_name')}
+                      error={Boolean(touched.company_name && errors.company_name)}
+                      helperText={touched.company_name && errors.company_name}
+                    />      
                   </Grid>
-
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      autoComplete="unit_measurement"
-                      type="text"
-                      label="Satuan"
-                      {...getFieldProps('unit_measurement')}
-                      error={Boolean(touched.unit_measurement && errors.unit_measurement)}
-                      helperText={touched.unit_measurement && errors.unit_measurement}
-                    />
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      autoComplete="value"
-                      type="text"
-                      label="Nilai Produk"
-                      {...getFieldProps('value')}
-                      error={Boolean(touched.value && errors.value)}
-                      helperText={touched.value && errors.value}
-                    />
-                  </Grid>
-
-                </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-                <LoadingButton
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                  loading={isSubmitting}
-                  sx={{ m: 1 }}
-                >
-                  Save
-                </LoadingButton>
-                <Button
-                  size="large"
-                  type="submit"
-                  color="grey"
-                  variant="contained"
-                  sx={{ m: 1 }}
-                >
-                  Cancel
-                </Button>
-              </Card>
-            </Grid>
+                </Grid>      
+              </CardContent>
+            </Card>
           </Grid>
-          </Form>
-        </FormikProvider>
+          {/* Work Center Information */}
+          <Grid item xs={12} sm={6}>
+            <Card>
+              <CardHeader
+                title="Rencana Penggunaan"
+              />
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="oee_target"
+                      type="text"
+                      label="Kecepatan Produksi (operator/jam)"
+                      {...getFieldProps('oee_target')}
+                      error={Boolean(touched.oee_target && errors.oee_target)}
+                      helperText={touched.oee_target && errors.oee_target}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="qty"
+                      type="number"
+                      label="Rencana Produksi"
+                      onChange={(event) => setQty(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="labor_alloc"
+                      type="text"
+                      label="Alokasi Labor"
+                      {...getFieldProps('labor_alloc')}
+                      error={Boolean(touched.labor_alloc && errors.labor_alloc)}
+                      helperText={touched.labor_alloc && errors.labor_alloc}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="prod_capacity"
+                      type="text"
+                      label="Kapasitas Produksi"
+                      {...getFieldProps('prod_capacity')}
+                      error={Boolean(touched.prod_capacity && errors.prod_capacity)}
+                      helperText={touched.prod_capacity && errors.prod_capacity}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Card>
+              <CardHeader
+                title="Detail Biaya"
+              />
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="work_hours"
+                      type="text"
+                      label="Hari Kerja"
+                      {...getFieldProps('work_hours')}
+                      error={Boolean(touched.work_hours && errors.work_hours)}
+                      helperText={touched.work_hours && errors.cost_per_hour}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="overhead_cost"
+                      type="text"
+                      label="CM Cost"
+                      {...getFieldProps('overhead_cost')}
+                      error={Boolean(touched.overhead_cost && errors.overhead_cost)}
+                      helperText={touched.overhead_cost && errors.overhead_cost}
+                    />
+                  </Grid>
+
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="cost_per_hour"
+                      type="text"
+                      label="Biaya Produksi per Hari"
+                      {...getFieldProps('cost_per_hour')}
+                      error={Boolean(touched.cost_per_hour && errors.cost_per_hour)}
+                      helperText={touched.cost_per_hour && errors.cost_per_hour}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item
+            sm={12}
+            xs={12}
+          >
+            <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              autoComplete="description"
+              type="text"
+              label="Deskripsi"
+              {...getFieldProps('description')}
+              error={Boolean(touched.description && errors.description)}
+              helperText={touched.description && errors.description}
+            />
+          </Card>
+          </Grid>
+          {/* Button */}
+          <Grid item xs={12}>
+            <Card sx={{ p:2, display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+              <LoadingButton
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                sx={{ m: 1 }}
+              >
+                Save
+              </LoadingButton>
+              <Button
+                size="large"
+                color="grey"
+                variant="contained"
+                sx={{ m: 1 }}
+              >
+                Cancel
+              </Button>
+            </Card>
+          </Grid>
+        </Grid>
+        </Form>
+      </FormikProvider>
       </Container>
     </Page>
   )

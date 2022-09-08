@@ -1,6 +1,6 @@
 import React from 'react';
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Stack } from '@mui/material'
+import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Stack, Paper, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -9,6 +9,19 @@ import { LoadingButton } from '@mui/lab';
 
 //API
 import API from '../../../helpers'
+import { fCurrency } from '../../../utils/formatNumber';
+
+function capacityProd(labor_alloc, oee_target){
+  return Math.floor(parseInt(labor_alloc) * parseFloat(oee_target));
+}
+
+function costEachDay(work_hours, cost_per_hour, overhead_cost){
+  return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
+}
+
+function daysOfWorks(qty, targetEachDay){
+  return Math.floor(qty/targetEachDay)
+}
 
 function WorkCenter() {
 
@@ -31,7 +44,7 @@ function WorkCenter() {
       company_name: '',
       overhead_cost: 0,
       prod_capacity: 0,
-      oee_target: 0,
+      oee_target: '0.0',
       cost_per_hour: 0,
       labor_alloc: 0,
       description: ''
@@ -46,14 +59,30 @@ function WorkCenter() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, getFieldProps } = formik;
+
+  const [qty, setQty] = React.useState(0);
+
+  React.useEffect(() => {
+    let { labor_alloc, cost_per_hour, prod_capacity, oee_target, work_hours} = values;
+    if(labor_alloc !== 0 && oee_target !== 0) {
+      let _prod = capacityProd(labor_alloc, oee_target);
+      setFieldValue('prod_capacity', _prod)  
+    }
+    if(qty !== 0 && prod_capacity !== 0) {
+      let _work = daysOfWorks(qty, capacityProd(labor_alloc, oee_target));
+      setFieldValue('work_hours', _work)  
+    } else {
+      return undefined;
+    }
+  }, [values.labor_alloc, values.cost_per_hour, values.oee_target, qty])
 
   return (
     <Page>
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           {/* Work Center Information */}
           <Grid item xs={12}>
             <Card >
@@ -94,54 +123,65 @@ function WorkCenter() {
           </Grid>
           {/* Work Center Information */}
           <Grid item xs={12} sm={6}>
-          <Card>
-            <CardHeader
-              title="Rencana Penggunaan"
-            />
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item 
-                  sm={4} xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    autoComplete="oee_target"
-                    type="text"
-                    label="Kecepatan Produksi (operator/jam)"
-                    {...getFieldProps('oee_target')}
-                    error={Boolean(touched.oee_target && errors.oee_target)}
-                    helperText={touched.oee_target && errors.oee_target}
-                  />
+            <Card>
+              <CardHeader
+                title="Rencana Penggunaan"
+              />
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="oee_target"
+                      type="text"
+                      label="Kecepatan Produksi (operator/jam)"
+                      {...getFieldProps('oee_target')}
+                      error={Boolean(touched.oee_target && errors.oee_target)}
+                      helperText={touched.oee_target && errors.oee_target}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="qty"
+                      type="number"
+                      label="Rencana Produksi"
+                      onChange={(event) => setQty(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="labor_alloc"
+                      type="text"
+                      label="Alokasi Labor"
+                      {...getFieldProps('labor_alloc')}
+                      error={Boolean(touched.labor_alloc && errors.labor_alloc)}
+                      helperText={touched.labor_alloc && errors.labor_alloc}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={12} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="prod_capacity"
+                      type="text"
+                      label="Kapasitas Produksi"
+                      {...getFieldProps('prod_capacity')}
+                      error={Boolean(touched.prod_capacity && errors.prod_capacity)}
+                      helperText={touched.prod_capacity && errors.prod_capacity}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item 
-                  sm={4} xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    autoComplete="labor_alloc"
-                    type="text"
-                    label="Alokasi Labor"
-                    {...getFieldProps('labor_alloc')}
-                    error={Boolean(touched.labor_alloc && errors.labor_alloc)}
-                    helperText={touched.labor_alloc && errors.labor_alloc}
-                  />
-                </Grid>
-                <Grid item 
-                  sm={4} xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    autoComplete="prod_capacity"
-                    type="text"
-                    label="Kapasitas Produksi"
-                    {...getFieldProps('prod_capacity')}
-                    error={Boolean(touched.prod_capacity && errors.prod_capacity)}
-                    helperText={touched.prod_capacity && errors.prod_capacity}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Card>
@@ -151,7 +191,7 @@ function WorkCenter() {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item 
-                    sm={4} xs={12}
+                    sm={12} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -164,7 +204,7 @@ function WorkCenter() {
                     />
                   </Grid>
                   <Grid item 
-                    sm={4} xs={12}
+                    sm={12} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -178,7 +218,7 @@ function WorkCenter() {
                   </Grid>
 
                   <Grid item 
-                    sm={4} xs={12}
+                    sm={12} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -190,29 +230,39 @@ function WorkCenter() {
                       helperText={touched.cost_per_hour && errors.cost_per_hour}
                     />
                   </Grid>
-                  <Grid item
-                    sm={12}
-                    xs={12}
-                  >
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={4}
-                      autoComplete="description"
-                      type="text"
-                      label="Deskripsi"
-                      {...getFieldProps('description')}
-                      error={Boolean(touched.description && errors.description)}
-                      helperText={touched.description && errors.description}
-                    />
-                  </Grid>
                 </Grid>
               </CardContent>
             </Card>
           </Grid>
+          <Grid item
+            sm={12}
+            xs={12}
+          >
+            <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              autoComplete="description"
+              type="text"
+              label="Deskripsi"
+              {...getFieldProps('description')}
+              error={Boolean(touched.description && errors.description)}
+              helperText={touched.description && errors.description}
+            />
+          </Card>
+          </Grid>
           {/* Button */}
           <Grid item xs={12}>
-            <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+            <Card sx={{ p:2, display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+  
+              <Typography 
+                variant='h5'
+                sx={{flex: 1}}
+              > 
+              Total Biaya Unit Kerja {values.name} Rp. {fCurrency(costEachDay(values.work_hours, values.cost_per_hour, values.overhead_cost))}
+              </Typography>
               <LoadingButton
                 size="large"
                 type="submit"
