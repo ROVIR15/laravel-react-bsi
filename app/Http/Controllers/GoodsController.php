@@ -191,6 +191,7 @@
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value'],
+          'brand' => $goodsParam['brand'],
           'imageUrl' => $goodsParam['imageUrl']
         ]);
         ProductHasCategory::where('product_id', $existingProduct['id'])

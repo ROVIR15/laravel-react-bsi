@@ -92,8 +92,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('requirement-has-request-item', 'RequirementHasRequestItemController')->only(['index']);
 
     //Agreement
+    Route::resource('po-agreement', 'POApprovalController')->only(['index', 'show', 'update']);
+    Route::resource('bom-agreement', 'BOMApprovalController')->only(['index', 'show', 'update']);
     Route::resource('agreement', 'AgreementController')->only(['index']);
-    Route::resource('agreement-role', 'AgreementRoleController')->only(['index']);
+    Route::resource('agreement-role', 'AgreementRoleController')->only(['update']);
     Route::resource('agreement-item', 'AgreementItemController')->only(['index']);
     Route::resource('price-component', 'PriceComponentController')->only(['index']);
 
@@ -168,6 +170,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::resource('machine', 'MachineController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
+
+    //Agre
 });
 
+Route::resource('graph-api', 'GraphSewingController')->only(['index']);
 

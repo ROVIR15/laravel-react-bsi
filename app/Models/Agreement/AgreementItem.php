@@ -11,9 +11,14 @@ class AgreementItem extends Model
     protected $primaryKey = 'id';
 
     public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
         'id',
-        'agreement_id'
+        'agreement_id',
+        'product_feature_id',
+        'product_id',
+        'qty',
+        'price'
     ];
 }

@@ -29,6 +29,12 @@ class AgreementTypeTableSeeder extends Seeder
                 'name' => 'Purchase Agreement',
                 'description' => 'a binding legal contract between two parties that obligates a transaction to occur between a buyer and seller',
             ),
+            2 => 
+            array (
+                'id' => 3,
+                'name' => 'Costing',
+                'description' => '',
+            ),
         ));
         
         

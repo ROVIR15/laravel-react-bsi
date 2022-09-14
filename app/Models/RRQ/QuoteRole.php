@@ -11,9 +11,11 @@ class QuoteRole extends Model
     protected $primaryKey = 'id';
 
     public $incrementing = true;
-
+    public $timestamps = true;
+    
     protected $fillable = [
-        'id',
-        'quote_id'
+        'quote_id',
+        'party_id',
+        'status'
     ];
 }
