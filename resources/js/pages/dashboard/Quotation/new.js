@@ -22,6 +22,9 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../helpers';
+import { partyArrangedData } from '../../../helpers/data';
+import { findTotalAmountOfQuotation, findTotalQty } from '../../../helpers/data/calculation';
+import { fCurrency } from '../../../utils/formatNumber';
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -32,7 +35,6 @@ import DialogBox from './components/DialogBox';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
-import { partyArrangedData } from '../../../helpers/data';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -261,9 +263,9 @@ const handleChangePopulate = (e) => {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSO.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
                   </div>
                   <DialogBox
                     options={options}
@@ -286,9 +288,9 @@ const handleChangePopulate = (e) => {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSH.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
                   </div>
                   <DialogBox
                     options={options}
@@ -325,26 +327,6 @@ const handleChangePopulate = (e) => {
               </Grid>       
             </CardContent>
 
-            <div>
-              <Stack direction="row">
-                <TextField
-                  type="number"
-                  label="Qty"
-                  name="z"
-                  value={populateState.z}
-                  onChange={handleChangePopulate}
-                />
-                <TextField
-                  type="number"
-                  label="Harga Barang"
-                  name="aa"
-                  value={populateState.aa}
-                  onChange={handleChangePopulate}
-                />
-                <Button onClick={handlePopulate}>Populate</Button>
-              </Stack>
-            </div>
-
             <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
               <div style={{display: 'flex'}}>
               <TextField
@@ -378,6 +360,27 @@ const handleChangePopulate = (e) => {
               />
               </div>
             </CardContent>
+
+            <CardContent>
+              <Stack direction="row">
+                <TextField
+                  type="number"
+                  label="Qty"
+                  name="z"
+                  value={populateState.z}
+                  onChange={handleChangePopulate}
+                />
+                <TextField
+                  type="number"
+                  label="Harga Barang"
+                  name="aa"
+                  value={populateState.aa}
+                  onChange={handleChangePopulate}
+                />
+                <Button onClick={handlePopulate}>Populate</Button>
+              </Stack>
+            </CardContent>
+
             <CardContent>
             <DataGrid 
               columns={columns} 
@@ -389,7 +392,13 @@ const handleChangePopulate = (e) => {
             />
             </CardContent>
           </Card>
-          <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+          <Card sx={{ p:2, display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+            <Typography
+              variant='h5'
+              sx={{flex: 1}}
+            >
+              Total Qty {findTotalQty(items)} and Rp. {fCurrency(findTotalAmountOfQuotation(items))}
+            </Typography>
             <LoadingButton
               size="large"
               type="submit"

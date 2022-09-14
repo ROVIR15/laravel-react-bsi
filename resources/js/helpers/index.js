@@ -347,7 +347,7 @@ const main = {
       });
     },
     updateQuoteItem(id, _data, cb){
-      if(!_data) throw new Error('data is required');
+      if(!_data) throw new Error('Data is required');
       axios.put( uri + '/quote-item/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
@@ -1731,6 +1731,13 @@ const main = {
       if(!data) return;
       axios.post(uri + '/monitoring-fg', {payload: data}).then(function(res){
         cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getGraphData(cb){
+      axios.get(uri + '/graph-api').then(function(res){
+        cb(res);
       }).catch(function(err){
         cb(err.response);
       });

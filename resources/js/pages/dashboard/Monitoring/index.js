@@ -14,7 +14,7 @@ import { Icon } from '@iconify/react';
 
 // components
 import Layout from '../../../layouts/Layout';
-import Chart from '../../../components/_dashboard/app/AppWebsiteVisits';
+import Chart from './charts/LineChart';
 import { useSnackbar } from 'notistack'
 
 function getPathname(array){

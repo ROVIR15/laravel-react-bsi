@@ -108,6 +108,7 @@ import ShowMachine from '../pages/dashboard/Machine/show';
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
+import DocumentQuotation from '../pages/dashboard/Quotation/pages/Document';
 import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 
@@ -187,6 +188,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowQuote/>},
             { path: 'add', element: <AddQuotation />},
             { path: 'display', element: <DisplayQuote />},
+            { path: 'document/:id', element: <DocumentQuotation/>}
           ]
         },
         { 

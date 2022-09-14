@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink } from 'react-router-dom';
+import paperFill from '@iconify/icons-eva/paper-plane-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
@@ -16,7 +17,7 @@ function getEditPathname(array, param) {
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 
-export default function MoreMenu({ handleDelete, id }) {
+export default function MoreMenu({ handleDelete, document, id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -38,12 +39,14 @@ export default function MoreMenu({ handleDelete, id }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
+        {document ? (
+        <MenuItem component={RouterLink} to={getEditPathname(pathname.split('/'), `document/${id}`)} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
+            <Icon icon={paperFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="View Document" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
+        ) : null }
 
         <MenuItem component={RouterLink} to={getEditPathname(pathname.split('/'), id)} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
@@ -51,6 +54,14 @@ export default function MoreMenu({ handleDelete, id }) {
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
+
+        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
+          <ListItemIcon>
+            <Icon icon={trash2Outline} width={24} height={24} color="red"/>
+          </ListItemIcon>
+          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2', color: 'red' }} />
+        </MenuItem>
+
       </Menu>
     </>
   );

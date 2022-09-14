@@ -12,15 +12,15 @@ import API from '../../../helpers'
 import { fCurrency } from '../../../utils/formatNumber';
 
 function capacityProd(labor_alloc, oee_target){
-  return Math.floor(parseInt(labor_alloc) * parseFloat(oee_target));
+  return Math.floor(parseInt(labor_alloc) * parseFloat(oee_target) * 8);
 }
 
 function costEachDay(work_hours, cost_per_hour, overhead_cost){
   return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
 }
 
-function daysOfWorks(qty, targetEachDay){
-  return Math.floor(qty/targetEachDay)
+function daysOfWorks(qty, targetEachDay, layout_produksi){
+  return Math.floor(parseFloor(qty/targetEachDay)+Math.floor(layout_produksi))
 }
 
 function WorkCenter() {
@@ -30,6 +30,7 @@ function WorkCenter() {
     work_hours: Yup.string().required('is required'),
     company_name: Yup.string().required('is required'),
     overhead_cost: Yup.string().required('References is required'),
+    layout_produksi: Yup.string().required('is required'),
     prod_capacity: Yup.string().required('is required'),
     oee_target: Yup.string().required('is required'),
     cost_per_hour: Yup.string().required('is required'),
@@ -44,6 +45,7 @@ function WorkCenter() {
       company_name: '',
       overhead_cost: 0,
       prod_capacity: 0,
+      layout_produksi: 0,
       oee_target: '0.0',
       cost_per_hour: 0,
       labor_alloc: 0,
@@ -62,20 +64,21 @@ function WorkCenter() {
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, getFieldProps } = formik;
 
   const [qty, setQty] = React.useState(0);
+  const [layProd, setLayProd] = React.useState(0);
 
   React.useEffect(() => {
-    let { labor_alloc, cost_per_hour, prod_capacity, oee_target, work_hours} = values;
+    let { labor_alloc, cost_per_hour, layout_produksi, prod_capacity, oee_target, work_hours} = values;
     if(labor_alloc !== 0 && oee_target !== 0) {
       let _prod = capacityProd(labor_alloc, oee_target);
       setFieldValue('prod_capacity', _prod)  
     }
     if(qty !== 0 && prod_capacity !== 0) {
-      let _work = daysOfWorks(qty, capacityProd(labor_alloc, oee_target));
+      let _work = daysOfWorks(qty, capacityProd(labor_alloc, oee_target), layout_produksi);
       setFieldValue('work_hours', _work)  
     } else {
       return undefined;
     }
-  }, [values.labor_alloc, values.cost_per_hour, values.oee_target, qty])
+  }, [values.labor_alloc, values.cost_per_hour, values.oee_target, qty, values.layout_produksi])
 
   return (
     <Page>
@@ -167,7 +170,7 @@ function WorkCenter() {
                     />
                   </Grid>
                   <Grid item 
-                    sm={12} xs={12}
+                    sm={6} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -179,6 +182,20 @@ function WorkCenter() {
                       helperText={touched.prod_capacity && errors.prod_capacity}
                     />
                   </Grid>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="layout_produksi"
+                      type="text"
+                      label="Layout Produksi"
+                      {...getFieldProps('layout_produksi')}
+                      error={Boolean(touched.layout_produksi && errors.layout_produksi)}
+                      helperText={touched.layout_produksi && errors.layout_produksi}
+                    />
+                  </Grid>
+
                 </Grid>
               </CardContent>
             </Card>

@@ -53,7 +53,7 @@ export default function BasicTable({ payload }) {
     return fCurrency(Math.floor(sub)*1.1);
   }
   return (
-    <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
+    <TableContainer component={Paper} sx={{marginLeft: 'auto', margin: '2em 0'}}>
       <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
         <TableHead>
           <TableRow>

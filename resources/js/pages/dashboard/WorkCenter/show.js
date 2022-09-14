@@ -16,8 +16,13 @@ import { fCurrency } from '../../../utils/formatNumber';
 //Component
 import DataGrid from '../../../components/DataGrid';
 
+
 function costEachDay(work_hours, cost_per_hour, overhead_cost){
   return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
+}
+
+function daysOfWorks(work_hours, layout_produksi){
+  return Math.floor(work_hours+layout_produksi)
 }
 
 function ShowWorkCenter() {
@@ -29,6 +34,7 @@ function ShowWorkCenter() {
     name: Yup.string().required('is required'),
     company_name: Yup.string().required('is required'),
     work_hours: Yup.number().required('is required'),
+    layout_produksi: Yup.number().required('is required'),
     overhead_cost: Yup.number().required('is required'),
     prod_capacity: Yup.number().required('is required'),
     oee_target: Yup.number().required('is required'),
@@ -45,6 +51,7 @@ function ShowWorkCenter() {
       company_name: '',
       overhead_cost: 0,
       prod_capacity: 0,
+      layout_produksi: 0,
       oee_target: 0,
       cost_per_hour: 0,
       labor_alloc: 0,
@@ -152,7 +159,7 @@ function ShowWorkCenter() {
                     />
                   </Grid>
                   <Grid item 
-                    sm={12} xs={12}
+                    sm={6} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -162,6 +169,19 @@ function ShowWorkCenter() {
                       {...getFieldProps('prod_capacity')}
                       error={Boolean(touched.prod_capacity && errors.prod_capacity)}
                       helperText={touched.prod_capacity && errors.prod_capacity}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="layout_produksi"
+                      type="text"
+                      label="Layout Produksi"
+                      {...getFieldProps('layout_produksi')}
+                      error={Boolean(touched.layout_produksi && errors.layout_produksi)}
+                      helperText={touched.layout_produksi && errors.layout_produksi}
                     />
                   </Grid>
                 </Grid>

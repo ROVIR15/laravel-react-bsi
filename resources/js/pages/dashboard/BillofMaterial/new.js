@@ -413,7 +413,7 @@ function BillOfMaterial() {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Work" value="1" />
-                          <Tab label="Component" value="2" />
+                          <Tab label="Material" value="2" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">

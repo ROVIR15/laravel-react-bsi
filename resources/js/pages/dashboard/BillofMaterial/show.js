@@ -163,7 +163,6 @@ function BillOfMaterial() {
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
-    { field: 'value', headerName: 'Value', editable: false},
     { field: 'consumption', headerName: 'Konsumsi', editable: true },
     { field: 'allowance', headerName: 'Allowance', editable: true },
     { field: 'unit_price', headerName: 'Harga', editable: true },
@@ -185,8 +184,8 @@ function BillOfMaterial() {
     { field: 'seq', headerName: 'seq', editable: true, width: 30},
     { field: 'work_center_id', headerName: 'Work Center ID', editable: false, width: 30 },
     { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
-    { field: 'work_hours', headerName: 'Working Hours', editable: false, width: 100, align: 'left' },
-    { field: 'cost_per_hour', headerName: 'Cost per Hours', editable: false, width: 100, align: 'left' },
+    { field: 'work_hours', headerName: 'Working Days', editable: false, width: 100, align: 'left' },
+    { field: 'cost_per_hour', headerName: 'Cost per Days', editable: false, width: 100, align: 'left' },
     { field: 'labor_alloc', headerName: 'Labor Allocation', editable: false, width: 100, align: 'left' },
     { field: 'overhead_cost', headerName: 'CM Cost', editable: false, width: 100, align: 'left' },
     { field: 'actions', type: 'actions', width: 100, 
@@ -512,7 +511,7 @@ function BillOfMaterial() {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Work" value="1" />
-                          <Tab label="Component" value="2" />
+                          <Tab label="Material" value="2" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">

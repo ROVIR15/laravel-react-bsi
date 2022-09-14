@@ -3,7 +3,7 @@ import Page from '../../../../components/Page';
 
 import { styled } from '@mui/material/styles';
 
-import {Box, Divider, Grid, Paper, Stack, Typography} from '@mui/material';
+import {Box, Button, Divider, Grid, IconButton, Paper, Stack, Typography} from '@mui/material';
 import { MHidden } from '../../../../components/@material-extend';
 
 import {useParams} from 'react-router-dom';
@@ -14,6 +14,11 @@ import Table from '../components/TableINV';
 //API
 import API from '../../../../helpers'
 import { productItemArrangedData } from '../../../../helpers/data';
+
+//Icons
+import editFill from '@iconify/icons-eva/edit-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
+import { Icon } from '@iconify/react';
 
 const RootStyle = styled(Page)(({ theme }) => ({
 
@@ -115,7 +120,6 @@ function FirstPage(){
       }
     })
 
-    
   }, [id]);
 
   return (
@@ -161,21 +165,21 @@ function FirstPage(){
               </Grid>
               <Grid item={6} sx={{width: '50%', marginBottom: '1em'}}>
                 <Box sx={{textAlign: 'right'}}>
-                  <IDontKnow>Request of Quotation</IDontKnow>
-                  <Typography variant="h3">RFQ-PO-{data.id}-A</Typography>
+                  <IDontKnow>Quotation</IDontKnow>
+                  <Typography variant="h3">Quotation-{data.id}</Typography>
                 </Box>
               </Grid>
             </Grid>
             <Grid container direction="row" spacing={1}>
-              <Grid item xs={7}>
-                <Stack>
-                  <Box>
+              <Grid item xs={6}>
+                <Box>
+                  <div>
                     <Typography
                       variant="overline" 
                       display="block" 
                       gutterBottom
                     >
-                      RFQ Number
+                      Quote Number
                     </Typography>
                     <Typography
                       variant="h6" 
@@ -184,9 +188,9 @@ function FirstPage(){
                     >
                       {data.po_number}
                     </Typography>
-                  </Box>
-
-                  <BOXColumn>
+                  </div>
+                </Box>
+                <BOXColumn>
                     <Typography
                       variant="overline" 
                       display="block" 
@@ -201,11 +205,9 @@ function FirstPage(){
                     >
                       {data.issue_date}
                     </Typography>
-                  </BOXColumn>
-                </Stack>
-
+                </BOXColumn>
               </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={6}>
                 <Box>
                   <div>
                     <Typography
@@ -217,24 +219,26 @@ function FirstPage(){
                     </Typography>
                     <Typography
                       variant="h6" 
+                      gutterBottom 
                       component="div"
                     >
                       {data.party.name}
                     </Typography>
                     <Typography variant="body1">{data.party.address?.street}</Typography>
                     <Typography variant="body1">{`${data.party.address?.city}, ${data.party.address?.province}, ${data.party.address?.country}`}</Typography>
+
                   </div>
                 </Box>
               </Grid>
 
               </Grid>
-              <GridItemX >
+              <GridItemX>
                 <Table payload={data.quote_items}/>
               </GridItemX>
 
               <Divider fullWidth />
               <Grid container>
-                <Box sx={{marginBottom: 15}}>
+                <Box sx={{marginBottom: 3, position: 'absolute', bottom: 0}}>
                   <Typography variant="h6">
                     This Document Generated Automatically
                   </Typography>

@@ -734,3 +734,8 @@ export function machineData(obj){
   let {product: {goods}, category} = obj;
   return {...goods, category: category.id, sub_category: category.sub.name}
 }
+
+//
+export function daysOfWorks(qty, targetEachDay, layout_produksi){
+  return Math.floor((qty/targetEachDay)+layout_produksi)
+}

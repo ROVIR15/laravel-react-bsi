@@ -24,6 +24,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../helpers';
+import { fCurrency } from '../../../utils/formatNumber';
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -38,6 +39,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import {partyArrangedData, productItemArrangedData} from '../../../helpers/data'
 import { QuotationSchema } from '../../../helpers/FormerSchema';
 import { isArray, isEmpty } from 'lodash';
+import { findTotalAmountOfQuotation, findTotalQty } from '../../../helpers/data/calculation';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -52,12 +54,6 @@ const SpaceBetweenBox = styled('div')(({theme}) => ({
   justifyContent: "space-between", 
   marginBottom: "8px"
 }))
-
-function findTotalQty(array){
-  if(!isArray(array)) return 0;
-  if(isEmpty(array)) return 0;
-  return array.reduce((initial, next) => initial + next.qty, 0);
-}
 
 function Quotation() {
   const {id} = useParams();
@@ -295,7 +291,7 @@ function Quotation() {
 
   // Populate
 
-  const [populateState, setPopulateState] = useState({qty: 0, unit_price: 0})
+  const [populateState, setPopulateState] = useState({})
   const handlePopulate = () => {
     let payload = {items : populateState, quote_id: parseInt(id)}
     try {
@@ -311,8 +307,8 @@ function Quotation() {
 
   const handleChangePopulate = (e) => {
     const { name, value } = e.target;
-    if(name === 'qty') setPopulateState({...populateState, qty: value});
-    if(name === 'unit_price') setPopulateState({...populateState, unit_price: value});
+    if(name === 'qty' && value !== 0) setPopulateState({...populateState, qty: value});
+    if(name === 'unit_price' && value !== 0) setPopulateState({...populateState, unit_price: value});
     else return;
   }
 
@@ -346,9 +342,11 @@ function Quotation() {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSO.name}
-                    </Typography>
+
+                    <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSO.address?.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSO.address?.city}, ${selectedValueSO.address?.province}, ${selectedValueSO.address?.country}`}</Typography>
+
                   </div>
                   <DialogBox
                     options={options}
@@ -371,9 +369,9 @@ function Quotation() {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSH.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSH.address?.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSH.address?.city}, ${selectedValueSH.address?.province}, ${selectedValueSH.address?.country}`}</Typography>
                   </div>
                   <DialogBox
                     options={options2}
@@ -443,7 +441,7 @@ function Quotation() {
               </div>
             </CardContent>
 
-            <div>
+            <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
               <Stack direction="row">
                 <TextField
                   type="number"
@@ -461,7 +459,7 @@ function Quotation() {
                 />
                 <Button onClick={handlePopulate}>Populate</Button>
               </Stack>
-            </div>
+            </CardContent>
             
             <CardContent>
             <DataGrid 
@@ -478,7 +476,7 @@ function Quotation() {
               variant='h5'
               sx={{flex: 1}}
             >
-              Total Qty {findTotalQty(items)}
+              Total Qty {findTotalQty(items)} and Rp. {fCurrency(findTotalAmountOfQuotation(items))}
             </Typography>
             <LoadingButton
               size="large"

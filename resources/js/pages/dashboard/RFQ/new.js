@@ -272,9 +272,9 @@ function RFQ() {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSO.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
                   </div>
                   <DialogBox
                     options={options}
@@ -297,9 +297,9 @@ function RFQ() {
                     </Button>
                   </SpaceBetweenBox>
                   <div>
-                    <Typography variant="body1">
-                      {selectedValueSH.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
                   </div>
                   <DialogBox
                     options={options2}

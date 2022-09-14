@@ -210,7 +210,7 @@ function DisplayRFQ({ placeHolder }) {
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );
