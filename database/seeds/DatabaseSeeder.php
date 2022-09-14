@@ -16,11 +16,15 @@ class DatabaseSeeder extends Seeder
         $this->call(FacilityTypeTableSeeder::class);
         $this->call(StatusTableSeeder::class);
         $this->call(PagesAccessTableSeeder::class);
+        $this->call(PersonTableSeeder::class);
+        $this->call(OrganizationTableSeeder::class);
+        $this->call(PartyTableSeeder::class);
+        $this->call(PartyRolesTableSeeder::class);
         $this->call(RoleTypeTableSeeder::class);
+        $this->call(RelationshipTableSeeder::class);
         $this->call(ProductSubCategoryTableSeeder::class);
         $this->call(ProductCategoryTableSeeder::class);
         $this->call(FacilityTableSeeder::class);
-        $this->call(RelationshipTableSeeder::class);
         $this->call(ShipmentTypeStatusTableSeeder::class);
         $this->call(AgreementTypeTableSeeder::class);
         $this->call(GoodsTableSeeder::class);
@@ -31,9 +35,5 @@ class DatabaseSeeder extends Seeder
         $this->call(SalesOrderTableSeeder::class);
         $this->call(PurchaseOrderTableSeeder::class);
         $this->call(MonitoringBsiSewingTableSeeder::class);
-        $this->call(PersonTableSeeder::class);
-        $this->call(OrganizationTableSeeder::class);
-        $this->call(PartyTableSeeder::class);
-        $this->call(PartyRolesTableSeeder::class);
     }
 }
