@@ -84,7 +84,7 @@ function DisplayBuyer({ placeHolder }) {
       try {
         API.getMachine((res) => {
 		      if(!res) return
-		      if(!res.success) {
+		      if(!res.success || res.data?.length === 0) {
             setGoodsData([]);
           } else {
             let data = machineList(res.data);
