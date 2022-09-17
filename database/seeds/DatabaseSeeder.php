@@ -35,8 +35,9 @@ class DatabaseSeeder extends Seeder
         //$this->call(SalesOrderTableSeeder::class);
         //$this->call(PurchaseOrderTableSeeder::class);
         //$this->call(MonitoringBsiSewingTableSeeder::class);
-        $this->call(QuoteTableSeeder::class);
-        $this->call(QuoteItemTableSeeder::class);
-        $this->call(ProductHasCategoryTableSeeder::class);
+        //$this->call(QuoteTableSeeder::class);
+        //$this->call(QuoteItemTableSeeder::class);
+        //ßß$this->call(ProductHasCategoryTableSeeder::class);
+        $this->call(AddressTableSeeder::class);
     }
 }
