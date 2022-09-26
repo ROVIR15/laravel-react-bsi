@@ -13,7 +13,7 @@ import { BuyerSchema } from '../../../helpers/FormerSchema';
 //api
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
-import { laborArrangedData } from '../../../helpers/data';
+import { _partyArrangedData } from '../../../helpers/data';
 
 function getEditPathname(array) {
   if(!array.length > 5) return null;
@@ -67,7 +67,7 @@ function Vendor() {
     if(!id) return;
     API.getVendor(id, function(res){
       if(!res.data === 200) alert("Something went wrong!");
-      const {role_type, ...arrangedData} = laborArrangedData(res.data);
+      const {role_type, ...arrangedData} = _partyArrangedData(res.data);
       setValues(arrangedData);
       setChoosen(role_type)
     });

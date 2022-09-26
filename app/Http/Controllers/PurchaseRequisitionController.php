@@ -24,9 +24,10 @@ class PurchaseRequisitionController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = PurReq::with('request_item')->where('req_type', 'Purchase')->get();
+      $query = PurReq::with('request_item')->where('req_type', 'PurchaseReq')->get();
 
-      return new RequestCollection($query);
+        return response()->json(['data' => $query]);
+        // return new RequestCollection($query);
     }
 
     /**
@@ -58,10 +59,10 @@ class PurchaseRequisitionController extends Controller
 
         $PRItemsCreation = [];
 
-        foreach($param['pr_items'] as $key){
+        foreach($param['inquiry_item'] as $key){
           array_push($PRItemsCreation, [
             'request_id' => $purReqCreation['id'],
-            'product_feature_id' => $key['id'],
+            'product_feature_id' => $key['product_featru'],
             'qty' => $key['qty'],
           ]);
         }
@@ -91,7 +92,8 @@ class PurchaseRequisitionController extends Controller
         //
       try {
         $query = PurReq::with('request_item')->find($id);
-        return new RequestOneCollection($query);
+        return response()->json($query);
+          // return new RequestOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

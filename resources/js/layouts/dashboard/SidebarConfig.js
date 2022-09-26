@@ -103,6 +103,10 @@ const sidebarConfig = [
         path: '/dashboard/material/goods'
       },
       {
+        title: 'Service',
+        path: '/dashboard/material/service'
+      },
+      {
         title: 'Machine',
         path: '/dashboard/material/machine'
       }

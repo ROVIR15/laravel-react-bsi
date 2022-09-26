@@ -80,11 +80,12 @@ function DisplayQuote({ placeHolder }) {
 
   if(flag<3) {
     API.getMonitoringSupermarket('', (res) => {
-		  if(!isEmpty(res.data)) {
+		  if(isEmpty(res.data)) {
         setQuoteData([]);
         setFlag(false);
       }
       else {
+        console.log(res.data)
         setQuoteData(res.data);
         setFlag(true);
       }

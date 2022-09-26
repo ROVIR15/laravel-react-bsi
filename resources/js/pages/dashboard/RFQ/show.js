@@ -215,16 +215,18 @@ function RFQ() {
     API.getAQuote(id, function(res){
       if(!res) alert("Something went wrong!");
       var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function(_d){
+      temp = res.data.quote_items.map(function(key, index){
+        const {id, product_id, name, size, color} = productItemArrangedData(key.product)
         return {
-          id: _d.id,
-          product_id: _d.product.product_id,
-          product_feature_id: _d.product_feature_id,
-          name: _d.product.name,
-          size: _d.product.size,
-          color: _d.product.color,
-          qty: _d.qty,
-          unit_price: _d.unit_price
+          'id': key.id,
+          'inquiry_item_id' : key.request_item_id,
+          'product_id' : product_id,
+          'product_feature_id' : key.product_feature_id,
+          'name' : name,
+          'size' : size,
+          'color' : color,
+          'qty' : key.qty,
+          'unit_price' : key.unit_price
         }
       })
       setItems(temp);

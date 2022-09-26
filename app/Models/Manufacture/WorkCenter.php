@@ -17,6 +17,7 @@ class WorkCenter extends Model
         'id',
         'name',
         'work_hours',
+        'layout_produksi',
         'company_name',
         'overhead_cost',
         'prod_capacity',

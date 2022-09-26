@@ -16,12 +16,15 @@ class Product extends Model
     protected $fillable = [
         'service_id',
         'goods_id',
-        'name',
         'part_id',
     ];
 
     public function goods(){
         return $this->belongsTo('App\Models\Product\Goods');
+    }
+
+    public function service(){
+        return $this->belongsTo('App\Models\Product\Service');
     }
 
     public function productCategory(){

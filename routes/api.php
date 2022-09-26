@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('product', 'ProductController')->only(['index']);
     Route::resource('service', 'ServiceController')->only(['index']);
     Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+    Route::resource('service', 'ServiceController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('part', 'PartController')->only(['index']);
     Route::resource('partBOM', 'PartBOMController')->only(['index']);
     Route::resource('product', 'ProductController')->only(['index']);
@@ -57,6 +58,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Manufacture
     Route::resource('manufacture', 'ManufactureController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -117,7 +119,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     //Purchasing
     Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
     Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
 
     //Study
@@ -176,3 +177,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::resource('graph-api', 'GraphSewingController')->only(['index']);
 
+Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');

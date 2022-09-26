@@ -106,6 +106,51 @@ const main = {
       });
     },
 
+    // Goods
+    insertService(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/service', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getService(cb){
+      axios.get( uri + '/service').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAService(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/service' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateService(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/service'+ `/${id}`, { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteService(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/service/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+
     // Machine
     insertMachine(_data, cb){
       if(!_data) {
@@ -524,6 +569,38 @@ const main = {
         cb(err.response);
       });
     },
+    // BOM Service
+    insertBOMService(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom-service', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getABOMServicebyBOMId(bomId, cb){
+      axios.get( uri + '/bom-service/' + bomId ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateABOMService(bomId, _data, cb){
+      axios.put( uri + '/bom-service/' + bomId, {payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteABOMService(id, cb){
+      axios.delete( uri + '/bom-service/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },    
     // Manufacture
     insertManufactureOrder(_data, cb){
       if(!_data) {

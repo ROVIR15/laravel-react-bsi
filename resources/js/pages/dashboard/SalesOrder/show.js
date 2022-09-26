@@ -277,12 +277,12 @@ function SalesOrder() {
     <Page>
       <Container>
       <Modal 
-        payload={items}
+        items={items}
         order_id={values.order_id}
         open={openM}
         options={optionsP}
         handleClose={handleCloseModal}
-        updateOrderItem={handleUpdateAllRows}
+        update={handleUpdateAllRows}
       />        
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

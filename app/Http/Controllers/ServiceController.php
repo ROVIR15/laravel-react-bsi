@@ -1,27 +1,38 @@
 <?php
+  
+  namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
+  
+  use Exception;
 
-use Illuminate\Http\Request;
-use App\Models\Product\Service;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\Service as ServiceOneCollection;
-use App\Http\Resources\Product\ServiceCollection;
+  use Illuminate\Support\Facades\DB;
+  use Illuminate\Http\Request;
+  use App\Models\Product\Service;
+  use App\Models\Product\Product;
+  use App\Models\Inventory\Inventory;
+  use App\Models\Product\ProductFeature;
+  use App\Models\Product\ProductHasCategory;
 
-class ServiceController extends Controller
-{
+  use App\Http\Controllers\Controller;
+  use App\Http\Resources\Product\ServiceCollection;
+  use App\Http\Resources\Product\Service as ServiceOneCollection;
+    
+  class ServiceController extends Controller
+  {
     /**
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-      $param = $request->all();
-      $query = Service::all();
+      $query = ProductHasCategory::where('product_category_id', 9)->with('service', 'category')->get();
 
-      return new ServiceCollection($query);
+      return response()->json([
+        "success" => true,
+        "data" => $query
+      ]);
     }
 
     /**
@@ -40,19 +51,29 @@ class ServiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Product $product)
+    public function store(Request $request)
     {
-      $param = $request->all()['payload'];
+      $serviceParam = $request->all()['payload']['service'];
+      $catParam = $request->all()['payload']['category'];
       
       try {
         $service = Service::create([
+          'name' => $serviceParam['name']
         ]);
 
-        $products = $product->insert([
-          'goods_id' => $service->id,
-          'name' => $param['name'],
-          'part_id' => $param['part_id'],
-        ]);
+        if($service->id) {
+          $product = Product::create([
+            'service_id' => $service->id,
+          ]);  
+
+          $productHasCategory = ProductHasCategory::create([
+            'product_id' => $product['id'],
+            'product_category_id' => $catParam
+          ]);
+        } else {
+          Service::find($service->id)->delete();
+        }
+
       } catch (Exception $th) {
         return response()->json([
           'success'=> false,
@@ -61,6 +82,7 @@ class ServiceController extends Controller
       }
       return response()->json([
         'success'=> true,
+        'ss' => $service['id']
       ], 200);
     }
 
@@ -73,11 +95,15 @@ class ServiceController extends Controller
     public function show($id)
     {
       try {
-        $serviceData = Service::find($id);
-        return new ServiceOneCollection($serviceData); 
+        $tes = Product::where('service_id', $id)->get();
+        $_service = Service::find($tes[0]['service_id']);
+
+        return new ServiceOneCollection($_service);
+        // return response()->json($feature);
       } catch (Exception $th) {
+        //throw $th;
         return response()->json([
-          'success'=> false,
+          'success' => false,
           'errors' => $th->getMessage()
         ], 500);
       }
@@ -103,16 +129,29 @@ class ServiceController extends Controller
      */
     public function update($id, Request $request)
     {
-      $param = $request->all()['payload'];
+      $serviceParam = $request->all()['payload']['service'];
+      $catParam = $request->all()['payload']['category'];
       try {
-        Service::find($id)->update($param);
+        $existingProduct = Product::find($id);
+
+        Service::find($id)->update([
+          'name' => $serviceParam['name']
+        ]);
+
+        ProductHasCategory::where('product_id', $existingProduct['id'])
+        ->update([
+          'product_category_id' => $catParam
+        ]);
       } catch (Exception $th) {
         //throw $th;
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
+          'errors' => $th->getMessage()
         ], 500);
       }
+      return response()->json([
+        'success' => true,
+      ], 200);
     }
 
     /**
@@ -124,9 +163,12 @@ class ServiceController extends Controller
     public function destroy($id)
     {
       try {
-        Service::find($id)->delete();
+        $existingData = Service::find($id);
+
+        //Delete Goods
+        $existingData->delete();
       } catch (Exception $th) {
-          //throw $th;
+        //throw $th;
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
@@ -136,4 +178,4 @@ class ServiceController extends Controller
         'success' => true
       ], 200);
     }
-}
+  }

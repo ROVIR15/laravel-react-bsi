@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Page from '../../../../components/Page';
 
 import { styled } from '@mui/material/styles';
 
-import {Box, Divider, Grid, Paper, Stack, Typography} from '@mui/material';
+import {Box, Button, Divider, Grid, IconButton, Paper, Stack, Typography} from '@mui/material';
 import { MHidden } from '../../../../components/@material-extend';
 
 import {useParams} from 'react-router-dom';
@@ -14,6 +14,15 @@ import Table from '../components/TableINV';
 //API
 import API from '../../../../helpers'
 import { productItemArrangedData } from '../../../../helpers/data';
+
+//Icons
+import editFill from '@iconify/icons-eva/edit-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
+import { Icon } from '@iconify/react';
+
+//pdf
+import { jsPDF } from 'jspdf'
+import { toBlob, toPng } from 'html-to-image';
 
 const RootStyle = styled(Page)(({ theme }) => ({
 
@@ -45,7 +54,7 @@ const BOXColumn = styled(Box)(({theme}) => ({
 
 const PaperStyled = styled(Paper)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
-    width: '100%',
+    width: '85%',
     backgroundColor: "rgb(255, 255, 255)", 
     color: "rgb(33, 43, 54)", 
     transition: "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms", 
@@ -69,12 +78,51 @@ const SpaceBetween = styled(Box)(({theme}) => ({
 
 const GridItemX = styled('div')(({ theme }) => ({
   height: "100%", 
-  overflow: "hidden"
+  overflow: "unset"
 }));
 
 function FirstPage(){
   const { id } = useParams();
+  const pdfRef = useRef(null);
 
+  const handleDownloadPdf = () => {
+    const content = pdfRef.current;
+
+    const doc = new jsPDF('l','mm',[210, 297]);
+
+    doc.html(content, {
+      callback: (doc) => {
+        doc.save('wow.pdf')
+      },
+    })
+  }
+
+  const handleDownloadPng = React.useCallback(() => {
+    const content = pdfRef.current;
+
+    // toBlob(content, {cacheBust: true})
+    // .then((blob) => {
+    //   const doc = new jsPDF();
+
+    //   doc.addImage(blob);
+    //   doc.save('hehe.pdf')
+    // })
+    // .catch((err) => {
+    //   alert(err)
+    // })
+
+    toPng(content, {cacheBust: true})
+    .then((dataUrl) => {
+      const doc = new jsPDF();
+
+      doc.addImage(dataUrl, 5, 5);
+      doc.save('hehe.pdf')
+    })
+    .catch((err) => {
+      alert(err)
+    })
+  }, [pdfRef]);
+  
   const [data, setData] = useState({
     id: '',
     po_number: '',
@@ -125,7 +173,9 @@ function FirstPage(){
             <IconButton>
               <Icon icon={editFill} width={20} height={20} />
             </IconButton>
-            <IconButton>
+            <IconButton
+              onClick={handleDownloadPng}
+            >
               <Icon icon={downloadFill} width={20} height={20} />
             </IconButton>
           </div>
@@ -142,8 +192,8 @@ function FirstPage(){
             </Button>
           </div>
         </SpaceBetween>
-        <RootStyle>
-          <PaperStyled sx={{ width: "210mm", height: "279mm"}}>
+        <RootStyle >
+          <PaperStyled ref={pdfRef} sx={{ width: "210mm", height: "279mm"}}>
             {/* Header Info */}
             <Stack direction="column" spacing={2}>
             <Grid container sx={{
@@ -228,6 +278,7 @@ function FirstPage(){
               </Grid>
 
               </Grid>
+
               <GridItemX >
                 <Table payload={data.quote_items}/>
               </GridItemX>

@@ -51,9 +51,9 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const {line, sales_order_id, date} = values
-      let data = items.map(({id, brand, name, size, color, ...x}) => ({ ...x, numbering_id: id, line, sales_order_id, date}));
+      let data = items.map(({id, brand, name, size, color, ...x}) => ({ ...x, line, sales_order_id, date}));
       API.insertMonitoringSupermarket(data, function(res){
-        alert(JSON.stringify(res.data));
+        alert(JSON.stringify(res));
       })
       setSubmitting(false);
     }
@@ -208,7 +208,8 @@ const [id, setId] = React.useState(0);
       <Modal 
         open={openM}
         onAddItems={handleAddItems}
-        order_id={id}
+        order_id={selectedValueSO.order_id}
+        so_id={selectedValueSO.sales_order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

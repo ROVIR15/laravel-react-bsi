@@ -18,7 +18,7 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 import API from '../../../../helpers';
 
 import Table from './Table';
-import { optionNumbering, orderItemArrangedData } from '../../../../helpers/data';
+import { optionNumbering, _miniFuncSupermarket } from '../../../../helpers/data';
 
 const style = {
   position: 'absolute',
@@ -28,7 +28,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ order_id, payload, open, options, handleClose, selected, setSelected}) {
+export default function BasicModal({ order_id, so_id, payload, open, options, handleClose, selected, setSelected}) {
   const [value, setValue] = React.useState([])
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
@@ -39,16 +39,25 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
       return !array.length;
     }
 
-    if(isEmpty(value) && order_id) {
-      API.getMonitoringNumbering(`?sales-order=${order_id}`, (res) => {
-		  if(!res) return
-		  if(!res.data) {
-          setValue(BUYERLIST);
+    if(isEmpty(value) || order_id) {
+      API.getASalesOrderItem(order_id, (res) => {
+        if(!res) return
+        if(!res.data.length) {
+            setValue([]);
         } else {
-          const ras = optionNumbering(res.data);
-          setValue(ras);
+          let ras = _miniFuncSupermarket(res.data, so_id);
+          setValue(ras)
         }
       });
+    //   API.getMonitoringNumbering(`?sales-order=${order_id}`, (res) => {
+		//   if(!res) return
+		//   if(!res.data) {
+    //       setValue(BUYERLIST);
+    //     } else {
+    //       const ras = optionNumbering(res.data);
+    //       setValue(ras);
+    //     }
+    //   });
     }
   }, [order_id])
 

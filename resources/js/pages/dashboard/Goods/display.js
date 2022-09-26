@@ -59,7 +59,10 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => {
+      if(!_b.name) console.log(_b)
+      return _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -86,9 +89,7 @@ function DisplayBuyer({ placeHolder }) {
 		if(!res.success) {
           setGoodsData([]);
         } else {
-          console.log(res.data)
           let data = machineList(res.data);
-          console.log(data);
           setGoodsData(data);
         }
       });

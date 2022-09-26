@@ -22,12 +22,12 @@ import API from '../../../../helpers';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'po_number', label: 'PO Number', alignRight: false },
+    // { id: 'po_number', label: 'PO Number', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'numbering', label: 'Numbering', alignRight: false },
-    { id: 'qty', label: 'Qty', alignRight: false },
+    // { id: 'numbering', label: 'Numbering', alignRight: false },
+    // { id: 'qty', label: 'Qty', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -167,11 +167,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     id,
                     order_id,
                     po_number,
-                    qty,
+                    // qty,
                     size,
                     color,
                     name,
-                    numbering
+                    // numbering
                   } = row;
                   return (
                     <TableRow
@@ -189,12 +189,12 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
+                      {/* <TableCell align="left">{po_number}</TableCell> */}
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{numbering}</TableCell>
-                      <TableCell align="left">{qty}</TableCell>
+                      {/* <TableCell align="left">{numbering}</TableCell> */}
+                      {/* <TableCell align="left">{qty}</TableCell> */}
                     </TableRow>
                   );
                 })}

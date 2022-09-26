@@ -30,10 +30,13 @@ import AutoCompleteP from './components/AutoCompleteP';
 import DataGrid from '../../../components/DataGrid';
 import Modal from './components/ModalShowP';
 import Modal2 from './components/ModalShowO';
+import Modal3 from './components/ModalShowS';
 
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+
+import { optionProductFeature, serviceList, BomServiceList } from '../../../helpers/data';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -52,16 +55,19 @@ function BillOfMaterial() {
   // Options for Product Feature
   const [options, setOptions] = useState([]);
 
+  // Options for Service
+  const [options4, setOptions4] = useState([]);
+
   // Options for Product
   const [options3, setOptions3] = useState([]);
   
   // Options for Work Center
   const [options2, setOptions2] = useState([]);
 
-
   //Data Grid variable items
   const [operation, setOperation] = useState([]);
   const [component, setComponent] = useState([]);
+  const [service, setService] = useState([]);
 
   //Modal Component of BOM 
   const [openM, setOpenM] = React.useState(false);
@@ -72,6 +78,11 @@ function BillOfMaterial() {
   const [openMO, setOpenMO] = React.useState(false);
   const handleOpenModalO = () => setOpenMO(true);
   const handleCloseModalO = () => setOpenMO(false);
+
+  //Modal Service of BOM
+  const [openS, setOpenS] = React.useState(false);
+  const handleOpenModalS = () => setOpenS(true);
+  const handleCloseModalS = () => setOpenS(false);
 
   //Data Grid Component of BOM
   const [editRowsModel, setEditRowsModel] = React.useState({});
@@ -148,6 +159,15 @@ function BillOfMaterial() {
         } else {
           setOptions3(res.data);
         }
+      });
+
+      await API.getService((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions4([]);
+        } else {
+          setOptions4(serviceList(res.data));
+        }
       })
 
     })();
@@ -166,7 +186,8 @@ function BillOfMaterial() {
     { field: 'consumption', headerName: 'Konsumsi', editable: true },
     { field: 'allowance', headerName: 'Allowance', editable: true },
     { field: 'unit_price', headerName: 'Harga', editable: true },
-    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: (params) => (parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) },
+    { field: 'qty', headerName: 'Total Konsumsi', editable: true},
+    { field: 'jumlah', headerName: 'Total Biaya', editable: true, valueGetter: (params) => ((parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) * parseFloat(params.row.unit_price))  },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -199,6 +220,22 @@ function BillOfMaterial() {
       ]
     }
   ], [deleteDataOperation]);
+
+  const serviceColumns = useMemo(() => [
+    { field: 'id', headerName: 'ID', editable: false, hideable: false, width: 30},
+    { field: 'name', headerName: 'Service Name', editable: false, width: 250 },
+    { field: 'unit_price', headerName: 'Harga', editable: true },
+    { field: 'actions', type: 'actions', width: 100, 
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Icon icon={trash2Outline} width={24} height={24} />}
+          label="Delete"
+          onClick={deleteDataService(params.id)}
+          showInMenu
+        />
+      ]
+    }
+  ], [deleteDataService]);
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -236,6 +273,16 @@ function BillOfMaterial() {
       return {...goods, ...rest, size, color, product_feature_id: key.product_feature_id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
     })
     setComponent(c);
+
+    const load3 = await axios.get(process.env.MIX_API_URL  + '/bom-service' + `/${id}`)
+    .then(function({data: {data}}) {
+      return(data);
+    }).catch((error) => {
+      alert(error);
+    })
+
+    var s = BomServiceList(load3);
+    setService(s);
 
     const load4 = await axios.get(process.env.MIX_API_URL  + '/operation' + `/${id}`)
     .then(function({data: {data}}) {
@@ -295,8 +342,8 @@ function BillOfMaterial() {
     })
 
     var c = load2.map((key)=>{
-      const { product_feature } = key
-      return {...product_feature, product_feature_id: key.product_feature_id, id: key.id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
+      const { product_feature: { size, color, product : {goods}}, ...rest } = key
+      return {...goods, ...rest, size, color, product_feature_id: key.product_feature_id, bom_id: key.bom_id, qty: key.qty, company_name: key.company_name}
     })
     setComponent(c);
   };
@@ -317,20 +364,6 @@ function BillOfMaterial() {
 
       handleUpdateAllComponentRows();
   });
-
-  const deleteDataOperation = React.useCallback(
-    (id) => () => {
-
-      setOperation((prevOperation) => {
-        return prevOperation.filter((x) => (x.id !== id))
-      });
-
-      API.deleteOperation(id, (res)=> {
-        alert('success')
-      });
-
-      handleUpdateAllOperationRows();
-  })
 
 
   /**
@@ -387,6 +420,78 @@ function BillOfMaterial() {
   const handleResetOperationRows = () => {
     setComponent([]);
   }
+  
+  const deleteDataOperation = React.useCallback(
+    (id) => () => {
+
+      setOperation((prevOperation) => {
+        return prevOperation.filter((x) => (x.id !== id))
+      });
+
+      API.deleteOperation(id, (res)=> {
+        alert('success')
+      });
+
+      handleUpdateAllOperationRows();
+  })
+
+
+    /**
+   * Handling Data Grid for a Component BOM
+   */
+
+     const handleEditServiceRowsModelChange = React.useCallback(
+      (model) => {
+        const editedIds = Object.keys(model);
+        // user stops editing when the edit model is empty
+        if (editedIds.length === 0) {
+          const editedIds = Object.keys(editRowsModel);
+          const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+  
+          //update items state
+          const data = new Object();
+          data[editedColumnName] = editRowData[editedColumnName].value;
+  
+          API.updateABOMService(editedIds, data, function(res){
+            alert(JSON.stringify(res));
+          })
+        } else {
+          setEditRowData(model[editedIds[0]]);
+        }
+    
+        setEditRowsModel(model);
+      },
+      [editRowData]
+    );
+  
+    const handleUpdateAllServiceRows = async() => {
+      const load2 = await axios.get(process.env.MIX_API_URL  + '/bom-service' + `/${id}`)
+      .then(function({data: {data}}) {
+        return(data);
+      }).catch((error) => {
+        alert(error);
+      })
+
+      var c = BomServiceList(load2);
+      setService(c);
+    };
+  
+    const handleResetServiceRows = () => {
+      setService([]);
+    }
+  
+    const deleteDataService = React.useCallback(
+      (id) => () => {
+        setService((prevService) => {
+          return prevService.filter((x) => (x.id !== id))
+        });
+  
+        API.deleteABOMService(id, (res)=> {
+          alert('success')
+        });
+  
+        handleUpdateAllServiceRows();
+    });
 
   return (
     <Page>
@@ -406,6 +511,15 @@ function BillOfMaterial() {
           options={options2}
           handleClose={handleCloseModalO}
           updateIt={handleUpdateAllOperationRows}
+        />
+        <Modal3
+          payload={[]}
+          bom_id={id}
+          open={openS}
+          options={options4}
+          handleClose={handleCloseModalS}
+          updateIt={handleUpdateAllServiceRows}
+          setComponent={setService}
         />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -512,6 +626,7 @@ function BillOfMaterial() {
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Work" value="1" />
                           <Tab label="Material" value="2" />
+                          <Tab label="Service" value="3" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
@@ -534,6 +649,17 @@ function BillOfMaterial() {
                           handleUpdateAllRows={handleUpdateAllComponentRows}
                         />                        
                       </TabPanel>
+                      <TabPanel value="3">
+                        <DataGrid 
+                          columns={serviceColumns}
+                          rows={service}
+                          handleAddRow={handleOpenModalS}
+                          onEditRowsModelChange={handleEditServiceRowsModelChange}
+                          handleResetRows={handleResetServiceRows}
+                          handleUpdateAllRows={handleUpdateAllServiceRows}
+                        />                        
+                      </TabPanel>
+
                     </TabContext>
                   </Box>
                 </CardContent>

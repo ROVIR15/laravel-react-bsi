@@ -63,7 +63,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
+function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -95,8 +95,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     let newSelected = [];
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
-        try {      
-          API.insertSalesOrderItem([name], function(res){
+        try {
+          const {id} = name;
+          let payload = {product_feature_id: id, order_id, qty: 0, unit_price: 0, shipment_estimated: "2022-09-03"}
+          API.insertSalesOrderItem([payload], function(res){
             if(res.success) alert('success');
             else alert('failed')
           })
@@ -147,7 +149,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     setSelected([])
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list?.length) : 0;
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 

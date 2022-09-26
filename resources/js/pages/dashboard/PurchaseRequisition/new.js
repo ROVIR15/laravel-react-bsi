@@ -38,13 +38,11 @@ function PurchaseReq() {
   const [open, setOpen] = useState(false);
 
   const InquirySchema = Yup.object().shape({
-    id: Yup.string().required('Id is required'),
     po_number: Yup.string().required('city is required'),
   });
 
   const formik = useFormik({
     initialValues: {
-      id: '',
       po_number: '',
     },
     validationSchema: InquirySchema,
@@ -110,7 +108,6 @@ function PurchaseReq() {
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
-    { field: 'delivery_date', type: 'date', headerName: 'Delivery Date', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -170,11 +167,10 @@ function PurchaseReq() {
     <Page>
       <Container>
       <Modal 
-        payload={[]}
         open={openM}
-        options={options}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -186,27 +182,16 @@ function PurchaseReq() {
             />
             <CardContent>
               <Grid container spacing={3}>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    autoComplete="id"
-                    type="text"
-                    label="No Purchase Requisition"
-                    {...getFieldProps('id')}
-                    error={Boolean(touched.id && errors.id)}
-                    helperText={touched.id && errors.id}
-                  />
-                </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={12}>
                   <TextField
                     fullWidth
                     autoComplete="po_number"
                     type="text"
-                    label="No PO"
+                    label="No Purchase Requisition"
                     {...getFieldProps('po_number')}
                     error={Boolean(touched.po_number && errors.po_number)}
                     helperText={touched.po_number && errors.po_number}
-                  />    
+                  />
                 </Grid>
               </Grid>       
             </CardContent>

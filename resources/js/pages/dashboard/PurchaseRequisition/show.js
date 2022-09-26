@@ -12,7 +12,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // Components
 import DataGrid from '../../../components/DataGrid';
-import Modal from './components/Modal2';
+import Modal from './components/Modal';
 
 //API
 import API from '../../../helpers'
@@ -34,8 +34,7 @@ function Inquiry() {
   const [items, setItems] = useState([])
 
   const InquirySchema = Yup.object().shape({
-    id: Yup.string().required('Email is required'),
-    po_number: Yup.string().required('city is required'),
+    po_number: Yup.string().required('PO Reference is required'),
   });
 
   const formik = useFormik({
@@ -84,7 +83,7 @@ function Inquiry() {
   );
 
   const handleUpdateAllRows = () => {
-    API.getAInquiry(id, function(res){
+    API.getAPurchaseRequisiton(id, function(res){
       if(!res) alert("Something went wrong!");
       var temp = res.data.inquiry_item;
       temp = res.data.inquiry_item.map(function(_d){
@@ -144,7 +143,6 @@ function Inquiry() {
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
-    { field: 'delivery_date', type: 'date', headerName: 'Delivery Date', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -159,7 +157,7 @@ function Inquiry() {
 
   useEffect(() => {
     if(!id) return;
-    API.getAInquiry(id, function(res){
+    API.getAPurchaseRequisiton(id, function(res){
       
       if(!res) alert("Something went wrong!");
       setValues({
@@ -168,16 +166,15 @@ function Inquiry() {
         po_number: res.data.po_number
       });
       var temp = res.data.inquiry_item;
-      temp = res.data.inquiry_item.map(function(_d){
+      temp = res.data.request_item.map(function(_d){
         return {
           id: _d.id,
-          product_id: _d.product.id,
-          product_feature_id: _d.product_feature_id,
-          name: _d.product.name,
-          size: _d.product.size,
-          color: _d.product.color,
+          product_id: _d.product_feature.product_id,
+          product_feature_id: _d.product_feature.id,
+          name: _d.product_feature.product.name,
+          size: _d.product_feature.size,
+          color: _d.product_feature.color,
           qty: _d.qty,
-          delivery_date: _d.delivery_date,
         }
       })
       setItems(temp);
@@ -190,12 +187,10 @@ function Inquiry() {
     <Page>
       <Container>
       <Modal 
-        payload={[]}
         open={openM}
-        options={options}
         handleClose={handleCloseModal}
-        setComponent={setItems}
-        addRow={addRow}
+        items={items}
+        setItems={setItems}
       />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -213,6 +208,7 @@ function Inquiry() {
                     autoComplete="id"
                     type="text"
                     label="No Inquiry"
+                    disabled
                     {...getFieldProps('id')}
                     error={Boolean(touched.id && errors.id)}
                     helperText={touched.id && errors.id}

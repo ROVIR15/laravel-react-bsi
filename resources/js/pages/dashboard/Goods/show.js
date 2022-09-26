@@ -296,7 +296,7 @@ function Goods() {
                         {
                           cat.map(function(x){
                             return (
-                              <MenuItem value={x.id} key={x.id}>{x.name}</MenuItem>
+                              <MenuItem value={x.id} key={x.id}>{x.name} - {x.sub}</MenuItem>
                             )
                           })
                         }

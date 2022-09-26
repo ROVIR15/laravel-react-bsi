@@ -17,17 +17,19 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
 // api
 import API from '../../../../helpers';
+import { useLocation, useParams } from 'react-router-dom';
+import { isEditCondition } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'date', label: 'Tanggal', alignRight: false },
-    { id: 'po_number', label: 'PO ', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'output', label: 'Qty Loading', alignRight: false },
+    { id: 'category', label: 'Category', alignRight: false },
+    { id: 'sub_category', label: 'Sub Category', alignRight: false },
+    { id: 'value', label: 'Value', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -57,12 +59,12 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
+function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -70,6 +72,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const { pathname } = useLocation();
+  const { id } = useParams();
+  let paramsId = id;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -79,7 +85,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.name);
+      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
     }
@@ -87,10 +93,23 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.map(e => e.id).indexOf(name.id);
+    name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0}
+    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      if(isEditCondition(pathname.split('/'), id)) {
+        try {
+          API.insertRequestItem([name], function(res){
+            if(res.success) alert('success');
+            else alert('failed')
+          })
+          update();
+        } catch(e) {
+          alert(e);
+        }
+      } else {
+        newSelected = newSelected.concat(selected, name);
+      }
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -120,11 +139,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
-    });
+    setSelected((prevSelected) => (prevSelected.filter((item) => (item.id !== id))));
   }
 
   const handleDeleteSelected = () => {
@@ -162,15 +177,16 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
+                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
-                    date,
-                    po_number,
                     name,
                     size,
                     color,
-                    qty_loading
+                    category,
+                    sub_category,
+                    value
                   } = row;
                   return (
                     <TableRow
@@ -183,18 +199,18 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
+                          disabled={disabled}
                           checked={isItemSelected}
-                          disabled={(qty_loading === 0 ? true : false)}
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{qty_loading}</TableCell>
+                      <TableCell align="left">{category}</TableCell>
+                      <TableCell align="left">{sub_category}</TableCell>
+                      <TableCell align="left">{value}</TableCell>
                     </TableRow>
                   );
                 })}

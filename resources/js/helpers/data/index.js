@@ -68,6 +68,82 @@ export function productFeatureArrangedData(array){
     return arranged;
 } 
 
+export function _miniFuncSupermarket(array, _so_id){
+  console.log(array)
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      id,
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      }
+    } = x;
+    return {
+      id: index+1,
+      numbering_id: 0, 
+      date: "1990-01-01",
+      order_id,
+      order_item_id: id,
+      sales_order_id: _so_id,
+      product_feature_id: product_feature.id,
+      po_number: " ",
+      color,
+      size,
+      name,
+      numbering: " ",
+    }
+  })
+  
+  return arranged;
+} 
+
+export function _miniFunc(array, _so_id){
+  console.log(array)
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      id,
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      }
+    } = x;
+    return {
+      id: index+1,
+      supermarket_id: 0, 
+      date: "1990-01-01",
+      order_id,
+      order_item_id: id,
+      sales_order_id: _so_id,
+      product_feature_id: product_feature.id,
+      po_number: "",
+      color,
+      size,
+      name,
+      numbering: " ",
+    }
+  })
+  
+  return arranged;
+} 
+
 export function optionProductFeature(array, filter){
   if(isEmpty(array)) return 
   let arranged = array.map((x) => {
@@ -94,8 +170,8 @@ export function optionProductFeature(array, filter){
       }
     } = x;
     return {
-        id, 
-        product_id, 
+        id,
+        product_id,
         name,
         color,
         size,
@@ -107,7 +183,7 @@ export function optionProductFeature(array, filter){
         created_at,
         updated_at,
     }
-    })
+  })
   
   if(filter) return arranged.filter((x) => (x.sub_category === filter))
   return arranged;
@@ -600,6 +676,15 @@ export function laborArrangedData(data) {
   }
 }
 
+export function _partyArrangedData(data) {
+  const { id, name, email, address: {street, city, province, country, postal_code}, party_roles } = data
+  return {
+    id, name, email, phone_number: '083231', address: street, city, province, country, postal_code, 
+    role_type_id: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type.id : null,
+    role_type: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type : null
+  }
+}
+
 
 // Party
 
@@ -619,7 +704,7 @@ export function partyArrangedData(array){
 
 export function bomDocumentArranged(data){
   const { operations, qty, id,
-          product: {goods: {name}}, bom_items, variants, start_date, end_date} = data;
+          product: {goods: {name}}, bom_items, bom_services, variants, start_date, end_date} = data;
   
   let cal_operations = {};
   let cal_material_items = {};
@@ -640,7 +725,7 @@ export function bomDocumentArranged(data){
         total_labors: prevValue + nextValue.work_center_info.labor_alloc,
         total_overhead_cost:prevValue + nextValue.work_center_info.overhead_cost,
         total_cost_of_wc: (prevValue) + (work_days * nextValue.work_center_info.cost_per_hour),
-        cm_cost: (prevValue + nextValue.work_center_info.overhead_cost+(work_days * nextValue.work_center_info.cost_per_hour))/qty,
+        cm_cost: (prevValue + nextValue.work_center_info.overhead_cost+(nextValue.work_center_info.cost_per_hour))/nextValue.work_center_info.prod_capacity,
         operations_numbers: operations.length
       }
     }, 0);
@@ -654,30 +739,37 @@ export function bomDocumentArranged(data){
       components_numbers: 0
     }
   } else {
-
-    if (bom_items.length > 1) {
-      cal_material_items = bom_items.reduce((prevValue, nextValue) => {
-        return {
-          total_cost_of_items: Math.floor(prevValue.consumption*qty*prevValue.unit_price) + Math.floor(nextValue.consumption*qty*nextValue.unit_price),
-          average_of_product_cost: Math.floor(prevValue.consumption*prevValue.unit_price) + Math.floor(nextValue.consumption*nextValue.unit_price),
-          components_numbers: bom_items.length
-        }
-      })
-    }
-
-    else {
-      cal_material_items = bom_items.reduce((prevValue, nextValue) => {
-        return {
-          total_cost_of_items: prevValue + Math.floor(nextValue.consumption*qty*nextValue.unit_price),
-          average_of_product_cost: prevValue + Math.floor(nextValue.consumption*nextValue.unit_price),
-          components_numbers: bom_items.length
-        }
-      }, 0)
-    }
+    cal_material_items = bom_items.reduce((prevValue, nextValue) => {
+      console.log(prevValue.average_of_product_cost, Math.floor(parseFloat(nextValue.qty)*nextValue.unit_price), nextValue.qty, nextValue.unit_price)
+      return {
+        total_cost_of_items: prevValue.total_cost_of_items + Math.floor(parseFloat(nextValue.qty)*qty*nextValue.unit_price),
+        average_of_product_cost: prevValue.average_of_product_cost + Math.floor(parseFloat(nextValue.qty)*nextValue.unit_price),
+        components_numbers: bom_items.length
+      }
+    }, {
+      total_cost_of_items: 0,
+      average_of_product_cost: 0,
+      components_numbers: 0
+    })
   }
 
+  var additionalCost = 0;
+  var average_add_cost = 0;
+  var list_of_service = ''
 
-  return {bom_id: id, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`}
+  if(!isEmpty(bom_services)) {
+    additionalCost = bom_services.reduce((initial, next) => {
+      return initial + Math.floor(parseFloat(next.unit_price) * parseInt(qty))
+    }, 0)
+
+    average_add_cost = Math.floor(additionalCost/qty);
+
+    list_of_service = bom_services.reduce((initial, next) => {
+      return initial + `${next.product.service.name}, `
+    }, '')
+  }
+
+  return {bom_id: id, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`, additionalCost, average_add_cost, list_of_service}
 }
 
 
@@ -738,4 +830,37 @@ export function machineData(obj){
 //
 export function daysOfWorks(qty, targetEachDay, layout_produksi){
   return Math.floor((qty/targetEachDay)+layout_produksi)
+}
+
+
+// Servce
+export function serviceList(array){
+  if(!isArray(array)) return [];
+  if(isEmpty(array)) return [];
+  return array.map((item) => {
+    let {product_id, service: {service}, category} = item;
+
+    return {...service, id: product_id, category: category.name, sub_category: category.sub.name}
+  });
+}
+
+export function serviceList2(array){
+  if(!isArray(array)) return [];
+  if(isEmpty(array)) return [];
+  return array.map((item) => {
+    let {product_id, service: {service}, category} = item;
+
+    return {...service, category: category.name, sub_category: category.sub.name}
+  });
+}
+
+export function BomServiceList(array){
+  if(!isArray(array)) return [];
+  if(isEmpty(array)) return [];
+  console.log(array)
+  return array.map((item) => {
+    let {bom_id, id, unit_price, product: {service}} = item;
+
+    return {id, bom_id, unit_price, name: service.name}
+  });
 }

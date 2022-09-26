@@ -53,13 +53,17 @@ function WorkCenter() {
       const {line, sales_order_id, date} = values
       let data = items.map(({id, brand, name, size, color, numbering, ...x}) => ({ ...x, order_item_id: id, line, sales_order_id, date}));
       API.insertMonitoringSewing(data, function(res){
-        alert(JSON.stringify(res.data));
+        alert(JSON.stringify(res));
+        if(!res) return;
+        if(res.success){
+          window.reload();
+        }
       })
       setSubmitting(false);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, handleReset, getFieldProps, setFieldValue } = formik;
 
 // columns - Data grid
   const deleteData = useCallback(
@@ -186,7 +190,8 @@ const [id, setId] = React.useState(0);
       <Modal 
         open={openM}
         onAddItems={handleAddItems}
-        order_id={id}
+        so_id={selectedValueSO.id}
+        order_id={selectedValueSO.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

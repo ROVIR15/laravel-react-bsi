@@ -29,11 +29,13 @@ import AutoCompleteP from './components/AutoCompleteP';
 import DataGrid from '../../../components/DataGrid';
 import Modal from './components/ModalNewP';
 import Modal2 from './components/ModalNewO';
+import Modal3 from './components/ModalNewS';
 
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
+import { optionProductFeature, serviceList } from '../../../helpers/data'
 
 function BillOfMaterial() {
   const { pathname } = useLocation();
@@ -48,11 +50,15 @@ function BillOfMaterial() {
   // Options for Product
   const [options3, setOptions3] = useState([]);
   
+  // Options for Service
+  const [options4, setOptions4] = useState([]);
+  
   // Options for Work Center
   const [options2, setOptions2] = useState([]);
 
   const [operation, setOperation] = useState([]);
   const [component, setComponent] = useState([]);
+  const [service, setService] = useState([]);
 
   //Modal Component of BOM 
   const [openM, setOpenM] = React.useState(false);
@@ -63,6 +69,11 @@ function BillOfMaterial() {
   const [openMO, setOpenMO] = React.useState(false);
   const handleOpenModalO = () => setOpenMO(true);
   const handleCloseModalO = () => setOpenMO(false);
+
+  //Modal Service of BOM
+  const [openS, setOpenS] = React.useState(false);
+  const handleOpenModalS = () => setOpenS(true);
+  const handleCloseModalS = () => setOpenS(false);
 
   //Data Grid Component of BOM
   const [editRowsModel, setEditRowsModel] = React.useState({});
@@ -100,7 +111,7 @@ function BillOfMaterial() {
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
-      const _data = {...values, components: component, operations: operation}
+      const _data = {...values, components: component, operations: operation, services: service}
       API.insertBOM(_data, (res)=>{
         if(!res.success) {
           alert('Failed');
@@ -121,7 +132,8 @@ function BillOfMaterial() {
 		    if(!res.data) {
           setOptions([]);
         } else {
-          setOptions(res.data);
+          const data = optionProductFeature(res.data);
+          setOptions(data);
         }
       })
 
@@ -140,6 +152,15 @@ function BillOfMaterial() {
           setOptions3([]);
         } else {
           setOptions3(res.data);
+        }
+      })
+
+      await API.getService((res) => {
+        if(!res) return
+		    if(!res.data) {
+          setOptions4([]);
+        } else {
+          setOptions4(serviceList(res.data));
         }
       })
 
@@ -193,6 +214,22 @@ function BillOfMaterial() {
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
           onClick={deleteDataOperation(params.id)}
+          showInMenu
+        />
+      ]
+    }
+  ], [deleteDataOperation]);
+
+  const serviceColumns = useMemo(() => [
+    { field: 'id', headerName: 'ID', editable: false, hideable: true, width: 30},
+    { field: 'name', headerName: 'Service Name', editable: false, width: 250 },
+    { field: 'unit_price', headerName: 'Harga', editable: true },
+    { field: 'actions', type: 'actions', width: 100, 
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Icon icon={trash2Outline} width={24} height={24} />}
+          label="Delete"
+          onClick={deleteDataS(params.id)}
           showInMenu
         />
       ]
@@ -290,6 +327,13 @@ function BillOfMaterial() {
       });
   })
 
+  const deleteDataService = React.useCallback(
+    (id) => () => {
+      setService((prevService) => {
+        return prevService.filter((x) => (x.id !== id))
+      });
+  })
+
   return (
     <Page>
       <Container>
@@ -306,6 +350,13 @@ function BillOfMaterial() {
           options={options2}
           handleClose={handleCloseModalO}
           setComponent={setOperation}
+        />
+        <Modal3
+          payload={[]}
+          open={openS}
+          options={options4}
+          handleClose={handleCloseModalS}
+          setComponent={setService}
         />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -414,6 +465,7 @@ function BillOfMaterial() {
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Work" value="1" />
                           <Tab label="Material" value="2" />
+                          <Tab label="Service" value="3" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
@@ -430,6 +482,15 @@ function BillOfMaterial() {
                           columns={goodsColumns}
                           rows={component}
                           handleAddRow={handleOpenModal}
+                          onEditRowsModelChange={handleEditComponentRowsModelChange}
+                          handleResetRows={handleResetComponentRows}
+                        />
+                      </TabPanel>
+                      <TabPanel value="3">
+                        <DataGrid 
+                          columns={serviceColumns}
+                          rows={service}
+                          handleAddRow={handleOpenModalS}
                           onEditRowsModelChange={handleEditComponentRowsModelChange}
                           handleResetRows={handleResetComponentRows}
                         />

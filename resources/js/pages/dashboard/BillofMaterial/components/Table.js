@@ -34,12 +34,13 @@ export default function BasicTable({ payload }) {
 
   const [margin, setMargin] = React.useState(0);
   const [price, setPrice] = React.useState(0);
-  const {total_labors, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items} = payload;
+  const {total_labors, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
 
   const rows = [
     createData('Labor', `${total_labors} Labor works on the projects`, total_cost_of_wc),
     createData('Material', `${components_numbers} Types of material to be consumpted`, total_cost_of_items),
     createData('Overhead', `Additional cost to execute the project`, total_overhead_cost),
+    createData('Additional Fee', `Cost occured when an order is placed such as ${list_of_service}`, additionalCost),
   ];
 
   function OfferingPrice(price){
@@ -81,7 +82,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {fCurrency(sum([total_cost_of_wc, total_overhead_cost, total_cost_of_items]))} </Typography>
+                <Typography variant="body1"> {fCurrency(sum([total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost]))} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -110,6 +111,21 @@ export default function BasicTable({ payload }) {
                 <Typography variant="body1"> {fCurrency(average_of_product_cost)} </Typography>
               </NoBorderCell>
             </TableRow>
+
+            <TableRow
+              key="cm_cost"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> HDE Fee </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(average_add_cost)} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
             <TableRow
               key="cm_cost"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -134,7 +150,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {fCurrency(sum([cm_cost, average_of_product_cost]))} </Typography>
+                <Typography variant="body1"> {fCurrency(sum([cm_cost, average_of_product_cost, average_add_cost]))} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -167,7 +183,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {OfferingPrice(sum([cm_cost, average_of_product_cost]))} </Typography>
+                <Typography variant="body1"> {OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost]))} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

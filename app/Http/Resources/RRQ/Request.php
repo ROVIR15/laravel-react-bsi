@@ -19,12 +19,9 @@ class Request extends JsonResource
         return [
           'id' => $this->id,
           'req_type' => $this->req_type,
-          'party_id' => $this->party_id,
-          'ship_to' => $this->ship_to,
           'po_number' => $this->po_number,
-          'po_date' => $this->po_date,
-          'delivery_date' => $this->delivery_date,
-          'valid_to' => $this->valid_to,
+          'created_at' => $this->created_at,
+          'updated_at' => $this->updated_at,
           'inquiry_item' => new RequestItemCollection($this->request_item)
         ];
     }

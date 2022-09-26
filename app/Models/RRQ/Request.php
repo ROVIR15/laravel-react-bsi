@@ -11,17 +11,12 @@ class Request extends Model
     protected $primaryKey = 'id';
 
     public $incrementing = true;
-    public $timestamp = false;
+    public $timestamp = true;
 
     protected $fillable = [
       'id',
       'req_type',
-      'party_id',
-      'ship_to',
       'po_number',
-      'po_date',
-      'delivery_date',
-      'valid_to'
     ];
 
     public function request_item(){

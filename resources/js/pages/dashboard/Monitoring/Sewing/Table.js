@@ -26,8 +26,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'numbering', label: 'Numbering', alignRight: false},
-    { id: 'qty_loading', label: 'Quantity', alignRight: false }
   ];
 
 // ----------------------------------------------------------------------
@@ -169,8 +167,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     name,
                     size,
                     color,
-		    qty_loading,
-		    numbering
+		    // qty_loading,
+		    // numbering
                   } = row;
                   return (
                     <TableRow
@@ -192,8 +190,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-		      <TableCell align="left">{numbering}</TableCell>
-		      <TableCell align="left">{qty_loading}</TableCell>
+		      {/* <TableCell align="left">{numbering}</TableCell>
+		      <TableCell align="left">{qty_loading}</TableCell> */}
                     </TableRow>
                   );
                 })}

@@ -48,7 +48,7 @@ class WorkCenterController extends Controller
         WorkCenter::create([
           'name' => $param['name'],
           'work_hours' => $param['work_hours'],
-          'work_hours' => $param['layout_produksi'],
+          'layout_produksi' => $param['layout_produksi'],
           'company_name' => $param['company_name'],
           'overhead_cost' => $param['overhead_cost'],
           'prod_capacity' => $param['prod_capacity'],

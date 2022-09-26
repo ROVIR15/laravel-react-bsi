@@ -27,7 +27,7 @@
      */
     public function index()
     {
-      $query = ProductHasCategory::whereNotIn('product_category_id', [7,8])->with('product', 'category')->get();
+      $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
 
       return response()->json([
         "success" => true,

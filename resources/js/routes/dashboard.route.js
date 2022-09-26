@@ -25,7 +25,8 @@ import {
   LaborLayout,
   MOLayout,
   InvLayout,
-  MachineLayout
+  MachineLayout,
+  ServiceLayout
 } from '../pages/dashboard';
 
 import Login from '../pages/auth/Login';
@@ -41,6 +42,7 @@ import AddRouting from '../pages/dashboard/Routing/new';
 import AddWorkCenter from '../pages/dashboard/WorkCenter/new';
 import AddInventory from '../pages/dashboard/Inventory/new';
 import AddGoods from '../pages/dashboard/Goods/add';
+import AddService from '../pages/dashboard/Service/add';
 import AddVendor from '../pages/dashboard/Vendor/new';
 import AddPurchaseRequisition from '../pages/dashboard/PurchaseRequisition/new';
 import AddRFQ from '../pages/dashboard/RFQ/new';
@@ -60,6 +62,7 @@ import AddMachine from '../pages/dashboard/Machine/add';
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
 import DisplayGoods from '../pages/dashboard/Goods/display';
+import DisplayService from '../pages/dashboard/Service/display';
 import DisplayInquiry from '../pages/dashboard/Inquiry/display';
 import DisplayQuote from '../pages/dashboard/Quotation/display';
 import DisplaySalesOrder from '../pages/dashboard/SalesOrder/display';
@@ -86,6 +89,7 @@ import DisplayMachine from '../pages/dashboard/Machine/display';
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
 import ShowGoods from '../pages/dashboard/Goods/show';
+import ShowService from '../pages/dashboard/Service/show';
 import ShowInquiry from '../pages/dashboard/Inquiry/show';
 import ShowQuote from '../pages/dashboard/Quotation/show';
 import ShowSalesOrder from '../pages/dashboard/SalesOrder/show';
@@ -208,6 +212,16 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGoods />},
             { path: 'add', element: <AddGoods />},
             { path: 'display', element: <DisplayGoods />},
+            { path: 'edit', element: <p>edit</p>}
+          ]
+        },
+        { 
+          path: 'material/service', 
+          element: <ServiceLayout/>, 
+          children: [
+            { path: ':id', element: <ShowService />},
+            { path: 'add', element: <AddService />},
+            { path: 'display', element: <DisplayService />},
             { path: 'edit', element: <p>edit</p>}
           ]
         },

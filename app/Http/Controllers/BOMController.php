@@ -8,6 +8,7 @@
   use App\Models\Manufacture\BOM;
   use App\Models\Manufacture\Operation;
   use App\Models\Manufacture\BOMItem;
+  use App\Models\Manufacture\BOMService;
 
   use App\Http\Resources\Manufacture\BOM as BOMOneCollection;
   use App\Http\Resources\Manufacture\BOMCollection;
@@ -68,8 +69,10 @@
               array_push($bomItemsCreation, [
                 'bom_id' => $billOfMaterial['id'],
                 'product_feature_id' => $key['id'],
-                'qty' => $key['qty'],
-                'created_at' => $current_date_time
+                'qty' => floatval($key['consumption']) + floatval($key['allowance']),
+                'consumption' => $key['consumption'],
+                'allowance' => $key['allowance'],
+                'unit_price' => $key['unit_price'],
               ]);
             }
     
@@ -88,6 +91,18 @@
             }
 
             Operation::insert($operationsCreation);
+
+            $servicesCreation = [];
+
+            foreach($param['services'] as $key){
+                array_push($servicesCreation, [
+                  'product_id' => $key['product_id'],
+                  'bom_id' => $billOfMaterial['id'],
+                  'unit_price' => $key['unit_price'],
+                ]);
+            }
+
+            BOMService::insert($servicesCreation);
     
           } catch (Exception $e) {
             //throw $th;
@@ -117,7 +132,7 @@
     {
         try {
             //code...
-            $query = BOM::with('bom_items', 'operation', 'product', 'variant')->find($id);
+            $query = BOM::with('bom_items', 'bom_services', 'operation', 'product', 'variant')->find($id);
             return new BOMOneCollection($query);
         } catch (Exception $th) {
             //throw $th;

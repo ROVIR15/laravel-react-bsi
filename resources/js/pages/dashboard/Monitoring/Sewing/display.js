@@ -203,12 +203,12 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
+                        onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{sales_order.po_number}</TableCell>
+                      <TableCell align="left">{sales_order?.po_number}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{goods.name}</TableCell>
                       <TableCell align="left">{line}</TableCell>
