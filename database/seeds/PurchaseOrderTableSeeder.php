@@ -69,6 +69,19 @@ class PurchaseOrderTableSeeder extends Seeder
                 'created_at' => '2022-09-13 01:34:18',
                 'updated_at' => '2022-09-13 01:34:18',
             ),
+            4 => 
+            array (
+                'id' => 6,
+                'order_id' => 20,
+                'po_number' => 'FAB HDE-0922-BIENSIDanjyo - 002',
+                'bought_from' => 10,
+                'ship_to' => 1,
+                'issue_date' => '2022-09-22',
+                'delivery_date' => '2022-09-22',
+                'valid_thru' => '2022-09-30',
+                'created_at' => '2022-09-23 08:05:23',
+                'updated_at' => '2022-09-23 08:05:23',
+            ),
         ));
         
         

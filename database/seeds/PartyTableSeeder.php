@@ -107,6 +107,26 @@ class PartyTableSeeder extends Seeder
                 'agreement_role_id' => NULL,
                 'organization_party_id' => 8,
             ),
+            9 => 
+            array (
+                'id' => 10,
+                'person_party_id' => NULL,
+                'name' => 'PT. HARVESTINDO PURNAMATEX',
+                'email' => 'irairnawati6674@gmail.com',
+                'npwp' => '123412434',
+                'agreement_role_id' => NULL,
+                'organization_party_id' => 9,
+            ),
+            10 => 
+            array (
+                'id' => 11,
+                'person_party_id' => NULL,
+                'name' => 'PT. KREASI KESUKSESAN MANDIRI',
+                'email' => 'ria.hendria@kreatex.co.id',
+                'npwp' => '2131234',
+                'agreement_role_id' => NULL,
+                'organization_party_id' => 10,
+            ),
         ));
         
         

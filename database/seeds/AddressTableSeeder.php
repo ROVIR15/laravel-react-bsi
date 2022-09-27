@@ -97,6 +97,26 @@ class AddressTableSeeder extends Seeder
                 'street' => 'Jl. Pulo Buaran 2 Blok Q No 1 Kawasan Industri Pulo Gadung, Kecamatan Cakung, Kelurahan Jatinegara',
                 'postal_code' => 62183,
             ),
+            8 => 
+            array (
+                'id' => 9,
+                'party_id' => 10,
+                'city' => 'Cianjur',
+                'province' => 'Jawa Barat',
+                'country' => 'Indonesia',
+                'street' => 'JL. Raya Bandung Kp. Mekarsari RT/RW 003/008 Desa Babakancaringin Karangtengah',
+                'postal_code' => 43281,
+            ),
+            9 => 
+            array (
+                'id' => 10,
+                'party_id' => 11,
+                'city' => 'Jakarta Timur',
+                'province' => 'DKI Jakarta',
+                'country' => 'Indonesia',
+                'street' => 'Rukan Avenue No. 8-068 Jakarta Garden City',
+                'postal_code' => 13910,
+            ),
         ));
         
         

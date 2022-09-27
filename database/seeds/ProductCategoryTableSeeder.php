@@ -65,6 +65,12 @@ class ProductCategoryTableSeeder extends Seeder
                 'sub_cat' => 7,
                 'name' => 'Inventory',
             ),
+            8 => 
+            array (
+                'id' => 9,
+                'sub_cat' => 5,
+                'name' => 'Service',
+            ),
         ));
         
         

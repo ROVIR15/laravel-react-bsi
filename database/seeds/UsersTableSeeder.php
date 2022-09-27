@@ -94,6 +94,17 @@ class UsersTableSeeder extends Seeder
                 'created_at' => '2022-09-03 01:51:26',
                 'updated_at' => '2022-09-03 01:51:26',
             ),
+            7 => 
+            array (
+                'id' => 8,
+                'name' => 'meti',
+                'email' => 'meti.md@harus24.com',
+                'email_verified_at' => NULL,
+                'password' => '$2y$10$YFfx1p0ENpARuiSrG4IbPe3ntRXpGBXIa0UD4D41wqeLrGlFYNvkq',
+                'remember_token' => NULL,
+                'created_at' => '2022-09-20 06:03:33',
+                'updated_at' => '2022-09-20 06:03:33',
+            ),
         ));
         
         
