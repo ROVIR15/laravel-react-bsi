@@ -59,8 +59,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
   if(user){
     sidebarConfig.map(function(x){
-      user.pages.map(function(page){
-        if(page.page_name === x.name) newSidebar.push(x);
+      user.pages.map(function(item){
+        if(item.page.name === x.name) newSidebar.push(x);
       });
     })  
   }

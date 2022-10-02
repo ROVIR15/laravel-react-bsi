@@ -32,7 +32,8 @@ class BOM extends JsonResource
             'bom_items' => new BOMItemCollection($this->bom_items),
             'operations' => new OperationCollection($this->operation),
             'variants' => $this->variants,
-            'product' => $this->product
+            'product' => $this->product,
+            'status' => $this->status
         ];
     }
 }

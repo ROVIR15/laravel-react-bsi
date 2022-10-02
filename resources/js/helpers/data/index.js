@@ -69,7 +69,6 @@ export function productFeatureArrangedData(array){
 } 
 
 export function _miniFuncSupermarket(array, _so_id){
-  console.log(array)
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
@@ -107,7 +106,6 @@ export function _miniFuncSupermarket(array, _so_id){
 } 
 
 export function _miniFunc(array, _so_id){
-  console.log(array)
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
@@ -713,6 +711,7 @@ export function bomDocumentArranged(data){
 
   if(isEmpty(operations)) {
      cal_operations = {
+      total_work_days: 0,
       total_labor: 0,
       total_overhead_cost: 0,
       total_cost_of_wc: 0,
@@ -722,9 +721,10 @@ export function bomDocumentArranged(data){
   } else {
     cal_operations = operations.reduce((prevValue, nextValue) => {
       return {
+        total_work_days: prevValue + nextValue.work_center_info.work_hours,
         total_labors: prevValue + nextValue.work_center_info.labor_alloc,
         total_overhead_cost:prevValue + nextValue.work_center_info.overhead_cost,
-        total_cost_of_wc: (prevValue) + (work_days * nextValue.work_center_info.cost_per_hour),
+        total_cost_of_wc: (prevValue) + (nextValue.work_center_info.work_hours * nextValue.work_center_info.cost_per_hour),
         cm_cost: (prevValue + nextValue.work_center_info.overhead_cost+(nextValue.work_center_info.cost_per_hour))/nextValue.work_center_info.prod_capacity,
         operations_numbers: operations.length
       }
@@ -740,7 +740,6 @@ export function bomDocumentArranged(data){
     }
   } else {
     cal_material_items = bom_items.reduce((prevValue, nextValue) => {
-      console.log(prevValue.average_of_product_cost, Math.floor(parseFloat(nextValue.qty)*nextValue.unit_price), nextValue.qty, nextValue.unit_price)
       return {
         total_cost_of_items: prevValue.total_cost_of_items + Math.floor(parseFloat(nextValue.qty)*qty*nextValue.unit_price),
         average_of_product_cost: prevValue.average_of_product_cost + Math.floor(parseFloat(nextValue.qty)*nextValue.unit_price),
@@ -769,7 +768,7 @@ export function bomDocumentArranged(data){
     }, '')
   }
 
-  return {bom_id: id, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`, additionalCost, average_add_cost, list_of_service}
+  return {bom_id: id, qty, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`, additionalCost, average_add_cost, list_of_service}
 }
 
 
@@ -857,7 +856,6 @@ export function serviceList2(array){
 export function BomServiceList(array){
   if(!isArray(array)) return [];
   if(isEmpty(array)) return [];
-  console.log(array)
   return array.map((item) => {
     let {bom_id, id, unit_price, product: {service}} = item;
 

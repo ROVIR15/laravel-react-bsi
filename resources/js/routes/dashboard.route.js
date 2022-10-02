@@ -26,8 +26,15 @@ import {
   MOLayout,
   InvLayout,
   MachineLayout,
-  ServiceLayout
+  ServiceLayout,
+  UserManagementLayout
 } from '../pages/dashboard';
+
+import UserRoles from '../pages/dashboard/UserManagement/role';
+import UserPage from '../pages/dashboard/UserManagement/pages';
+import UserRegister from '../pages/dashboard/UserManagement/register';
+import UserTest from '../pages/dashboard/UserManagement/test';
+import DisplayUser from '../pages/dashboard/UserManagement/display';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -513,6 +520,15 @@ export default function TestRouter() {
         },
         { path: 'inputer-finished-goods', 
           element: <MonitoringFinishedGoods />
+        },
+        { 
+          path: 'user-management', 
+          element: <UserManagementLayout />,
+          children: [
+            { path: 'reg-user', element: <UserRegister /> },
+            { path: 'display', element: <DisplayUser /> },
+            { path: 'display/:id', element: <UserTest /> }
+          ]
         },
         { path: '*', element: <Navigate to="/404" /> }
       ]

@@ -21,6 +21,7 @@ export { default as ORLayout } from './IndustrialEngineeringStudy/ObservationRes
 export { default as LaborLayout } from './Labor';
 export { default as MOLayout } from './ManufactureOrder';
 export { default as MachineLayout } from './Machine';
+export { default as UserManagementLayout } from './UserManagement';
 
 //Monitoring
 export { default as FinishedGoodsLayout } from './Monitoring/FinishedGoods';

@@ -39,6 +39,10 @@ class User extends Authenticatable
     ];
 
     public function pages(){
-        return $this->hasMany('App\Models\General\PagesAccess', 'users_id', 'id');
+        return $this->hasMany('App\Models\General\PagesAccess', 'users_id', 'id')->with('page');
+    }
+
+    public function role(){
+        return $this->hasMany('App\Models\General\Approval', 'user_id', 'id');
     }
 }

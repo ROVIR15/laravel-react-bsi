@@ -25,7 +25,7 @@
      */
     public function index()
     {
-        $query = BOM::all();
+        $query = BOM::with('status')->get();
 
         return new BOMCollection($query);
     }
@@ -132,7 +132,7 @@
     {
         try {
             //code...
-            $query = BOM::with('bom_items', 'bom_services', 'operation', 'product', 'variant')->find($id);
+            $query = BOM::with('bom_items', 'bom_services', 'operation', 'product', 'variant', 'status')->find($id);
             return new BOMOneCollection($query);
         } catch (Exception $th) {
             //throw $th;

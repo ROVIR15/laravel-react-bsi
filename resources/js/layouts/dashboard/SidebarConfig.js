@@ -56,7 +56,7 @@ const sidebarConfig = [
     icon: getIcon(flashFill),
     children: [
       {
-        title: 'Bill of Material',
+        title: 'Costing',
         path: '/dashboard/production/bom'
       },
       {
@@ -191,6 +191,11 @@ const sidebarConfig = [
         path: '/dashboard/monitoring/finished-goods'
       },
     ]
+  },
+  {
+    title: 'User Management',
+    name: 'user-management',
+    path: '/dashboard/user-management',
   },
   {
     title: 'Spreading',

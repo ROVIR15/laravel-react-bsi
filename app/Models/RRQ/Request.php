@@ -22,4 +22,8 @@ class Request extends Model
     public function request_item(){
         return $this->hasMany('App\Models\RRQ\RequestItem')->with('product_feature');
     }
+
+    public function status(){
+      return $this->belongsTo('App\Models\RRQ\RequestStatus', 'id', 'request_id');
+    }
 }

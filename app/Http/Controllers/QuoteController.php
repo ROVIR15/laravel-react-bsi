@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
+use App\Models\RRQ\QuoteStatus;
 use App\Models\RRQ\QuoteView;
 use App\Models\RRQ\QuoteItem;
 use App\Http\Controllers\Controller;
@@ -26,24 +27,69 @@ class QuoteController extends Controller
     {
       $param = $request->all();
       $type = $request->query('type');
+      $level = $request->query('level');
       $query;
 
       switch ($type) {
         case 'SO':
           # code...
-          $query = Quote::where('quote_type', 'SO')->get();
-          break;
+          switch ($level) {
+            case 'approve':
+              # code...
+              $query = Quote::with('status')->where('quote_type', 'SO')->whereHas('status', function($query2){
+                $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+              })->get();
+              return new QuoteViewCollection($query);
+              break;
+
+            case 'review':
+              # code...
+              $query = Quote::with('status')->where('quote_type', 'SO')->whereHas('status', function($query2){
+                $query2->whereIn('status_type', ['Submit', 'Reject Approve', 'Reject Review']);
+              })->get();
+              return new QuoteViewCollection($query);
+              break;
+              
+            default:
+              # code...
+              $query = Quote::with('status')->where('quote_type', 'SO')->get();
+              return new QuoteViewCollection($query);
+              break;
+          }
         case 'PO':
           # code...
-          $query = Quote::where('quote_type', 'PO')->get();
-          break;
+          switch ($level) {
+            case 'approve':
+              # code...
+              $query = Quote::with('status')->where('quote_type', 'PO')->whereHas('status', function($query2){
+                $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+              })->get();
+              return new QuoteViewCollection($query);
+              break;
+
+            case 'review':
+              # code...
+              $query = Quote::with('status')->where('quote_type', 'PO')->whereHas('status', function($query2){
+                $query2->whereIn('status_type', ['Submit', 'Review', 'Reject Review']);
+              })->get();
+              return new QuoteViewCollection($query);
+              break;
+              
+            default:
+              # code...
+              // $query = QuoteStatus::whereHas
+              $query = Quote::with('status')->where('quote_type', 'PO')->get();
+              return new QuoteViewCollection($query);
+              break;
+          }
         default:
           # code...
           $query = Quote::all();
+          return new QuoteViewCollection($query);
           break;
       }
 
-      return new QuoteViewCollection($query);
+      // return response()->json([ 'data' => $query, 'type' => $type, 'level' => $level]);
     }
 
     /**
@@ -111,7 +157,7 @@ class QuoteController extends Controller
     public function show($id)
     {
       try {
-        $query = Quote::find($id);
+        $query = Quote::with('status')->find($id);
         return new QuoteOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

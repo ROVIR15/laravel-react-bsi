@@ -364,7 +364,7 @@ function BillOfMaterial() {
             <Grid item xs={12}>
               <Card >
                 <CardHeader
-                  title="BOM Information"
+                  title="Costing Information"
                 />
                 <CardContent>
                   <Grid container spacing={2}>
@@ -373,7 +373,7 @@ function BillOfMaterial() {
                         fullWidth
                         autoComplete="name"
                         type="text"
-                        label="BOM Name"
+                        label="Costing Name"
                         {...getFieldProps('name')}
                         error={Boolean(touched.name && errors.name)}
                         helperText={touched.name && errors.name}

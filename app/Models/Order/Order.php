@@ -30,4 +30,8 @@
     public function purchase_order(){
       return $this->belongsTo('App\Models\Order\PurchaseOrder', 'purchase_order_id')->with('party', 'ship');
     }
+
+    public function status(){
+      return $this->belongsTo('App\Models\Order\OrderStatus', 'id', 'order_id');
+    }
   }

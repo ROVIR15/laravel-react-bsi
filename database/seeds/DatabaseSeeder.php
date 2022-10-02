@@ -43,3 +43,5 @@ class DatabaseSeeder extends Seeder
         $this->call(MonitoringBsiSupermarketTableSeeder::class);
     }
 }
+
+// php artisan iseed user,address,pages,facility_type,status,pages_access,person,organization,party,party_roles,role_type,relationship,product_has_category,product_sub_category,product_category,facility,shipment_type,agreement_type,goods,product,product_feature,order,order_item,sales_order,purchase_order,monitoring_bsi_sewing,monitoring_bsi_supermarket,monitoring_bsi_qc,quote,quote_item,bom,operations,bom_component,bom_service,approval

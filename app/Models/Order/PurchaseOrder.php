@@ -24,7 +24,7 @@
     ];
 
     public function order(){
-      return $this->belongsTo('App\Models\Order\Order');
+      return $this->belongsTo('App\Models\Order\Order')->with('status');
     }
 
     public function product_feature(){
@@ -45,6 +45,10 @@
 
     public function ship(){
         return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    }
+
+    public function status(){
+        return $this->hasManyThrough('App\Models\Order\OrderStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id');
     }
 
   }

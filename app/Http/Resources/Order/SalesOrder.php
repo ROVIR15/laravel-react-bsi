@@ -30,7 +30,8 @@ class SalesOrder extends JsonResource
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
             'valid_thru' => $this->valid_thru,
-            'order_item' => new OrderItemCollection($this->order_item)
+            'order_item' => new OrderItemCollection($this->order_item),
+            'status' => $this->status
         ];
     }
 }

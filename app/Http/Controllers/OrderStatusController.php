@@ -45,6 +45,7 @@
       $orderStatusData = $request->all()['payload'];
       try {
         OrderStatus::create([
+          'user_id' => $orderStatusData['user_id'],
           'order_id' => $orderStatusData['order_id'],
           'status_type' => $orderStatusData['status_type']
         ]);

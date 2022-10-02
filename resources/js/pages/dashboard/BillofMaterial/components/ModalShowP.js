@@ -84,7 +84,7 @@ export default function BasicModal({ payload, bom_id, updateIt, open, options, h
             onClose={() => {
               setOpenX(false);
             }}
-            getOptionLabel={({ brand, product: {goods: {name}}, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
+            getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
             options={options}
             loading={loading}
             disableCloseOnSelect

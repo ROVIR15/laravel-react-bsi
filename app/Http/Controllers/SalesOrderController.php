@@ -6,6 +6,7 @@
   
 
   use App\Models\Order\Order;
+  use App\Models\Order\OrderStatus;
   use App\Models\Order\OrderItem;
   use App\Models\Order\SalesOrder;
   use App\Http\Controllers\Controller;
@@ -24,9 +25,35 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-      $query = SalesOrder::all();
+      $query;
+      $level = $request->query('level');
+      
+      switch ($level) {
+        case 'approve':
+          # code...
+          $query = SalesOrder::with('status')->whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+            });
+          })->get();
+          break;
+
+        case 'review':
+          # code...
+          $query = SalesOrder::whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
+            });
+          })->get();
+          break;
+        
+        default:
+          # code...
+          $query = SalesOrder::with('status')->get();
+          break;
+      }
 
       return new SOViewCollection($query);
     }
@@ -112,7 +139,7 @@
     public function show($id)
     {
       try {
-        $salesOrder = SalesOrder::with('party', 'order_item', 'ship')->find($id);
+        $salesOrder = SalesOrder::with('party', 'order_item', 'ship', 'status')->find($id);
         return new oneSalesOrder($salesOrder);
       } catch (Exception $th) {
         return response()->json([

@@ -7,6 +7,116 @@ const uri = process.env.MIX_API_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const main = {
+    getUsers(cb){
+      axios.get( uri + '/user').then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getUser(id, cb){
+      axios.get( uri + '/user' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getASubmission(param = null, cb){
+      let _url = uri + '/submission' + `${param}`;
+      axios.get( _url).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertSubmission(data, cb){
+      axios.post( uri + '/submission', { payload: data}).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateSubmission(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/submission'+ `/${id}`, { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteSubmission(id, cb){
+      if(!id) {
+          console.error('data not found');
+      }
+      axios.delete(uri + '/submission'+ `/${id}`).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getPages(cb) {
+      axios.get( uri + '/pages').then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getPagesAccess(cb) {
+      axios.get( uri + '/pages-access').then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getAPagesAccess(param = null, cb) {
+      let _url = uri + '/pages-access' + `${param}`;
+      axios.get( _url).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertPagesAccess(data, cb){
+      axios.post( uri + '/pages-access', { payload: data}).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updatePagesAccess(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put(uri + '/pages-access'+ `/${id}`, { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deletePagesAccess(id, cb){
+      if(!id) {
+          console.error('data not found');
+      }
+      axios.delete(uri + '/pages-access'+ `/${id}`).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    resetPassword(id, _p, cb){
+      if(!_p) {
+          console.error('user not found');
+      }
+      axios.put( uri + '/reset-password/' + id, 
+                  {password: _p}
+              ).then( function(res){
+                      cb(res.data);
+      }).catch(function(err){
+          cb(err.response)
+      })
+    },
     login(_u, _p, cb){
         if(!_u || !_p) {
             console.error('user not found');
@@ -18,6 +128,18 @@ const main = {
         }).catch(function(err){
             cb(err.response)
         })
+    },
+    register(data, cb){
+      if(!data) {
+          console.error('user not found');
+      }
+      axios.post( uri + '/register', 
+                  {payload: data}
+              ).then( function(res){
+                      cb(res.data);
+      }).catch(function(err){
+          cb(err.response)
+      })
     },
     getBuyers(cb){
       axios.get( uri + '/buyer').then( function(res){
@@ -271,6 +393,135 @@ const main = {
         cb(err.response);
       });
     },
+    // Request Status
+    insertRequestStatus(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/request-status', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getRequestStatus(cb){
+      axios.get( uri + '/request-status').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getARequestStatus(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/request-status' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteRequestStatus(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/request-status/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateRequestStatus(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/request-status/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Quote Status
+    insertQuoteStatus(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/quote-status', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getQuoteStatus(cb){
+      axios.get( uri + '/quote-status').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+  getAQuoteStatus(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/quote-status' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteQuoteStatus(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/quote-status/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateQuoteStatus(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/quote-status/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // BOM Status
+    insertBOMStatus(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom-status', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getBOMStatus(cb){
+      axios.get( uri + '/bom-status').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getABOMStatus(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/bom-status' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteBOMStatus(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/bom-status/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateBOMStatus(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/bom-status/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },      
     //Request Item
     insertRequestItem(_data, cb){
       if(!_data) {
@@ -394,6 +645,49 @@ const main = {
     updateQuoteItem(id, _data, cb){
       if(!_data) throw new Error('Data is required');
       axios.put( uri + '/quote-item/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Order Status
+    insertOrderStatus(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/order-status', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getOrderStatus(cb){
+      axios.get( uri + '/order-status').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAOrderStatus(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/order-status' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteOrderStatus(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/order-status/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateOrderStatus(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/order-status/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1549,7 +1843,49 @@ const main = {
         cb(err.response);
       });
     },
-
+    // Shipment Status
+    insertShipmentStatus(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/shipment-status', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getShipmentStatus(cb){
+      axios.get( uri + '/shipment-status').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAShipmentStatus(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/shipment-status' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteShipmentStatus(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/shipment-status/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateShipmentStatus(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/shipment-status/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     //Inventory
     getInventoryItem(cb){
       axios.get( uri + '/inventory').then(function(res){

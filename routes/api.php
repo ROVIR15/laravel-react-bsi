@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::post('login', 'AuthController@login');
+Route::post('register', 'AuthController@register');
+Route::put('reset-password/{id}', 'AuthController@reset');
+Route::resource('user', 'UsersController')->only(['index', 'show']);
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'AuthController@logout');
@@ -59,6 +62,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
     // Manufacture
     Route::resource('manufacture', 'ManufactureController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -87,8 +91,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('quote', 'QuoteController')->only(['index', 'show', 'update', 'destroy', 'store']);
     Route::resource('quote-item', 'QuoteItemController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('quote-role', 'QuoteRoleController')->only(['index']);
+    Route::resource('quote-status', 'QuoteStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('request', 'RequestController')->only(['index']);
     Route::resource('request-item', 'RequestItemController')->only(['index', 'update', 'show', 'destroy', 'store']);
+    Route::resource('request-status', 'RequestStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('requirement', 'RequirementController')->only(['index']);
     Route::resource('requirement-has-request', 'RequirementHasRequestController')->only(['index']);
     Route::resource('requirement-has-request-item', 'RequirementHasRequestItemController')->only(['index']);
@@ -178,3 +184,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::resource('graph-api', 'GraphSewingController')->only(['index']);
 
 Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
+Route::resource('pages', 'PagesController')->only('index', 'store', 'destroy', 'update', 'show');
+Route::resource('pages-access', 'PagesAccessController')->only('index', 'store', 'destroy', 'update', 'show');
+Route::resource('submission', 'ApprovalController')->only('index', 'store', 'destroy', 'update', 'show', 'showByUserId');

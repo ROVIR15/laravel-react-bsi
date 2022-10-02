@@ -93,7 +93,7 @@ class RFQController extends Controller
     public function show($id)
     {
       try {
-        $query = Quote::with('quote_item')->find($id);
+        $query = Quote::with('quote_item', 'status')->find($id);
         return new QuoteOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

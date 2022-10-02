@@ -24,10 +24,35 @@
      */
     public function index(Request $request)
     {
-        $param = $request->all();
-        $query = PurchaseOrder::with('party')->get();
+      $query;
+      $level = $request->query('level');
+      
+      switch ($level) {
+        case 'approve':
+          # code...
+          $query = PurchaseOrder::with('status')->whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+            });
+          })->get();
+          break;
 
-        return new POViewCollection($query);
+        case 'review':
+          # code...
+          $query = PurchaseOrder::whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
+            });
+          })->get();
+          break;
+        
+        default:
+          # code...
+          $query = PurchaseOrder::with('status')->get();
+          break;
+      }
+
+      return new POViewCollection($query);
     }
 
         /**
@@ -112,7 +137,7 @@
     public function show($id)
     {
       try {
-        $purchaseOrderData = PurchaseOrder::with('bought', 'ship', 'order_item', 'order')->find($id);
+        $purchaseOrderData = PurchaseOrder::with('bought', 'ship', 'order_item', 'order', 'status')->find($id);
         return new onePurchaseOrder($purchaseOrderData);
     } catch (Exception $th) {
         return response()->json([

@@ -34,10 +34,10 @@ export default function BasicTable({ payload }) {
 
   const [margin, setMargin] = React.useState(0);
   const [price, setPrice] = React.useState(0);
-  const {total_labors, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
+  const {total_labors, total_work_days, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
 
   const rows = [
-    createData('Labor', `${total_labors} Labor works on the projects`, total_cost_of_wc),
+    createData('Work Days', `Spent ${total_work_days} days for working on the projects`, total_cost_of_wc),
     createData('Material', `${components_numbers} Types of material to be consumpted`, total_cost_of_items),
     createData('Overhead', `Additional cost to execute the project`, total_overhead_cost),
     createData('Additional Fee', `Cost occured when an order is placed such as ${list_of_service}`, additionalCost),

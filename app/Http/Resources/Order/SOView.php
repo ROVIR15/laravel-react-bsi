@@ -22,7 +22,8 @@ class SOView extends JsonResource
             'po_number' => $this->po_number,
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
-            'valid_thru' => $this->valid_thru
+            'valid_thru' => $this->valid_thru,
+            'status' => $this->status
         ];
 
     }

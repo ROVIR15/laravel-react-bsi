@@ -35,4 +35,8 @@ class Quote extends Model
     public function ship(){
         return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
     }
+
+    public function status(){
+        return $this->belongsTo('App\Models\RRQ\QuoteStatus', 'id', 'quote_id');
+    }
 }

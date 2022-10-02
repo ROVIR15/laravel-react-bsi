@@ -42,5 +42,9 @@ class BOM extends Model
     public function operation(){
         return $this->hasMany('App\Models\Manufacture\Operation', 'bom_id');
     }
+
+    public function status(){
+        return $this->hasMany('App\Models\Manufacture\BOMStatus', 'bom_id');
+    }
     
 }

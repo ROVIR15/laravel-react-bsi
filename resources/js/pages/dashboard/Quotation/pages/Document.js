@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import {Box, Button, Divider, Grid, IconButton, Paper, Stack, Typography} from '@mui/material';
 import { MHidden } from '../../../../components/@material-extend';
 
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 
 // Components
 import Table from '../components/TableINV';
@@ -19,6 +19,10 @@ import { productItemArrangedData } from '../../../../helpers/data';
 import editFill from '@iconify/icons-eva/edit-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
+
+//Comtext
+import useAuth from '../../../../context';
+import { getPages } from '../../../../utils/getPathname';
 
 const RootStyle = styled(Page)(({ theme }) => ({
 
@@ -79,6 +83,30 @@ const GridItemX = styled('div')(({ theme }) => ({
 
 function FirstPage(){
   const { id } = useParams();
+  const { user } = useAuth();
+  const { pathname } = useLocation();
+
+  const [submit, setSubmit] = useState(false);
+  const [review, setReview] = useState(false);
+  const [approve, setApprove] = useState(false);
+
+  console.log(getPages(pathname.split('/')));
+  
+  console.log(user);
+
+  useEffect(() => {
+    const { role } = user;
+    const name = getPages(pathname.split('/'));
+
+    role.map(function(x){
+      if(x.name === name){
+        setSubmit(Boolean(x.submit));
+        setReview(Boolean(x.review));
+        setApprove(Boolean(x.approve));
+        console.log(submit, review, approve)
+      }
+    })
+  }, [])
 
   const [data, setData] = useState({
     id: '',
@@ -136,18 +164,24 @@ function FirstPage(){
 
           <div>
             <Button
+              disabled={!submit}
             >
               Submit
             </Button>
             <Button
-
+              disabled={!review}
+            >
+              Review
+            </Button>
+            <Button
+              disabled={!approve}
             >
               Tandai Approve
             </Button>
           </div>
         </SpaceBetween>
         <RootStyle>
-          <PaperStyled sx={{ width: "210mm", height: "279mm"}}>
+          <PaperStyled sx={{ width: "210mm", minHeight: "279mm"}}>
             {/* Header Info */}
             <Stack direction="column" spacing={2}>
             <Grid container sx={{
