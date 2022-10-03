@@ -57,6 +57,16 @@ class OrganizationTableSeeder extends Seeder
                 'id' => 8,
                 'description' => NULL,
             ),
+            8 => 
+            array (
+                'id' => 9,
+                'description' => NULL,
+            ),
+            9 => 
+            array (
+                'id' => 10,
+                'description' => NULL,
+            ),
         ));
         
         

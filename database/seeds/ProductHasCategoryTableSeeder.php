@@ -257,6 +257,12 @@ class ProductHasCategoryTableSeeder extends Seeder
                 'product_category_id' => 4,
                 'product_sub_category_id' => NULL,
             ),
+            40 => 
+            array (
+                'product_id' => 52,
+                'product_category_id' => 1,
+                'product_sub_category_id' => NULL,
+            ),
         ));
         
         

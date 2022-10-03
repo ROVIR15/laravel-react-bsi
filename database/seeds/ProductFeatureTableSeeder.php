@@ -1089,6 +1089,134 @@ class ProductFeatureTableSeeder extends Seeder
                 'size' => '1',
                 'price_component_id' => NULL,
             ),
+            134 => 
+            array (
+                'id' => 170,
+                'product_id' => 20,
+                'color' => 'Brown',
+                'size' => 'M',
+                'price_component_id' => NULL,
+            ),
+            135 => 
+            array (
+                'id' => 171,
+                'product_id' => 20,
+                'color' => 'Brown',
+                'size' => 'L',
+                'price_component_id' => NULL,
+            ),
+            136 => 
+            array (
+                'id' => 172,
+                'product_id' => 20,
+                'color' => 'Brown',
+                'size' => 'XL',
+                'price_component_id' => NULL,
+            ),
+            137 => 
+            array (
+                'id' => 173,
+                'product_id' => 20,
+                'color' => 'Brown',
+                'size' => 'XXL',
+                'price_component_id' => NULL,
+            ),
+            138 => 
+            array (
+                'id' => 174,
+                'product_id' => 21,
+                'color' => 'Black',
+                'size' => 'M',
+                'price_component_id' => NULL,
+            ),
+            139 => 
+            array (
+                'id' => 175,
+                'product_id' => 21,
+                'color' => 'Black',
+                'size' => 'L',
+                'price_component_id' => NULL,
+            ),
+            140 => 
+            array (
+                'id' => 176,
+                'product_id' => 21,
+                'color' => 'Black',
+                'size' => 'XL',
+                'price_component_id' => NULL,
+            ),
+            141 => 
+            array (
+                'id' => 177,
+                'product_id' => 21,
+                'color' => 'Black',
+                'size' => 'XXL',
+                'price_component_id' => NULL,
+            ),
+            142 => 
+            array (
+                'id' => 178,
+                'product_id' => 21,
+                'color' => 'Brown',
+                'size' => 'M',
+                'price_component_id' => NULL,
+            ),
+            143 => 
+            array (
+                'id' => 179,
+                'product_id' => 21,
+                'color' => 'Brown',
+                'size' => 'L',
+                'price_component_id' => NULL,
+            ),
+            144 => 
+            array (
+                'id' => 180,
+                'product_id' => 21,
+                'color' => 'Brown',
+                'size' => 'XL',
+                'price_component_id' => NULL,
+            ),
+            145 => 
+            array (
+                'id' => 181,
+                'product_id' => 21,
+                'color' => 'Brown',
+                'size' => 'XXL',
+                'price_component_id' => NULL,
+            ),
+            146 => 
+            array (
+                'id' => 182,
+                'product_id' => 52,
+                'color' => 'M',
+                'size' => 'Black',
+                'price_component_id' => NULL,
+            ),
+            147 => 
+            array (
+                'id' => 183,
+                'product_id' => 52,
+                'color' => 'L',
+                'size' => 'Black',
+                'price_component_id' => NULL,
+            ),
+            148 => 
+            array (
+                'id' => 184,
+                'product_id' => 52,
+                'color' => 'XL',
+                'size' => 'Black',
+                'price_component_id' => NULL,
+            ),
+            149 => 
+            array (
+                'id' => 185,
+                'product_id' => 52,
+                'color' => 'XXL',
+                'size' => 'Black',
+                'price_component_id' => NULL,
+            ),
         ));
         
         

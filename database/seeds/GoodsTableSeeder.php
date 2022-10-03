@@ -435,6 +435,17 @@ class GoodsTableSeeder extends Seeder
                 'created_at' => '2022-09-23 07:40:19',
                 'updated_at' => '2022-09-23 07:40:19',
             ),
+            38 => 
+            array (
+                'id' => 42,
+                'name' => 'Dresden',
+                'satuan' => 'pcs',
+                'value' => 0,
+                'brand' => 'EMBA',
+                'imageUrl' => NULL,
+                'created_at' => '2022-09-30 12:20:19',
+                'updated_at' => '2022-09-30 12:20:19',
+            ),
         ));
         
         

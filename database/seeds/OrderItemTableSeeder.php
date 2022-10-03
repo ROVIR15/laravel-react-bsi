@@ -881,6 +881,114 @@ class OrderItemTableSeeder extends Seeder
                 'shipment_estimated' => '2022-09-03',
                 'product_feature_id' => 169,
             ),
+            96 => 
+            array (
+                'id' => 121,
+                'order_id' => 14,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 170,
+            ),
+            97 => 
+            array (
+                'id' => 122,
+                'order_id' => 14,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 171,
+            ),
+            98 => 
+            array (
+                'id' => 123,
+                'order_id' => 14,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 172,
+            ),
+            99 => 
+            array (
+                'id' => 124,
+                'order_id' => 14,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 173,
+            ),
+            100 => 
+            array (
+                'id' => 125,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 174,
+            ),
+            101 => 
+            array (
+                'id' => 126,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 175,
+            ),
+            102 => 
+            array (
+                'id' => 127,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 176,
+            ),
+            103 => 
+            array (
+                'id' => 128,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 177,
+            ),
+            104 => 
+            array (
+                'id' => 129,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 178,
+            ),
+            105 => 
+            array (
+                'id' => 130,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 179,
+            ),
+            106 => 
+            array (
+                'id' => 131,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 180,
+            ),
+            107 => 
+            array (
+                'id' => 132,
+                'order_id' => 15,
+                'qty' => 100,
+                'unit_price' => 29000,
+                'shipment_estimated' => '2022-04-03',
+                'product_feature_id' => 181,
+            ),
         ));
         
         

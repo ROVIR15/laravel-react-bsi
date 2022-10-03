@@ -1249,6 +1249,50 @@ class QuoteItemTableSeeder extends Seeder
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
+            112 => 
+            array (
+                'id' => 122,
+                'quote_id' => 19,
+                'request_item_id' => NULL,
+                'product_feature_id' => 182,
+                'qty' => 100,
+                'unit_price' => '30000',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
+            113 => 
+            array (
+                'id' => 123,
+                'quote_id' => 19,
+                'request_item_id' => NULL,
+                'product_feature_id' => 183,
+                'qty' => 100,
+                'unit_price' => '30000',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
+            114 => 
+            array (
+                'id' => 124,
+                'quote_id' => 19,
+                'request_item_id' => NULL,
+                'product_feature_id' => 184,
+                'qty' => 100,
+                'unit_price' => '30000',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
+            115 => 
+            array (
+                'id' => 125,
+                'quote_id' => 19,
+                'request_item_id' => NULL,
+                'product_feature_id' => 185,
+                'qty' => 100,
+                'unit_price' => '30000',
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
         ));
         
         

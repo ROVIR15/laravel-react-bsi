@@ -34,10 +34,10 @@ class UsersTableSeeder extends Seeder
                 'name' => 'Eko',
                 'email' => 'ekoarianto.hde@gmail.com',
                 'email_verified_at' => NULL,
-                'password' => '$2y$10$fh0yNPXrtfghQ1APa7ub9Oo2NgvuurQ4EesO8cDDaKpeeCHbbG5Kq',
+                'password' => '$2y$10$tdv8gM6O51Q9nNhF350qQOZKBPsOQtiMt72JDSwkYOWuXr4PDXIN6',
                 'remember_token' => NULL,
                 'created_at' => '2022-06-23 06:29:02',
-                'updated_at' => '2022-06-23 06:29:02',
+                'updated_at' => '2022-10-02 17:25:31',
             ),
             2 => 
             array (
@@ -104,6 +104,28 @@ class UsersTableSeeder extends Seeder
                 'remember_token' => NULL,
                 'created_at' => '2022-09-20 06:03:33',
                 'updated_at' => '2022-09-20 06:03:33',
+            ),
+            8 => 
+            array (
+                'id' => 10,
+                'name' => 'Testing',
+                'email' => 'test@gggma.com',
+                'email_verified_at' => NULL,
+                'password' => '$2y$10$oVnPn3m8CQKMbmIjU5PU..WFbU6HX5zbpHS2xjGWXUE3esWKep0W.',
+                'remember_token' => NULL,
+                'created_at' => '2022-10-02 15:35:48',
+                'updated_at' => '2022-10-02 15:35:48',
+            ),
+            9 => 
+            array (
+                'id' => 11,
+                'name' => 'Dwiyanto',
+                'email' => 'dwiyanto.purchasing@harus24.com',
+                'email_verified_at' => NULL,
+                'password' => '$2y$10$0x7ri1fYueO6jOcxvlr9UejsDUMMAdFXzc1DKSYNcMPS0423IdDDm',
+                'remember_token' => NULL,
+                'created_at' => '2022-10-02 18:23:07',
+                'updated_at' => '2022-10-02 18:23:07',
             ),
         ));
         

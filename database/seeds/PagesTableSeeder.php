@@ -107,6 +107,12 @@ class PagesTableSeeder extends Seeder
                 'name' => 'operator-finished',
                 'description' => NULL,
             ),
+            15 => 
+            array (
+                'id' => 16,
+                'name' => 'user-management',
+                'description' => NULL,
+            ),
         ));
         
         

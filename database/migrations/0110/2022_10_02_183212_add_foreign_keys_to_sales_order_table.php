@@ -16,7 +16,7 @@ class AddForeignKeysToSalesOrderTable extends Migration {
 		{
 			$table->foreign('sold_to', 'fk_sales_order_buyer1')->references('id')->on('party')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('ship_to', 'fk_sales_order_buyer2')->references('id')->on('party')->onUpdate('CASCADE')->onDelete('CASCADE');
-			$table->foreign('order_id', 'fk_sales_order_order1')->references('id')->on('order')->onUpdate('CASCADE')->onDelete('CASCADE');
+			// $table->foreign('order_id', 'fk_sales_order_order1')->references('id')->on('order')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 
@@ -32,7 +32,7 @@ class AddForeignKeysToSalesOrderTable extends Migration {
 		{
 			$table->dropForeign('fk_sales_order_buyer1');
 			$table->dropForeign('fk_sales_order_buyer2');
-			$table->dropForeign('fk_sales_order_order1');
+			// $table->dropForeign('fk_sales_order_order1');
 		});
 	}
 

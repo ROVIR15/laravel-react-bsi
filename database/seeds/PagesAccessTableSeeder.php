@@ -227,6 +227,56 @@ class PagesAccessTableSeeder extends Seeder
                 'delete' => 1,
                 'edit' => 1,
             ),
+            21 => 
+            array (
+                'id' => 22,
+                'users_id' => 3,
+                'pages_id' => 16,
+                'name' => 'user-management',
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            22 => 
+            array (
+                'id' => 24,
+                'users_id' => 2,
+                'pages_id' => 16,
+                'name' => NULL,
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            23 => 
+            array (
+                'id' => 25,
+                'users_id' => 2,
+                'pages_id' => 3,
+                'name' => NULL,
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            24 => 
+            array (
+                'id' => 26,
+                'users_id' => 11,
+                'pages_id' => 6,
+                'name' => NULL,
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
+            25 => 
+            array (
+                'id' => 27,
+                'users_id' => 11,
+                'pages_id' => 8,
+                'name' => NULL,
+                'insert' => 1,
+                'delete' => 1,
+                'edit' => 1,
+            ),
         ));
         
         
