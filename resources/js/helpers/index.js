@@ -576,8 +576,8 @@ const main = {
         cb(err.response)
       })
     },
-    getQuoteBySO(cb){
-      axios.get( uri + '/quote?type=SO').then(function(res){
+    getQuoteBySO(params=null, cb){
+      axios.get( uri + '/quote?type=SO' + `&${params}`).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
@@ -704,8 +704,8 @@ const main = {
           cb(err.response);
       });
     },
-    getSalesOrder(cb){
-      axios.get( uri + '/sales-order').then(function(res){
+    getSalesOrder(params=null, cb){
+      axios.get( uri + '/sales-order' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
@@ -1599,11 +1599,11 @@ const main = {
           cb(err);
         });
       },
-      getRFQ(cb){
-        axios.get( uri + '/request-for-quotation').then(function(res){
+      getRFQ(params=null, cb){
+        axios.get( uri + '/quote?type=PO' + `&${params}`).then(function(res){
           cb(res.data);
         }).catch(function(err){
-          cb(err.response);
+          cb(err.response)
         })
       },
       getARFQ(id, cb){

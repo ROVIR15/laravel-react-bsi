@@ -18,7 +18,6 @@
         'status_type',
         'user_id',
         'quote_id',
-        'id'
     ];
 
     public function quote() {

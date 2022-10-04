@@ -1,17 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
 import { 
+  Box,
   Card, 
   CardHeader, 
   CardContent, 
   Container, 
   Divider,
+  InputAdornment,
+  Tab,
   TextField, 
   Typography, 
   Paper, 
   Stack, 
   Button 
 } from '@mui/material'
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -71,6 +75,15 @@ function SalesOrder() {
   // Sales Order Items storage variable on Data Grid
   const [items, setItems] = useState([])
 
+  /**
+   * TAB Panel
+   */
+   const [valueTab, setValueTab] = React.useState('1');
+
+   const handleChangeTab = (event, newValue) => {
+     setValueTab(newValue);
+   };
+   
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
@@ -346,77 +359,102 @@ function SalesOrder() {
             </CardContent>
           </Card>
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
             <CardContent>
-              <div style={{display: 'flex'}}>
-              <TextField
-                fullWidth
-                autoComplete="issue_date"
-                type="date"
-                placeholder='valid'
-                label="Diterbitkan"
-                {...getFieldProps('issue_date')}
-                error={Boolean(touched.issue_date && errors.issue_date)}
-                helperText={touched.issue_date && errors.issue_date}
-              />
-              <TextField
-                fullWidth
-                autoComplete="valid_thru"
-                type="date"
-                label="Valid to"
-                placeholder='valid'
-                {...getFieldProps('valid_thru')}
-                error={Boolean(touched.valid_thru && errors.valid_thru)}
-                helperText={touched.valid_thru && errors.valid_thru}
-              />
-              <TextField
-                fullWidth
-                autoComplete="delivery_date"
-                type="date"
-                label='Tanggal Pengiriman'
-                {...getFieldProps('delivery_date')}
-                error={Boolean(touched.delivery_date && errors.delivery_date)}
-                helperText={touched.delivery_date && errors.delivery_date}
-              />
-              </div>
+              <TabContext value={valueTab}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                    <Tab label="Overview" value="1" />
+                    <Tab label="Finance" value="2" />
+                  </TabList>  
+                </Box>
 
-              {/* Populate */}
-              <div>
-                <Stack direction="row">
-                  <TextField
-                    type="number"
-                    label="Qty"
-                    name="z"
-                    value={populateState.z}
-                    onChange={handleChangePopulate}
-                  />
-                  <TextField
-                    type="number"
-                    label="Harga Barang"
-                    name="aa"
-                    value={populateState.aa}
-                    onChange={handleChangePopulate}
-                  />
-                  <TextField
-                    type="date"
-                    label="Tanggal Kirim"
-                    name="y"
-                    value={populateState.y}
-                    onChange={handleChangePopulate}
-                  />
-                  <Button onClick={handlePopulate}>Populate</Button>
-                </Stack>
-              </div>
+                <TabPanel value="1">
+                <div style={{display: 'flex'}}>
+                <TextField
+                  fullWidth
+                  autoComplete="issue_date"
+                  type="date"
+                  placeholder='valid'
+                  label="Diterbitkan"
+                  {...getFieldProps('issue_date')}
+                  error={Boolean(touched.issue_date && errors.issue_date)}
+                  helperText={touched.issue_date && errors.issue_date}
+                />
+                <TextField
+                  fullWidth
+                  autoComplete="valid_thru"
+                  type="date"
+                  label="Valid to"
+                  placeholder='valid'
+                  {...getFieldProps('valid_thru')}
+                  error={Boolean(touched.valid_thru && errors.valid_thru)}
+                  helperText={touched.valid_thru && errors.valid_thru}
+                />
+                <TextField
+                  fullWidth
+                  autoComplete="delivery_date"
+                  type="date"
+                  label='Tanggal Pengiriman'
+                  {...getFieldProps('delivery_date')}
+                  error={Boolean(touched.delivery_date && errors.delivery_date)}
+                  helperText={touched.delivery_date && errors.delivery_date}
+                />
+                </div>
+    
+                {/* Populate */}
+                <div>
+                  <Stack direction="row">
+                    <TextField
+                      type="number"
+                      label="Qty"
+                      name="z"
+                      value={populateState.z}
+                      onChange={handleChangePopulate}
+                    />
+                    <TextField
+                      type="number"
+                      label="Harga Barang"
+                      name="aa"
+                      value={populateState.aa}
+                      onChange={handleChangePopulate}
+                    />
+                    <TextField
+                      type="date"
+                      label="Tanggal Kirim"
+                      name="y"
+                      value={populateState.y}
+                      onChange={handleChangePopulate}
+                    />
+                    <Button onClick={handlePopulate}>Populate</Button>
+                  </Stack>
+                </div>
+    
+                <DataGrid 
+                  columns={columns} 
+                  rows={items}
+                  onEditRowsModelChange={handleEditRowsModelChange}
+                  handleUpdateAllRows={handleUpdateAllRows}
+                  handleAddRow={handleOpenModal}
+                />
+                </TabPanel>
 
-            <DataGrid 
-              columns={columns} 
-              rows={items}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleOpenModal}
-            />
+                <TabPanel value="2">
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <Typography variant="body1">Tax</Typography>
+                    <TextField 
+                      autoComplete="tax"
+                      type="number"
+                      // {...getFieldProps('tax')}
+                      // error={Boolean(touched.tax && errors.tax)}
+                      // helperText={touched.tax && errors.tax}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                      }}
+                    />
+                  </Stack>
+                </TabPanel>
+              </TabContext>
+
             </CardContent>
           </Card>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>

@@ -47,9 +47,9 @@ export default function BasicTable({ payload, qty }) {
 
   const total = () => {
     let res = payload.reduce((prev, next) => {
-      return prev + Math.floor(next.work_center_info?.work_hours * next.work_center_info?.cost_per_hour);
+      return prev + Math.floor((next.work_center_info?.overhead_cost + next.work_center_info?.cost_per_hour)/next.work_center_info?.prod_capacity);
     }, 0)
-    return fCurrency(Math.floor(res/qty));
+    return fCurrency(Math.floor(res/payload.length));
   }
 
   return (

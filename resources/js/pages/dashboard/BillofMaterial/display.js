@@ -24,6 +24,7 @@ import API from '../../../helpers';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
   { id: 'company_name', label: 'Company Name', alignRight: false },
 ];
@@ -175,6 +176,7 @@ function DisplayBOM({ placeHolder }) {
                     id,
                     product_id,
                     product_feature_id,
+                    status,
                     name, 
                     qty, 
                     company_name
@@ -197,6 +199,7 @@ function DisplayBOM({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
                       <TableCell align="left">{qty}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>
                       <TableCell align="right">

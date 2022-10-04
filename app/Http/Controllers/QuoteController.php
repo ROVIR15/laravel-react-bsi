@@ -37,6 +37,7 @@ class QuoteController extends Controller
               $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
               })->get();
+              // return response()->json($query);
               return new QuoteViewCollection($query);
               break;
 

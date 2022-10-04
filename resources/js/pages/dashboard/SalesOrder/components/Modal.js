@@ -36,7 +36,6 @@ export default function BasicModal({ payload, order_id, update, open, handleClos
   const loading = open && options.length === 0;
 
   React.useEffect(() => {
-    console.log(items)
     let active = true;
 
     if(!loading) {

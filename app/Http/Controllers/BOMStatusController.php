@@ -44,8 +44,9 @@
       try {
         BOMStatus::create([
           'user_id' => $BOMStatusData['user_id'],
-          'order_id' => $BOMStatusData['order_id'],
-          'status_type' => $BOMStatusData['status_type']
+          'bom_id' => $BOMStatusData['bom_id'],
+          'status_type' => $BOMStatusData['status_type'],
+          'description' => $BOMStatusData['description']
         ]);
       } catch (Exception $th) {
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);

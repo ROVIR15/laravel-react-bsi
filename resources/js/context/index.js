@@ -56,9 +56,9 @@ export const AuthProvider = ({ children }) => {
       // localStorage.clear();
       navigate('/login');
     } else {
-      const { name, email, pages, role } = userStorage;
+      const { id, name, email, pages, role } = userStorage;
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      setUser({name, email, pages, role, access_token});  
+      setUser({id, name, email, pages, role, access_token});  
     }
 
   }, [location.pathname]);
@@ -77,8 +77,8 @@ export const AuthProvider = ({ children }) => {
       // localStorage.clear();
       navigate('/login');
     } else {
-      const { name, email, pages, role } = userStorage;
-      setUser({name, email, pages, role, access_token});  
+      const { id, name, email, pages, role } = userStorage;
+      setUser({id, name, email, pages, role, access_token});  
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     }
 

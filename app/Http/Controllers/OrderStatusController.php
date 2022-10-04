@@ -47,7 +47,8 @@
         OrderStatus::create([
           'user_id' => $orderStatusData['user_id'],
           'order_id' => $orderStatusData['order_id'],
-          'status_type' => $orderStatusData['status_type']
+          'status_type' => $orderStatusData['status_type'],
+          'description' => $orderStatusData['description']
         ]);
       } catch (Exception $th) {
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);

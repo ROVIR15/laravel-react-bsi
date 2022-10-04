@@ -83,7 +83,6 @@ function DisplayBuyer({ placeHolder }) {
           setGoodsData([]);
         } else {
           let data = serviceList2(res.data);
-          console.log(data);
           setGoodsData(data);
         }
       });

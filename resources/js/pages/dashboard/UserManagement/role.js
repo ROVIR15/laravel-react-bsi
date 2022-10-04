@@ -71,8 +71,6 @@ function User({data}) {
       return x;
     })
 
-    console.log(name, value, a)
-
     setPayload(a);
   }
 

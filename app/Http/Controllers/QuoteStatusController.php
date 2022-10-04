@@ -41,11 +41,13 @@
     public function store(Request $request)
     {
       $QuoteStatusData = $request->all()['payload'];
+
       try {
         QuoteStatus::create([
           'user_id' => $QuoteStatusData['user_id'],
-          'order_id' => $QuoteStatusData['order_id'],
-          'status_type' => $QuoteStatusData['status_type']
+          'quote_id' => $QuoteStatusData['quote_id'],
+          'status_type' => $QuoteStatusData['status_type'], 
+          'description' => $QuoteStatusData['description']
         ]);
       } catch (Exception $th) {
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);

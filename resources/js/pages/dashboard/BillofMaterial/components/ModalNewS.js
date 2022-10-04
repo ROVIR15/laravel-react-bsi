@@ -33,7 +33,6 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
 
-console.log(options)
 
   const handleDoneFill = () => {
     if(!value.length) handleClose();

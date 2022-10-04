@@ -49,7 +49,6 @@ export default function BasicModal({ payload, open, handleClose, update, items, 
         } else {
           let data =  await optionProductFeature(res.data);
           setOptions(data);
-          console.log(options);
         }
       })
     return () => {

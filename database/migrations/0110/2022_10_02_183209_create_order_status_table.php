@@ -16,7 +16,7 @@ class CreateOrderStatusTable extends Migration {
 		{
 			$table->integer('id', true);
 			$table->string('status_type', 50);
-			$table->text('description', 65535);
+			$table->text('description', 65535)->nullable();
 			$table->integer('order_id')->index('fk_order_status_order1_idx');
 			$table->integer('user_id');
 			$table->timestamps();

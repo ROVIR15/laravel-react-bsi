@@ -20,13 +20,14 @@ import BUYERLIST from '../../../_mocks_/buyer';
 import API from '../../../helpers';
 import { previousSaturday } from 'date-fns';
 import { fCurrency } from '../../../utils/formatNumber';
+import useAuth from '../../../context';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },  
-  { id: 'vendor_id', label: 'Supplier ID', alignRight: false },  
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'vendor_name', label: 'Nama Supplier', alignRight: false },
   { id: 'total_qty', label: 'Qty', alignRight: false },
   { id: 'total_money', label: 'Total', alignRight: false },  
@@ -76,18 +77,41 @@ function DisplayRFQ({ placeHolder }) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { user } = useAuth();
 
   useEffect(() => {
+    const { role } = user;
+    let params;
+
+    role.map((item) => {
+      if(item.approve && item.submit && item.review) {
+        params=null
+        return
+      }
+      if(item.approve) {
+        params='level=approve'
+        return
+      } 
+      if (item.submit) {
+        params='level=submit'
+        return
+      }
+      if (item.review) {
+        params='level=review'
+        return
+      }
+    });
+
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
 
     if(isEmpty(quoteData)) {
-      API.getRFQ((res) => {
+      API.getRFQ(params, (res) => {
 		    if(!res) return
 		    if(!res.data) {
-          setQuoteData(BUYERLIST);
+          setQuoteData([]);
         } else {
           setQuoteData(res.data);
         }
@@ -188,7 +212,8 @@ function DisplayRFQ({ placeHolder }) {
                     issue_date,
                     valid_thru,
                     delivery_date,
-                    sum
+                    sum,
+                    status
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -208,7 +233,7 @@ function DisplayRFQ({ placeHolder }) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{party.id}</TableCell>
+                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
                       <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

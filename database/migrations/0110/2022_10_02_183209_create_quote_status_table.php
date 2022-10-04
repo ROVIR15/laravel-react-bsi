@@ -18,7 +18,7 @@ class CreateQuoteStatusTable extends Migration {
 			$table->integer('user_id');
 			$table->integer('quote_id');
 			$table->string('status_type', 50);
-			$table->text('description', 65535);
+			$table->text('description', 65535)->nullable();
 			$table->timestamps();
 		});
 	}

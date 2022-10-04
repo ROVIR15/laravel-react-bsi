@@ -16,6 +16,8 @@ class BOM extends Model
         'id',
         'product_id',
         'product_feature_id',
+        'margin',
+        'tax',
         'name',
         'qty',
         'start_date',

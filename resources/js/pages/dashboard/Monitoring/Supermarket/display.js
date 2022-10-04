@@ -85,7 +85,6 @@ function DisplayQuote({ placeHolder }) {
         setFlag(false);
       }
       else {
-        console.log(res.data)
         setQuoteData(res.data);
         setFlag(true);
       }

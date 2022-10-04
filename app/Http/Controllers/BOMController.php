@@ -58,11 +58,17 @@
               'product_feature_id' => $param['product_feature_id'],
               'name' => $param['name'],
               'qty' => $param['qty'],
+              'margin' => $param['margin'],
+              'tax' => $param['tax'],
               'start_date' => $param['start_date'],
               'end_date' => $param['end_date'],
               'company_name' => $param['company_name']
             ]);
     
+            if(!is_array($param['components']) && count($param['components']) === 0) {
+                throw new Exception("Not found");
+            }
+
             $bomItemsCreation = [];
       
             foreach($param['components'] as $key){
@@ -78,6 +84,27 @@
     
             BOMItem::insert($bomItemsCreation);
 
+
+            if(!is_array($param['services']) && count($param['services']) === 0) {
+              throw new Exception("Not found");
+            }
+
+            $servicesCreation = [];
+
+            foreach($param['services'] as $key){
+                array_push($servicesCreation, [
+                  'product_id' => $key['product_id'],
+                  'bom_id' => $billOfMaterial['id'],
+                  'unit_price' => $key['unit_price'],
+                ]);
+            }
+
+            BOMService::insert($servicesCreation);
+
+            if(!is_array($param['operations']) && count($param['operations']) === 0) {
+                throw new Exception("Not found");
+            }
+
             $operationsCreation = [];
 
             foreach($param['operations'] as $key){
@@ -92,18 +119,7 @@
 
             Operation::insert($operationsCreation);
 
-            $servicesCreation = [];
-
-            foreach($param['services'] as $key){
-                array_push($servicesCreation, [
-                  'product_id' => $key['product_id'],
-                  'bom_id' => $billOfMaterial['id'],
-                  'unit_price' => $key['unit_price'],
-                ]);
-            }
-
-            BOMService::insert($servicesCreation);
-    
+            
           } catch (Exception $e) {
             //throw $th;
             return response()->json(

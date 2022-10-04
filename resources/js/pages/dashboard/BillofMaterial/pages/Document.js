@@ -31,6 +31,8 @@ import { getPages } from '../../../../utils/getPathname';
 import { jsPDF } from 'jspdf'
 import { toBlob, toPng } from 'html-to-image';
 
+import Dialog from '../../../../components/DialogBox/dialog';
+
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     padding: 180,
@@ -99,9 +101,57 @@ function Document(){
   const { user } = useAuth();
   const { pathname } = useLocation();
 
-  const [submit, setSubmit] = useState(false);
-  const [review, setReview] = useState(false);
-  const [approve, setApprove] = useState(false);
+  const [margin, setMargin] = useState('0');
+
+  const [submit, setSubmit] = useState(true);
+  const [review, setReview] = useState(true);
+  const [approve, setApprove] = useState(true);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [comment, setComment] = useState(false);
+  const [commentCtn, setCommentCtn] = useState('');
+  const [warning, setWarning] = useState({
+    title: "",
+    message: ""
+  });
+
+  function handleDialog(key) {
+
+    switch (key) {
+      case 'submit':
+        setWarning({
+          title: "Submit Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'submit',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      case 'review':
+        setWarning({
+          title: "Review Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'review',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      case 'approve':
+        setWarning({
+          title: "Apporve Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'approve',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      default:
+        break;
+    }
+  }    
 
   const handleDownloadPng = React.useCallback(() => {
     const content = pdfRef.current;
@@ -136,6 +186,8 @@ function Document(){
     goods_name: '',
     size: '',
     color: '',
+    margin: 0,
+    tax: 0,
     start_date: '',
     end_date: '',
     labor_alloc: 0,
@@ -155,7 +207,6 @@ function Document(){
         setSubmit(Boolean(x.submit));
         setReview(Boolean(x.review));
         setApprove(Boolean(x.approve));
-        console.log(submit, review, approve)
       }
     })
   }, [])
@@ -168,6 +219,7 @@ function Document(){
           if(!res) return undefined;
           let ras = await bomDocumentArranged(res.data);
           setData(ras);
+          setMargin(res.data?.margin);
           setImageUrl(ras.product?.goods?.imageUrl);
           setItems(res.data?.bom_items);
           setService(res.data?.bom_services);
@@ -177,16 +229,77 @@ function Document(){
         alert('error');
       }
 
+
     return () => {
       active = false;
     }
   }, [id]);
 
-
   const { bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
+
+  function handleSubmission(key, description){
+    let payload = { user_id: id, status_type: '', bom_id: data.bom_id };
+    switch (key) {
+      case 'submit':
+        payload = {...payload, status_type: 'Submit', description: ''};
+        break;
+
+      case 'review':
+        payload = {...payload, status_type: 'Review', description};
+        break;
+
+      case 'reject-review':
+        payload = {...payload, status_type: 'Reject Review', description};
+        break;
+
+      case 'approve':
+        payload = {...payload, status_type: 'Approve', description: ''};
+        try {
+          API.updateBOM(data.bom_id, {margin}, (res) => {
+            if(!res) return undefined
+            if(!res.success) return undefined
+            alert('success');
+          })
+        } catch (error) {
+          alert(error)
+        }
+        break;
+
+      case 'reject-approve':
+        payload = {...payload, status_type: 'Reject Approve', description};
+        break;        
+
+      default:
+        payload
+        break;
+    }
+    // alert(JSON.stringify(payload));
+    // return;
+    try {
+      API.insertBOMStatus(payload, (res) => {
+        if(!res) return undefined;
+        if(!res.success) new Error('Failed');
+        else alert('Success')
+      })      
+    } catch (error) {
+      alert('error');
+    }
+
+    setDialogOpen(false);
+  }  
 
   return (
       <MHidden width="mdDown">
+        <Dialog 
+          title={warning.title}
+          message={warning.message}
+          setOpen={setDialogOpen} 
+          open={dialogOpen}
+          comment={comment}
+          setComment={setComment}
+          type={warning.type}
+          send={warning.send}
+        />
         <SpaceBetween>
           <div >
             <IconButton>
@@ -199,21 +312,25 @@ function Document(){
 
           <div>
             <Button
+              onClick={() => handleDialog('submit')}
               disabled={!submit}
             >
               Submit
             </Button>
             <Button
+              onClick={() => handleDialog('review')}
               disabled={!review}
             >
               Review
             </Button>
             <Button
+              onClick={() => handleDialog('approve')}
               disabled={!approve}
             >
               Tandai Approve
             </Button>
           </div>
+
         </SpaceBetween>        
           <PaperStyled elevation={2} sx={{}}>
             {/* Product Info */}
@@ -363,7 +480,7 @@ function Document(){
               </Grid>
             </Grid>
             <GridItemX sx={{marginTop: 8, marginBottom: 4}}>
-              <Table payload={rest} approval={approve}/>
+              <Table payload={rest} approval={approve} margin={margin} setMargin={setMargin} tax={data.tax}/>
             </GridItemX>
             <Divider fullWidth />
             <Grid container>
@@ -406,7 +523,7 @@ function Document(){
               <Typography m={2} variant="h5">Breakdown Material Cost</Typography>
             </Grid>
             <GridItemX sx={{marginTop: 3, marginBottom: 4}}>
-              <TableComponent payload={items}/>
+              <TableComponent payload={items} tax={data.tax}/>
             </GridItemX>
             <Divider fullWidth />
             <Grid container>
@@ -448,14 +565,14 @@ function Document(){
               <Typography m={2} variant="h5">Breakdown Service Cost</Typography>
             </Grid>
             <GridItemX sx={{marginTop: 3, marginBottom: 4}}>
-              <TableService payload={service} qty={data?.qty}/>
+              <TableService payload={service} qty={data?.qty} tax={data.tax}/>
             </GridItemX>
 
             <Grid item>
               <Typography m={2} variant="h5">Breakdown CM Cost</Typography>
             </Grid>
             <GridItemX sx={{marginTop: 3, marginBottom: 4}}>
-              <TableCM payload={op} qty={data?.qty}/>
+              <TableCM payload={op} qty={data?.qty} tax={data.tax}/>
             </GridItemX>
 
             <Divider fullWidth />

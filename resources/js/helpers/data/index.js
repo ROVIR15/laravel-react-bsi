@@ -703,7 +703,7 @@ export function partyArrangedData(array){
 // BOM 
 
 export function bomDocumentArranged(data){
-  const { operations, qty, id,
+  const { operations, qty, id, margin, tax,
           product: {goods: {name}}, bom_items, bom_services, variants, start_date, end_date} = data;
   
   let cal_operations = {};
@@ -770,7 +770,7 @@ export function bomDocumentArranged(data){
     }, '')
   }
 
-  return {bom_id: id, qty, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`, additionalCost, average_add_cost, list_of_service}
+  return {bom_id: id, qty, tax, margin, ...cal_material_items, ...cal_operations, goods_name: name, size: variants?.size.valueOf() ? variants.size : null, color: variants?.color.valueOf() ? variants.color : null, start_date, end_date, qty_to_produce: qty, bom_name: `BOM-SO-${id}`, additionalCost, average_add_cost, list_of_service}
 }
 
 

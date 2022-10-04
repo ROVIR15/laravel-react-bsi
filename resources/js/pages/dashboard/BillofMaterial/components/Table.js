@@ -30,9 +30,8 @@ function createData(
   return { name, details, total_cost};
 }
 
-export default function BasicTable({ payload, approval }) {
+export default function BasicTable({ payload, approval, margin, setMargin, tax }) {
 
-  const [margin, setMargin] = React.useState(0);
   const [price, setPrice] = React.useState(0);
   const {total_labors, total_work_days, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
 
@@ -44,7 +43,11 @@ export default function BasicTable({ payload, approval }) {
   ];
 
   function OfferingPrice(price){
-    return fCurrency(price * ((1+margin/100)));
+    return price * ((1+margin/100));
+  }
+
+  function OfferingPriceAndTax(price, tax){
+    return price * ((1+tax/100));
   }
 
   return (
@@ -104,7 +107,7 @@ export default function BasicTable({ payload, approval }) {
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Material Cost </Typography>
+                <Typography value={margin} variant="inherit"> Material Cost </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -163,15 +166,16 @@ export default function BasicTable({ payload, approval }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-        <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
-          <Input
-            id="filled-adornment-amount"
-            disabled={!approval}
-            inputProps={{ style: {textAlign: 'end'}}}
-            onChange={(e) => setMargin(e.target.value)}
-            endAdornment={<InputAdornment position="end">%</InputAdornment>}
-          />
-        </FormControl>
+                <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+                  <Input
+                    id="filled-adornment-amount"
+                    disabled={!approval}
+                    value={margin} 
+                    inputProps={{ style: {textAlign: 'end'}}}
+                    onChange={(e) => setMargin(e.target.value)}
+                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                  />
+                </FormControl>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -184,9 +188,24 @@ export default function BasicTable({ payload, approval }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost]))} </Typography>
+                <Typography variant="body1"> {fCurrency(OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost])))} </Typography>
               </NoBorderCell>
             </TableRow>
+
+            <TableRow
+              key="Total"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Offering Price + Tax {tax} % </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(OfferingPriceAndTax(OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost])),tax))} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
         </TableBody>
       </Table>
     </TableContainer>

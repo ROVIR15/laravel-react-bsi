@@ -42,7 +42,7 @@ class Quote extends Model
     }
 
     public function status(){
-        return $this->belongsTo('App\Models\RRQ\QuoteStatus', 'id', 'quote_id');
+        return $this->hasMany('App\Models\RRQ\QuoteStatus')->orderBy('created_at', 'desc');
     }
 
     public function confirmation(){

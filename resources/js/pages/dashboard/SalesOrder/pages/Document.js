@@ -27,6 +27,8 @@ import { toBlob, toPng } from 'html-to-image';
 import useAuth from '../../../../context';
 import { getPages } from '../../../../utils/getPathname';
 
+import Dialog from '../../../../components/DialogBox/dialog';
+
 const RootStyle = styled(Page)(({ theme }) => ({
 
 }));
@@ -58,6 +60,7 @@ const BOXColumn = styled(Box)(({theme}) => ({
 const PaperStyled = styled(Paper)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     width: '85%',
+    margin: 'auto',
     backgroundColor: "rgb(255, 255, 255)", 
     color: "rgb(33, 43, 54)", 
     transition: "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms", 
@@ -90,6 +93,53 @@ function FirstPage(){
   const pdfRef = useRef(null);
   const { pathname } = useLocation();
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [comment, setComment] = useState(false);
+  const [commentCtn, setCommentCtn] = useState('');
+  const [warning, setWarning] = useState({
+    title: "",
+    message: ""
+  });
+
+  function handleDialog(key) {
+
+    switch (key) {
+      case 'submit':
+        setWarning({
+          title: "Submit Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'submit',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      case 'review':
+        setWarning({
+          title: "Review Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'review',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      case 'approve':
+        setWarning({
+          title: "Apporve Sales Order?",
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'approve',
+          send: (type, content) => handleSubmission(type, content)
+        })
+        setDialogOpen(true);
+        break;
+
+      default:
+        break;
+    }
+
+  }
+
   const [submit, setSubmit] = useState(false);
   const [review, setReview] = useState(false);
   const [approve, setApprove] = useState(false);
@@ -103,7 +153,6 @@ function FirstPage(){
         setSubmit(Boolean(x.submit));
         setReview(Boolean(x.review));
         setApprove(Boolean(x.approve));
-        console.log(submit, review, approve)
       }
     })
   }, [])
@@ -157,6 +206,19 @@ function FirstPage(){
     quote_items: []
   })
 
+  useEffect(() => {
+    const { role } = user;
+    const name = getPages(pathname.split('/'));
+
+    role.map(function(x){
+      if(x.name === name){
+        setSubmit(Boolean(x.submit));
+        setReview(Boolean(x.review));
+        setApprove(Boolean(x.approve));
+      }
+    })
+  }, [])
+
   useEffect(async () => {
     API.getASalesOrder(id, function(res){
       if (!res) return;
@@ -175,11 +237,10 @@ function FirstPage(){
           }
         });
 
-        console.log(quoteItem)
-
         setData({
           ...data, 
           id: res.data.id,
+          order_id: res.data.order_id,
           po_number: res.data.po_number,
           issue_date: res.data.issue_date,
           quote_items: quoteItem,
@@ -192,8 +253,60 @@ function FirstPage(){
     
   }, [id]);
 
+  function handleSubmission(key, description){
+    let payload = { user_id: id, status_type: '', order_id: data.order_id };
+    switch (key) {
+      case 'submit':
+        payload = {...payload, status_type: 'Submit', description: ''};
+        break;
+
+      case 'review':
+        payload = {...payload, status_type: 'Review', description};
+        break;
+
+      case 'reject-review':
+        payload = {...payload, status_type: 'Reject Review', description};
+        break;
+
+      case 'approve':
+        payload = {...payload, status_type: 'Approve', description: ''};
+        break;
+
+      case 'reject-approve':
+        payload = {...payload, status_type: 'Reject Approve', description};
+        break;        
+
+      default:
+        payload
+        break;
+    }
+    // alert(JSON.stringify(payload));
+    // return;
+    try {
+      API.insertOrderStatus(payload, (res) => {
+        if(!res) return undefined;
+        if(!res.success) new Error('Failed');
+        else alert('Success')
+      })      
+    } catch (error) {
+      alert('error');
+    }
+
+    setDialogOpen(false);
+  }  
+
   return (
       <MHidden width="mdDown">
+        <Dialog 
+          title={warning.title}
+          message={warning.message}
+          setOpen={setDialogOpen} 
+          open={dialogOpen}
+          comment={comment}
+          setComment={setComment}
+          type={warning.type}
+          send={warning.send}
+        />
         <SpaceBetween>
           <div >
             <IconButton>
@@ -206,21 +319,25 @@ function FirstPage(){
 
           <div>
             <Button
+              onClick={() => handleDialog('submit')}
               disabled={!submit}
             >
               Submit
             </Button>
             <Button
+              onClick={() => handleDialog('review')}
               disabled={!review}
             >
               Review
             </Button>
             <Button
+              onClick={() => handleDialog('approve')}
               disabled={!approve}
             >
               Tandai Approve
             </Button>
           </div>
+
         </SpaceBetween>
         <RootStyle >
           <PaperStyled ref={pdfRef} sx={{ width: "210mm", height: "279mm"}}>
@@ -241,8 +358,8 @@ function FirstPage(){
               </Grid>
               <Grid item={6} sx={{width: '50%', marginBottom: '1em'}}>
                 <Box sx={{textAlign: 'right'}}>
-                  <IDontKnow>Purchase Order</IDontKnow>
-                  <Typography variant="h3">PO-{data.id}-A</Typography>
+                  <IDontKnow>Sales Order</IDontKnow>
+                  <Typography variant="h3">SO-{data.order_id}-A</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -255,7 +372,7 @@ function FirstPage(){
                       display="block" 
                       gutterBottom
                     >
-                      RFQ Number
+                      Sales Order Number
                     </Typography>
                     <Typography
                       variant="h6" 

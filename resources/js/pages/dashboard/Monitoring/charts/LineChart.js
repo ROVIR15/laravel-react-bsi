@@ -88,7 +88,6 @@ export default function AppWebsiteVisits() {
       setData(hahaha)
       setLabels(res.data.label);
     })
-    console.log(labels, data)
   }, [])
 
   return (

@@ -7,9 +7,12 @@ import {
   CardContent, 
   Container, 
   Grid, 
+  InputAdornment,
   Tab,
   TextField,
-  Button
+  Button,
+  Typography,
+  Stack
 } from '@mui/material'
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { styled } from '@mui/material/styles';
@@ -105,7 +108,9 @@ function BillOfMaterial() {
     name: Yup.string().required('Name is required'),
     product_id: Yup.string().required('Product ID is required'),
     company_name: Yup.string().required('Company is required'),
-    qty: Yup.number().required('Quantity BOM is required')
+    qty: Yup.number().required('Quantity BOM is required'),
+    margin: Yup.number().required('Margin is required'),
+    tax: Yup.number().required('Tax is required')
   });
 
   const formik = useFormik({
@@ -115,6 +120,8 @@ function BillOfMaterial() {
       product_feature_id: '',
       company_name: '',
       qty: '',
+      margin: 0,
+      tax: 11,
       start_date: '',
       end_date: ''
     },
@@ -257,6 +264,8 @@ function BillOfMaterial() {
       product_feature_id: load.product_feature_id,
       name: load.name,
       qty: load.qty,
+      margin: load?.margin,
+      tax: load?.tax,
       start_date: load.start_date,
       end_date: load.end_date,
       company_name: load.company_name
@@ -628,6 +637,7 @@ function BillOfMaterial() {
                           <Tab label="Work" value="1" />
                           <Tab label="Material" value="2" />
                           <Tab label="Service" value="3" />
+                          <Tab label="Tax" value="4" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
@@ -659,6 +669,22 @@ function BillOfMaterial() {
                           handleResetRows={handleResetServiceRows}
                           handleUpdateAllRows={handleUpdateAllServiceRows}
                         />                        
+                      </TabPanel>
+
+                      <TabPanel value="4">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                        <Typography variant="body1">Tax</Typography>
+                        <TextField 
+                          autoComplete="tax"
+                          type="number"
+                          {...getFieldProps('tax')}
+                          error={Boolean(touched.tax && errors.tax)}
+                          helperText={touched.tax && errors.tax}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                          }}
+                        />
+                        </Stack>
                       </TabPanel>
 
                     </TabContext>

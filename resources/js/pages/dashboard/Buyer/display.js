@@ -87,7 +87,6 @@ function DisplayBuyer({ placeHolder }) {
         if(isEmpty(res)) {
           setBuyerData(BUYERLIST);
         } else {
-          console.log(res)
           const a = partyArrangedData(res);
           setBuyerData(a);
         }

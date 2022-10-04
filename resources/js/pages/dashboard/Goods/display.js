@@ -60,7 +60,7 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      if(!_b.name) console.log(_b)
+      if(!_b.name) return
       return _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     });
   }

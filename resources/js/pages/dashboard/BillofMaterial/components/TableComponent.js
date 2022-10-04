@@ -35,7 +35,7 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload }) {
+export default function BasicTable({ payload, tax }) {
 
   const sumSubTotal = () => {
     var sub = 0;
@@ -108,11 +108,11 @@ export default function BasicTable({ payload }) {
             >
               <NoBorderCell align="right" colSpan={7}>
                 <BoxStyle />
-                <Typography variant="body1"> Taxes </Typography>
+                <Typography variant="body1"> Taxes {tax}% </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {`Included`} </Typography>
+                <Typography variant="body1"> {tax > 0 ? `Included` : `Excluded`} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

@@ -29,8 +29,8 @@ import useAuth from '../../../context';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'po_number', label: 'Ref. Quote', alignRight: false },
+    { id: 'status', label: 'Status', alignRight: false },
     { id: 'bought_from', label: 'Supplier', alignRight: false },
     { id: 'total_qty', label: 'Qty', alignRight: false },
     { id: 'total_money', label: 'Total', alignRight: false },
@@ -88,14 +88,21 @@ function PurchaseOrder({ placeHolder }) {
     let params;
 
     role.map((item) => {
+      if(item.approve && item.submit && item.review) {
+        params=null
+        return
+      }
       if(item.approve) {
         params='?level=approve'
+        return
       } 
       if (item.submit) {
         params='?level=submit'
+        return
       }
       if (item.review) {
         params='?level=review'
+        return
       }
     });
 
@@ -105,7 +112,7 @@ function PurchaseOrder({ placeHolder }) {
     }
 
     if(isEmpty(purchaseOrderData)) {
-      API.getPurchaseOrder(params, (res) => {
+      API.getPurchaseOrder(params,(res) => {
 		  if(!res) return
 		  if(!res.data) {
           setpurchaseOrderData(BUYERLIST);
@@ -210,7 +217,8 @@ function PurchaseOrder({ placeHolder }) {
                     issue_date,
                     valid_thru,
                     delivery_date,
-                    sum
+                    sum,
+                    status
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -229,8 +237,8 @@ function PurchaseOrder({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{order_id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

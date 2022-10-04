@@ -19,6 +19,8 @@ class CreateBomTable extends Migration {
 			$table->integer('product_feature_id')->nullable()->index('fk_bom_product_feature_id_idx');
 			$table->string('name', 45)->nullable();
 			$table->integer('qty')->nullable();
+			$table->float('margin',10,0);
+			$table->float('tax',10,0);
 			$table->string('company_name', 45)->nullable();
 			$table->date('start_date');
 			$table->date('end_date');
