@@ -30,7 +30,7 @@ function createData(
   return { name, details, total_cost};
 }
 
-export default function BasicTable({ payload }) {
+export default function BasicTable({ payload, approval }) {
 
   const [margin, setMargin] = React.useState(0);
   const [price, setPrice] = React.useState(0);
@@ -166,6 +166,7 @@ export default function BasicTable({ payload }) {
         <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
           <Input
             id="filled-adornment-amount"
+            disabled={!approval}
             inputProps={{ style: {textAlign: 'end'}}}
             onChange={(e) => setMargin(e.target.value)}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}

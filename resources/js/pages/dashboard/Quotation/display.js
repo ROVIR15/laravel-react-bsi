@@ -18,6 +18,7 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { fCurrency } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,8 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
+  { id: 'total_qty', label: 'Qty', alignRight: false },
+  { id: 'total_money', label: 'Total', alignRight: false },
   { id: 'issue_date', label: 'Issue Date', alignRight: false },
   { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
@@ -185,6 +188,7 @@ function DisplayQuote({ placeHolder }) {
                     issue_date,
                     valid_thru,
                     delivery_date,
+                    sum
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -205,6 +209,8 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{party.name}</TableCell>
+                      <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>

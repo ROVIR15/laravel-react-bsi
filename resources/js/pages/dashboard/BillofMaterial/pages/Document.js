@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { styled } from '@mui/material/styles';
-import {Box, Divider, Grid, Paper, Typography} from '@mui/material';
+import {Box, Button, Divider, Grid, IconButton, Paper, Typography} from '@mui/material';
 
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 
 // Components
 import Table from '../components/Table'
@@ -19,12 +19,31 @@ import axios from 'axios';
 import API from '../../../../helpers';
 import { bomDocumentArranged } from '../../../../helpers/data';
 
+//Icons
+import editFill from '@iconify/icons-eva/edit-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
+import { Icon } from '@iconify/react';
+
+//Comtext
+import useAuth from '../../../../context';
+import { getPages } from '../../../../utils/getPathname';
+
+import { jsPDF } from 'jspdf'
+import { toBlob, toPng } from 'html-to-image';
+
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     padding: 180,
     background: '#666666'
   }
 }));
+
+const SpaceBetween = styled(Box)(({theme}) => ({
+  display: "flex", 
+  justifyContent: "space-between", 
+  marginBottom: "40px"
+}))
+
 
 const IDontKnow = styled('span')(({ theme }) => ({
   height: "22px", 
@@ -75,6 +94,41 @@ function Document(){
   const [ op, setOp ] = useState([]);
   const [ imageUrl, setImageUrl ] = useState(null);
 
+  const pdfRef = useRef(null);
+
+  const { user } = useAuth();
+  const { pathname } = useLocation();
+
+  const [submit, setSubmit] = useState(false);
+  const [review, setReview] = useState(false);
+  const [approve, setApprove] = useState(false);
+
+  const handleDownloadPng = React.useCallback(() => {
+    const content = pdfRef.current;
+
+    // toBlob(content, {cacheBust: true})
+    // .then((blob) => {
+    //   const doc = new jsPDF();
+
+    //   doc.addImage(blob);
+    //   doc.save('hehe.pdf')
+    // })
+    // .catch((err) => {
+    //   alert(err)
+    // })
+
+    toPng(content, {cacheBust: true})
+    .then((dataUrl) => {
+      const doc = new jsPDF();
+
+      doc.addImage(dataUrl, 5, 5);
+      doc.save('hehe.pdf')
+    })
+    .catch((err) => {
+      alert(err)
+    })
+  }, [pdfRef]);
+
   // state for document
   const [data, setData] = useState({
     bom_id: '',
@@ -91,6 +145,20 @@ function Document(){
     total_overhead: 0,
     total_goods: 0
   });
+
+  useEffect(() => {
+    const { role } = user;
+    const name = getPages(pathname.split('/'));
+
+    role.map(function(x){
+      if(x.name === name){
+        setSubmit(Boolean(x.submit));
+        setReview(Boolean(x.review));
+        setApprove(Boolean(x.approve));
+        console.log(submit, review, approve)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     let active = true;
@@ -119,6 +187,34 @@ function Document(){
 
   return (
       <MHidden width="mdDown">
+        <SpaceBetween>
+          <div >
+            <IconButton>
+              <Icon icon={editFill} width={20} height={20} />
+            </IconButton>
+            <IconButton>
+              <Icon icon={downloadFill} width={20} height={20} />
+            </IconButton>
+          </div>
+
+          <div>
+            <Button
+              disabled={!submit}
+            >
+              Submit
+            </Button>
+            <Button
+              disabled={!review}
+            >
+              Review
+            </Button>
+            <Button
+              disabled={!approve}
+            >
+              Tandai Approve
+            </Button>
+          </div>
+        </SpaceBetween>        
           <PaperStyled elevation={2} sx={{}}>
             {/* Product Info */}
             <Grid container 
@@ -267,7 +363,7 @@ function Document(){
               </Grid>
             </Grid>
             <GridItemX sx={{marginTop: 8, marginBottom: 4}}>
-              <Table payload={rest}/>
+              <Table payload={rest} approval={approve}/>
             </GridItemX>
             <Divider fullWidth />
             <Grid container>
@@ -278,6 +374,7 @@ function Document(){
               </Box>
             </Grid>
           </PaperStyled>
+
           <PaperStyled>
             <Grid container 
               spacing={3}
@@ -304,6 +401,7 @@ function Document(){
                 <Divider fullWidth />
               </Grid>
             </Grid>
+            
             <Grid item>
               <Typography m={2} variant="h5">Breakdown Material Cost</Typography>
             </Grid>

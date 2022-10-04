@@ -1513,8 +1513,8 @@ const main = {
           cb(err.response);
       });
     },
-    getPurchaseOrder(cb){
-      axios.get( uri + '/purchase-order').then(function(res){
+    getPurchaseOrder(params = null, cb){
+      axios.get( uri + '/purchase-order' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)

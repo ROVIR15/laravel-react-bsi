@@ -14,10 +14,16 @@ import {
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+
+import {useLocation} from 'react-router-dom';
+
 //
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+
+import { fCurrency } from '../../../utils/formatNumber';
+import useAuth from '../../../context';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +32,8 @@ const TABLE_HEAD = [
     { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'po_number', label: 'Ref. Quote', alignRight: false },
     { id: 'bought_from', label: 'Supplier', alignRight: false },
+    { id: 'total_qty', label: 'Qty', alignRight: false },
+    { id: 'total_money', label: 'Total', alignRight: false },
     { id: 'issue_date', label: 'Issue Date', alignRight: false },
     { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
     { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
@@ -73,14 +81,31 @@ function PurchaseOrder({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const { user } = useAuth();
+
   useEffect(() => {
+    const { role } = user;
+    let params;
+
+    role.map((item) => {
+      if(item.approve) {
+        params='?level=approve'
+      } 
+      if (item.submit) {
+        params='?level=submit'
+      }
+      if (item.review) {
+        params='?level=review'
+      }
+    });
+
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
 
     if(isEmpty(purchaseOrderData)) {
-      API.getPurchaseOrder((res) => {
+      API.getPurchaseOrder(params, (res) => {
 		  if(!res) return
 		  if(!res.data) {
           setpurchaseOrderData(BUYERLIST);
@@ -184,7 +209,8 @@ function PurchaseOrder({ placeHolder }) {
                     bought_from,
                     issue_date,
                     valid_thru,
-                    delivery_date
+                    delivery_date,
+                    sum
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -206,11 +232,13 @@ function PurchaseOrder({ placeHolder }) {
                       <TableCell align="left">{order_id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
+                      <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );

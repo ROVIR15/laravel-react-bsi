@@ -33,7 +33,7 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = SalesOrder::with('status')->whereHas('order', function($query2){
+          $query = SalesOrder::with('status', 'sum')->whereHas('order', function($query2){
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
             });
@@ -42,7 +42,7 @@
 
         case 'review':
           # code...
-          $query = SalesOrder::whereHas('order', function($query2){
+          $query = SalesOrder::with('sum')->whereHas('order', function($query2){
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
             });
@@ -51,7 +51,7 @@
         
         default:
           # code...
-          $query = SalesOrder::with('status')->get();
+          $query = SalesOrder::with('status', 'sum')->get();
           break;
       }
 

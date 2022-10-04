@@ -254,7 +254,8 @@ export function orderItemArrangedData(array){
               brand, 
               created_at, 
               updated_at
-          }
+          },
+          ...product
         },
         ...product_feature
       }
@@ -263,6 +264,7 @@ export function orderItemArrangedData(array){
     return {
       id, 
       order_id,
+      product_id: product.id,
       product_feature_id: product_feature.id,
       color,
       size,

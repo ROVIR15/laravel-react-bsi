@@ -19,6 +19,8 @@ import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 
+import { fCurrency } from '../../../utils/formatNumber';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -27,6 +29,8 @@ const TABLE_HEAD = [
     { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'sold_to', label: 'Sold to', alignRight: false },
     { id: 'ship_to', label: 'Ship to', alignRight: false },
+    { id: 'total_qty', label: 'Qty', alignRight: false },
+    { id: 'total_money', label: 'Total', alignRight: false },
     { id: 'issue_date', label: 'Issue Date', alignRight: false },
     { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
     { id: 'valid_thru', label: 'Valid Thru', alignRight: false }
@@ -186,7 +190,8 @@ function DisplaySalesOrder({ placeHolder }) {
                     po_number,
                     issue_date,
                     delivery_date,
-                    valid_thru
+                    valid_thru,
+                    sum
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -209,11 +214,13 @@ function DisplaySalesOrder({ placeHolder }) {
                       <TableCell align="left">{order_id}</TableCell>
                       <TableCell align="left">{sold_to}</TableCell>
                       <TableCell align="left">{ship_to}</TableCell>
+                      <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );

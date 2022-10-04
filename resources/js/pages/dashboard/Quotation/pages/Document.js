@@ -90,10 +90,6 @@ function FirstPage(){
   const [review, setReview] = useState(false);
   const [approve, setApprove] = useState(false);
 
-  console.log(getPages(pathname.split('/')));
-  
-  console.log(user);
-
   useEffect(() => {
     const { role } = user;
     const name = getPages(pathname.split('/'));

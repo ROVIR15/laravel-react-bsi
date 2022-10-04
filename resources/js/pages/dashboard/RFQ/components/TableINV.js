@@ -50,7 +50,7 @@ export default function BasicTable({ payload }) {
     payload.map(function(item){
       sub = sub + (item.qty*item.unit_price)
     })
-    return fCurrency(Math.floor(sub)*1.1);
+    return fCurrency(Math.floor(sub)*1.11);
   }
   return (
     <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
@@ -111,7 +111,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {`${10}%`} </Typography>
+                <Typography variant="body1"> {`${11}%`} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow

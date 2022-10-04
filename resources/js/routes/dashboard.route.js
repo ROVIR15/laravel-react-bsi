@@ -121,6 +121,8 @@ import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
 import DocumentQuotation from '../pages/dashboard/Quotation/pages/Document';
 import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
+import DocumentPO from '../pages/dashboard/PurchaseOrder/pages/Document';
+import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 
 //Play MOW
@@ -209,7 +211,8 @@ export default function TestRouter() {
             { path: ':id', element: <ShowSalesOrder />},
             { path: 'add', element: <AddSalesOrder />},
             { path: 'display', element: <DisplaySalesOrder />},
-            { path: 'edit', element: <p>edit</p>}
+            { path: 'edit', element: <p>edit</p>},
+            { path: 'document/:id', element: <DocumentSO/>}
           ]
         },
         { 
@@ -325,6 +328,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowPO />},
             { path: 'add', element: <AddPurchaseOrder />},
             { path: 'display', element: <DisplayPO />},
+            { path: 'document/:id', element: <DocumentPO/>}
           ]
         },
         { 

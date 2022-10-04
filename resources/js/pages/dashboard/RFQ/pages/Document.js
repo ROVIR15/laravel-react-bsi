@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import {Box, Button, Divider, Grid, IconButton, Paper, Stack, Typography} from '@mui/material';
 import { MHidden } from '../../../../components/@material-extend';
 
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 
 // Components
 import Table from '../components/TableINV';
@@ -23,6 +23,9 @@ import { Icon } from '@iconify/react';
 //pdf
 import { jsPDF } from 'jspdf'
 import { toBlob, toPng } from 'html-to-image';
+
+import useAuth from '../../../../context';
+import { getPages } from '../../../../utils/getPathname';
 
 const RootStyle = styled(Page)(({ theme }) => ({
 
@@ -83,19 +86,40 @@ const GridItemX = styled('div')(({ theme }) => ({
 
 function FirstPage(){
   const { id } = useParams();
+  const { user } = useAuth();
   const pdfRef = useRef(null);
+  const { pathname } = useLocation();
 
-  const handleDownloadPdf = () => {
-    const content = pdfRef.current;
+  const [submit, setSubmit] = useState(false);
+  const [review, setReview] = useState(false);
+  const [approve, setApprove] = useState(false);
 
-    const doc = new jsPDF('l','mm',[210, 297]);
+  useEffect(() => {
+    const { role } = user;
+    const name = getPages(pathname.split('/'));
 
-    doc.html(content, {
-      callback: (doc) => {
-        doc.save('wow.pdf')
-      },
+    role.map(function(x){
+      if(x.name === name){
+        setSubmit(Boolean(x.submit));
+        setReview(Boolean(x.review));
+        setApprove(Boolean(x.approve));
+        console.log(submit, review, approve)
+      }
     })
-  }
+  }, [])
+
+  // const handleDownloadPdf = () => {
+  //   const content = pdfRef.current;
+
+  //   const doc = new jsPDF('l','mm',[210, 297]);
+
+  //   doc.html(content, {
+  //     callback: (doc) => {
+  //       doc.save('wow.pdf')
+  //     },
+  //   })
+  // }
+  
 
   const handleDownloadPng = React.useCallback(() => {
     const content = pdfRef.current;
@@ -173,20 +197,24 @@ function FirstPage(){
             <IconButton>
               <Icon icon={editFill} width={20} height={20} />
             </IconButton>
-            <IconButton
-              onClick={handleDownloadPng}
-            >
+            <IconButton onClick={handleDownloadPng}>
               <Icon icon={downloadFill} width={20} height={20} />
             </IconButton>
           </div>
 
           <div>
             <Button
+              disabled={!submit}
             >
               Submit
             </Button>
             <Button
-
+              disabled={!review}
+            >
+              Review
+            </Button>
+            <Button
+              disabled={!approve}
             >
               Tandai Approve
             </Button>

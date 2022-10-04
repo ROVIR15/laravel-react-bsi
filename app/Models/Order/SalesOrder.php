@@ -3,7 +3,8 @@
   namespace App\Models\Order;
   
   use Carbon\Carbon;
-  
+  use DB;
+
   use Illuminate\Database\Eloquent\Model;
   use App\Http\Resources\Party\Party;
   
@@ -36,6 +37,10 @@
 
     public function order_item(){
       return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature');
+    }
+
+    public function sum(){
+      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->groupBy('order_id')->select(DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money'));
     }
 
     public function party(){

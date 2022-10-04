@@ -3,6 +3,7 @@
 namespace App\Models\RRQ;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Quote extends Model
 {
@@ -28,6 +29,10 @@ class Quote extends Model
         return $this->hasMany('App\Models\RRQ\QuoteItem');
     }
 
+    public function sum(){
+        return $this->hasMany('App\Models\RRQ\QuoteItem')->groupBy('quote_id')->select('quote_id',DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money'));
+    }
+
     public function party(){
         return $this->belongsTo('App\Models\Party\Party', 'party_id', 'id');
     }
@@ -38,5 +43,9 @@ class Quote extends Model
 
     public function status(){
         return $this->belongsTo('App\Models\RRQ\QuoteStatus', 'id', 'quote_id');
+    }
+
+    public function confirmation(){
+        return $this->belongsTo('App\Models\RRQ\Quote','quote_id');
     }
 }

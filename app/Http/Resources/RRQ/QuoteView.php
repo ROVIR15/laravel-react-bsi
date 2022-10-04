@@ -26,7 +26,8 @@ class QuoteView extends JsonResource
             'issue_date' => $this->issue_date,
             'valid_thru' => $this->valid_thru,
             'delivery_date' => $this->delivery_date,
-            'status' => $this->status
+            'status' => $this->status,
+            'sum' => $this->sum
         ];
     }
 }

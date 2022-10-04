@@ -200,7 +200,7 @@ function DisplayBOM({ placeHolder }) {
                       <TableCell align="left">{qty}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );

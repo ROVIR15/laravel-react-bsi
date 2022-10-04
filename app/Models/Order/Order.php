@@ -34,4 +34,8 @@
     public function status(){
       return $this->belongsTo('App\Models\Order\OrderStatus', 'id', 'order_id');
     }
+
+    public function confirmation(){
+      return $this->belongsTo('App\Models\Order\OrderConfirmed', 'id', 'order_id');
+    }
   }

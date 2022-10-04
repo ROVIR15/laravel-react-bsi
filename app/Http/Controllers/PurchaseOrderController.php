@@ -30,7 +30,7 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = PurchaseOrder::with('status')->whereHas('order', function($query2){
+          $query = PurchaseOrder::with('sum', 'status')->whereHas('order', function($query2){
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
             });
@@ -39,7 +39,7 @@
 
         case 'review':
           # code...
-          $query = PurchaseOrder::whereHas('order', function($query2){
+          $query = PurchaseOrder::whereHas('sum', 'order', function($query2){
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
             });
@@ -48,7 +48,7 @@
         
         default:
           # code...
-          $query = PurchaseOrder::with('status')->get();
+          $query = PurchaseOrder::with('status', 'sum')->get();
           break;
       }
 
