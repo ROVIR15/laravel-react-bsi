@@ -799,8 +799,8 @@ const main = {
         cb(err);
       });
     },
-    getBOM(cb){
-      axios.get( uri + '/bom').then(function(res){
+    getBOM(params='', cb){
+      axios.get( uri + '/bom' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

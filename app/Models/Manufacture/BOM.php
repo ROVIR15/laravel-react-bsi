@@ -46,7 +46,7 @@ class BOM extends Model
     }
 
     public function status(){
-        return $this->hasMany('App\Models\Manufacture\BOMStatus', 'bom_id');
+        return $this->hasMany('App\Models\Manufacture\BOMStatus', 'bom_id')->orderBy('created_at', 'desc');;
     }
     
 }

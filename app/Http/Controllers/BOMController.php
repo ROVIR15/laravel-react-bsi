@@ -25,9 +25,35 @@
      */
     public function index()
     {
-        $query = BOM::with('status')->get();
+      $query;
+      $level = $request->query('level');
+      
+      switch ($level) {
+        case 'approve':
+          # code...
+          $query = BOM::whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+            });
+          })->get();
+          break;
 
-        return new BOMCollection($query);
+        case 'review':
+          # code...
+          $query = BOM::whereHas('order', function($query2){
+            $query2->whereHas('status', function($query3){
+              $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
+            });
+          })->get();
+          break;
+        
+        default:
+          # code...
+          $query = BOM::with('status')->get();
+          break;
+      }
+
+      return new BOMCollection($query);
     }
 
     /**

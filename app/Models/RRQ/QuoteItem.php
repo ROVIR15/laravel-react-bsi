@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuoteItem extends Model
 {
-    protected $table = 'quote_item';
+protected $table = 'quote_item';
 
     protected $primaryKey = 'id';
 

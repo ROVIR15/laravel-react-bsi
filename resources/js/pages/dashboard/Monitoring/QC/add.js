@@ -82,6 +82,7 @@ function WorkCenter() {
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty_loading', headerName: 'Qty Loading', type: 'number', editable: true },
     { field: 'output', headerName: 'Output QC', type: 'number', editable: true },
+    { field: 'reject', headerName: 'Reject QC', type: 'number', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -209,8 +210,9 @@ const [id, setId] = React.useState(0);
       <Container>
       <Modal 
         open={openM}
+        so_id={selectedValueSO.id}
         onAddItems={handleAddItems}
-        order_id={id}
+        order_id={selectedValueSO.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

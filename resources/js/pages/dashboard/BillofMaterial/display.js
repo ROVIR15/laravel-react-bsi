@@ -19,6 +19,8 @@ import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 
+import useAuth from '../../../context';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -71,13 +73,34 @@ function DisplayBOM({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const { user } = useAuth();
+
   useEffect(() => {
+
+    const { role } = user;
+    let params;
+
+    role.map((item) => {
+      if(item.approve) {
+        params='?level=approve'
+        return
+      } 
+      if (item.submit) {
+        params='?level=submit'
+        return
+      }
+      if (item.review) {
+        params='?level=review'
+        return
+      }
+    });
+
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
     if(isEmpty(bomData)){
-      API.getBOM((res) => {
+      API.getBOM(params, (res) => {
         if(!res) return
         if(!res.data) {
           console.error('Nothing');

@@ -1,4 +1,5 @@
 import { isArray, sum } from 'lodash';
+import moment from 'moment';
 import { dateDifference } from '../../utils/formatTime';
 
 export function isEmpty(array){
@@ -122,11 +123,13 @@ export function _miniFunc(array, _so_id){
         },
         ...product_feature 
       }
+
+      
     } = x;
     return {
       id: index+1,
       supermarket_id: 0, 
-      date: "1990-01-01",
+      date: moment(new Date()).format("YYYY-MM-DD"),
       order_id,
       order_item_id: id,
       sales_order_id: _so_id,
@@ -136,6 +139,44 @@ export function _miniFunc(array, _so_id){
       size,
       name,
       numbering: " ",
+    }
+  })
+  
+  return arranged;
+} 
+
+export function _miniFuncQC(array, _so_id){
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      id,
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      }
+
+      
+    } = x;
+    return {
+      id: index+1,
+      ms_id: 0, 
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      order_id,
+      order_item_id: id,
+      sales_order_id: _so_id,
+      product_feature_id: product_feature.id,
+      po_number: "",
+      color,
+      size,
+      name,
     }
   })
   

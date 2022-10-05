@@ -25,7 +25,8 @@ class Qc extends Model
         'recorder',
         'line',
         'qty_loading',
-        'output'
+        'output',
+        'reject'
     ];
 
     public function order_item(){

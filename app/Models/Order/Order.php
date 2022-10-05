@@ -32,7 +32,7 @@
     }
 
     public function status(){
-      return $this->belongsTo('App\Models\Order\OrderStatus', 'id', 'order_id');
+      return $this->hasMany('App\Models\Order\OrderStatus', 'id', 'order_id')->orderBy('created_at', 'desc');
     }
 
     public function confirmation(){

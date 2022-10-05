@@ -22,12 +22,12 @@ import API from '../../../../helpers';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'date', label: 'Tanggal', alignRight: false },
-    { id: 'po_number', label: 'PO ', alignRight: false },
+    // { id: 'date', label: 'Tanggal', alignRight: false },
+    // { id: 'po_number', label: 'PO ', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
+    // { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -165,12 +165,12 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                   const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
                   const {
                     id,
-                    date,
-                    po_number,
+                    // date,
+                    // po_number,
                     name,
                     size,
                     color,
-                    qty_loading
+                    // qty_loading
                   } = row;
                   return (
                     <TableRow
@@ -188,12 +188,12 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
+                      {/* <TableCell align="left">{date}</TableCell> */}
+                      {/* <TableCell align="left">{po_number}</TableCell> */}
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{qty_loading}</TableCell>
+                      {/* <TableCell align="left">{qty_loading}</TableCell> */}
                     </TableRow>
                   );
                 })}
