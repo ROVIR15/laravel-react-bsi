@@ -67,7 +67,7 @@ function FirstPage(){
   return (
       <MHidden width="mdDown">
         <RootStyle>
-          <PaperStyled sx={{ width: "210mm", height: "279mm"}}>
+          <PaperStyled sx={{ width: "210mm", minHeight: "279mm"}}>
             {/* Header Info */}
             <Stack direction="column" spacing={2}>
             <Grid container sx={{

@@ -340,7 +340,7 @@ function FirstPage(){
 
         </SpaceBetween>
         <RootStyle >
-          <PaperStyled ref={pdfRef} sx={{ width: "210mm", height: "279mm"}}>
+          <PaperStyled ref={pdfRef} >
             {/* Header Info */}
             <Stack direction="column" spacing={2}>
             <Grid container sx={{
