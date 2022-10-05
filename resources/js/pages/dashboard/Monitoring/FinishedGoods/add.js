@@ -178,7 +178,7 @@ const [id, setId] = React.useState(0);
 
     (async () => {
       if (active) {
-        API.getSalesOrder((res) => {
+        API.getSalesOrder('', (res) => {
           if(!res) return
           else setOptions(res.data);
         })  
