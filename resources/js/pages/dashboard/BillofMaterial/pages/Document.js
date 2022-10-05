@@ -103,9 +103,9 @@ function Document(){
 
   const [margin, setMargin] = useState('0');
 
-  const [submit, setSubmit] = useState(true);
-  const [review, setReview] = useState(true);
-  const [approve, setApprove] = useState(true);
+  const [submit, setSubmit] = useState(false);
+  const [review, setReview] = useState(false);
+  const [approve, setApprove] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [comment, setComment] = useState(false);
@@ -532,7 +532,7 @@ function Document(){
                   This Document Generated Automatically
                 </Typography>
               </Box>
-            </Grid>
+          </Grid>
           </PaperStyled>
 
           <PaperStyled>
