@@ -523,7 +523,7 @@ function Document(){
               <Typography m={2} variant="h5">Breakdown Material Cost</Typography>
             </Grid>
             <GridItemX sx={{marginTop: 3, marginBottom: 4}}>
-              <TableComponent payload={items} tax={data?.tax} qty={data?.qty}/>
+              <TableComponent payload={items} tax={data.tax}/>
             </GridItemX>
             <Divider fullWidth />
             <Grid container>

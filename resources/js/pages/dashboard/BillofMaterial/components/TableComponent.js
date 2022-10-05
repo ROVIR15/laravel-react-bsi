@@ -35,7 +35,7 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, tax, qty }) {
+export default function BasicTable({ payload, tax }) {
 
   const sumSubTotal = () => {
     var sub = 0;
@@ -85,7 +85,7 @@ export default function BasicTable({ payload, tax, qty }) {
               <TableCell align="right">{row.allowance}</TableCell>
               <TableCell align="right">{row.qty}</TableCell>
               <TableCell align="right">{fCurrency(row.unit_price)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(Math.floor(row.qty * qty))}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(Math.floor(row.qty * row.unit_price))}</TableCell>
             </TableRow>
           ))}
           
