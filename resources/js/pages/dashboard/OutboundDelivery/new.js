@@ -79,7 +79,7 @@ function OutboundDelivery() {
 
     (async () => {
 
-      API.getSalesOrder((res) => {
+      API.getSalesOrder('', (res) => {
         if(!res) return
       if(!res.data) {
         setOptions([]);

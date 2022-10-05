@@ -125,7 +125,7 @@ function SalesOrder() {
 
     (async () => {
 
-      API.getQuoteBySO((res) => {
+      API.getQuoteBySO('', (res) => {
           if(!res) return
 		    if(!res.data) {
           setOptions([]);

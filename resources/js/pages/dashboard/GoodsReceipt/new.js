@@ -109,7 +109,7 @@ function GoodsReceipt() {
 
     (async () => {
 
-      API.getPurchaseOrder((res) => {
+      API.getPurchaseOrder('', (res) => {
         if(!res) return
       if(!res.data) {
         setOptions([]);
