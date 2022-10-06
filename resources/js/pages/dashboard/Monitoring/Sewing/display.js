@@ -188,7 +188,7 @@ function DisplayQuote({ placeHolder }) {
                     line,
                     qty_loading,
                     output,
-                    product_feature: { product: { goods } }
+                    product_feature
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -210,7 +210,7 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{date}</TableCell>
                       <TableCell align="left">{sales_order?.po_number}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{goods.name}</TableCell>
+                      <TableCell align="left">{product_feature?.product?.goods?.name}</TableCell>
                       <TableCell align="left">{line}</TableCell>
                       <TableCell align="left">{qty_loading}</TableCell>
                       <TableCell align="left">{output}</TableCell>
