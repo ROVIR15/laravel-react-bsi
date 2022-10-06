@@ -31,19 +31,16 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = BOM::whereHas('order', function($query2){
-            $query2->whereHas('status', function($query3){
+          $query = BOM::whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-            });
-          })->get();
+            }
+          )->get();
           break;
 
         case 'review':
           # code...
-          $query = BOM::whereHas('order', function($query2){
-            $query2->whereHas('status', function($query3){
+          $query = BOM::whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
-            });
           })->get();
           break;
         
