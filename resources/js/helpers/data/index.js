@@ -183,6 +183,44 @@ export function _miniFuncQC(array, _so_id){
   return arranged;
 } 
 
+export function _miniFuncFG(array, _so_id){
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      id,
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      }
+
+      
+    } = x;
+    return {
+      id: index+1,
+      qc_id: 0, 
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      order_id,
+      order_item_id: id,
+      sales_order_id: _so_id,
+      product_feature_id: product_feature.id,
+      po_number: "",
+      color,
+      size,
+      name,
+    }
+  })
+  
+  return arranged;
+} 
+
 export function optionProductFeature(array, filter){
   if(isEmpty(array)) return 
   let arranged = array.map((x) => {

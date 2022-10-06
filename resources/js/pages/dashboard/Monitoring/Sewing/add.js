@@ -53,10 +53,13 @@ function WorkCenter() {
       const {line, sales_order_id, date} = values
       let data = items.map(({id, brand, name, size, color, numbering, ...x}) => ({ ...x, order_item_id: id, line, sales_order_id, date}));
       API.insertMonitoringSewing(data, function(res){
-        alert(JSON.stringify(res));
-        if(!res) return;
-        if(res.success){
-          window.reload();
+        if(res.success) {
+          setItems([]);
+          handleReset();
+          selectedValueSO({});
+          alert(JSON.stringify(res));
+        } else {
+          alert(error);
         }
       })
       setSubmitting(false);

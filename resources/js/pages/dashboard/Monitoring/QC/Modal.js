@@ -18,7 +18,7 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 import API from '../../../../helpers';
 
 import Table from './Table';
-import { optionQC, _miniFunc } from '../../../../helpers/data';
+import { optionQC, _miniFuncQC } from '../../../../helpers/data';
 
 const style = {
   position: 'absolute',
@@ -44,7 +44,7 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         if(!res.data.length) {
           setValue([]);
         } else {
-          let ras = _miniFunc(res.data, so_id);
+          let ras = _miniFuncQC(res.data, so_id);
           setValue(ras)
         }
       });

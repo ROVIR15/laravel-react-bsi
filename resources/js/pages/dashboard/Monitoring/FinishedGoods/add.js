@@ -55,7 +55,14 @@ function WorkCenter() {
       const {line, recorder} = values
       let data = items.map(({id, date, brand, name, size, color, ...x}) => ({ ...x, qc_id: id, line, date: values.date, recorder}));
       API.insertMonitoringFG(data, function(res){
-        alert(JSON.stringify(JSON.stringify(res.data)));
+        if(res.success) {
+          setItems([]);
+          handleReset();
+          selectedValueSO({});
+          alert(JSON.stringify(res));
+        } else {
+          alert(error);
+        }
       })
       setSubmitting(false);
     }
@@ -211,7 +218,8 @@ const [id, setId] = React.useState(0);
       <Modal 
         open={openM}
         onAddItems={handleAddItems}
-        order_id={id}
+        so_id={selectedValueSO.id}
+        order_id={selectedValueSO.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

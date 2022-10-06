@@ -55,13 +55,20 @@ function WorkCenter() {
       const {line, recorder} = values
       let data = items.map(({id, date, brand, name, size, color, ...x}) => ({ ...x, ms_id: id, line, date: values.date, recorder}));
       API.insertMonitoringQC(data, function(res){
-        alert(JSON.stringify(JSON.stringify(res.data)));
+        if(res.success) {
+          setItems([]);
+          handleReset();
+          selectedValueSO({});
+          alert(JSON.stringify(res));
+        } else {
+          alert(error);
+        }
       })
       setSubmitting(false);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, values, handleReset, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
 // columns - Data grid
   const deleteData = useCallback(
@@ -242,13 +249,13 @@ const [id, setId] = React.useState(0);
                       </SpaceBetweenBox>
                       <div>
                         <Typography variant="body1">
-                          {selectedValueSO.id}
+                          {selectedValueSO?.id}
                         </Typography>
                         <Typography variant="span">
-                          {selectedValueSO.po_number}
+                          {selectedValueSO?.po_number}
                         </Typography>
                         <Typography variant="body2">
-                          {selectedValueSO.sold_to}
+                          {selectedValueSO?.sold_to}
                         </Typography>
                       </div>
                       <DialogBox
