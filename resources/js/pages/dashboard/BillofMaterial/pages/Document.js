@@ -220,7 +220,7 @@ function Document(){
           let ras = await bomDocumentArranged(res.data);
           setData(ras);
           setMargin(res.data?.margin);
-          setImageUrl(ras.product?.goods?.imageUrl);
+          setImageUrl(ras.imageUrl);
           setItems(res.data?.bom_items);
           setService(res.data?.bom_services);
           setOp(res.data?.operations);
@@ -287,6 +287,7 @@ function Document(){
 
     setDialogOpen(false);
   }  
+  
 
   return (
       <MHidden width="mdDown">
