@@ -82,7 +82,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Avatar src={state.name} alt={state.name} />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {user.name}
+                {user?.name}
               </Typography>
             </Box>
           </AccountStyle>
