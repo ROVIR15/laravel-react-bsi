@@ -110,7 +110,7 @@ function DisplayBOM({ placeHolder }) {
         }
       });
     }
-  }, [bomData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
