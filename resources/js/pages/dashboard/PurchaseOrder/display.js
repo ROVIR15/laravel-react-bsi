@@ -11,6 +11,7 @@ import {
   TablePagination,
 } from '@mui/material';
 //components
+import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
@@ -24,6 +25,7 @@ import API from '../../../helpers';
 
 import { fCurrency } from '../../../utils/formatNumber';
 import useAuth from '../../../context';
+import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
@@ -79,11 +81,19 @@ function PurchaseOrder({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
+    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { user } = useAuth();
 
   useEffect(() => {
+
+  }, [])
+
+  const handleUpdateData = () => {
     const { role } = user;
     let params;
 
@@ -106,22 +116,21 @@ function PurchaseOrder({ placeHolder }) {
       }
     });
 
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
-    if(isEmpty(purchaseOrderData)) {
+    try {
       API.getPurchaseOrder(params,(res) => {
 		  if(!res) return
 		  if(!res.data) {
-          setpurchaseOrderData(BUYERLIST);
+          setpurchaseOrderData([]);
         } else {
           setpurchaseOrderData(res.data);
         }
-      });
+      });      
+    } catch (error) {
+      alert('error')
     }
-  }, [])
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -156,6 +165,32 @@ function PurchaseOrder({ placeHolder }) {
     setSelected(newSelected);
   };
 
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
+
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -189,9 +224,13 @@ function PurchaseOrder({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        dateActive={true}
+        filterDate={filterDate}
+        onFilterDate={handleDateChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        onGo={handleUpdateData}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -204,11 +243,12 @@ function PurchaseOrder({ placeHolder }) {
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
+              active={false}
             />
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, index) => {
                   const {
                     id,
                     order_id,
@@ -230,15 +270,9 @@ function PurchaseOrder({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{index+1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
+                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

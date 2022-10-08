@@ -58,10 +58,13 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
+
+  if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
-      if(!_b.name) return
-      return _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      return (
+        _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1
+        && _b.category_id === query[1]
+      )
     });
   }
   return stabilizedThis.map((el) => el[0]);
@@ -76,6 +79,7 @@ function DisplayBuyer({ placeHolder }) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterCategory, setFilterCategory] = useState(0);
 
   useEffect(() => {
     function isEmpty(array){
@@ -151,9 +155,13 @@ function DisplayBuyer({ placeHolder }) {
     });
   }
 
+  const handleFilterCategoryAndSub = (event) => {
+    setFilterCategory(event.target.value)
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsData.length) : 0;
 
-  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), [filterName, filterCategory]);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -162,8 +170,11 @@ function DisplayBuyer({ placeHolder }) {
       <ListToolbar
         numSelected={selected.length}
         filterName={filterName}
+        filterCategory={filterCategory}
         onFilterName={handleFilterByName}
+        onFilterCategoryAndSub={handleFilterCategoryAndSub}
         placeHolder={placeHolder}
+        categoryFilterActive={true}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>

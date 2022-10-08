@@ -22,6 +22,9 @@ import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 import useAuth from '../../../context';
 
+
+import ChipStatus from '../../../components/ChipStatus';
+import moment from 'moment';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -76,12 +79,20 @@ function DisplaySalesOrder({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
+    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { user } = useAuth();
 
 
   useEffect(() => {
+    handleUpdateData();
+  }, [])
+
+  const handleUpdateData = () => {
     const { role } = user;
     let params;
 
@@ -104,22 +115,21 @@ function DisplaySalesOrder({ placeHolder }) {
       }
     });
 
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
-    if(isEmpty(salesOrderData)) {
+    try {
       API.getSalesOrder(params,(res) => {
-		  if(!res) return
-		  if(!res.data) {
-          setSalesOrderData([]);
-        } else {
-          setSalesOrderData(res.data);
-        }
-      });
+        if(!res) return
+        if(!res.data) {
+            setSalesOrderData([]);
+          } else {
+            setSalesOrderData(res.data);
+          }
+        });        
+    } catch (error) {
+      alert('error')
     }
-  }, [])
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -135,6 +145,31 @@ function DisplaySalesOrder({ placeHolder }) {
     }
     setSelected([]);
   };
+
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -187,6 +222,10 @@ function DisplaySalesOrder({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        dateActive={true}
+        filterDate={filterDate}
+        onFilterDate={handleDateChanges}
+        onGo={handleUpdateData}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -195,6 +234,7 @@ function DisplaySalesOrder({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -206,7 +246,7 @@ function DisplaySalesOrder({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, index) => {
                   const {
                     id,
                     sold_to,
@@ -227,15 +267,9 @@ function DisplaySalesOrder({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{index+1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
+                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{sold_to}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

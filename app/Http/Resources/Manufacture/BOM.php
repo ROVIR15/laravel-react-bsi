@@ -35,7 +35,8 @@ class BOM extends JsonResource
             'product' => $this->product,
             'status' => $this->status,
             'tax' => $this->tax,
-            'margin' => $this->margin
+            'margin' => $this->margin,
+            'created_at' => $this->created_at
         ];
     }
 }

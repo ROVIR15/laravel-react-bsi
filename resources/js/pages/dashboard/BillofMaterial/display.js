@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
+import { styled } from '@mui/material/styles';
 import {
   Card,
   Checkbox,
@@ -9,27 +10,33 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Chip,
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 
 import useAuth from '../../../context';
+import moment, { isMoment } from 'moment';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'date', label: 'Issue Date', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
   { id: 'company_name', label: 'Company Name', alignRight: false },
 ];
+
+const ChipStyled = styled(Chip)(({theme}) => ({
+  color: '#fff',
+  fontWeight: 'bolder'
+}))
 
 // ----------------------------------------------------------------------
 
@@ -57,60 +64,35 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  if (query[1] !== "All") {
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1 && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
+  } else {
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayBOM({ placeHolder }) {
-
+  let now = new Date()
+  
   const [bomData, setBomData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(now).format('YYYY-MM-DD'),
+    'fromDate': moment(now).subtract(7, 'days').format('YYYY-MM-DD')
+  });
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { user } = useAuth();
 
   useEffect(() => {
-
-    const { role } = user;
-    let params;
-
-    role.map((item) => {
-      if(item.approve) {
-        params='?level=approve'
-        return
-      } 
-      if (item.submit) {
-        params='?level=submit'
-        return
-      }
-      if (item.review) {
-        params='?level=review'
-        return
-      }
-    });
-
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
-    if(isEmpty(bomData)){
-      API.getBOM(params, (res) => {
-        if(!res) return
-        if(!res.data) {
-          console.error('Nothing');
-          setBomData(BUYERLIST);
-        } else {
-          setBomData(res.data);
-        }
-      });
-    }
-  }, [])
+    handleUpdateData();
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -158,6 +140,70 @@ function DisplayBOM({ placeHolder }) {
     setFilterName(event.target.value);
   };
 
+  const handleFilterByStatus = (event) => {
+    setFilterStatus(event.target.value);
+  }
+
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
+
+  const handleUpdateData = () => {
+    const { role } = user;
+    let params;
+
+    role.map((item) => {
+      if(item.approve) {
+        params='?level=approve'
+        return
+      } 
+      if (item.submit) {
+        params='?level=submit'
+        return
+      }
+      if (item.review) {
+        params='?level=review'
+        return
+      }
+    });
+
+    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+
+    try {
+      API.getBOM(params, (res) => {
+        if(!res) return
+        if(!res.data) {
+          setBomData([]);
+        } else {
+          setBomData(res.data);
+        }
+      });        
+    } catch (error) {
+      alert(error);
+    }
+  }
+
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteBOM(id, function(res){
@@ -167,16 +213,46 @@ function DisplayBOM({ placeHolder }) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bomData.length) : 0;
 
-  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), filterName);
-
+  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), [filterName, filterStatus]);
+  
   const isDataNotFound = filteredData.length === 0;  
 
+  function ChipStatus(param){
+    switch (param) {
+      case "Submit":
+        return <ChipStyled label={param} color="primary"/>
+        break;
+
+      case "Reject Review" || "Reject Approve":
+        return <ChipStyled label={param} color="error"/>
+        break;
+        
+      case "Review":
+        return <ChipStyled variant="filled"  label={param} color="warning"/>
+        break;
+
+      case "Approve":
+        return <ChipStyled label={param} color="success"/>
+        break;
+        
+      default:
+        return <Chip label="Created"/>
+        break;
+    }
+  }
   return (
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        dateActive={true}
+        statusActive={true}
         filterName={filterName}
+        filterStatus={filterStatus}
+        filterDate={filterDate}
         onFilterName={handleFilterByName}
+        onFilterStatus={handleFilterByStatus}
+        onFilterDate={handleDateChanges}
+        onGo={handleUpdateData}
         placeHolder={placeHolder}
       />
       <Scrollbar>
@@ -184,6 +260,7 @@ function DisplayBOM({ placeHolder }) {
           <Table>
             <ListHead
               order={order}
+              active={false}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
               rowCount={bomData.length}
@@ -194,7 +271,7 @@ function DisplayBOM({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, index) => {
                   const { 
                     id,
                     product_id,
@@ -202,7 +279,8 @@ function DisplayBOM({ placeHolder }) {
                     status,
                     name, 
                     qty, 
-                    company_name
+                    company_name,
+                    ...rest
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -214,15 +292,12 @@ function DisplayBOM({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{index+1}</TableCell>
+                      <TableCell align="left">{moment(new Date(rest.created_at)).format("DD MMM YYYY")}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
+                      <TableCell align="left">
+                        {ChipStatus(status[0]?.status_type)}
+                      </TableCell>
                       <TableCell align="left">{qty}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>
                       <TableCell align="right">
@@ -250,7 +325,7 @@ function DisplayBOM({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 25, 50]}
         component="div"
         count={bomData.length}
         rowsPerPage={rowsPerPage}

@@ -897,7 +897,7 @@ export function machineList(array){
   return array.map((item) => {
     let {product: {goods}, category} = item;
 
-    return {...goods, category: category.name, sub_category: category.sub.name}
+    return {...goods, category_id: category.id, category: category.name, sub_category: category.sub.name}
   });
 }
 

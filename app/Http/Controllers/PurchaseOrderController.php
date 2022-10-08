@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   use Carbon\Carbon;
-  
+  use DB;
 
   use Illuminate\Http\Request;
   use App\Models\Order\Order;
@@ -26,7 +26,15 @@
     {
       $query;
       $level = $request->query('level');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
       
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
       switch ($level) {
         case 'approve':
           # code...
@@ -34,7 +42,7 @@
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
             });
-          })->get();
+          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
         case 'review':
@@ -43,12 +51,12 @@
             $query2->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
             });
-          })->get();
+          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
         
         default:
           # code...
-          $query = PurchaseOrder::with('status', 'sum')->get();
+          $query = PurchaseOrder::with('status', 'sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
       }
 

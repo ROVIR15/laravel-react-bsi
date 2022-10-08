@@ -11,16 +11,16 @@ import {
   TablePagination,
 } from '@mui/material';
 //components
+import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 
 import useAuth from '../../../context';
+import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
@@ -76,13 +76,19 @@ function DisplayQuote({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
+    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [flag, setFlag] = useState(0)
 
   const { user } = useAuth();
 
   useEffect(() => {
+    handleUpdateData()
+  }, [])
+
+  const handleUpdateData = () => {
     const { role } = user;
     let params;
 
@@ -101,12 +107,9 @@ function DisplayQuote({ placeHolder }) {
       }
     });
 
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
-    if(isEmpty(quoteData)) {
+    try {
       API.getQuoteBySO(params, (res) => {
 		    if(!res) return
 		    if(!res.data) {
@@ -115,15 +118,41 @@ function DisplayQuote({ placeHolder }) {
           setQuoteData(res.data);
         }
       });
+    } catch (error) {
+     alert('error'); 
     }
-
-  }, [])
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -185,6 +214,10 @@ function DisplayQuote({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        dateActive={true}
+        filterDate={filterDate}
+        onFilterDate={handleDateChanges}
+        onGo={handleUpdateData}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -204,7 +237,7 @@ function DisplayQuote({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, index) => {
                   const {
                     id,
                     po_number,
@@ -231,9 +264,9 @@ function DisplayQuote({ placeHolder }) {
                           onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{index+1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{status?.length ? status[0].status_type : 'Created'}</TableCell>
+                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

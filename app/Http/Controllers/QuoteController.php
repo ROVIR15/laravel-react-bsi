@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
 use App\Models\RRQ\QuoteStatus;
@@ -26,6 +28,15 @@ class QuoteController extends Controller
       $param = $request->all();
       $type = $request->query('type');
       $level = $request->query('level');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
+      
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
       $query;
 
       switch ($type) {
@@ -36,7 +47,7 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-              })->get();
+              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               // return response()->json($query);
               return new QuoteViewCollection($query);
               break;
@@ -45,13 +56,13 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Submit', 'Reject Approve', 'Reject Review']);
-              })->get();
+              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               return new QuoteViewCollection($query);
               break;
               
             default:
               # code...
-              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->get();
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               return new QuoteViewCollection($query);
               break;
           }
@@ -62,7 +73,7 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-              })->get();
+              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               return new QuoteViewCollection($query);
               break;
 
@@ -70,20 +81,20 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Submit', 'Review', 'Reject Review']);
-              })->get();
+              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               return new QuoteViewCollection($query);
               break;
               
             default:
               # code...
               // $query = QuoteStatus::whereHas
-              $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->get();
+              $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
               return new QuoteViewCollection($query);
               break;
           }
         default:
           # code...
-          $query = Quote::with('sum')->get();
+          $query = Quote::with('sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           return new QuoteViewCollection($query);
           break;
       }

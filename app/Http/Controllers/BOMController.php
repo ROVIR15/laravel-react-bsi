@@ -5,6 +5,8 @@
   
   use Carbon\Carbon;
 
+  use DB;
+
   use App\Models\Manufacture\BOM;
   use App\Models\Manufacture\Operation;
   use App\Models\Manufacture\BOMItem;
@@ -27,29 +29,37 @@
     {
       $query;
       $level = $request->query('level');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
       
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
       switch ($level) {
         case 'approve':
           # code...
           $query = BOM::whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-            }
-          )->get();
+          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
         case 'review':
           # code...
           $query = BOM::whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
-          })->get();
+          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
         
         default:
           # code...
-          $query = BOM::with('status')->get();
+          $query = BOM::with('status')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
       }
 
+      // return response()->json([$query, $thruDate, $fromDate]);
       return new BOMCollection($query);
     }
 
