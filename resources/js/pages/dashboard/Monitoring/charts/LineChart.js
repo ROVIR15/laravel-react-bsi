@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
-import { Card, CardHeader, Box } from '@mui/material';
+import { Card, CardHeader, Box, FormControl, Typography, Button, TextField, Grid, Stack } from '@mui/material';
 //
+import moment from 'moment';
 import { BaseOptionChart } from '../../../../components/charts';
 //
 import API from '../../../../helpers'
@@ -60,6 +61,12 @@ function lineData(data){
 export default function AppWebsiteVisits() {
   const [labels, setLabels] = React.useState([]);
   const [data, setData] = React.useState([]);
+
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
+    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
+
   
   const chartOptions = merge(BaseOptionChart(), {
     stroke: { width: [3, 3, 3] },
@@ -82,20 +89,92 @@ export default function AppWebsiteVisits() {
   });
 
   React.useEffect(() => {
-    API.getGraphData(res => {
-      if(!res) return undefined;
-      let hahaha = (lineData(res.data));
-      setData(hahaha)
-      setLabels(res.data.label);
-    })
+    handleUpdateData();
   }, [])
 
+  const handleUpdateData = () => {
+    let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    try {
+      API.getGraphData(params, res => {
+        if(!res) return undefined;
+        let hahaha = (lineData(res.data));
+        setData(hahaha)
+        setLabels(res.data.label);
+      })  
+    } catch (error) {
+      alert('error');
+    }
+  }
+
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
+
   return (
-    <Card>
-      <CardHeader title="Performance" subheader="(+43%) than last year" />
-      <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={data} options={chartOptions} height={364} />
-      </Box>
-    </Card>
+    <Grid
+      container
+      direction="row"
+      spacing={2}
+    >
+      <Grid item xs={12}>
+      <Stack direction="row" spacing={2}>
+        <FormControl fullWidth>
+          <TextField
+            type="date"
+            label="Form Date"
+            value={filterDate.fromDate}
+            name="fromDate"
+            onChange={handleDateChanges}
+          />
+        </FormControl>
+
+        <Typography variant="h3">
+          -
+        </Typography>
+
+        <FormControl fullWidth>
+          <TextField
+            type="date"
+            label="To Date"
+            value={filterDate.thruDate}
+            name="thruDate"
+            onChange={handleDateChanges}
+          />
+        </FormControl> 
+
+        <Button onClick={handleUpdateData}>Go</Button>   
+      </Stack>      
+      </Grid>
+
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title="Sewing Performance" subheader="(+43%) than last year" />
+          <Box sx={{ p: 3, pb: 1 }} dir="ltr">
+            <ReactApexChart type="line" series={data} options={chartOptions} height={364} />
+          </Box>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }

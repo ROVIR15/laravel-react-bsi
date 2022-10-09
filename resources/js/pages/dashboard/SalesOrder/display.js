@@ -22,15 +22,17 @@ import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 import useAuth from '../../../context';
 
-
+import ChipStatusProduction from '../../../components/ChipStatusProduction';
 import ChipStatus from '../../../components/ChipStatus';
 import moment from 'moment';
+import AlertDialog from '../../../components/DialogBox/OrderCompletionStatus';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'po_number', label: 'PO Number', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'completion_status', label: 'Status Produksi', alignRight: false },
     { id: 'sold_to', label: 'Sold to', alignRight: false },
     { id: 'total_qty', label: 'Qty', alignRight: false },
     { id: 'total_money', label: 'Total', alignRight: false },
@@ -86,7 +88,6 @@ function DisplaySalesOrder({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { user } = useAuth();
-
 
   useEffect(() => {
     handleUpdateData();
@@ -255,6 +256,7 @@ function DisplaySalesOrder({ placeHolder }) {
                     delivery_date,
                     valid_thru,
                     sum,
+                    completion_status,
                     status
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
@@ -270,6 +272,7 @@ function DisplaySalesOrder({ placeHolder }) {
                       <TableCell align="left">{index+1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
+                      <TableCell align="left">{ChipStatusProduction(completion_status[0]?.status?.name)}</TableCell>
                       <TableCell align="left">{sold_to}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
@@ -277,7 +280,7 @@ function DisplaySalesOrder({ placeHolder }) {
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} document={true} completionStatus={true} openDialogForCompletionStatus={() => handleOpenDialog()} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );

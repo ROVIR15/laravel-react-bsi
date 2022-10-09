@@ -1,12 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import useAuth from '../../context';
+import Welcoming from './Welcoming';
 
 // ----------------------------------------------------------------------
 
@@ -37,13 +38,28 @@ const MainStyle = styled('div')(({ theme }) => ({
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const { loadingInitial } = useAuth();
+  const { pathname } = useLocation();
+
+  console.log(pathname.split('/'))
+
+  function isWelcoming(){
+    if(pathname.split('/').length === 2){
+      return (
+        <Welcoming />
+      )  
+    } else {
+      return (
+        <Outlet/> 
+      )
+    }
+  }
 
   return (
     <RootStyle>
       <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>
-        {loadingInitial ? null : (<Outlet/>)}
+        {loadingInitial ? null : isWelcoming()}
       </MainStyle>
     </RootStyle>
   );

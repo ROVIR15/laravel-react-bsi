@@ -138,7 +138,7 @@ function SimpleDialog(props) {
               selected={selectedValue === item.id}
               key={item.id}
             >
-              <Typography variant="subtitle2">{item.id}</Typography>
+              <Typography variant="subtitle2">{item.id} - {item.completion_status[0]?.status.name}</Typography>
               <Typography component="span" variant="caption">{item.po_number}</Typography>
               <Typography variant="body2">{item.sold_to}</Typography>
             </ListItemStyled>

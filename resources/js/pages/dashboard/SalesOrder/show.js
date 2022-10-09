@@ -7,11 +7,15 @@ import {
   CardContent, 
   Container, 
   Divider,
+  FormControl,
   InputAdornment,
+  InputLabel,
+  MenuItem,
   Tab,
   TextField, 
   Typography, 
   Paper, 
+  Select,
   Stack, 
   Button 
 } from '@mui/material'
@@ -37,6 +41,7 @@ import Modal from './components/Modal';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import useAuth from '../../../context';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -54,6 +59,7 @@ const SpaceBetweenBox = styled('div')(({theme}) => ({
 
 function SalesOrder() {
   const {id} = useParams();
+  const { user } = useAuth();
 
   //Dialog Interaction
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
@@ -144,6 +150,8 @@ function SalesOrder() {
     setSelectedValueSO(load.party)
     setSelectedValueSH(load.ship)
 
+    setStatus(load.completion_status[0]?.status?.id);
+
     const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${load.order_id}`)
     .then(function({data: {data}}) {
       return(data);
@@ -181,6 +189,31 @@ function SalesOrder() {
   }, [loading])
 
   const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps } = formik;
+
+  /**
+   * Completion Status
+   */
+
+  const [status, setStatus] = React.useState(0);
+
+  const handleSubmitCompletionStatus = () => {
+    if(!status) { alert('Stop'); return undefined}
+    try {
+      API.insertOrderCompletionStatus({
+        user_id: user.id,
+        order_id: values.order_id,
+        completion_status_id: status}, function(res){
+        if(!res.success) alert('Failed');
+        alert('done')
+      })
+    } catch (error) {
+        alert(error)
+    }
+  }
+ 
+  const handleChangeStatus = (event) => {
+    setStatus(event.target.value);
+  }  
 
   const deleteData = useCallback(
     (id) => () => {
@@ -393,7 +426,8 @@ function SalesOrder() {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                     <Tab label="Overview" value="1" />
-                    <Tab label="Finance" value="2" />
+                    <Tab label="Status" value="2" />
+                    <Tab label="Finance" value="3" />
                   </TabList>  
                 </Box>
 
@@ -468,6 +502,27 @@ function SalesOrder() {
                 </TabPanel>
 
                 <TabPanel value="2">
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <FormControl fullWidth>
+                      <InputLabel >Selet Status</InputLabel>
+                      <Select
+                        value={status}
+                        label="Status"
+                        onChange={handleChangeStatus}
+                      >
+                        <MenuItem value={5}>Draft</MenuItem>
+                        <MenuItem value={1}>Completed</MenuItem>
+                        <MenuItem value={2}>Running</MenuItem>
+                        <MenuItem value={3}>Waiting</MenuItem>
+                        <MenuItem value={4}>On Shipment</MenuItem>
+                      </Select>
+                    </FormControl>  
+
+                    <Button onClick={handleSubmitCompletionStatus}> Update </Button>     
+                  </Stack>           
+                </TabPanel>
+
+                <TabPanel value="3">
                   <Stack direction="row" spacing={4} alignItems="center">
                     <Typography variant="body1">Tax</Typography>
                     <TextField 

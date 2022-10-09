@@ -11,6 +11,7 @@ import {
   TablePagination,
 } from '@mui/material';
 //components
+import ChipStatusProduction from '../../../components/ChipStatusProduction';
 import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
@@ -33,6 +34,7 @@ const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'po_number', label: 'Ref. Quote', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'completion_status', label: 'Progress', alignRight: false },
     { id: 'bought_from', label: 'Supplier', alignRight: false },
     { id: 'total_qty', label: 'Qty', alignRight: false },
     { id: 'total_money', label: 'Total', alignRight: false },
@@ -258,6 +260,7 @@ function PurchaseOrder({ placeHolder }) {
                     valid_thru,
                     delivery_date,
                     sum,
+                    completion_status,
                     status
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
@@ -273,6 +276,7 @@ function PurchaseOrder({ placeHolder }) {
                       <TableCell align="left">{index+1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
+                      <TableCell align="left">{ChipStatusProduction(completion_status[0]?.status?.name)}</TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>

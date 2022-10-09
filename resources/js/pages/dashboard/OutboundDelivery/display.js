@@ -86,7 +86,7 @@ function OutboundDelivery({ placeHolder }) {
             setGoodsReceipt([]);
           } else {
             let response = outboundShipmentArrangedData(res.data);
-            setGoodsReceipt(response);
+            setGoodsReceipt([]);
           }
         });
       } catch (error) {

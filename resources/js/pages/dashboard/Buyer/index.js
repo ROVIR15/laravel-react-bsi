@@ -12,6 +12,7 @@ import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
+import Display from './display';
 // components
 import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
 import Layout from '../../../layouts/Layout';
@@ -33,6 +34,19 @@ function BuyerList() {
       variant: 'success'
     });
   };
+
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }  
+
 
   return (
     <Layout>
@@ -67,7 +81,7 @@ function BuyerList() {
           </Button> */}
         </Stack>
       </Stack>
-      <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }

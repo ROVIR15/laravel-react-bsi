@@ -31,36 +31,44 @@
       $level = $request->query('level');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
-      
+      $completion_status = $request->query('completion_status');
+
+      if(empty($level)){
+        if(!empty($completion_status) && $completion_status = 2){
+          $query = SalesOrder::with('completion_status')->whereHas('completion_status', function($query2){
+            $query2->where('completion_status_id', 2);
+          })->get();
+        } else {
+          $query = SalesOrder::with('status', 'sum', 'completion_status')->get();
+        }
+
+        return new SOViewCollection($query);
+      }
+
       if(empty($fromDate) || empty($thruDate)){
         $thruDate = date('Y-m-d');
         $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
         $fromDate = date_format($fromDate, 'Y-m-d');
       }
-
       
       switch ($level) {
         case 'approve':
           # code...
-          $query = SalesOrder::with('status', 'sum')->whereHas('order', function($query2){
-            $query2->whereHas('status', function($query3){
-              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-            });
+          $query = SalesOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
+            $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
         case 'review':
           # code...
-          $query = SalesOrder::with('sum')->whereHas('order', function($query2){
-            $query2->whereHas('status', function($query3){
-              $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
-            });
+          $query = SalesOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
+            $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
         
         default:
           # code...
-          $query = SalesOrder::with('status', 'sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          $query = SalesOrder::with('completion_status', 'status', 'sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
       }
 
@@ -148,7 +156,7 @@
     public function show($id)
     {
       try {
-        $salesOrder = SalesOrder::with('party', 'order_item', 'ship', 'status')->find($id);
+        $salesOrder = SalesOrder::with('party', 'order_item', 'ship', 'status', 'completion_status')->find($id);
         return new oneSalesOrder($salesOrder);
       } catch (Exception $th) {
         return response()->json([

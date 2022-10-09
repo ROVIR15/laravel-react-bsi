@@ -17,7 +17,6 @@
         'completion_status_id',
         'user_id',
         'order_id',
-        'id'
     ];
 
     public function sales_order() {
@@ -26,5 +25,9 @@
 
     public function purchase_order() {
       return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('order_item', 'purchase_order');
-    }    
+    }
+    
+    public function status(){
+      return $this->belongsTo('App\Models\Order\CompletionStatus', 'completion_status_id', 'id');
+    }
   }

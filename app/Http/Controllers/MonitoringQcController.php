@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Monitoring\Qc;
+use DB;
 
 class MonitoringQcController extends Controller
 {
@@ -17,12 +18,37 @@ class MonitoringQcController extends Controller
     public function index(Request $request)
     {
       $param = $request->has('sales-order');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
       $query = [];
 
-      if($param){
-        $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id', 'ms_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature', 'fg')->where('sales_order_id', $request->query('sales-order'))->get();
-      } else {
-        $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'po_number', 'product_feature_id', 'ms_id')->with('sales_order', 'product_feature')->orderBy('date', 'desc')->get();
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
+      try {
+        //code...
+        if($param){
+          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+                  ->groupBy('line', 'date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id', 'ms_id')
+                  ->orderBy('date', 'desc')
+                  ->with('sales_order', 'product_feature', 'fg')
+                  ->where('sales_order_id', $request->query('sales-order'))
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->get();
+        } else {
+          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+                  ->groupBy('line', 'date', 'po_number', 'product_feature_id', 'ms_id')
+                  ->with('sales_order', 'product_feature')
+                  ->orderBy('date', 'desc')
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->get();
+        }  
+      } catch (Throwable $th) {
+        //throw $th;
+        return response()->json(['success' => false, 'error' => $th->getMessage()]);
       }
 
       return response()->json(['data' => $query]);

@@ -10,6 +10,8 @@ import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
+import API from '../../helpers';
+import AlertDialog from '../DialogBox/OrderCompletionStatus';
 // ----------------------------------------------------------------------
 
 function getEditPathname(array, param) {
@@ -17,7 +19,7 @@ function getEditPathname(array, param) {
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 
-export default function MoreMenu({ handleDelete, document, id }) {
+export default function MoreMenu({ handleDelete, document=false, id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 

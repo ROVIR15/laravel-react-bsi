@@ -160,7 +160,7 @@ const [id, setId] = React.useState(0);
 
     (async () => {
       if (active) {
-        API.getSalesOrder('', (res) => {
+        API.getSalesOrder('?completion_status=2', (res) => {
           if(!res) return
           else setOptions(res.data);
         })  

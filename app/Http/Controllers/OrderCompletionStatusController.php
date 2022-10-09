@@ -45,7 +45,7 @@ class OrderCompletionStatusController extends Controller
         OrderCompletionStatus::create([
           'user_id' => $orderStatusData['user_id'],
           'order_id' => $orderStatusData['order_id'],
-          'completion_status_id' => $orderStatusData['status_type'],
+          'completion_status_id' => $orderStatusData['completion_status_id'],
         ]);
       } catch (Exception $th) {
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
@@ -100,7 +100,7 @@ class OrderCompletionStatusController extends Controller
 
       try {
         if(empty($id)) return response()->json([ 'success' => false, 'errors' => 'id not found']);
-        OrderCompletionStatus::find($id)->update($orderStatusData);
+        OrderCompletionStatus::where($id)->update($orderStatusData);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

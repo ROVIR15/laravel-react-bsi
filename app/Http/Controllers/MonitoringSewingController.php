@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Monitoring\Sewing;
+use DB;
 
 class MonitoringSewingController extends Controller
 {
@@ -17,12 +18,35 @@ class MonitoringSewingController extends Controller
     public function index(Request $request)
     {
       $param = $request->has('sales-order');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
       $query = [];
 
-      if($param){
-        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature', 'qc')->where('sales_order_id', $request->query('sales-order'))->get();
-      } else {
-        $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')->groupBy('line', 'date', 'po_number', 'sales_order_id')->with('sales_order', 'product_feature', 'qc')->get();
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
+      try {
+        if($param){
+          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+                  ->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')
+                  ->with('sales_order', 'product_feature', 'qc')
+                  ->where('sales_order_id', $request->query('sales-order'))
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->orderBy('date', 'asc')
+                  ->get();
+        } else {
+          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+                  ->groupBy('line', 'date', 'po_number', 'sales_order_id')
+                  ->with('sales_order', 'product_feature', 'qc')
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->orderBy('date', 'asc')
+                  ->get();
+        }
+      } catch (Throwable $th) {
+        return response()->json(['success' => false, 'error' => $th->getMessage()]);
       }
 
       return response()->json(['data' => $query]);

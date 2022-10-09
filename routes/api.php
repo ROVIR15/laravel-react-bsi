@@ -178,13 +178,11 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::resource('machine', 'MachineController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
-
+    Route::resource('graph-api', 'GraphSewingController')->only(['index']);
+    Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
+    Route::resource('pages', 'PagesController')->only('index', 'store', 'destroy', 'update', 'show');
+    Route::resource('pages-access', 'PagesAccessController')->only('index', 'store', 'destroy', 'update', 'show');
+    Route::resource('submission', 'ApprovalController')->only('index', 'store', 'destroy', 'update', 'show', 'showByUserId');
+    
     //Agre
 });
-
-Route::resource('graph-api', 'GraphSewingController')->only(['index']);
-
-Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
-Route::resource('pages', 'PagesController')->only('index', 'store', 'destroy', 'update', 'show');
-Route::resource('pages-access', 'PagesAccessController')->only('index', 'store', 'destroy', 'update', 'show');
-Route::resource('submission', 'ApprovalController')->only('index', 'store', 'destroy', 'update', 'show', 'showByUserId');

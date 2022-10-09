@@ -18,6 +18,7 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
+import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
@@ -73,26 +74,30 @@ function DisplayQuote({ placeHolder }) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [flag, setFlag] = useState(0)
+  const [filterDate, setFilterDate] = useState({
+    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
+    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
 
   useEffect(() => {
-
-  if(flag<3) {
-    API.getMonitoringQC('', (res) => {
-		  if(!res) {
-        setQuoteData(BUYERLIST);
-        setFlag(false);
-      }
-      else {
-        setQuoteData(res.data);
-        setFlag(true);
-      }
-      setFlag(prevFlag => prevFlag+1);
-    });
-  }
-
+    handleUpdateData();
   }, [])
+
+  const handleUpdateData = () => {
+    let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    try {
+      API.getMonitoringQC(params, (res) => {
+        if(!res.data) {
+          setQuoteData([]);
+        }
+        else {
+          setQuoteData(res.data);
+        }
+      });      
+    } catch (error) {
+      alert('error');
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -150,6 +155,31 @@ function DisplayQuote({ placeHolder }) {
     });
   }
 
+  const handleDateChanges = (event) => {
+    const { name, value} = event.target;
+    setFilterDate((prevValue) => {
+      if(name === 'fromDate') {
+        if(value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      } 
+      else if(name === 'thruDate') {
+        if(value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return ({...prevValue, [name]: value});
+        }
+      }
+      else {
+        return ({...prevValue, [name]: value});
+      }
+    })
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
   const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
@@ -160,7 +190,11 @@ function DisplayQuote({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        dateActive={true}
         filterName={filterName}
+        filterDate={filterDate}
+        onFilterDate={handleDateChanges}
+        onGo={handleUpdateData}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
       />

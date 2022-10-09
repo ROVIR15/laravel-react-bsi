@@ -12,6 +12,7 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
 // components
+import Display from './display';
 import Layout from '../../../layouts/Layout';
 
 import { useSnackbar } from 'notistack'
@@ -31,6 +32,19 @@ function Machine() {
       variant: 'success'
     });
   };
+
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }  
+
 
   return (
     <Layout>
@@ -65,7 +79,7 @@ function Machine() {
           </Button> */}
         </Stack>
       </Stack>
-      <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }

@@ -7,6 +7,13 @@ const uri = process.env.MIX_API_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const main = {
+    getCheckAuth(cb){
+      axios.get( uri + '/facility').then( function(res){
+        cb(res);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },  
     getUsers(cb){
       axios.get( uri + '/user').then( function(res){
         cb(res.data);
@@ -182,6 +189,15 @@ const main = {
         }).catch(function(err){
           cb(err.response);
         })
+    },
+    //Update Order Completion Status
+    insertOrderCompletionStatus(_data, cb){
+      if(!_data) throw new Error('data is required');
+      axios.post( uri + '/order-completion-status', { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
     },
     // Goods
     insertGoods(_data, cb){
@@ -2148,8 +2164,8 @@ const main = {
         cb(err.response);
       });
     },
-    getGraphData(cb){
-      axios.get(uri + '/graph-api').then(function(res){
+    getGraphData(params, cb){
+      axios.get(uri + '/graph-api' + params).then(function(res){
         cb(res);
       }).catch(function(err){
         cb(err.response);

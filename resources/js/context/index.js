@@ -2,6 +2,7 @@ import React, { createContext, useState, useMemo, useEffect, useContext } from "
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import AUTHAPI from '../helpers/api/auth';
+import API from '../helpers';
 
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -70,7 +71,7 @@ export const AuthProvider = ({ children }) => {
   //
   // Finally, just signal the component that the initial load
   // is over.
-  useEffect(() => {
+  useEffect(() => {    
     const userStorage = JSON.parse(localStorage.getItem('user'));
     const access_token = localStorage.getItem('_token');
     if( !userStorage && !access_token ) {
@@ -118,7 +119,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     setLoading(false);
-    console.log('logged in' );
     return;
   }
 
@@ -153,6 +153,16 @@ export const AuthProvider = ({ children }) => {
     });
     // sessionsApi.logout().then(() => setUser(undefined));
 	  console.log('log out');
+  }
+
+  function checkIsItLogin(){
+    try {
+      API.getCheckAuth(function(res){
+        alert(res.status);
+      })
+    } catch(error) {
+      alert(error);
+    }
   }
 
   // Make the provider update only when it should.

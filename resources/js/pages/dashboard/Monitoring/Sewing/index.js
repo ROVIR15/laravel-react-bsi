@@ -12,6 +12,7 @@ import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
+import Display from './display';
 // components
 import Layout from '../../../../layouts/Layout';
 
@@ -32,6 +33,18 @@ function Labor() {
       variant: 'success'
     });
   };
+
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }  
 
   return (
     <Layout>
@@ -56,17 +69,9 @@ function Labor() {
           >
             Display
           </Button>
-          {/* <Button
-            variant="contained"
-            component='div'
-            onClick={handleClick}
-            startIcon={<Icon icon={hardDriveFill} />}
-          >
-            Show Snackbar
-          </Button> */}
         </Stack>
       </Stack>
-      <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }
