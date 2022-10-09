@@ -1,24 +1,21 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 
 import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
 import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
+import closeCircle from '@iconify/icons-eva/close-outline';
 
 const icon = <Icon icon={SquareOutline}/>;
 const checkedIcon = <Icon icon={CheckSquareOutline} />;
-
 // Components
 import API from '../../../../helpers';
 
 import Table from './Table';
 import { optionQC, _miniFuncQC } from '../../../../helpers/data';
+import { IconButton, Stack } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -71,9 +68,14 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Sewing Output
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Select Product 
+            </Typography>
+            <IconButton onClick={handleClose} color="error">
+              <Icon icon={closeCircle}/>
+            </IconButton>
+          </Stack>
 
           <Table list={value} selected={selected} setSelected={setSelected}/>
         </Card>

@@ -137,13 +137,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   return (
     <div>
-      <ListToolbar
-        numSelected={selected.length}
-        filterName={filterName}
-        onFilterName={handleFilterByName}
-        placeHolder={placeHolder}
-        onDeletedSelected={handleDeleteSelected}
-      />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>

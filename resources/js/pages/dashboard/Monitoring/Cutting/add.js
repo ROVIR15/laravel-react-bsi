@@ -235,9 +235,6 @@ const [selectedValueSp, setSelectedValueSp] = React.useState({});
           {/* Work Center Information */}
           <Grid item xs={12}>
             <Card >
-              <CardHeader
-                title="Work Center Information"
-              />
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item
