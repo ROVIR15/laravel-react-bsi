@@ -20,18 +20,29 @@ class SalesOrder extends JsonResource
     public function toArray($request)
     {
         return [
+            // 'id' => $this->id,
+            // 'order_id' => $this->order_id,
+            // 'sold_to' => $this->sold_to,
+            // 'ship_to' => $this->ship_to,
+            // 'party' => new Party($this->party),
+            // 'ship' => new Party($this->ship),
+            // 'po_number' => $this->po_number,
+            // 'issue_date' => $this->issue_date,
+            // 'delivery_date' => $this->delivery_date,
+            // 'valid_thru' => $this->valid_thru,
+            // 'order_item' => new OrderItemCollection($this->order_item),
+            // 'status' => $this->status
             'id' => $this->id,
             'order_id' => $this->order_id,
-            'sold_to' => $this->sold_to,
-            'ship_to' => $this->ship_to,
-            'party' => new Party($this->party),
-            'ship' => new Party($this->ship),
+            'sold_to' => $this->party->name,
+            'ship_to' => $this->ship->name,
             'po_number' => $this->po_number,
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
             'valid_thru' => $this->valid_thru,
-            'order_item' => new OrderItemCollection($this->order_item),
-            'status' => $this->status
+            'status' => $this->status,
+            'completion_status' => $this->completion_status,
+            'sum' => $this->sum
         ];
     }
 }

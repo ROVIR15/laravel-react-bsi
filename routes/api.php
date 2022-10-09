@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-association', 'OrderAssociationController')->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('order-completion-status', 'OrderCompletionStatusController')->only(['index', 'store', 'update', 'destroy']);
 
     //Product
     Route::resource('product', 'ProductController')->only(['index']);

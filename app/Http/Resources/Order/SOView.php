@@ -24,6 +24,7 @@ class SOView extends JsonResource
             'delivery_date' => $this->delivery_date,
             'valid_thru' => $this->valid_thru,
             'status' => $this->status,
+            'completion_status' => $this->completion_status,
             'sum' => $this->sum
         ];
 

@@ -4,9 +4,9 @@
   
   use Illuminate\Database\Eloquent\Model;
   
-  class OrderStatus extends Model
+  class OrderCompletionStatus extends Model
   {
-    protected $table = 'order_status';
+    protected $table = 'order_completion_status';
 
     protected $primaryKey = 'id';
 
@@ -14,8 +14,7 @@
     public $timestamps = true;
 
     protected $fillable = [
-        'description',
-        'status_type',
+        'completion_status_id',
         'user_id',
         'order_id',
         'id'

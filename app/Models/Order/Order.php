@@ -38,4 +38,8 @@
     public function confirmation(){
       return $this->belongsTo('App\Models\Order\OrderConfirmed', 'id', 'order_id');
     }
+
+    public function completion_status(){
+      return $this->hasMany('App\Models\Order\OrderCompletionStatus', 'id', 'order_id')->orderBy('created_at', 'desc');
+    }
   }
