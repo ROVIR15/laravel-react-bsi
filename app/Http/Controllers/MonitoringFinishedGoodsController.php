@@ -45,9 +45,9 @@ class MonitoringFinishedGoodsController extends Controller
                   ->orderBy('date', 'desc')
                   ->get();
         }
-      } catch (\Throwable $th) {
+      } catch (Throwable $th) {
         //throw $th;
-        return response()->json(['data' => []]);
+        return response()->json(['data' => $th->getMessage()]);
       }
 
       return response()->json(['data' => $query]);
