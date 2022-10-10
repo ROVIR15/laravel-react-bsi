@@ -13,7 +13,7 @@ import AutoComplete from './components/AutoComplete';
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
 import { BuyerSchema } from '../../../helpers/FormerSchema';
-import { laborArrangedData } from '../../../helpers/data';
+import { _partyArrangedData } from '../../../helpers/data';
 
 function getEditPathname(array) {
   if(!array.length > 5) return null;
@@ -66,7 +66,8 @@ function Buyer() {
     if(!id) return;
     API.getBuyer(id, function(res){
       if(!res.success) alert("Something went wrong!");
-      const {role_type, ...arrangedData} = laborArrangedData(res.data);
+      const {role_type, ...arrangedData} = _partyArrangedData(res.data);
+      console.log(arrangedData);
       setValues(arrangedData);
       setChoosen(role_type)
     });

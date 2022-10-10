@@ -756,9 +756,9 @@ export function laborArrangedData(data) {
 }
 
 export function _partyArrangedData(data) {
-  const { id, name, email, address: {street, city, province, country, postal_code}, party_roles } = data
+  const { id, name, email, npwp, address: {street, city, province, country, postal_code}, party_roles } = data
   return {
-    id, name, email, phone_number: '083231', address: street, city, province, country, postal_code, 
+    id, name, email, npwp, phone_number: '083231', address: street, city, province, country, postal_code, 
     role_type_id: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type.id : null,
     role_type: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type : null
   }
