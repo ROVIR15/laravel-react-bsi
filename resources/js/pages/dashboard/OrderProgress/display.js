@@ -37,17 +37,17 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 function completionOfOrder(order_qty, final_garment) {
-  final_garment = final_garment ? final_garment : 0;
-  order_qty = order_qty ? order_qty : 0;
+  final_garment = final_garment ? parseInt(final_garment) : 0;
+  order_qty = order_qty ? parseInt(order_qty) : 0;
 
-  if(!final_garment) {
+  if(final_garment === 0) {
     return {
       percentage: 0,
       difference: final_garment - order_qty
     }
   } else {
     return {
-      percentage: Math.floor(final_garment/order_qty),
+      percentage: parseFloat(final_garment/order_qty)*100,
       difference: final_garment - order_qty
     }
   }
