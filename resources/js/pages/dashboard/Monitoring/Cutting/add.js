@@ -39,7 +39,6 @@ function WorkCenter() {
 
   const WorkCenterSchema = Yup.object().shape({
     sales_order_id: Yup.string().required('is required'),
-    spread_id: Yup.number().required('is required'),
     date: Yup.date().required('is required'),
   });
 
@@ -52,7 +51,7 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const {sales_order_id, spread_id, date} = values
-      let data = items.map(({id, brand, qty_loading, name, size, color, ...x}) => ({ ...x, order_item_id: id, po_number: selectedValueSp.po_number, sales_order_id, date, spread_id}));
+      let data = items.map(({id, brand, product_id, qty_loading, name, size, color, ...x}) => ({ ...x, order_item_id: id, sales_order_id, date, spread_id: 0}));
       API.insertMonitoringCutting(data, function(res){
         alert(JSON.stringify(res.data));
       })
@@ -75,10 +74,10 @@ function WorkCenter() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'po_number', headerName: 'PO Number', editable: true},
     { field: 'name', headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
-    { field: 'category_name', headerName: 'Kategori', type: 'text', editable: true },
     { field: 'output', headerName: 'Output', type: 'number', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
@@ -278,6 +277,7 @@ const [selectedValueSp, setSelectedValueSp] = React.useState({});
                       <SpaceBetweenBox>
                         <Typography variant="h6"> Select Spreading </Typography>
                         <Button
+                          disabled
                           onClick={() => setOpenSp(true)}
                         >
                           Select

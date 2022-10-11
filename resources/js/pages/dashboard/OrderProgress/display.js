@@ -24,6 +24,7 @@ import API from '../../../helpers';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
+  { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
   { id: 'output_sw', label: 'Output Sewing', alignRight: false },
   { id: 'output_qc', label: 'Output QC', alignRight: false },
   { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
@@ -198,6 +199,7 @@ function Display({ placeHolder }) {
           <Table>
             <ListHead
               order={order}
+              active={false}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
               rowCount={quoteData.length}
@@ -213,6 +215,7 @@ function Display({ placeHolder }) {
                     id,
                     order_id,
                     po_number,
+                    monitoring_cutting,
                     monitoring_sewing,
                     monitoring_qc,
                     monitoring_fg,
@@ -227,14 +230,9 @@ function Display({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                        onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_sewing[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_qc[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_fg[0]?.output}</TableCell>
