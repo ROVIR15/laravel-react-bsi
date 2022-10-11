@@ -121,7 +121,7 @@ export default function BasicTable({ payload, approval, margin, setMargin, tax }
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> HDE Fee </Typography>
+                <Typography variant="inherit"> Additional Cost </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
