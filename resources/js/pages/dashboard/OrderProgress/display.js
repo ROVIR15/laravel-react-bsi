@@ -43,12 +43,12 @@ function completionOfOrder(order_qty, final_garment) {
   if(!final_garment) {
     return {
       percentage: 0,
-      difference: order_qty - final_garment
+      difference: final_garment - order_qty
     }
   } else {
     return {
       percentage: Math.floor(final_garment/order_qty),
-      difference: order_qty - final_garment
+      difference: final_garment - order_qty
     }
   }
 }
