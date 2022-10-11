@@ -18,19 +18,40 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import moment from 'moment';
 // api
 import API from '../../../helpers';
+import { fPercent } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
+  { id: 'qty', label: 'Order Qty', alignRight: false },
   { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
   { id: 'output_sw', label: 'Output Sewing', alignRight: false },
   { id: 'output_qc', label: 'Output QC', alignRight: false },
   { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
+  { id: 'percentage', label: 'Percentage', alignRight: false },
+  { id: 'difference', label: 'Selisih', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
+
+function completionOfOrder(order_qty, final_garment) {
+  final_garment = final_garment ? final_garment : 0;
+  order_qty = order_qty ? order_qty : 0;
+
+  if(!final_garment) {
+    return {
+      percentage: 0,
+      difference: order_qty - final_garment
+    }
+  } else {
+    return {
+      percentage: Math.floor(final_garment/order_qty),
+      difference: order_qty - final_garment
+    }
+  }
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -214,12 +235,15 @@ function Display({ placeHolder }) {
                   const {
                     id,
                     order_id,
+                    sum,
                     po_number,
                     monitoring_cutting,
                     monitoring_sewing,
                     monitoring_qc,
                     monitoring_fg,
                   } = row;
+                  let { percentage, difference } = completionOfOrder(sum[0]?.total_qty, monitoring_fg[0]?.output);
+
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -232,10 +256,13 @@ function Display({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{sum[0]?.total_qty}</TableCell>
                       <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_sewing[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_qc[0]?.output}</TableCell>
                       <TableCell align="left">{monitoring_fg[0]?.output}</TableCell>
+                      <TableCell align="left">{fPercent(percentage)}</TableCell>
+                      <TableCell align="left">{difference}</TableCell>
                       {/* <TableCell align="right">
                         <MoreMenu id={order_id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell> */}
