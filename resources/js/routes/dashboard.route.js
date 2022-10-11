@@ -27,7 +27,8 @@ import {
   InvLayout,
   MachineLayout,
   ServiceLayout,
-  UserManagementLayout
+  UserManagementLayout,
+  OrderProgressLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -92,6 +93,8 @@ import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
 import DisplayMachine from '../pages/dashboard/Machine/display';
+import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
+import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -463,6 +466,14 @@ export default function TestRouter() {
               children: [
                 { path: 'insert', element: <MonitoringFinishedGoods />},
                 { path: 'display', element: <DisplayMonitoringFinishedGoods />}
+              ]
+            },
+            { 
+              path: 'order', 
+              element: <OrderProgressLayout/>,
+              children: [
+                { path: 'display', element: <DisplayOutputPerSalesOrder/>},
+                { path: ':id', element: <DisplayOutputPerSalesOrderDetail/>}
               ]
             }
           ]

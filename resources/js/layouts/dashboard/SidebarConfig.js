@@ -190,6 +190,10 @@ const sidebarConfig = [
         title: 'Finished Goods',
         path: '/dashboard/monitoring/finished-goods'
       },
+      {
+        title: 'Order Progress',
+        path: '/dashboard/monitoring/order'
+      }
     ]
   },
   {

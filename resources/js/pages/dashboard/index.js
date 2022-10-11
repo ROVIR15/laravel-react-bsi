@@ -28,3 +28,5 @@ export { default as FinishedGoodsLayout } from './Monitoring/FinishedGoods';
 
 
 export { default as InvLayout } from './Finance/Invoice';
+
+export { default as OrderProgressLayout } from './OrderProgress';

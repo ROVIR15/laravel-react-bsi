@@ -25,7 +25,9 @@ const pages = [
   'request-for-quotation',
   'sales-order',
   'purchase-order',
-  'bom'
+  'bom',
+  'hde',
+  'bsi'
 ];
 
 const initialData = {

@@ -14,23 +14,21 @@ import {
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
-//
-import moment from 'moment';
+
 // api
 import API from '../../../../helpers';
+import { useLocation, useParams } from 'react-router-dom';
+import { isEditCondition } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
-  { id: 'date', label: 'date', alignRight: false },
-  { id: 'so_number', label: 'Sales PO Number', alignRight: false },
-  { id: 'po_number', label: 'Box', alignRight: false },
-  { id: 'goods_name', label: 'Nama Barang', alignRight: false },
-  { id: 'line', label: 'Line', alignRight: false },
-  { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
-  { id: 'output', label: 'Output', alignRight: false },
-];
+    { id: 'id', label: 'ID', alignRight: false },
+    { id: 'name', label: 'Style', alignRight: false },
+    { id: 'size', label: 'Size', alignRight: false },
+    { id: 'color', label: 'Color', alignRight: false },
+    { id: 'value', label: 'Value', alignRight: false },
+  ];
 
 // ----------------------------------------------------------------------
 
@@ -64,39 +62,18 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function DisplayQuote({ placeHolder }) {
+function TableD({ list, placeHolder, selected, setSelected}) {
 
-  const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
+//   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
-  });
 
-  useEffect(() => {
-    handleUpdateData();
-  }, [])
-
-  const handleUpdateData = () => {
-    let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
-    try {
-      API.getMonitoringFG(params, (res) => {
-        if(!res.data) {
-          setQuoteData([]);
-        }
-        else {
-          setQuoteData(res.data);
-        }
-      });      
-    } catch (error) {
-      alert('error')
-    }
-  }
+  const { pathname } = useLocation();
+  const { id } = useParams();
+  let paramsId = id;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -106,7 +83,7 @@ function DisplayQuote({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = quoteData.map((n) => n.name);
+      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
     }
@@ -114,10 +91,25 @@ function DisplayQuote({ placeHolder }) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+    name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0}
+    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      if(isEditCondition(pathname.split('/'), id)) {
+        try {
+          let dateNow = new Date();
+          name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0, delivery_date: fDate(dateNow)}
+          API.insertPurchaseOrderItem([name], function(res){
+            if(res.success) alert('success');
+            else alert('failed')
+          })
+          update();
+        } catch(e) {
+          alert(e);
+        }
+      } else {
+        newSelected = newSelected.concat(selected, name);
+      }
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -147,50 +139,31 @@ function DisplayQuote({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
+    API.deleteSalesOrder(id, function(res){
+      if(res.success) setSalesOrderData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
-  const handleDateChanges = (event) => {
-    const { name, value} = event.target;
-    setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
-          alert('from date cannot be more than to date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
-          alert('to date cannot be less than fron date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
+  const handleDeleteSelected = () => {
+    setSelected([])
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
   return (
-    <Card>
+    <div>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
         filterName={filterName}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
-        onGo={handleUpdateData}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        onDeletedSelected={handleDeleteSelected}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -199,7 +172,7 @@ function DisplayQuote({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={quoteData.length}
+              rowCount={list.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -208,18 +181,15 @@ function DisplayQuote({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
+                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
-                    date,
-                    sales_order,
-                    po_number,
-                    box,
-                    line,
-                    qty_loading,
-                    output,
-                    product_feature: { product: { goods } }
+                    name,
+                    size,
+                    color,
+                    value
                   } = row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
                       hover
@@ -231,21 +201,16 @@ function DisplayQuote({ placeHolder }) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
+                          disabled={disabled}
                           checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
+                          onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{sales_order.po_number}</TableCell>
-                      <TableCell align="left">{box}</TableCell>
-                      <TableCell align="left">{goods.name}</TableCell>
-                      <TableCell align="left">{line}</TableCell>
-                      <TableCell align="left">{qty_loading}</TableCell>
-                      <TableCell align="left">{output}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
-                      </TableCell>
+                      <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">{size}</TableCell>
+                      <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{value}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -270,14 +235,14 @@ function DisplayQuote({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={quoteData.length}
+        count={list.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Card>
+    </div>
   )
 }
 
-export default DisplayQuote;
+export default TableD;

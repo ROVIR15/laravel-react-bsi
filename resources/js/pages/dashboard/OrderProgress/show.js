@@ -11,25 +11,24 @@ import {
   TablePagination,
 } from '@mui/material';
 //components
-import Scrollbar from '../../../../components/Scrollbar';
-import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import Scrollbar from '../../../components/Scrollbar';
+import SearchNotFound from '../../../components/SearchNotFound';
+import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 //
 import moment from 'moment';
 // api
-import API from '../../../../helpers';
+import API from '../../../helpers';
+import { useParams } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'date', label: 'date', alignRight: false },
-  { id: 'so_number', label: 'Sales PO Number', alignRight: false },
-  { id: 'po_number', label: 'Box', alignRight: false },
-  { id: 'goods_name', label: 'Nama Barang', alignRight: false },
-  { id: 'line', label: 'Line', alignRight: false },
-  { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
-  { id: 'output', label: 'Output', alignRight: false },
+  { id: 'po_number', label: 'SO Number', alignRight: false },
+  { id: 'po_number2', label: 'PO Number', alignRight: false },
+  { id: 'output_sw', label: 'Output Sewing', alignRight: false },
+  { id: 'output_qc', label: 'Output QC', alignRight: false },
+  { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -64,7 +63,8 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function DisplayQuote({ placeHolder }) {
+function Display({ placeHolder }) {
+  const {id} = useParams();
 
   const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
@@ -72,7 +72,7 @@ function DisplayQuote({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filterDate, setFilterDate] = useState({
     'thruDate': moment(new Date()).format('YYYY-MM-DD'),
     'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
@@ -83,16 +83,16 @@ function DisplayQuote({ placeHolder }) {
   }, [])
 
   const handleUpdateData = () => {
-    let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
-    try {
-      API.getMonitoringFG(params, (res) => {
-        if(!res.data) {
+    // let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+
+    try { 
+      API.getAOrder(id, (res) => {
+        if(!res?.data) {
           setQuoteData([]);
-        }
-        else {
+        } else {
           setQuoteData(res.data);
         }
-      });      
+      });
     } catch (error) {
       alert('error')
     }
@@ -147,6 +147,11 @@ function DisplayQuote({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
+    API.deleteQuote(id, function(res){
+      if(res.success) setQuoteData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
   const handleDateChanges = (event) => {
@@ -184,7 +189,6 @@ function DisplayQuote({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
         filterName={filterName}
         filterDate={filterDate}
         onFilterDate={handleDateChanges}
@@ -210,14 +214,10 @@ function DisplayQuote({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    date,
-                    sales_order,
                     po_number,
-                    box,
-                    line,
-                    qty_loading,
-                    output,
-                    product_feature: { product: { goods } }
+                    monitoring_sewing_detail,
+                    monitoring_qc_detail,
+                    monitoring_fg_detail,
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -232,20 +232,15 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
+                        onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{sales_order.po_number}</TableCell>
-                      <TableCell align="left">{box}</TableCell>
-                      <TableCell align="left">{goods.name}</TableCell>
-                      <TableCell align="left">{line}</TableCell>
-                      <TableCell align="left">{qty_loading}</TableCell>
-                      <TableCell align="left">{output}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
-                      </TableCell>
+                      <TableCell align="left">{monitoring_sewing_detail[0]?.po_number}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{monitoring_sewing_detail[0]?.output}</TableCell>
+                      <TableCell align="left">{monitoring_qc_detail[0]?.output}</TableCell>
+                      <TableCell align="left">{monitoring_fg_detail[0]?.output}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -268,7 +263,7 @@ function DisplayQuote({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[25, 50, 75]}
         component="div"
         count={quoteData.length}
         rowsPerPage={rowsPerPage}
@@ -280,4 +275,4 @@ function DisplayQuote({ placeHolder }) {
   )
 }
 
-export default DisplayQuote;
+export default Display;

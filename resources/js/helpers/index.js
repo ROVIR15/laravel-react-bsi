@@ -752,6 +752,21 @@ const main = {
         cb(err.response);
       });
     },
+    getOrder(cb){
+      axios.get( uri + '/order' ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });      
+    },
+    getAOrder(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/order/' + id ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });      
+    },
     //SalesOrder Item
     insertSalesOrderItem(_data, cb){
       if(!_data) {
