@@ -59,5 +59,20 @@
         return $this->hasManyThrough('App\Models\Order\OrderCompletionStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('status')->orderBy('created_at', 'asc');
     }
 
+    public function monitoring_sewing(){
+      return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id')->groupBy('sales_order_id')->select(DB::raw('id, order_id, sales_order_id, sum(output) as output'));
+    }
+
+    public function monitoring_qc(){
+      return $this->hasMany('App\Models\Monitoring\Qc', 'sales_order_id')->groupBy('sales_order_id')->select(DB::raw('id, order_id, sales_order_id, sum(output) as output'));
+    }
+
+    public function monitoring_fg(){
+      return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'sales_order_id')->groupBy('sales_order_id')->select(DB::raw('id, order_id, sales_order_id, sum(output) as output'));
+    }
+
+    public function monitoring_sewing_detail(){
+      return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id')->groupBy('po_number')->select(DB::raw('id, order_id, sales_order_id, po_number, sum(output) as output'))->with('detail');
+    }
 
   }

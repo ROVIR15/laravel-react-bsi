@@ -46,4 +46,11 @@ class Sewing extends Model
         return $this->hasMany('App\Models\Monitoring\Qc', 'ms_id', 'id')->selectRaw('sum(output) as output_qc, ms_id')->groupBy('ms_id');
     }
 
+    public function detail(){
+        return $this->hasMany('App\Models\Monitoring\Qc', 'sales_order_id', 'sales_order_id')
+        ->selectRaw('sum(output) as output_qc, sales_order_id, po_number')
+        ->groupBy('sales_order_id', 'po_number')
+        ->with('detail');
+    }
+
 }

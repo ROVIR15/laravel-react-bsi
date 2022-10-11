@@ -24,8 +24,16 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = Order::all();
-        return new OrderCollection($query);
+        // $query = Order::all();
+        // return new OrderCollection($query);
+        $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to')
+                ->with('monitoring_sewing', 'monitoring_qc', 'monitoring_fg', 'completion_status', 'party')
+                ->whereHas('completion_status', function($query2){
+                    $query2->where('completion_status_id', 2);
+                })
+                ->get();
+
+        return response()->json(['data' => $query]);
     }
 
             /**
@@ -97,9 +105,29 @@
      * @param  \App\Models\Order\Order  $X
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function show($id)
     {
         //
+        try {
+            //code...
+            $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to')
+            ->with('monitoring_sewing_detail', 'completion_status', 'party')
+            ->whereHas('completion_status', function($query2){
+                $query2->where('completion_status_id', 2);
+            })
+            ->where('order_id', $id)
+            ->get();
+
+            return response()->json([
+                'data' => $query
+            ]);
+        } catch (Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
     }
 
     /**

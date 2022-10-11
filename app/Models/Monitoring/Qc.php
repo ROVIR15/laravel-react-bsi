@@ -49,4 +49,11 @@ class Qc extends Model
         return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'qc_id', 'id')->selectRaw('sum(output) as output_fg, qc_id')->groupBy('qc_id');
     }
 
+    public function detail(){
+        return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'sales_order_id', 'sales_order_id')
+        ->selectRaw('sum(output) as output_qc, sales_order_id, po_number')
+        ->groupBy('sales_order_id', 'po_number')
+        ->with('detail');
+    }
+
 }
