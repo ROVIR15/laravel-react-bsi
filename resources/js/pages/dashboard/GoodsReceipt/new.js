@@ -25,6 +25,7 @@ import API from '../../../helpers';
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
 import AutoComplete from './components/AutoComplete';
+import DialogBox from './components/DialogBox';
 import DialogBoxF from './components/DBFacility';
 
 //Icons
@@ -33,7 +34,7 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 // Helper
-import {productItemArrangedData} from '../../../helpers/data';
+import {productItemArrangedData, partyArrangedData} from '../../../helpers/data';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -60,6 +61,8 @@ function GoodsReceipt() {
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [openSO, setOpenSO] = useState(false);
+  const loading2 = (openSO) && optionsP?.length === 0;
 
   const [options2, setOptions2] = useState([]);
   const [openSH, setOpenSH] = useState(false);
@@ -117,6 +120,16 @@ function GoodsReceipt() {
         ;
         setOptions(res.data);
       }
+
+      API.getParty((res) => {
+        if(!res) return
+        else {
+          console.log(res)
+          // let data = partyArrangedData(res);
+          // console.log(data)
+          setOptionsP(res);
+        }
+      })  
     })
 
     })();
@@ -127,7 +140,7 @@ function GoodsReceipt() {
   }, [loading]);
 
   const GoodsReceiptSchema = Yup.object().shape({
-    purchase_order_id: Yup.number().required('Inquiry References is required'),
+    supplier: Yup.number().required('Inquiry References is required'),
     facility_id: Yup.number().required('Inquiry References is required'),
     issue_date: Yup.date().required('PO Date is required'),
   });
@@ -136,7 +149,8 @@ function GoodsReceipt() {
     initialValues: {
       purchase_order_id: '',
       issue_date: '',
-      facility_id: ''
+      facility_id: '',
+      supplier: ''
     },
     validationSchema: GoodsReceiptSchema,
     onSubmit: (values) => {
@@ -167,7 +181,7 @@ function GoodsReceipt() {
         'color' : color,
         'qty_received' : key.qty_received || 0,
         'qty_receipt' : key.qty_receipt || 0,
-        'qty_order' : key.qty
+        'qty_order' : key.qty || 0
       }
     })
     setValues({
@@ -208,15 +222,16 @@ function GoodsReceipt() {
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
           
-    
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
+            if(row.id === parseInt(itemToUpdateIndex)){
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
             } else {
               return row
             }
           });
         });
+
+        console.log(items);
 
         // update on field value
       } else {
@@ -233,13 +248,11 @@ function GoodsReceipt() {
   }
 
   const columns = useMemo(() => [
-    { field: 'po_item_id', headerName: 'PO Item ID', editable: false, visible: 'hide' },
+    { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
     { field: 'name', headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
-    { field: 'qty_order', headerName: 'Qty Order', editable: true },
     { field: 'qty_received', headerName: 'Qty Receive', editable: true },
     { field: 'qty_on_receipt', headerName: 'Qty On Receipt', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
@@ -254,34 +267,49 @@ function GoodsReceipt() {
     }
   ], [deleteData]);
 
-  const handleClose = (name, value) => {
-    setOpenSH(false);
-    setOptions2([]);
-    if(value) {
-      setSelectedValueSH(value);
-      setFieldValue('facility_id', value.id);
-    }
-  };
+  // const handleClose = (name, value) => {
+  //   setOpenSH(false);
+  //   setOptions2([]);
+  //   if(value) {
+  //     setSelectedValueSH(value);
+  //     setFieldValue('facility_id', value.id);
+  //   }
+  // };
+
+    // Dialog Box
+    const handleClose = (name, value) => {
+      if(name === 'facility_id') {
+        setOpenSO(false)
+        setSelectedValueSH(value);
+      }
+      if(name === 'supplier') {
+        setOpenSH(false)
+        setSelectedValueSO(value);
+      }
+      console.log(selectedValueSH)
+      console.log(selectedValueSO)
+
+      setOpenSO(false)
+      setOpenSH(false)
+      setFieldValue(name, value.id);
+      setOptions([]);
+    };
 
 
   return (
     <Page>
       <Container>
       <Modal 
-        payload={items}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={1} direction="row">
             <Grid item xs={4}>
               <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                <CardHeader
-                  title="Warehouse"
-                />
                 <CardContent>
                     <ColumnBox>
                       <SpaceBetweenBox>
@@ -294,10 +322,10 @@ function GoodsReceipt() {
                       </SpaceBetweenBox>
                       <div>
                         <Typography variant="body1">
-                          {selectedValueSH.name}
+                          {selectedValueSH?.name}
                         </Typography>
                         <Typography variant="caption">
-                          {selectedValueSH.type.name}
+                          {selectedValueSH?.type?.name}
                         </Typography>
                       </div>
                       <DialogBoxF
@@ -315,12 +343,9 @@ function GoodsReceipt() {
             </Grid>
             <Grid item xs={8}>
               <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                <CardHeader
-                  title="Goods Receipt Information"
-                />
                 <CardContent>
                   <Grid container direction="row" spacing={2}>
-                    <Grid item xs={4} sx={{padding: 'unset'}}>
+                    {/* <Grid item xs={4} sx={{padding: 'unset'}}>
                       <AutoComplete
                         fullWidth
                         autoComplete="purchase_order_id"
@@ -336,23 +361,32 @@ function GoodsReceipt() {
                     </Grid>
                     <Grid item xs={1}>
                       <Divider orientation="vertical"/>
-                    </Grid>
+                    </Grid> */}
                     <Divider/>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                       <ColumnBox>
                         <SpaceBetweenBox>
-                          <Typography variant="h6"> Supplier </Typography>
+                          <Typography variant="h6"> Pengirim </Typography>
                           <Button
-                            disabled
+                            onClick={() => setOpenSO(true)}
                           >
                             Select
                           </Button>
                         </SpaceBetweenBox>
                         <div>
-                          <Typography variant="body1">
-                            {selectedValueSO.name}
-                          </Typography>
+                          <Typography variant="subtitle1">{selectedValueSO?.party?.name}</Typography>
+                          <Typography component="span" variant="caption">{selectedValueSO?.party?.address?.street}</Typography>
+                          <Typography variant="body2">{`${selectedValueSO?.party?.city}, ${selectedValueSO?.party?.address?.province}, ${selectedValueSO?.party?.address?.country}`}</Typography>
                         </div>
+                        <DialogBox
+                          options={optionsP}
+                          loading={loading2}
+                          error={Boolean(touched.supplier && errors.supplier)}
+                          helperText={touched.supplier && errors.supplier}
+                          selectedValue={selectedValueSO}
+                          open={openSO}
+                          onClose={(value) => handleClose('supplier', value)}
+                        />
                       </ColumnBox>
                     </Grid>
                   </Grid>

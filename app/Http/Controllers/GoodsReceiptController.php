@@ -27,9 +27,12 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = GRView::all();
+        $query = GoodsReceipt::with('items', 'facility', 'party')->get();
 
-        return new GoodsReceiptCollection($query);
+        return response()->json([
+          'data' => $query
+        ]);
+        // return new GoodsReceiptCollection($query);
     }
 
         /**
@@ -55,7 +58,7 @@
       try {
         //Goods Receipt Creation
         $goodsReceipt = GoodsReceipt::create([
-            'purchase_order_id' => $param['purchase_order_id'],
+            'party_id' => $param['supplier'],
             'facility_id' => $param['facility_id']
         ]);
 
@@ -65,7 +68,7 @@
         foreach($param['GR_items'] as $key){
           array_push($GRItems, [
             'goods_receipt_id' => $goodsReceipt->id,
-            'order_item_id' => $key['po_item_id'],
+            'product_feature_id' => $key['product_feature_id'],
             'qty_received' => $key['qty_received'],
             'qty_on_receipt' => $key['qty_on_receipt']
           ]);
@@ -111,8 +114,11 @@
     public function show($id)
     {
       try {
-        $GoodsReceiptData = GRView::with('party', 'items', 'facility')->find($id);
-        return new oneGoodsReceiptView($GoodsReceiptData);
+        $GoodsReceiptData = GoodsReceipt::with('party', 'items', 'facility')->find($id);
+        // return new oneGoodsReceiptView($GoodsReceiptData);
+        return response()->json([
+          'data' => $GoodsReceiptData
+        ]);
     } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -166,7 +172,7 @@
     public function destroy($id)
     {
       try {
-        $GoodsReceipt = GoodsReceipt::destroy($id);
+        // $GoodsReceipt = GoodsReceipt::destroy($id);
         return response()->json([
           'success' => true,
         ], 200);

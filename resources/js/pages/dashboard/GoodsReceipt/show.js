@@ -19,6 +19,8 @@ import { LoadingButton } from '@mui/lab';
 import { useParams } from 'react-router-dom';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
+import moment from 'moment';
+
 // api
 import API from '../../../helpers';
 
@@ -52,14 +54,11 @@ function GoodsReceipt() {
   // Option Inquiry
   const [options, setOptions] = useState([]);
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
-  const [selectedValueSH, setSelectedValueSH] = React.useState({
-    name: '',
-    type: {
-      name: ''
-    }
-  });
+  const [selectedValueSH, setSelectedValueSH] = React.useState({});
   // Option for Product Items
   const [optionsP, setOptionsP] = useState([])
+  const [openSO, setOpenSO] = useState(false);
+  const loading2 = (openSO) && optionsP?.length === 0;
 
   //AutoComplete
   const loading = open && options.length === 0;
@@ -85,6 +84,7 @@ function GoodsReceipt() {
     initialValues: {
       purchase_order_id: '',
       issue_date: '',
+      facility_id: '',
       po_number: ''
     },
     validationSchema: GoodsReceiptSchema,
@@ -112,26 +112,28 @@ function GoodsReceipt() {
   }, [id])
 
   function changeData(data){
-    const GRItems = data.GR_Items.map(function(key, index){
+    setSelectedValueSH(data.facility)
+    setSelectedValueSO(data.party)
+
+    const GRItems = data.items.map(function(key, index){
       return {
         'id': key.id,
-        'product_id': key.product.id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
-        'qty_order' : key.qty_order,
+        'product_id': key.product_feature?.product?.id,
+        'name' : key.product_feature?.product?.goods?.name,
+        'size' : key.product_feature?.size,
+        'color' : key.product_feature?.color,
         'qty_on_receipt' : key.qty_on_receipt,
         'qty_received' : key.qty_received,
       }
     })
+    const date = moment(data.created_at).format('YYYY-MM-DD');
     setValues({
-      purchase_order_id: data.po_number,
-      issue_date: data.issue_date,
-      facility_id: data.facility_id
+      purchase_order_id: data.purchase_order_id,
+      issue_date: date,
+      facility_id: data.facility_id,
+      supplier: data.party.id
     })
 
-    setSelectedValueSH(data.facility)
-    setSelectedValueSO(data.bought_from)
     setItems(GRItems);
   }
 
@@ -186,7 +188,6 @@ function GoodsReceipt() {
     { field: 'name', headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
-    { field: 'qty_order', headerName: 'Qty Order', editable: false },
     { field: 'qty_on_receipt', headerName: 'Qty On Receive', editable: true },
     { field: 'qty_received', headerName: 'Qty Received', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
@@ -216,69 +217,48 @@ function GoodsReceipt() {
           <Grid container spacing={1} direction="row">
             <Grid item xs={4}>
               <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                <CardHeader
-                  title="Warehouse"
-                />
                 <CardContent>
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Facility </Typography>
-                        <Button
-                          disabled
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Facility </Typography>
+                      <Button
+                        onClick={() => setOpenSH(true)}
+                        disabled
                         >
-                          Select
-                        </Button>
-                      </SpaceBetweenBox>
-                      <div>
-                        <Typography variant="body1">
-                          {selectedValueSH.name}
-                        </Typography>
-                        <Typography variant="caption">
-                          {selectedValueSH.type.name}
-                        </Typography>
-                      </div>
-                    </ColumnBox>
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH?.name}
+                      </Typography>
+                      <Typography variant="caption">
+                        {selectedValueSH?.type?.name}
+                      </Typography>
+                    </div>
+                  </ColumnBox>
                 </CardContent>
               </Card>              
             </Grid>
             <Grid item xs={8}>
               <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                <CardHeader
-                  title="Goods Receipt Information"
-                />
                 <CardContent>
                   <Grid container direction="row" spacing={2}>
-                    <Grid item xs={4} sx={{padding: 'unset'}}>
-                      <TextField
-                        fullWidth
-                        autoComplete="purchase_order_id"
-                        disabled
-                        type="text"
-                        label="Purchase Order ID"
-                        error={Boolean(touched.purchase_order_id && errors.purchase_order_id)}
-                        helperText={touched.purchase_order_id && errors.purchase_order_id}
-                        value={values.purchase_order_id}
-                        loading={loading}
-                      />
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Divider orientation="vertical"/>
-                    </Grid>
-                    <Divider/>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                       <ColumnBox>
                         <SpaceBetweenBox>
-                          <Typography variant="h6"> Supplier </Typography>
+                          <Typography variant="h6"> Pengirim </Typography>
                           <Button
+                            onClick={() => setOpenSO(true)}
                             disabled
                           >
                             Select
                           </Button>
                         </SpaceBetweenBox>
                         <div>
-                          <Typography variant="body1">
-                            {selectedValueSO.name}
-                          </Typography>
+                          <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                          <Typography component="span" variant="caption">{selectedValueSO?.address?.street}</Typography>
+                          <Typography variant="body2">{`${selectedValueSO?.address?.city}, ${selectedValueSO?.address?.province}, ${selectedValueSO?.address?.country}`}</Typography>
                         </div>
                       </ColumnBox>
                     </Grid>
@@ -295,6 +275,7 @@ function GoodsReceipt() {
               <div style={{display: 'flex'}}>
                 <TextField
                   fullWidth
+                  disabled
                   autoComplete="issue_date"
                   type="date"
                   placeholder='valid'

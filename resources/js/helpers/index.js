@@ -148,6 +148,13 @@ const main = {
           cb(err.response)
       })
     },
+    getParty(cb){
+      axios.get( uri + '/party').then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     getBuyers(cb){
       axios.get( uri + '/buyer').then( function(res){
         cb(res.data);
