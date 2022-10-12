@@ -25,8 +25,11 @@ import { isEditCondition } from '../../../../helpers/data';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
+    { id: 'category', label: 'Kategori', alignRight: false },
+    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
+    { id: 'brand', label: 'Brand', alignRight: false },
     { id: 'value', label: 'Value', alignRight: false },
   ];
 
@@ -56,8 +59,15 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+
+  if (isArray(query) && query[1] > 0) {
+    return filter(array, (_b) => {
+      console.log(query[1], _b)
+      return (
+        _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1
+        && _b.category_id === query[1]
+      )
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -70,6 +80,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterCategory, setFilterCategory] = useState(0);
 
   const { pathname } = useLocation();
   const { id } = useParams();
@@ -98,11 +109,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
           let dateNow = new Date();
-          API.insertGoodsReceiptItem([name], function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
-          update();
+          // API.insertGoodsReceiptItem([name], function(res){
+          //   if(res.success) alert('success');
+          //   else alert('failed')
+          // })
+          // update();
         } catch(e) {
           alert(e);
         }
@@ -135,6 +146,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     setFilterName(event.target.value);
   };
 
+  const handleFilterCategoryAndSub = (event) => {
+    setFilterCategory(event.target.value)
+  }
+
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
@@ -151,7 +166,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), [filterName, filterCategory]);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -163,6 +178,9 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
         onDeletedSelected={handleDeleteSelected}
+        filterCategory={filterCategory}
+        onFilterCategoryAndSub={handleFilterCategoryAndSub}
+        categoryFilterActive={true}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -187,7 +205,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     name,
                     size,
                     color,
-                    value
+                    category,
+                    sub_category,
+                    satuan,
+                    brand
                   } = row;
                   return (
                     <TableRow
@@ -207,9 +228,12 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">{category}</TableCell>
+                      <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{value}</TableCell>
+                      <TableCell align="left">{satuan}</TableCell>
+                      <TableCell align="left">{brand}</TableCell>
                     </TableRow>
                   );
                 })}

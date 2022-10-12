@@ -286,9 +286,6 @@ function GoodsReceipt() {
         setOpenSH(false)
         setSelectedValueSO(value);
       }
-      console.log(selectedValueSH)
-      console.log(selectedValueSO)
-
       setOpenSO(false)
       setOpenSH(false)
       setFieldValue(name, value.id);

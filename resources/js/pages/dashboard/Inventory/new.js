@@ -223,12 +223,7 @@ function Inventory() {
                 </Paper>
             </CardContent>
             </Card>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>
-              
-              
-              <CardHeader
-                title="Product Feature"
-              />
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>              
               <CardContent>
                 <TextField
                   fullWidth

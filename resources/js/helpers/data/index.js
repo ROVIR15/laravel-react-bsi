@@ -255,6 +255,7 @@ export function optionProductFeature(array, filter){
         satuan,
         value,
         brand,
+        category_id: category?.id,
         category: category.name,
         sub_category: sub.name,
         created_at,

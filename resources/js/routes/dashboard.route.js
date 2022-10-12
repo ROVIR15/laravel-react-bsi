@@ -94,7 +94,7 @@ import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
 import DisplayMachine from '../pages/dashboard/Machine/display';
 import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
-import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
+import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/sewing';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -298,6 +298,15 @@ export default function TestRouter() {
         },
         { 
           path: 'purchasing/vendor', 
+          element: <VendorLayout />,
+          children: [
+            { path: ':id', element: <ShowVendor />},
+            { path: 'add', element: <AddVendor />},
+            { path: 'display', element: <DisplayVendor />},
+          ]
+        },
+        { 
+          path: 'inventory/vendor', 
           element: <VendorLayout />,
           children: [
             { path: ':id', element: <ShowVendor />},

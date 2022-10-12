@@ -122,6 +122,10 @@ const sidebarConfig = [
         path: '/dashboard/inventory/inventory-items'
       },
       {
+        title: 'Vendor',
+        path: '/dashboard/purchasing/vendor'
+      },
+      {
         title: 'Goods Receipt',
         path: '/dashboard/inventory/goods-receipt'
       }

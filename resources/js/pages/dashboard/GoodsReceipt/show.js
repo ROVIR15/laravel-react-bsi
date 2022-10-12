@@ -26,7 +26,7 @@ import API from '../../../helpers';
 
 //Component
 import DataGrid from './components/DataGrid';
-import Modal from './components/Modal2';
+import Modal from './components/Modal';
 import AutoComplete from './components/AutoComplete';
 
 //Icons
@@ -206,11 +206,10 @@ function GoodsReceipt() {
     <Page>
       <Container>
       <Modal 
-        payload={items}
         open={openM}
-        options={optionsP}
         handleClose={handleCloseModal}
-        setComponent={setItems}
+        items={items}
+        setItems={setItems}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -292,6 +291,8 @@ function GoodsReceipt() {
                 handleAddRow={handleOpenModal}
                 handleReset={handleResetRows}
                 handleUpdateAllRows={false}
+                addItemDisable={true}
+                updateItemDisable={true}
               />
             </CardContent>
           </Card>
