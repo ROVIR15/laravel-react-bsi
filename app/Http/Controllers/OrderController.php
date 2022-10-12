@@ -3,10 +3,14 @@
   namespace App\Http\Controllers;
 
   use Carbon\Carbon;
-  
+  use DB;
   use App\Models\Order\Order;
+  use App\Models\Order\OrderItem;
   use App\Models\Order\SalesOrder;
   use App\Models\Order\PurchaseOrder;
+  use App\Models\Monitoring\Sewing;
+  use App\Models\Monitoring\Qc;
+  use App\Models\Monitoring\FinishedGoods;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\Order as OrderOneCollection;
   use App\Http\Resources\Order\OrderCollection;
@@ -109,18 +113,17 @@
     {
         //
         try {
-            //code...
-            $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to')
-            ->with('monitoring_sewing_detail', 'completion_status', 'party')
-            ->whereHas('completion_status', function($query2){
-                $query2->where('completion_status_id', 2);
-            })
-            ->where('order_id', $id)
-            ->get();
+            $sales = SalesOrder::where('order_id', $id)->get();
+            $query = Sewing::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('po_number')->get();
+            $query2 = Qc::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('po_number')->get();
+            $query3 = FinishedGoods::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('po_number')->get();
 
             return response()->json([
-                'data' => $query
-            ]);
+                'sales_order' => $sales[0],
+                'sewing' => $query,
+                'qc' => $query2,
+                'fg' => $query3
+             ]);
         } catch (Throwable $th) {
             //throw $th;
             return response()->json([

@@ -19,7 +19,7 @@ function getEditPathname(array, param) {
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 
-export default function MoreMenu({ handleDelete, document=false, id }) {
+export default function MoreMenu({ handleDelete, name="Edit", deleteActive=true, document=false, id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -54,15 +54,19 @@ export default function MoreMenu({ handleDelete, document=false, id }) {
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={name} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} color="red"/>
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2', color: 'red' }} />
-        </MenuItem>
+        {
+          deleteActive ? (
+            <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
+              <ListItemIcon>
+                <Icon icon={trash2Outline} width={24} height={24} color="red"/>
+              </ListItemIcon>
+              <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2', color: 'red' }} />
+            </MenuItem>
+          ) : null
+        }
 
       </Menu>
     </>

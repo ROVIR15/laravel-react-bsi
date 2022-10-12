@@ -18,40 +18,19 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import moment from 'moment';
 // api
 import API from '../../../helpers';
-import { fPercent } from '../../../utils/formatNumber';
+import { useParams } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'size', label: 'Size', alignRight: false },
+  { id: 'color', label: 'Color', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'qty', label: 'Order Qty', alignRight: false },
-  { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
-  { id: 'output_sw', label: 'Output Sewing', alignRight: false },
-  { id: 'output_qc', label: 'Output QC', alignRight: false },
-  { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
-  { id: 'percentage', label: 'Percentage', alignRight: false },
-  { id: 'difference', label: 'Selisih', alignRight: false },
+  { id: 'output_sw', label: 'Output FG', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
-
-function completionOfOrder(order_qty, final_garment) {
-  final_garment = final_garment ? parseInt(final_garment) : 0;
-  order_qty = order_qty ? parseInt(order_qty) : 0;
-
-  if(final_garment === 0) {
-    return {
-      percentage: 0,
-      difference: final_garment - order_qty
-    }
-  } else {
-    return {
-      percentage: parseFloat(final_garment/order_qty)*100,
-      difference: final_garment - order_qty
-    }
-  }
-}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -83,7 +62,8 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function Display({ placeHolder }) {
+function Display({ placeHolder, items=[] }) {
+  const {id} = useParams();
 
   const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
@@ -99,22 +79,10 @@ function Display({ placeHolder }) {
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, [items])
 
   const handleUpdateData = () => {
-    // let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
-
-    try { 
-      API.getOrder((res) => {
-        if(!res?.data) {
-          setQuoteData([]);
-        } else {
-          setQuoteData(res.data);
-        }
-      });
-    } catch (error) {
-      alert('error')
-    }
+    setQuoteData(items);
   }
 
   const handleRequestSort = (event, property) => {
@@ -166,7 +134,11 @@ function Display({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-
+    API.deleteQuote(id, function(res){
+      if(res.success) setQuoteData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
   const handleDateChanges = (event) => {
@@ -202,21 +174,12 @@ function Display({ placeHolder }) {
 
   return (
     <Card>
-      <ListToolbar
-        numSelected={selected.length}
-        filterName={filterName}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
-        onGo={handleUpdateData}
-        onFilterName={handleFilterByName}
-        placeHolder={placeHolder}
-      />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
-              order={order}
               active={false}
+              order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
               rowCount={quoteData.length}
@@ -229,17 +192,10 @@ function Display({ placeHolder }) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   const {
-                    id,
-                    order_id,
-                    sum,
+                    product_feature,
                     po_number,
-                    monitoring_cutting,
-                    monitoring_sewing,
-                    monitoring_qc,
-                    monitoring_fg,
+                    output
                   } = row;
-                  let { percentage, difference } = completionOfOrder(sum[0]?.total_qty, monitoring_fg[0]?.output);
-
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -250,18 +206,11 @@ function Display({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{product_feature?.product?.goods?.name}</TableCell>
+                      <TableCell align="left">{product_feature?.color}</TableCell>
+                      <TableCell align="left">{product_feature?.size}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{sum[0]?.total_qty}</TableCell>
-                      <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_sewing[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_qc[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_fg[0]?.output}</TableCell>
-                      <TableCell align="left">{fPercent(percentage)}</TableCell>
-                      <TableCell align="left">{difference}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu id={order_id} deleteActive={false} name="Show" handleDelete={(event) => handleDeleteData(event, id)} />
-                      </TableCell>
+                      <TableCell align="left">{output}</TableCell>
                     </TableRow>
                   );
                 })}
