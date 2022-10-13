@@ -21,8 +21,8 @@ function costEachDay(work_hours, cost_per_hour, overhead_cost){
   return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
 }
 
-function daysOfWorks(work_hours, layout_produksi){
-  return Math.floor(work_hours+layout_produksi)
+function daysOfWorks(qty, targetEachDay, layout_produksi){
+  return Math.floor(parseFloat(parseInt(qty)/parseFloat(targetEachDay))+Math.floor(layout_produksi))
 }
 
 function ShowWorkCenter() {

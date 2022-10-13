@@ -206,6 +206,11 @@ const sidebarConfig = [
     path: '/dashboard/user-management',
   },
   {
+    title: 'Work Center',
+    name: 'work-center',
+    path: '/dashboard/production/work-center',
+  },
+  {
     title: 'Spreading',
     name: 'operator-spreading',
     path: '/dashboard/inputer-spreading',
