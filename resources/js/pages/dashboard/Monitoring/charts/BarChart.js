@@ -62,8 +62,8 @@ export default function AppWebsiteVisits() {
       }
     ]
   );
-
-  const [filterDate, setFilterDate] = useState(moment(new Date()).format('YYYY/MM/DD'));
+  let now =moment(new Date()).format('YYYY/MM/DD')
+  const [filterDate, setFilterDate] = useState(now);
 
   
   const chartOptions = {
