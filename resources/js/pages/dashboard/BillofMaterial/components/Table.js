@@ -30,7 +30,7 @@ function createData(
   return { name, details, total_cost};
 }
 
-export default function BasicTable({ payload, approval, margin, setMargin, tax }) {
+export default function BasicTable({ payload, approval, review, margin, setMargin, finalPrice, setFinalPrice, tax }) {
 
   const [price, setPrice] = React.useState(0);
   const {total_labors, total_work_days, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
@@ -43,6 +43,7 @@ export default function BasicTable({ payload, approval, margin, setMargin, tax }
   ];
 
   function OfferingPrice(price){
+    if(margin < 0) return price
     return price * ((1+margin/100));
   }
 
@@ -169,8 +170,8 @@ export default function BasicTable({ payload, approval, margin, setMargin, tax }
                 <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
                   <Input
                     id="filled-adornment-amount"
-                    disabled={!approval}
-                    value={margin} 
+                    disabled={!approval || finalPrice > 0}
+                    value={parseFloat(margin).toFixed(2)} 
                     inputProps={{ style: {textAlign: 'end'}}}
                     onChange={(e) => setMargin(e.target.value)}
                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -178,6 +179,7 @@ export default function BasicTable({ payload, approval, margin, setMargin, tax }
                 </FormControl>
               </NoBorderCell>
             </TableRow>
+
             <TableRow
               key="Total"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -189,6 +191,29 @@ export default function BasicTable({ payload, approval, margin, setMargin, tax }
               <NoBorderCell align="right">
                 <BoxStyle />
                 <Typography variant="body1"> {fCurrency(OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost])))} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
+            <TableRow
+              key="margin"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Final Price </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+                  <Input
+                    id="filled-adornment-amount"
+                    disabled={!(!review ^ !approval)}
+                    value={finalPrice} 
+                    inputProps={{ style: {textAlign: 'end'}}}
+                    onChange={(e) => setFinalPrice(e.target.value)}
+                    startAdornment={<InputAdornment position="start">Rp.</InputAdornment>}
+                  />
+                </FormControl>
               </NoBorderCell>
             </TableRow>
 

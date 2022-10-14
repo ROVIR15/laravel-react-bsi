@@ -30,8 +30,9 @@ import { getPages } from '../../../../utils/getPathname';
 
 import { jsPDF } from 'jspdf'
 import { toBlob, toPng } from 'html-to-image';
-
 import Dialog from '../../../../components/DialogBox/dialog';
+import { sum } from 'lodash';
+import { fPercent } from '../../../../utils/formatNumber';
 
 const RootStyle = styled(Page)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -102,6 +103,7 @@ function Document(){
   const { pathname } = useLocation();
 
   const [margin, setMargin] = useState('0');
+  const [finalPrice, setFinalPrice] = useState('0');
 
   const [submit, setSubmit] = useState(false);
   const [review, setReview] = useState(false);
@@ -237,6 +239,16 @@ function Document(){
 
   const { bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
 
+  useEffect(() => {
+      const { cm_cost, average_of_product_cost, average_add_cost } = rest;
+      let _offerPrice = sum([cm_cost, average_of_product_cost, average_add_cost]);
+    if(parseFloat(finalPrice) !== 0 ){
+      let margin = ((finalPrice - _offerPrice) / _offerPrice);
+      margin = margin*100
+      setMargin(margin);
+    }
+  }, [finalPrice]);
+
   function handleSubmission(key, description){
     let payload = { user_id: id, status_type: '', bom_id: data.bom_id };
     switch (key) {
@@ -255,7 +267,7 @@ function Document(){
       case 'approve':
         payload = {...payload, status_type: 'Approve', description: ''};
         try {
-          API.updateBOM(data.bom_id, {margin}, (res) => {
+          API.updateBOM(data.bom_id, {margin, final_price: final_price}, (res) => {
             if(!res) return undefined
             if(!res.success) return undefined
             alert('success');
@@ -481,7 +493,22 @@ function Document(){
               </Grid>
             </Grid>
             <GridItemX sx={{marginTop: 8, marginBottom: 4}}>
-              <Table payload={rest} approval={approve} margin={margin} setMargin={setMargin} tax={data.tax}/>
+              {
+                /**
+                 * 
+                 * Table Primary
+                 */
+              }
+              <Table 
+                payload={rest} 
+                approval={approve} 
+                review={review} 
+                margin={margin} 
+                setMargin={setMargin} 
+                finalPrice={finalPrice} 
+                setFinalPrice={setFinalPrice} 
+                tax={data.tax}
+              />
             </GridItemX>
             <Divider fullWidth />
             <Grid container>
