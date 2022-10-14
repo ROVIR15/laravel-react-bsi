@@ -155,7 +155,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Facilitiy
     Route::resource('facility', 'FactoryController')->only(['index', 'show', 'store']);
-
+    Route::resource('facility-target', 'FacilityTargetController')->only('index', 'store', 'update', 'show');
+    
     // Action on Manufacturing Order
     Route::resource('action', 'ActionController')->only(['index', 'show', 'store']);
 
