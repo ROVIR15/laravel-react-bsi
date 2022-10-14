@@ -391,7 +391,7 @@ function Document(){
                 >
                   <Box 
                     component="img"
-                    src={imageUrl ? imageUrl : "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"}
+                    src={imageUrl ? imageUrl : null}
                     sx={{
                       height: "300px", 
                       margin: "auto",
