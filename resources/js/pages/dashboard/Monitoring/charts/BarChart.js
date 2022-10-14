@@ -139,8 +139,8 @@ export default function AppWebsiteVisits() {
         <FormControl fullWidth>
           <TextField
             type="date"
-            label="Form Date"
-            value={filterDate.fromDate}
+            label="From Date"
+            value={filterDate}
             name="fromDate"
             onChange={handleDateChanges}
           />

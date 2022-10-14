@@ -169,7 +169,7 @@ export default function AppWebsiteVisits() {
 
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Sewing Performance" subheader="(+43%) than last year" />
+          <CardHeader title="Sewing Performance"  />
           <Box sx={{ p: 3, pb: 1 }} dir="ltr">
             <ReactApexChart type="line" series={data} options={chartOptions} height={364} />
           </Box>
