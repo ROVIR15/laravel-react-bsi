@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }) => {
     try {
       AUTHAPI.login(email, password, function(res){
         localStorage.clear();
+        console.log(res);
         const { access_token, user, ...rest } = res?.data;
         if(rest?.success) {
           setUser({...user, user, access_token})
