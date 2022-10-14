@@ -1961,12 +1961,46 @@ const main = {
       });
     },
     //Facility
-    getFacility(cb){
-      axios.get( uri + '/facility').then(function(res){
+    getFacility(params=null, cb){
+      axios.get( uri + '/facility' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
       })
+    },
+    getFacilityTarget(params=null, cb){
+      axios.get( uri + '/facility-target' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAFacilityTarget(id, cb){
+      axios.get( uri + '/facility-target/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    insertFacilityTarget(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/facility-target', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateFacilityTarget(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put( uri + '/facility-target/' + id , { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
     },
     getAFacility(id, cb){
       if(!id) console.error('ID not found')

@@ -245,6 +245,11 @@ const sidebarConfig = [
     name: 'operator-finished',
     path: '/dashboard/inputer-finished-goods',
   },
+  {
+    title: 'Facility',
+    name: 'facility',
+    path: '/dashboard/facility/target',
+  },
 ];
 
 export default sidebarConfig;

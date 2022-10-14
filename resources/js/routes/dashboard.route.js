@@ -28,7 +28,8 @@ import {
   MachineLayout,
   ServiceLayout,
   UserManagementLayout,
-  OrderProgressLayout
+  OrderProgressLayout,
+  FacilityTargetLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -66,6 +67,7 @@ import AddMO from '../pages/dashboard/ManufactureOrder/new';
 import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
 import AddMachine from '../pages/dashboard/Machine/add';
+import AddLineTarget from '../pages/dashboard/LineTarget/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -95,6 +97,7 @@ import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
 import DisplayMachine from '../pages/dashboard/Machine/display';
 import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
 import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/sewing';
+import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -118,6 +121,7 @@ import ShowMO from '../pages/dashboard/ManufactureOrder/show';
 import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
 import ShowMachine from '../pages/dashboard/Machine/show';
+import ShowLineTarget from '../pages/dashboard/LineTarget/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -522,6 +526,16 @@ export default function TestRouter() {
             { path: ':id', element: <ShowInv /> },
             { path: 'display', element: <DisplayInv /> },
             { path: 'document/:id', element: <DocumentINV/>}
+          ]
+        },
+        // Finance
+        { 
+          path: 'facility/target', 
+          element: <FacilityTargetLayout />,
+          children: [
+            { path: 'add', element: <AddLineTarget /> },
+            { path: ':id', element: <ShowLineTarget /> },
+            { path: 'display', element: <DisplayLineTarget /> }
           ]
         },
         { path: 'inputer-spreading', 

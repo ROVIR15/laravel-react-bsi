@@ -3,6 +3,7 @@ import Page from '../../../components/Page';
 import {
   Button,
   Container,
+  Grid,
   Stack,
   Typography
 } from '@mui/material';
@@ -15,6 +16,7 @@ import { Icon } from '@iconify/react';
 // components
 import Layout from '../../../layouts/Layout';
 import Chart from './charts/LineChart';
+import BarChart from './charts/BarChart';
 import { useSnackbar } from 'notistack'
 
 function getPathname(array){
@@ -39,10 +41,16 @@ function Labor() {
         <Typography variant="h4" gutterBottom>
           Monitoring
         </Typography>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
-        </Stack>
       </Stack>
-      <Chart />
+
+      <Grid container direction="row" spacing={2}>
+        <Grid item xs={6}>
+          <Chart />
+        </Grid>
+        <Grid item xs={6}>
+          <BarChart />
+        </Grid>
+      </Grid>
       <Outlet/>
     </Layout>
   )

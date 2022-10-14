@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Facility\Facility;
+use App\Models\Facility\FacilityType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Facility\FacilityCollection;
 use App\Http\Resources\Facility\Facility as FacilityOneCollection;
@@ -19,7 +20,30 @@ class FactoryController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Facility::all();
+      $type = $request->query('type');
+
+      try {
+        //code...
+        $query;
+
+        if(!isset($type)){
+          $query = Facility::all();          
+        } else {
+          $query = FacilityType::with('facilities')
+          ->where('name', $type)
+          ->first();
+
+          return response()->json([
+            'data' => $query->facilities
+          ]);
+        }
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
 
       return new FacilityCollection($query);
     }
