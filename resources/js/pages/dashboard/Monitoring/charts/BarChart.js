@@ -52,7 +52,7 @@ function arrangedData(data){
 
 }
 
-export default function AppWebsiteVisits() {
+export default function AppWebsiteVisits( {filterDate, setFilterDate, update }) {
   const [labels, setLabels] = React.useState([]);
   const [data, setData] = React.useState(
     [
@@ -62,8 +62,6 @@ export default function AppWebsiteVisits() {
       }
     ]
   );
-  let now =moment(new Date()).format('YYYY/MM/DD')
-  const [filterDate, setFilterDate] = useState(now);
 
   
   const chartOptions = {
@@ -120,6 +118,7 @@ export default function AppWebsiteVisits() {
     } catch (error) {
       alert('error');
     }
+    update();
   }
 
   const handleDateChanges = (event) => {

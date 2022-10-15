@@ -22,6 +22,7 @@ class Sewing extends Model
         'order_item_id',
         'product_feature_id',
         'line',
+        'facility_id',
         'qty_loading',
         'output'
     ];
@@ -35,7 +36,7 @@ class Sewing extends Model
     }
 
     public function sales_order(){
-        return $this->belongsTo('App\Models\Order\SalesOrder')->with('product_feature');
+        return $this->belongsTo('App\Models\Order\SalesOrder');
       }
   
     public function inventory(){
@@ -44,6 +45,10 @@ class Sewing extends Model
 
     public function qc(){
         return $this->hasMany('App\Models\Monitoring\Qc', 'ms_id', 'id')->selectRaw('sum(output) as output_qc, ms_id')->groupBy('ms_id');
+    }
+
+    public function target(){
+        return $this->belongsTo('App\Models\Facility\FacilityTarget', 'facility_id', 'facility_id')->with('facility');
     }
 
     public function detail(){

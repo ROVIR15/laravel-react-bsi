@@ -102,7 +102,7 @@ function Inventory() {
 
     (async () => {
       if (active) {
-        API.getFacility((res) => {
+        API.getFacility('', (res) => {
           if(!res) return
           else setOptions2(res.data);
         })  

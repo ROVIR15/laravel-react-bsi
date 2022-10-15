@@ -62,7 +62,7 @@ class MonitoringSewingController extends Controller
     {
         $param = $request->all()['payload'];
 
-        try {
+      try {
             Sewing::insert($param);
             
             return response()->json(['success' => true]);
@@ -84,10 +84,15 @@ class MonitoringSewingController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($facilityId)
     {
       try {
-        $res = Sewing::with('order_item', 'sales_order')->find($id);
+        $res = Sewing::select('id', 'sales_order_id', 'po_number', 'product_feature_id', 'facility_id', 'date',DB::raw('sum(output) as total_output'))
+              ->with('product_feature', 'sales_order', 'target')
+              ->where('facility_id', $facilityId)
+              ->groupBy('facility_id', 'date')
+              ->orderBy('date', 'desc')
+              ->get();
         return response()->json(['data' => $res]);
     } catch (Exception $th) {
         return response()->json([

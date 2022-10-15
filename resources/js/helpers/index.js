@@ -2169,6 +2169,15 @@ const main = {
         cb(err.response);
       });
     },
+    getSewingLineDetail(param, cb){
+      if(!cb) return;
+      const paramUri = '/sewing-line-detail' + `${param}`
+      axios.get(uri + paramUri).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     getMonitoringSewing(param, cb){
       if(!cb) return;
       const paramUri = '/monitoring-sewing' + `${param}`

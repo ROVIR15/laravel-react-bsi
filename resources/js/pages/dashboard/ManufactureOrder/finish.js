@@ -100,7 +100,7 @@ function ListOfFacility({something, set}){
 
     (async () => {
       if (active) {
-        API.getFacility((res) => {
+        API.getFacility('', (res) => {
           if(!res) return
           else setOptions(res.data);
         })  

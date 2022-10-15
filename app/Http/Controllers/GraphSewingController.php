@@ -75,4 +75,27 @@ class GraphSewingController extends Controller
       }
 
     }
+
+    public function sewingLineDetail(Request $request) {
+      $date = $request->query('date');
+
+      if(empty($date)){
+        $date = date('Y-m-d');
+      }
+
+      try {
+        $res = Sewing::select('id', 'sales_order_id', 'po_number', 'product_feature_id', 'facility_id', 'date',DB::raw('sum(output) as total_output'))
+        ->with('product_feature', 'sales_order', 'target')
+        ->groupBy('facility_id', 'date')
+        ->where('date', $date)
+        ->orderBy('date', 'desc')
+        ->get();
+        return response()->json(['data' => $res]);
+      } catch (Exception $th) {
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+    }
 }
