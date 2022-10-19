@@ -222,6 +222,7 @@ function Document(){
         API.getABOM(id, async (res) => {
           if(!res) return undefined;
           let ras = await bomDocumentArranged(res.data);
+          console.log(res.data?.status[0])
           setData(ras);
           setMargin(res.data?.margin);
           setImageUrl(ras.imageUrl);
