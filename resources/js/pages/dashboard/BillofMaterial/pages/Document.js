@@ -274,6 +274,15 @@ function Document(){
 
       case 'reject-review':
         payload = {...payload, status_type: 'Reject Review', description};
+        try {
+          API.updateBOM(data.bom_id, {margin, final_price: finalPrice}, (res) => {
+            if(!res) return undefined
+            if(!res.success) return undefined
+            alert('success');
+          })
+        } catch (error) {
+          alert(error)
+        }
         break;
 
       case 'approve':
@@ -291,6 +300,15 @@ function Document(){
 
       case 'reject-approve':
         payload = {...payload, status_type: 'Reject Approve', description};
+        try {
+          API.updateBOM(data.bom_id, {margin, final_price: finalPrice}, (res) => {
+            if(!res) return undefined
+            if(!res.success) return undefined
+            alert('success');
+          })
+        } catch (error) {
+          alert(error)
+        }
         break;        
 
       default:
