@@ -226,6 +226,7 @@ function Document(){
           setItems(res.data?.bom_items);
           setService(res.data?.bom_services);
           setOp(res.data?.operations);
+          setFinalPrice(res.data?.final_price);
         })
       } catch (error) {
         alert('error');
