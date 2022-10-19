@@ -235,6 +235,8 @@ function Document(){
         alert('error');
       }
 
+      console.log(status, res.data?.status)
+
 
     return () => {
       active = false;
