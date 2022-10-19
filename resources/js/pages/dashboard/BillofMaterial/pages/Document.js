@@ -117,6 +117,8 @@ function Document(){
     message: ""
   });
 
+  const [status, setStatus] = useState(null);
+
   function handleDialog(key) {
 
     switch (key) {
@@ -227,6 +229,7 @@ function Document(){
           setService(res.data?.bom_services);
           setOp(res.data?.operations);
           setFinalPrice(res.data?.final_price);
+          setStatus(res.data?.status);
         })
       } catch (error) {
         alert('error');
@@ -336,19 +339,19 @@ function Document(){
           <div>
             <Button
               onClick={() => handleDialog('submit')}
-              disabled={!submit}
+              disabled={!submit === status?.name?.toLowerCase() === 'approve'}
             >
               Submit
             </Button>
             <Button
               onClick={() => handleDialog('review')}
-              disabled={!review}
+              disabled={!review || status?.name?.toLowerCase() === 'approve'}
             >
               Review
             </Button>
             <Button
               onClick={() => handleDialog('approve')}
-              disabled={!approve}
+              disabled={!approve || status?.name?.toLowerCase() === 'approve'}
             >
               Tandai Approve
             </Button>
