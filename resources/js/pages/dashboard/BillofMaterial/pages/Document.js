@@ -258,11 +258,15 @@ function Document(){
 
       case 'review':
         payload = {...payload, status_type: 'Review', description};
-        API.updateBOM(data.bom_id, {margin, final_price: finalPrice}, (res) => {
-          if(!res) return undefined
-          if(!res.success) return undefined
-          alert('success');
-        })
+        try {
+          API.updateBOM(data.bom_id, {margin, final_price: finalPrice}, (res) => {
+            if(!res) return undefined
+            if(!res.success) return undefined
+            alert('success');
+          })
+        } catch (error) {
+          alert(error)
+        }
         break;
 
       case 'reject-review':
