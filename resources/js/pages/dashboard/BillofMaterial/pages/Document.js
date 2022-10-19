@@ -267,7 +267,7 @@ function Document(){
       case 'approve':
         payload = {...payload, status_type: 'Approve', description: ''};
         try {
-          API.updateBOM(data.bom_id, {margin, final_price: final_price}, (res) => {
+          API.updateBOM(data.bom_id, {margin, final_price: finalPrice}, (res) => {
             if(!res) return undefined
             if(!res.success) return undefined
             alert('success');
