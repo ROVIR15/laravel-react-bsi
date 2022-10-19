@@ -218,27 +218,31 @@ function Document(){
   useEffect(() => {
     let active = true;
 
-      try {
-        API.getABOM(id, async (res) => {
-          if(!res) return undefined;
-          let ras = await bomDocumentArranged(res.data);
-          setData(ras);
-          setMargin(res.data?.margin);
-          setImageUrl(ras.imageUrl);
-          setItems(res.data?.bom_items);
-          setService(res.data?.bom_services);
-          setOp(res.data?.operations);
-          setFinalPrice(res.data?.final_price);
-          setStatus(res.data?.status[0]);
-        })
-      } catch (error) {
-        alert('error');
-      }
+    handleUpdateData();
 
     return () => {
       active = false;
     }
   }, [id]);
+
+  const handleUpdateData = () => {
+    try {
+      API.getABOM(id, async (res) => {
+        if(!res) return undefined;
+        let ras = await bomDocumentArranged(res.data);
+        setData(ras);
+        setMargin(res.data?.margin);
+        setImageUrl(ras.imageUrl);
+        setItems(res.data?.bom_items);
+        setService(res.data?.bom_services);
+        setOp(res.data?.operations);
+        setFinalPrice(res.data?.final_price);
+        setStatus(res.data?.status[0]);
+      })
+    } catch (error) {
+      alert('error');
+    }
+  }
 
   const { bom_name, goods_name, size, color, start_date, end_date, ...rest} = data;
 
@@ -326,6 +330,8 @@ function Document(){
     } catch (error) {
       alert('error');
     }
+
+    handleUpdateDate();
 
     setDialogOpen(false);
   }  
