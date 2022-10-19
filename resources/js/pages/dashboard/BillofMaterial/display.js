@@ -65,9 +65,9 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query[1] !== "All") {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1 && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
   } else {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }

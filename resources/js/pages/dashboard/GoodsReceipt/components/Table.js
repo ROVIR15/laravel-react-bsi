@@ -64,7 +64,7 @@ function applySortFilter(array, comparator, query) {
     return filter(array, (_b) => {
       console.log(query[1], _b)
       return (
-        _b.name.toLowerCase().indexOf(query[0].toLowerCase()) !== -1
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
         && _b.category_id === query[1]
       )
     });

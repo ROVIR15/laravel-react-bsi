@@ -46,7 +46,8 @@ function WorkCenter() {
     initialValues: {
       sales_order_id: '',
       line: null,
-      date: ''
+      hours: '07:00',
+      date: '202'
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
@@ -268,6 +269,21 @@ const [id, setId] = React.useState(0);
                       helperText={touched.date && errors.date}
                     />
                   </Grid>
+
+                  <Grid item
+                    xs={6}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="hours"
+                      type="time"
+                      label="Jam"
+                      {...getFieldProps('hours')}
+                      error={Boolean(touched.hours && errors.hours)}
+                      helperText={touched.hours && errors.hours}
+                    />
+                  </Grid>
+
 
                 </Grid>      
               </CardContent>
