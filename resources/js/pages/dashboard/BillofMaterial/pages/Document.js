@@ -331,9 +331,9 @@ function Document(){
       alert('error');
     }
 
+    setDialogOpen(false);
     handleUpdateDate();
 
-    setDialogOpen(false);
   }  
   
 
