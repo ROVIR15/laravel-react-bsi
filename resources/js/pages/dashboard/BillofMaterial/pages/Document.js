@@ -235,7 +235,7 @@ function Document(){
         alert('error');
       }
 
-      console.log(status, res.data?.status)
+      console.log(status, status?.name?.toLowerCase() === 'approve')
 
 
     return () => {
