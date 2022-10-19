@@ -229,7 +229,7 @@ function Document(){
           setService(res.data?.bom_services);
           setOp(res.data?.operations);
           setFinalPrice(res.data?.final_price);
-          setStatus(res.data?.status);
+          setStatus(res.data?.status[0]);
         })
       } catch (error) {
         alert('error');
@@ -335,7 +335,7 @@ function Document(){
               <Icon icon={downloadFill} width={20} height={20} />
             </IconButton>
           </div>
-
+          {status?.name?.toLowerCase() === 'approve'}
           <div>
             <Button
               onClick={() => handleDialog('submit')}
