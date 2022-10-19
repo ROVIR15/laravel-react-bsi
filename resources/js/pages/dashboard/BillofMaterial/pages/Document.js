@@ -338,7 +338,7 @@ function Document(){
           <div>
             <Button
               onClick={() => handleDialog('submit')}
-              disabled={!submit === status?.status_type?.toLowerCase() === 'approve'}
+              disabled={!submit}
             >
               Submit
             </Button>
@@ -520,7 +520,7 @@ function Document(){
                 finalPrice={finalPrice} 
                 setFinalPrice={setFinalPrice} 
                 tax={data.tax}
-                status={status?.status_type}
+                status={status?.status_type?.toLowerCase() === 'approve'}
               />
             </GridItemX>
             <Divider fullWidth />

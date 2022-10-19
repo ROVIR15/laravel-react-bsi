@@ -42,7 +42,7 @@
         case 'approve':
           # code...
           $query = BOM::whereHas('status', function($query3){
-              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+              $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve', 'Reject Review']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
