@@ -236,7 +236,7 @@ function Document(){
         alert('error');
       }
 
-      console.log(status, status?.name?.toLowerCase() === 'approve')
+      console.log(status, status?.status_type?.toLowerCase() === 'approve')
 
 
     return () => {
@@ -338,23 +338,23 @@ function Document(){
               <Icon icon={downloadFill} width={20} height={20} />
             </IconButton>
           </div>
-          {status?.name?.toLowerCase() === 'approve'}
+          {status?.status_type?.toLowerCase() === 'approve'}
           <div>
             <Button
               onClick={() => handleDialog('submit')}
-              disabled={!submit === status?.name?.toLowerCase() === 'approve'}
+              disabled={!submit === status?.status_type?.toLowerCase() === 'approve'}
             >
               Submit
             </Button>
             <Button
               onClick={() => handleDialog('review')}
-              disabled={!review || status?.name?.toLowerCase() === 'approve'}
+              disabled={!review || status?.status_type?.toLowerCase() === 'approve'}
             >
               Review
             </Button>
             <Button
               onClick={() => handleDialog('approve')}
-              disabled={!approve || status?.name?.toLowerCase() === 'approve'}
+              disabled={!approve || status?.status_type?.toLowerCase() === 'approve'}
             >
               Tandai Approve
             </Button>
