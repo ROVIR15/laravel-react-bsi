@@ -30,7 +30,7 @@ function createData(
   return { name, details, total_cost};
 }
 
-export default function BasicTable({ payload, approval, review, margin, setMargin, finalPrice, setFinalPrice, tax }) {
+export default function BasicTable({ payload, status, approval, review, margin, setMargin, finalPrice, setFinalPrice, tax }) {
 
   const [price, setPrice] = React.useState(0);
   const {total_labors, total_work_days, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
@@ -207,7 +207,7 @@ export default function BasicTable({ payload, approval, review, margin, setMargi
                 <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
                   <Input
                     id="filled-adornment-amount"
-                    disabled={!(!review ^ !approval)}
+                    disabled={!(!review ^ !approval) || status}
                     value={finalPrice} 
                     inputProps={{ style: {textAlign: 'end'}}}
                     onChange={(e) => setFinalPrice(e.target.value)}
