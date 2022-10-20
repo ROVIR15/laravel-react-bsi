@@ -29,8 +29,8 @@ const TABLE_HEAD = [
     { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
+    { id: 'satuan', label: 'Satuan', alignRight: false },
     { id: 'brand', label: 'Brand', alignRight: false },
-    { id: 'value', label: 'Value', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------

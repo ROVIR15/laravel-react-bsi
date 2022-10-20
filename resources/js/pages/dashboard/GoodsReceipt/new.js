@@ -248,13 +248,13 @@ function GoodsReceipt() {
   }
 
   const columns = useMemo(() => [
-    { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'id', headerName: 'ID', width: 50, editable: false, visible: 'hide' },
+    // { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
+    { field: 'name', headerName: 'Name', width: 400, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
-    { field: 'qty_received', headerName: 'Qty Receive', editable: true },
-    { field: 'qty_on_receipt', headerName: 'Qty On Receipt', editable: true },
+    { field: 'qty_received', headerName: 'Actual Qty', width: 200, editable: true },
+    { field: 'qty_on_receipt', headerName: 'Qty On Receipt', width: 200, editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
