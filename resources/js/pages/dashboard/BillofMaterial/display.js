@@ -26,8 +26,8 @@ import moment, { isMoment } from 'moment';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'date', label: 'Issue Date', alignRight: false },
   { id: 'buyer', label: 'Buyer', alignRight: false },
+  { id: 'date', label: 'Issue Date', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
