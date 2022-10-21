@@ -329,7 +329,7 @@ const [selectedValueSp, setSelectedValueSp] = React.useState({});
           <Grid item xs={12}>
             <Card>
               <CardHeader
-                title="Detail Performance in Work Center"
+                
               />
               <CardContent>
                 <Grid item xs={12}>

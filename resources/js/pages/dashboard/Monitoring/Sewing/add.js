@@ -294,7 +294,7 @@ const [id, setId] = React.useState(0);
           <Grid item xs={12}>
             <Card>
               <CardHeader
-                title="Detail Performance in Work Center"
+                
               />
               <CardContent>
                 <Grid item xs={12}>

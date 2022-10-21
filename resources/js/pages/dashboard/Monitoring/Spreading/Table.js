@@ -22,10 +22,12 @@ import API from '../../../../helpers';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'po_number', label: 'PO ', alignRight: false },
+    { id: 'category', label: 'Category', alignRight: false },
+    { id: 'sub_category', label: 'Sub Category', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
+    { id: 'satuan', label: 'Satuan', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -55,7 +57,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -163,12 +165,15 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                   const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
                   const {
                     id,
-                    date,
-                    po_number,
+                    // date,
+                    // po_number,
                     name,
                     size,
                     color,
-                    qty_loading
+                    satuan,
+                    sub_category,
+                    category
+                    // qty_loading
                   } = row;
                   return (
                     <TableRow
@@ -182,15 +187,18 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          disabled={(qty_loading === 0 ? true : false)}
+                          // disabled={(qty_loading === 0 ? true : false)}
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
+                      {/* <TableCell align="left">{po_number}</TableCell> */}
+                      <TableCell align="left">{category}</TableCell>
+                      <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{satuan}</TableCell>
                     </TableRow>
                   );
                 })}

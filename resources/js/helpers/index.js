@@ -349,6 +349,13 @@ const main = {
       })
     },
     // Product Feature
+    getFabric(cb){
+      axios.get( uri + '/fabric').then(function(res){
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
     newProductFeature(_data, cb){
       axios.post( uri + '/product-feature', {payload: _data}).then( function(res){
         cb(res.data);
