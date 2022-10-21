@@ -42,10 +42,8 @@ const columns = [
 ];
 
 function makeData(array) {
-  console.log(isArray(array))
   if(!isArray(array)) return [];
   let a = array.map(function(x, index) {
-    console.log(x)
     let _p = (parseFloat(x.total_output)/parseFloat(x.target?.target)) * 100
     return {
       id: index+1,

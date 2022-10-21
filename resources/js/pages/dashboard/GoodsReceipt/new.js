@@ -124,7 +124,6 @@ function GoodsReceipt() {
       API.getParty((res) => {
         if(!res) return
         else {
-          console.log(res)
           // let data = partyArrangedData(res);
           // console.log(data)
           setOptionsP(res);
@@ -230,8 +229,6 @@ function GoodsReceipt() {
             }
           });
         });
-
-        console.log(items);
 
         // update on field value
       } else {

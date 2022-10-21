@@ -41,21 +41,21 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = BOM::whereHas('status', function($query3){
+          $query = BOM::with('party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve', 'Reject Review']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
         case 'review':
           # code...
-          $query = BOM::whereHas('status', function($query3){
+          $query = BOM::with('party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
         
         default:
           # code...
-          $query = BOM::with('status')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          $query = BOM::with('status', 'party')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
       }
 
@@ -89,6 +89,7 @@
             $billOfMaterial = BOM::create([
               'product_id' => $param['product_id'],
               'product_feature_id' => $param['product_feature_id'],
+              'party_id' => $param['party_id'],
               'name' => $param['name'],
               'qty' => $param['qty'],
               'margin' => $param['margin'],
@@ -181,9 +182,17 @@
     {
         try {
             //code...
-            $query = BOM::with('bom_items', 'bom_services', 'operation', 'product', 'variant', 'status')->find($id);
+            $query = BOM::with(
+              'bom_items', 
+              'bom_services', 
+              'operation', 
+              'product', 
+              'variant', 
+              'status', 
+              'party')
+              ->find($id);
             return new BOMOneCollection($query);
-        } catch (Exception $th) {
+        } catch (Throwable $th) {
             //throw $th;
             return response()->json([
                 'success' => false,

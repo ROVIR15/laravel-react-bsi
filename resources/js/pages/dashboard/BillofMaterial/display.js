@@ -27,6 +27,7 @@ import moment, { isMoment } from 'moment';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'date', label: 'Issue Date', alignRight: false },
+  { id: 'buyer', label: 'Buyer', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
@@ -282,6 +283,7 @@ function DisplayBOM({ placeHolder }) {
                 .map((row, index) => {
                   const { 
                     id,
+                    party,
                     product_id,
                     product_feature_id,
                     status,
@@ -301,6 +303,7 @@ function DisplayBOM({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{index+1}</TableCell>
+                      <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">{moment(new Date(rest.created_at)).format("DD MMM YYYY")}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">

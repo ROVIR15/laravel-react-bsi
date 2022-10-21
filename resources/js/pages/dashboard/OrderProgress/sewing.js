@@ -78,7 +78,6 @@ function Display({ placeHolder, items=[] }) {
   });
 
   useEffect(() => {
-    console.log(items)
     handleUpdateData();
   }, [items])
 

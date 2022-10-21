@@ -148,10 +148,10 @@ function Quotation() {
 
     if (active) {
       try {
-        API.getBuyers(async (res) => {
+        API.getBuyers((res) => {
           if(!res) return
           else {
-            let data = await partyArrangedData(res);
+            let data = partyArrangedData(res);
             setOptions2(data);
           }
         }) 

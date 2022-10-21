@@ -28,8 +28,10 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 import API from '../../../helpers';
 
 // Components
-import AutoComplete from './components/AutoComplete';
-import AutoCompleteP from './components/AutoCompleteP';
+import ColumnBox from '../../../components/ColumnBox';
+import SpaceBetweenBox from '../../../components/SpaceBetweenBox';
+import DialogBoxParty from './components/DialogBoxParty'
+
 import DataGrid from '../../../components/DataGrid';
 import Modal from './components/ModalShowP';
 import Modal2 from './components/ModalShowO';
@@ -39,7 +41,7 @@ import Modal3 from './components/ModalShowS';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
-import { optionProductFeature, serviceList, BomServiceList } from '../../../helpers/data';
+import { optionProductFeature, partyArrangedData, serviceList, BomServiceList } from '../../../helpers/data';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -94,6 +96,52 @@ function BillOfMaterial() {
   //Data Grid Opration of BOM
   const [editRowsModelO, setEditRowsModelO] = React.useState({});
   const [editRowDataO, setEditRowDataO] = React.useState({});
+
+  // DialogBox for Party
+  const [optionParty, setOptionParty] = useState([]);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSH = openSH && optionParty.length === 0;
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+    type: {
+      name: ''
+    }
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      try {
+        await API.getBuyers((res) => {
+          if(!res) return
+          else {
+            let data = partyArrangedData(res);
+            setOptionParty(data);
+          }
+        })  
+          
+      } catch (error) {
+        alert('error');        
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+
+
+  }, [loadingSH]);
+
+  const handleCloseDialogParty = (data) => {
+    if(!data) {
+      setOpenSH(false)
+    } else {
+      setSelectedValueSH(data)
+      setFieldValue('party_id', data.id)
+      setOpenSH(false)  
+    }
+  }
 
   /**
    * TAB Panel
@@ -260,6 +308,7 @@ function BillOfMaterial() {
 
     setValues({
       id: load.id,
+      party_id: load.party?.id,
       product_id: load.product_id,
       product_feature_id: load.product_feature_id,
       name: load.name,
@@ -270,6 +319,8 @@ function BillOfMaterial() {
       end_date: load.end_date,
       company_name: load.company_name
     })
+
+    setSelectedValueSH(load.party)
 
     const load2 = await axios.get(process.env.MIX_API_URL  + '/bom-item' + `/${id}`)
     .then(function({data: {data}}) {
@@ -534,8 +585,39 @@ function BillOfMaterial() {
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <CardContent>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Buyer </Typography>
+                      <Button
+                        onClick={() => setOpenSH(true)}
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH?.name}
+                      </Typography>
+                    </div>
+                    <DialogBoxParty
+                      options={optionParty}
+                      loading={loadingSH}
+                      // error={Boolean(touched.facility_id && errors.facility_id)}
+                      // helperText={touched.facility_id && errors.facility_id}
+                      // selectedValue={values.facility_id}
+                      open={openSH}
+                      onClose={(value) => handleCloseDialogParty(value)}
+                    />
+                  </ColumnBox>
+                </CardContent>
+              </Card>              
+            </Grid>
+
             {/* BOM Form */}
-            <Grid item xs={12}>
+            <Grid item xs={8}>
               <Card >
                 <CardHeader
                   title="Costing Information"

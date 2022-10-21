@@ -61,7 +61,6 @@ function applySortFilter(array, comparator, query) {
 
   if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
-      console.log(_b)
       return (
         _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
         && _b.category_id === query[1]

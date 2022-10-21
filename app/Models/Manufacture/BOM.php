@@ -14,6 +14,7 @@ class BOM extends Model
 
     protected $fillable = [
         'id',
+        'party_id',
         'product_id',
         'product_feature_id',
         'margin',
@@ -48,6 +49,10 @@ class BOM extends Model
 
     public function status(){
         return $this->hasMany('App\Models\Manufacture\BOMStatus', 'bom_id')->orderBy('created_at', 'desc');;
+    }
+
+    public function party(){
+        return $this->belongsTo('App\Models\Party\Party', 'party_id');
     }
     
 }

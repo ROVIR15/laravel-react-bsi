@@ -75,7 +75,7 @@ function WorkCenter() {
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
     { field: 'po_number', headerName: 'PO Number', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'name', width: 300, headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'output', headerName: 'Output', type: 'number', editable: true },

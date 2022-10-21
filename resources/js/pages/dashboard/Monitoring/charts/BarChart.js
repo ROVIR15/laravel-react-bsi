@@ -46,8 +46,6 @@ function arrangedData(data){
     }
   });
 
-  console.log(b)
-
   return b;
 
 }
@@ -107,7 +105,6 @@ export default function AppWebsiteVisits( {filterDate, setFilterDate, update }) 
       API.getFacilityTarget(params, res => {
         if(!res) return undefined;
         let hahaha = (arrangedData(res.data));
-        console.log(hahaha)
         setData([
           {
             name: 'Actual',

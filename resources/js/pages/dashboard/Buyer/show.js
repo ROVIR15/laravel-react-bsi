@@ -67,7 +67,6 @@ function Buyer() {
     API.getBuyer(id, function(res){
       if(!res.success) alert("Something went wrong!");
       const {role_type, ...arrangedData} = _partyArrangedData(res.data);
-      console.log(arrangedData);
       setValues(arrangedData);
       setChoosen(role_type)
     });

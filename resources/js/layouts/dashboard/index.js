@@ -40,7 +40,6 @@ export default function DashboardLayout() {
   const { loadingInitial } = useAuth();
   const { pathname } = useLocation();
 
-  console.log(pathname.split('/'))
 
   function isWelcoming(){
     if(pathname.split('/').length === 2){

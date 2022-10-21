@@ -27,6 +27,10 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import API from '../../../helpers';
 
 // Components
+import ColumnBox from '../../../components/ColumnBox';
+import SpaceBetweenBox from '../../../components/SpaceBetweenBox';
+import DialogBoxParty from './components/DialogBoxParty'
+
 import AutoComplete from './components/AutoComplete';
 import AutoCompleteP from './components/AutoCompleteP';
 import DataGrid from '../../../components/DataGrid';
@@ -38,7 +42,7 @@ import Modal3 from './components/ModalNewS';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
-import { optionProductFeature, serviceList } from '../../../helpers/data'
+import { optionProductFeature, partyArrangedData, serviceList } from '../../../helpers/data'
 
 function BillOfMaterial() {
   const { pathname } = useLocation();
@@ -86,6 +90,52 @@ function BillOfMaterial() {
   const [editRowsModelO, setEditRowsModelO] = React.useState({});
   const [editRowDataO, setEditRowDataO] = React.useState({});
 
+  // DialogBox for Party
+  const [optionParty, setOptionParty] = useState([]);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSH = openSH && optionParty.length === 0;
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+    type: {
+      name: ''
+    }
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      try {
+        await API.getBuyers((res) => {
+          if(!res) return
+          else {
+            let data = partyArrangedData(res);
+            setOptionParty(data);
+          }
+        })  
+          
+      } catch (error) {
+        alert('error');        
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+
+
+  }, [loadingSH]);
+
+  const handleCloseDialogParty = (data) => {
+    if(!data) {
+      setOpenSH(false)
+    } else {
+      setSelectedValueSH(data)
+      setFieldValue('party_id', data.id)
+      setOpenSH(false)  
+    }
+  }
+
   /**
    * TAB Panel
    */
@@ -107,9 +157,10 @@ function BillOfMaterial() {
   const formik = useFormik({
     initialValues: {
       name: '',
+      party_id: '',
       product_id: '',
       product_feature_id: '',
-      company_name: '',
+      company_name: 'PT Buana Sandang Indonesia',
       qty: 0,
       margin: 0,
       tax: 11,      
@@ -186,7 +237,7 @@ function BillOfMaterial() {
 
   const goodsColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false },
+    { field: 'name', width: 300, headerName: 'Name', editable: false },
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
@@ -368,7 +419,39 @@ function BillOfMaterial() {
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+
+            <Grid item xs={4}>
+              <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <CardContent>
+                  <ColumnBox>
+                    <SpaceBetweenBox>
+                      <Typography variant="h6"> Buyer </Typography>
+                      <Button
+                        onClick={() => setOpenSH(true)}
+                      >
+                        Select
+                      </Button>
+                    </SpaceBetweenBox>
+                    <div>
+                      <Typography variant="body1">
+                        {selectedValueSH?.name}
+                      </Typography>
+                    </div>
+                    <DialogBoxParty
+                      options={optionParty}
+                      loading={loadingSH}
+                      // error={Boolean(touched.facility_id && errors.facility_id)}
+                      // helperText={touched.facility_id && errors.facility_id}
+                      // selectedValue={values.facility_id}
+                      open={openSH}
+                      onClose={(value) => handleCloseDialogParty(value)}
+                    />
+                  </ColumnBox>
+                </CardContent>
+              </Card>              
+            </Grid>
+
+            <Grid item xs={8}>
               <Card >
                 <CardHeader
                   title="Costing Information"
