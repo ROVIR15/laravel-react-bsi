@@ -163,6 +163,7 @@ function BillOfMaterial() {
 
   const formik = useFormik({
     initialValues: {
+      party_id: '',
       name: '',
       product_id: '',
       product_feature_id: '',
@@ -605,9 +606,9 @@ function BillOfMaterial() {
                     <DialogBoxParty
                       options={optionParty}
                       loading={loadingSH}
-                      // error={Boolean(touched.facility_id && errors.facility_id)}
-                      // helperText={touched.facility_id && errors.facility_id}
-                      // selectedValue={values.facility_id}
+                      error={Boolean(touched.party_id && errors.party_id)}
+                      helperText={touched.party_id && errors.party_id}
+                      selectedValue={values.party_id}
                       open={openSH}
                       onClose={(value) => handleCloseDialogParty(value)}
                     />
