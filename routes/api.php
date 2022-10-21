@@ -189,3 +189,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
+Route::get('fabric', 'ProductFeatureController@showFabric');

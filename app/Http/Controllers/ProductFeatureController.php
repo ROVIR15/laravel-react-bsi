@@ -26,6 +26,26 @@ class ProductFeatureController extends Controller
       ]);
     }
 
+    public function showFabric(){
+      try {
+        //code...
+        $query = ProductFeature::whereHas('product_category', function($query){
+          $query->where('product_category_id', 4);
+        })->with('product', 'product_category')->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return reponse()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
