@@ -51,14 +51,14 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = PurchaseOrder::with('completion_status', 'sum', 'status')->whereHas('order', function($query2){
+          $query = PurchaseOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
 
         case 'review':
           # code...
-          $query = PurchaseOrder::whereHas('completion_status', 'sum', 'order', function($query2){
+          $query = PurchaseOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
           })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
           break;
