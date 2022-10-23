@@ -358,7 +358,6 @@ function Document(){
               <Icon icon={downloadFill} width={20} height={20} />
             </IconButton>
           </div>
-          {status?.status_type?.toLowerCase() === 'approve'}
           <div>
             <Button
               onClick={() => handleDialog('submit')}

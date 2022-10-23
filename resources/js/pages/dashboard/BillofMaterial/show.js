@@ -184,7 +184,7 @@ function BillOfMaterial() {
     }
   })
 
-  const { errors, touched, values, setValues, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, setValues, setFieldValue, isSubmitting, setSubmitting, handleSubmit, getFieldProps } = formik;
 
   useEffect(() => {
     let active = true;
