@@ -226,7 +226,8 @@ function DisplayBOM({ placeHolder }) {
   
   const isDataNotFound = filteredData.length === 0;  
 
-  function ChipStatus(param){
+  function ChipStatus(param, _id){
+    console.log(_id)
     switch (param) {
       case "Submit":
         return <ChipStyled label={param} color="primary"/>
@@ -237,7 +238,11 @@ function DisplayBOM({ placeHolder }) {
         break;
         
       case "Review":
-        return <ChipStyled variant="filled"  label={param} color="warning"/>
+        if(_id === 3){
+          return <ChipStyled variant="filled"  label={param} sx={{backgroundColor: '#FF5F1F'}}/>
+        } else {
+          return <ChipStyled variant="filled"  label={param} color="warning"/>
+        }
         break;
 
       case "Approve":
@@ -307,7 +312,7 @@ function DisplayBOM({ placeHolder }) {
                       <TableCell align="left">{moment(new Date(rest.created_at)).format("DD MMM YYYY")}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">
-                        {ChipStatus(status[0]?.status_type)}
+                        {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
                       </TableCell>
                       <TableCell align="left">{qty}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>

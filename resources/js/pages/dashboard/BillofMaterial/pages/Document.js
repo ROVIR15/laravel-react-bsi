@@ -257,7 +257,7 @@ function Document(){
   }, [finalPrice]);
 
   function handleSubmission(key, description){
-    let payload = { user_id: id, status_type: '', bom_id: data.bom_id };
+    let payload = { user_id: user.id, status_type: '', bom_id: data.bom_id };
     switch (key) {
       case 'submit':
         payload = {...payload, status_type: 'Submit', description: ''};

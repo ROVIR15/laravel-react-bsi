@@ -207,7 +207,7 @@ export default function BasicTable({ payload, status, approval, review, margin, 
                 <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
                   <Input
                     id="filled-adornment-amount"
-                    disabled={!(!review ^ !approval) || status}
+                    disabled={!(!review ^ !approval) ^ !(status || !approval)}
                     value={finalPrice} 
                     inputProps={{ style: {textAlign: 'end'}}}
                     onChange={(e) => setFinalPrice(e.target.value)}
