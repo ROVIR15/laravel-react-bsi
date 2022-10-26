@@ -11,6 +11,9 @@ import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
 import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
 
+import { IconButton, Stack } from '@mui/material';
+import closeCircle from '@iconify/icons-eva/close-outline';
+
 const icon = <Icon icon={SquareOutline}/>;
 const checkedIcon = <Icon icon={CheckSquareOutline} />;
 
@@ -72,9 +75,14 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Product to Inquiry Item
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Select Product 
+            </Typography>
+            <IconButton onClick={handleClose} color="error">
+              <Icon icon={closeCircle}/>
+            </IconButton>
+          </Stack>
 
           <Table list={value} selected={selected} setSelected={setSelected}/>
         </Card>

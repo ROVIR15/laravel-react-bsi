@@ -82,7 +82,7 @@ function WorkCenter() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'name', headerName: 'Name', width: 350, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'po_number', headerName: 'PO', editable: true },
@@ -293,9 +293,6 @@ const [id, setId] = React.useState(0);
           {/* Work Center Information */}
           <Grid item xs={12}>
             <Card>
-              <CardHeader
-                
-              />
               <CardContent>
                 <Grid item xs={12}>
                   <DataGrid 

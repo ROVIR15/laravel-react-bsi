@@ -55,7 +55,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -137,6 +137,12 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   return (
     <div>
+      <ListToolbar
+        numSelected={selected.length}
+        filterName={filterName}
+        onFilterName={handleFilterByName}
+        placeHolder={placeHolder}
+      />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
