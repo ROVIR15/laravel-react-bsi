@@ -21,7 +21,6 @@ function Display({ placeHolder }) {
 
   const handleUpdateData = () => {
     // let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
-
     try { 
       API.getAOrder(id, (res) => {
         if(!res) {

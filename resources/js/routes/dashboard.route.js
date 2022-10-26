@@ -68,6 +68,7 @@ import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
 import AddMachine from '../pages/dashboard/Machine/add';
 import AddLineTarget from '../pages/dashboard/LineTarget/add';
+import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -96,8 +97,10 @@ import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
 import DisplayMachine from '../pages/dashboard/Machine/display';
 import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
-import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/sewing';
+import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
 import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
+
+import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -122,6 +125,8 @@ import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
 import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
+
+import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -169,6 +174,13 @@ import DisplayMNumbering from '../pages/dashboard/Monitoring/Numbering/display';
 import MonitoringSupermarketLayout from '../pages/dashboard/Monitoring/Supermarket'; //
 import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add'; //
 import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
+
+import { 
+  IncomingLayout,
+  OutgoingLayout,
+  StatusLayout
+} from '../pages/dashboard/Shipment'
+import { Typography } from '@mui/material';
 
 export default function TestRouter() {
 
@@ -536,6 +548,32 @@ export default function TestRouter() {
             { path: 'add', element: <AddLineTarget /> },
             { path: ':id', element: <ShowLineTarget /> },
             { path: 'display', element: <DisplayLineTarget /> }
+          ]
+        },
+        // Shipment
+        {
+          path: 'shipment/incoming',
+          element: <IncomingLayout/>,
+          children: [
+            { path: 'add', element: <Typography>Add</Typography> },
+            { path: ':id', element: <Typography>ID</Typography> },
+            { path: 'display', element: <Typography>Display</Typography> }
+          ]
+        },
+        {
+          path: 'shipment/outgoing',
+          element: <OutgoingLayout/>,
+          children: [
+            { path: 'add', element: <AddOutgoingShipment /> },
+            { path: ':id', element: <ShowOutgoingShipment /> },
+            { path: 'display', element: <DisplayOutgoingShipment /> }
+          ]
+        },
+        {
+          path: 'shipment/status',
+          element: <StatusLayout/>,
+          children: [
+            { path: 'display', element: <Typography>Display</Typography> }
           ]
         },
         { path: 'inputer-spreading', 

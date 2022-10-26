@@ -7,7 +7,7 @@ import cubeFill from '@iconify/icons-eva/cube-fill';
 import archiveFill from '@iconify/icons-eva/archive-fill';
 import settingsOutline from '@iconify/icons-eva/settings-2-outline';
 import peopleFill from '@iconify/icons-eva/people-fill';
-
+import carFill from '@iconify/icons-eva/car-fill';
 //Inactive
 import shoppingCart from '@iconify/icons-eva/shopping-cart-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
@@ -162,6 +162,25 @@ const sidebarConfig = [
       {
         title: 'Purchase Order',
         path: '/dashboard/purchasing/purchase-order'
+      }
+    ]
+  },
+  {
+    title: "Shipment",
+    name: "shipment",
+    icon: getIcon(carFill),
+    children: [
+      {
+        title: 'Incoming Shipment',
+        path: '/dashboard/shipment/incoming'
+      },
+      {
+        title: 'Outgoing Shipment',
+        path: '/dashboard/shipment/outgoing'
+      },
+      {
+        title: 'Shipment Status',
+        path: '/dashboard/shipment/status'
       }
     ]
   },
