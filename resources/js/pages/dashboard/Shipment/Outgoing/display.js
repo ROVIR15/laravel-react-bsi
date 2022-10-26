@@ -28,7 +28,7 @@ import { outboundShipmentArrangedData } from '../../../../helpers/data';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'serial_number', label: 'PO Number', alignRight: false },
+  { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },

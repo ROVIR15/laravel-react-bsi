@@ -106,6 +106,39 @@ export function _miniFuncSupermarket(array, _so_id){
   return arranged;
 } 
 
+export function _orderItem(array, _so_id){
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      id,
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      },
+      qty
+    } = x;
+    return {
+      id: id,
+      order_item_id: id,
+      color,
+      size,
+      name,
+      qty_order: qty,
+      deliv_qty: 0
+    }
+  })
+  
+  return arranged;
+} 
+
 export function _miniFunc(array, _so_id){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
@@ -855,6 +888,22 @@ export function bomDocumentArranged(data){
 
 
 // Shipment 
+
+export function _shipmentItem(array){
+  if(!isArray(array)) return undefined;
+  if(isEmpty(array)) return undefined;
+  return array.map((x) => {
+    const { id, order_item, qty_shipped  } = x;
+    return { 
+      id,
+      name: order_item?.product_feature?.product?.goods?.name,
+      size: order_item?.product_feature?.size,
+      color: order_item?.product_feature?.color,
+      qty_order: order_item?.qty,
+      deliv_qty: qty_shipped
+    }
+  })
+}
 
 export function outboundShipmentArrangedData(array){
   if(!isArray(array)) return undefined;
