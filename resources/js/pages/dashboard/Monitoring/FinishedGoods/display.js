@@ -27,6 +27,8 @@ const TABLE_HEAD = [
   { id: 'so_number', label: 'Sales PO Number', alignRight: false },
   { id: 'po_number', label: 'Box', alignRight: false },
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
+  { id: 'size', label: 'Size', alignRight: false },
+  { id: 'color', label: 'Color', alignRight: false },
   { id: 'line', label: 'Line', alignRight: false },
   { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
   { id: 'output', label: 'Output', alignRight: false },
@@ -217,7 +219,7 @@ function DisplayQuote({ placeHolder }) {
                     line,
                     qty_loading,
                     output,
-                    product_feature: { product: { goods } }
+                    product_feature: { product: { goods }, size, color }
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -240,6 +242,8 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{sales_order.po_number}</TableCell>
                       <TableCell align="left">{box}</TableCell>
                       <TableCell align="left">{goods.name}</TableCell>
+                      <TableCell align="left">{size}</TableCell>
+                      <TableCell align="left">{color}</TableCell>
                       <TableCell align="left">{line}</TableCell>
                       <TableCell align="left">{qty_loading}</TableCell>
                       <TableCell align="left">{output}</TableCell>

@@ -27,6 +27,8 @@ const TABLE_HEAD = [
   { id: 'so_number', label: 'Sales PO Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
+  { id: 'size', label: 'Size', alignRight: false },
+  { id: 'color', label: 'Color', alignRight: false },
   { id: 'line', label: 'Line', alignRight: false },
   { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
   { id: 'output', label: 'Output', alignRight: false },
@@ -244,6 +246,8 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{sales_order?.po_number}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{product_feature?.product?.goods?.name}</TableCell>
+                      <TableCell align="left">{product_feature?.size}</TableCell>
+                      <TableCell align="left">{product_feature?.color}</TableCell>
                       <TableCell align="left">{line}</TableCell>
                       <TableCell align="left">{qty_loading}</TableCell>
                       <TableCell align="left">{output}</TableCell>

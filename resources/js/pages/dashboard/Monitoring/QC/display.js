@@ -28,6 +28,8 @@ const TABLE_HEAD = [
   { id: 'so_number', label: 'Sales PO Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
+  { id: 'size', label: 'Size', alignRight: false },
+  { id: 'color', label: 'Color', alignRight: false },
   { id: 'color', label: 'Color', alignRight: false },
   { id: 'size', label: 'Size', alignRight: false },
   { id: 'output', label: 'Output', alignRight: false },
