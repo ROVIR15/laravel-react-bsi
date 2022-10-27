@@ -106,7 +106,7 @@ export function _miniFuncSupermarket(array, _so_id){
   return arranged;
 } 
 
-export function _orderItem(array, _so_id){
+export function _orderItem(array){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
@@ -118,7 +118,8 @@ export function _orderItem(array, _so_id){
         size, 
         product: {
           goods: {
-              name
+              name,
+              satuan
           }
         },
         ...product_feature 
@@ -131,6 +132,7 @@ export function _orderItem(array, _so_id){
       color,
       size,
       name,
+      satuan,
       qty_order: qty,
       deliv_qty: 0
     }

@@ -1855,8 +1855,8 @@ const main = {
           cb(err.response);
       });
     },
-    getShipment(cb){
-      axios.get( uri + '/shipment').then(function(res){
+    getShipment(params='', cb){
+      axios.get( uri + '/shipment' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
