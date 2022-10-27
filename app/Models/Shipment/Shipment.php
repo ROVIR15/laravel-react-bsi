@@ -14,7 +14,11 @@ class Shipment extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'comment',
+        'serial_number',
+        'shipment_type_id',
         'delivery_date',
+        'est_delivery_date',
         'order_id'
     ];
 
@@ -23,6 +27,16 @@ class Shipment extends Model
     }
 
     public function order(){
-        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order');
+        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order', 'purchase_order');
+    }
+
+    public function type(){
+        return $this->belongsTo('App\Models\Shipment\ShipmentType', 'shipment_type_id');
+    }
+
+    public function status(){
+        return $this->hasMany('App\Models\Shipment\ShipmentStatus', 'shipment_id', 'id')
+        ->with('status_type')
+        ->orderBy('created_at', 'desc');
     }
 }

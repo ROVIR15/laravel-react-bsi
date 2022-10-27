@@ -25,7 +25,7 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
-    { id: 'qty_order', label: 'Color', alignRight: false },
+    { id: 'qty_order', label: 'Qty Order', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------

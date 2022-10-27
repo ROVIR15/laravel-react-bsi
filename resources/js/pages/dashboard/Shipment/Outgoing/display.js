@@ -28,11 +28,12 @@ import { outboundShipmentArrangedData } from '../../../../helpers/data';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
-  { id: 'est_delivery_date', label: 'Delivery Date', alignRight: false },
+  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -84,9 +85,8 @@ function OutboundDelivery({ placeHolder }) {
     }
 
     if(isEmpty(goodsReceipt)) {
-
       try {
-        API.getShipment((res) => {
+        API.getShipment('?shipment_type=2', (res) => {
           if(!res) return
           if(!res.data) {
             setGoodsReceipt([]);
@@ -205,7 +205,8 @@ function OutboundDelivery({ placeHolder }) {
                     serial_number,
                     delivery_date,
                     est_delivery_date,
-                    order
+                    order,
+                    status
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -224,6 +225,9 @@ function OutboundDelivery({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">
+                        <b>{status[0]?.status_type?.name}</b>
+                      </TableCell>
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>

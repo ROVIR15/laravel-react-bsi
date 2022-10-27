@@ -5,7 +5,7 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import { Icon } from '@iconify/react';
 import Layout from '../../../../layouts/Layout';
-// import Display from './display';
+import Display from './display';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -17,7 +17,7 @@ function Outgoing() {
   const isBeginning = () => {
     if(pathname.split('/').length === 4){
       return (
-        <p>ssss</p>
+        <Display/>
       )
     } else {
       return (

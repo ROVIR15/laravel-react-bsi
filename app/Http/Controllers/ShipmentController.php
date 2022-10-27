@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use App\Models\Shipment\Shipment;
 use App\Models\Shipment\ShipmentView;
 use App\Models\Shipment\ShipmentItem;
+use App\Models\Shipment\ShipmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Shipment\ShipmentCollection;
 use App\Http\Resources\Shipment\Shipment as ShipmentOneCollection;
@@ -22,7 +25,18 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Shipment::with('order')->get();
+      $type = $request->query('shipment_type');
+
+      if(isset($type)){
+        $query = Shipment::with('order', 'type', 'status')
+        ->whereHas('type', function($query) use ($type){
+          $query->where('id', $type);
+        })
+        ->get();
+      } else {
+        $query = Shipment::with('order', 'type', 'status')
+        ->get();
+      }
 
       return response()->json(['data' => $query]);
     }
@@ -48,7 +62,11 @@ class ShipmentController extends Controller
       $param = $request->all()['payload'];
       try {
         $shipment = Shipment::create([
+          'comment'=> $param['comment'] ,
+          'serial_number'=> $param['serial_number'],
+          'est_delivery_date'=> $param['est_delivery_date'],
           'delivery_date'=> $param['delivery_date'],
+          'shipment_type_id'=> $param['shipment_type_id'],
           'order_id'=> $param['order_id']
         ]);
 
@@ -59,13 +77,19 @@ class ShipmentController extends Controller
         foreach($param['OD_items'] as $item){
           array_push($shipmentItemP, [
             'shipment_id' => $shipment->id,
-            'order_item_id' => $item['po_item_id'],
+            'order_item_id' => $item['order_item_id'],
             'qty_shipped' => $item['deliv_qty']
           ]);
         }
 
         ShipmentItem::insert($shipmentItemP);
       
+        ShipmentStatus::create([
+          'shipment_type_status_id' => 5,
+          'user_id'=> $param['user_id'],
+          'shipment_id' => $shipment->id
+        ]);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -86,7 +110,7 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = Shipment::with('items', 'order')->find($id);
+        $query = Shipment::with('items', 'order', 'type', 'status')->find($id);
         return response()->json(['data' => $query]);
       } catch (Exception $th) {
         return response()->json([

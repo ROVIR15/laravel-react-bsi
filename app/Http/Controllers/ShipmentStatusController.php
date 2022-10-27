@@ -44,8 +44,8 @@
       try {
         ShipmentStatus::create([
           'user_id' => $ShipmentStatusData['user_id'],
-          'order_id' => $ShipmentStatusData['order_id'],
-          'status_type' => $ShipmentStatusData['status_type']
+          'shipment_id' => $ShipmentStatusData['shipment_id'],
+          'shipment_type_status_id' => $ShipmentStatusData['shipment_type_status_id']
         ]);
       } catch (Exception $th) {
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
@@ -99,8 +99,9 @@
     {
       $ShipmentStatusData = $request->all()['payload'];
 
+      if(empty($id)) return response()->json([ 'success' => false, 'errors' => 'id not found']);
+
       try {
-        if(empty($id)) return response()->json([ 'success' => false, 'errors' => 'id not found']);
         ShipmentStatus::find($id)->update($ShipmentStatusData);
       } catch (Exception $th) {
         return response()->json([
