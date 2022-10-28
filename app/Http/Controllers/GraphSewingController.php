@@ -86,7 +86,7 @@ class GraphSewingController extends Controller
       try {
         $res = Sewing::select('id', 'sales_order_id', 'po_number', 'product_feature_id', 'facility_id', 'date',DB::raw('sum(output) as total_output'))
         ->with( 
-        ['product_feature', 'sales_order', 'target' => function($query2) use ($date){
+        ['product_feature', 'order_item', 'sales_order', 'target' => function($query2) use ($date){
           $query2->where('date', $date);
         }])
         ->groupBy('facility_id', 'date')
