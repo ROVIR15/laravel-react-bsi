@@ -101,4 +101,40 @@ class GraphSewingController extends Controller
         ], 500);
       }
     }
+
+    public function getAmountOfMoney(Request $request)
+    {
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
+
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
+      try {
+        //code...
+        $amount = Sewing::select('id', 'order_item_id', 'product_feature_id', 'date', DB::raw('sum(output) as total_output'))
+                  ->with('order_item')
+                  ->groupBy('order_item_id', 'date')
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->orderBy('date', 'asc')
+                  ->get();
+
+      } catch (Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $amount,
+        'fromDate' => $fromDate,
+        'thruDate' => $thruDate
+      ]);
+    }
 }
