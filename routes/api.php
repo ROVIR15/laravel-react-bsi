@@ -38,9 +38,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     //Order
     Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('order', 'OrderController')->only(['index', 'show']);
     Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
-    Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-association', 'OrderAssociationController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('order-completion-status', 'OrderCompletionStatusController')->only(['index', 'store', 'update', 'destroy']);
@@ -111,6 +109,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Shipment
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('shipment-status', 'ShipmentStatusController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
@@ -125,7 +124,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
 
     //Purchasing
-    Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
 
     //Study
@@ -186,7 +184,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('submission', 'ApprovalController')->only('index', 'store', 'destroy', 'update', 'show', 'showByUserId');
     
     //Agre
-});
 
-Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
-Route::get('fabric', 'ProductFeatureController@showFabric');
+    Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
+    Route::get('fabric', 'ProductFeatureController@showFabric');
+    Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+    Route::resource('order', 'OrderController')->only(['index', 'show']);
+    Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+});
