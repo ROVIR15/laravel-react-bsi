@@ -62,5 +62,5 @@ class DatabaseSeeder extends Seeder
 // php artisan iseed shipment_type_status,agreement_type,goods,service,product,product_feature,order,order_item,sales_order,purchase_order,monitoring_bsi_sewing,monitoring_bsi_supermarket,monitoring_bsi_qc,quote,quote_item,bom,
 // php artisan iseed operation,bom_component,bom_service,approval
 // php artisan iseed monitoring_bsi_cutting, shipment, shipment_item, shipment_type_status, shipment_type, shipment_status
-/// php artisan iseed facility_target, bom_status
+// php artisan iseed facility_target, bom_status
 // php artisan iseed goods_receipt, goods_receipt_items
