@@ -145,7 +145,6 @@ export function _miniFunc(array, _so_id){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
-      id,
       order_id,
       product_feature: {
         product_id, 
@@ -157,16 +156,15 @@ export function _miniFunc(array, _so_id){
           }
         },
         ...product_feature 
-      }
-
-      
+      },
+      ...order_item
     } = x;
     return {
       id: index+1,
       supermarket_id: 0, 
       date: moment(new Date()).format("YYYY-MM-DD"),
       order_id,
-      order_item_id: id,
+      order_item_id: order_item.id,
       sales_order_id: _so_id,
       product_feature_id: product_feature.id,
       po_number: "",
@@ -184,7 +182,6 @@ export function _miniFuncQC(array, _so_id){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
-      id,
       order_id,
       product_feature: {
         product_id, 
@@ -196,16 +193,15 @@ export function _miniFuncQC(array, _so_id){
           }
         },
         ...product_feature 
-      }
-
-      
+      },
+      ...order_item
     } = x;
     return {
       id: index+1,
       ms_id: 0, 
       date: moment(new Date()).format("YYYY-MM-DD"),
       order_id,
-      order_item_id: id,
+      order_item_id: order_item.id,
       sales_order_id: _so_id,
       product_feature_id: product_feature.id,
       po_number: "",
@@ -222,7 +218,6 @@ export function _miniFuncFG(array, _so_id){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
     const {
-      id,
       order_id,
       product_feature: {
         product_id, 
@@ -234,8 +229,8 @@ export function _miniFuncFG(array, _so_id){
           }
         },
         ...product_feature 
-      }
-
+      },
+      ...order_item
       
     } = x;
     return {
@@ -243,7 +238,7 @@ export function _miniFuncFG(array, _so_id){
       qc_id: 0, 
       date: moment(new Date()).format("YYYY-MM-DD"),
       order_id,
-      order_item_id: id,
+      order_item_id: order_item.id,
       sales_order_id: _so_id,
       product_feature_id: product_feature.id,
       po_number: "",
