@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\Monitoring\Sewing; 
 
@@ -115,9 +116,10 @@ class GraphSewingController extends Controller
 
       try {
         //code...
+        // $alternative_two = OrderItem
         $amount = Sewing::select('id', 'order_item_id', 'product_feature_id', 'date', DB::raw('sum(output) as total_output'))
                   ->with('order_item')
-                  ->groupBy('order_item_id', 'date')
+                  ->groupBy('order_item_id')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'asc')
                   ->get();

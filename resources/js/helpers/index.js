@@ -2242,6 +2242,13 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       });
+    },
+    getAmountMoneySewing(params,cb){
+      axios.get(uri + '/sewing-monetary' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
     }
     //
   }
