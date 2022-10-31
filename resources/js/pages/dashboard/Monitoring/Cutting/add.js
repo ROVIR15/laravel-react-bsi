@@ -53,7 +53,8 @@ function WorkCenter() {
       const {sales_order_id, spread_id, date} = values
       let data = items.map(({id, brand, product_id, qty_loading, name, size, color, ...x}) => ({ ...x, order_item_id: id, sales_order_id, date, spread_id: 0}));
       API.insertMonitoringCutting(data, function(res){
-        alert(JSON.stringify(res.data));
+        if(!res.success) alert('failed, try again')
+        else alert('success');
       })
       setSubmitting(false);
     }
