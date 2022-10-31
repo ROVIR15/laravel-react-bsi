@@ -191,4 +191,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('order', 'OrderController')->only(['index', 'show']);
     Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+
+    Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'delete']);
+    Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'delete', 'store']);
 });
+

@@ -4,7 +4,7 @@ import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import { Icon } from '@iconify/react';
-import Layout from '../../../../layouts/Layout';
+import Layout from '../../../layouts/Layout';
 import Display from './display';
 
 function getPathname(array){
@@ -12,12 +12,12 @@ function getPathname(array){
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
 }
 
-function Outgoing() {
+function GoodsLayout() {
   const { pathname } = useLocation();
   const isBeginning = () => {
     if(pathname.split('/').length === 4){
       return (
-        <Display/>
+        <Display />
       )
     } else {
       return (
@@ -30,7 +30,7 @@ function Outgoing() {
     <Layout>
     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
       <Typography variant="h4" gutterBottom>
-      Incoming Shipment
+        Manufacture Planning
       </Typography>
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
           <Button
@@ -56,4 +56,4 @@ function Outgoing() {
   )
 }
 
-export default Outgoing;
+export default GoodsLayout;

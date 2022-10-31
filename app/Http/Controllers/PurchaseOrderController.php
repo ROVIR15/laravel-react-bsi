@@ -155,8 +155,9 @@
     {
       try {
         $purchaseOrderData = PurchaseOrder::with('bought', 'ship', 'order_item', 'order', 'status', 'completion_status')->find($id);
+        // return response()->json($purchaseOrderData);
         return new onePurchaseOrder($purchaseOrderData);
-    } catch (Exception $th) {
+    } catch (Throwable $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()

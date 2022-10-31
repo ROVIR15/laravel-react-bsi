@@ -29,7 +29,8 @@ import {
   ServiceLayout,
   UserManagementLayout,
   OrderProgressLayout,
-  FacilityTargetLayout
+  FacilityTargetLayout,
+  MPLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -69,6 +70,8 @@ import AddInv from '../pages/dashboard/Finance/Invoice/new';
 import AddMachine from '../pages/dashboard/Machine/add';
 import AddLineTarget from '../pages/dashboard/LineTarget/add';
 import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
+import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
+import AddMP from '../pages/dashboard/ManufacturePlanning/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -101,6 +104,9 @@ import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/s
 import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
 
 import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
+import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
+
+import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -127,6 +133,9 @@ import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
 
 import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
+import ShowIncomingShipment from '../pages/dashboard/Shipment/Outgoing/show';
+
+import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -310,6 +319,15 @@ export default function TestRouter() {
               path: ':id/operation/:manufacture_operation_id/finish',  
               element: <FinishMOW />
             }
+          ]
+        },
+        { 
+          path: 'production/manufacture-planning', 
+          element: <MPLayout />,
+          children: [
+            { path: ':id', element: <ShowMP />},
+            { path: 'add', element: <AddMP />},
+            { path: 'display', element: <DisplayMP />},
           ]
         },
         { 
@@ -555,9 +573,9 @@ export default function TestRouter() {
           path: 'shipment/incoming',
           element: <IncomingLayout/>,
           children: [
-            { path: 'add', element: <Typography>Add</Typography> },
-            { path: ':id', element: <Typography>ID</Typography> },
-            { path: 'display', element: <Typography>Display</Typography> }
+            { path: 'add', element: <AddIncomingShipment /> },
+            { path: ':id', element: <ShowIncomingShipment /> },
+            { path: 'display', element: <DisplayIncomingShipment /> }
           ]
         },
         {

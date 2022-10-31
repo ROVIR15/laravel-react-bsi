@@ -67,6 +67,10 @@ const sidebarConfig = [
         title: 'Manufacture Order',
         path: '/dashboard/production/manufacture-order',
         disabled: true
+      },
+      {
+        title: 'Manufacture Planning',
+        path: '/dashboard/production/manufacture-planning'
       }
     ]
   },

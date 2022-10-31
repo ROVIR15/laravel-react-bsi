@@ -2249,7 +2249,41 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       });
-    }
+    },
+    //Manufacture Planning
+    getManufacturePlanning(cb){
+      axios.get( uri + '/manufacture-planning').then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+    });
+    },
+    getAManufacturePlanning(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/manufacture-planning' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    setManufacturePlanning(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/manufacture-planning', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    deleteManufacturePlanning(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/manufacture-planning/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
     //
   }
 export default main;

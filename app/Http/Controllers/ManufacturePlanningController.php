@@ -1,25 +1,25 @@
 <?php
-  
-  namespace App\Http\Controllers;
-  
-  
-  use App\Models\Manufacture\BOMStatus;
-  use App\Http\Controllers\Controller;
-  use Illuminate\Http\Request;
-  
-  class BOMStatusController extends Controller
-  {  
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Manufacture\ManufacturePlanning;
+use App\Models\Manufacture\ManufacturePlanningItems;
+
+class ManufacturePlanningController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = BOMStatus::all();
+        $param = $request->all();
+        $query = ManufacturePlanning::all();
+
         return response()->json($query);
-        // return new BOMStatusCollection($query);
     }
 
         /**
@@ -40,19 +40,43 @@
      */
     public function store(Request $request)
     {
-      $BOMStatusData = $request->all()['payload'];
-      try {
-        BOMStatus::create([
-          'user_id' => $BOMStatusData['user_id'],
-          'bom_id' => $BOMStatusData['bom_id'],
-          'status_type' => $BOMStatusData['status_type'],
-          'unit_price' => $BOMStatusData['unit_price'],
-          'description' => $BOMStatusData['description']
-        ]);
-      } catch (Exception $th) {
-        return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
-      }
+      $param = $request->all()['payload'];
 
+      try {
+
+        $plan = ManufacturePlanning::create([
+          'month' => $param['month'],
+          'year' => $param['year']
+        ]);
+
+        if(!$plan['id']) {
+            throw new Exception("Error Processing Request", 1); 
+        }
+        
+        $list = [];
+
+        foreach ($param['items'] as $key) {
+            array_push($list, [
+                'manufacture_planning_id' => $plan['id'],
+                'sales_order_id' => $key['id'],
+                'expected_output' => $key['expected_output'],
+                'work_days' => $key['work_days']    
+            ]);
+        }
+
+        ManufacturePlanningItems::insert($list);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
+      
       return response()->json([
         'success' => true
       ], 200);
@@ -67,11 +91,10 @@
     public function show($id)
     {
       try {
-        $BOMStatusData = BOMStatus::find($id);
-        // return new BOMStatusOneCollection($BOMStatusData);
-        return response()->json($BOMStatusData);
-
-      } catch (Exception $th) {
+        $query = ManufacturePlanning::with('items')->find($id);
+        return response()->json($query);
+        // return new ManufactureOneCollection($query[0]);
+    } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
@@ -99,21 +122,7 @@
      */
     public function update($id, Request $request)
     {
-      $BOMStatusData = $request->all()['payload'];
 
-      try {
-        if(empty($id)) return response()->json([ 'success' => false, 'errors' => 'id not found']);
-        BOMStatus::find($id)->update($BOMStatusData);
-      } catch (Exception $th) {
-        return response()->json([
-          'success' => false,
-          'errors' => $th->getMessage()
-        ], 500);
-      }
-      
-      return response()->json([
-        'success' => true
-      ], 200);
     }
 
     /**
@@ -125,15 +134,15 @@
     public function destroy($id)
     {
       try {
-        BOMStatus::find($id)->delete();
+        ManufacturePlanning::destroy($id);
+        return response()->json([
+          'success' => true,
+        ], 200);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
         ], 500);
       }
-      return response()->json([
-        'success' => true
-      ], 200);
-    }
-  }
+    } 
+}

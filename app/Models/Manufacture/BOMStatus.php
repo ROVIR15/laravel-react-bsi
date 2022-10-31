@@ -15,6 +15,7 @@
 
     protected $fillable = [
         'description',
+        'unit_price',
         'status_type',
         'user_id',
         'bom_id',

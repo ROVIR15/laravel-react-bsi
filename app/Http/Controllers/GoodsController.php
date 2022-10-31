@@ -35,6 +35,24 @@
       ]);
     }
 
+    public function showFabric(){
+      try {
+        //code...
+        $query = ProductHasCategory::where('product_category_id', 3)->with('product', 'category')->get();
+      } catch (Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -148,11 +166,12 @@
     public function show($id, Goods $goods, Product $product)
     {
       try {
+        $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
         $tes = $product->where('goods_id', $id)->get();
         $goods = $goods->find($tes[0]['goods_id']);
 
-        return new GoodsOneCollection($goods);
-        // return response()->json($feature);
+        // return new GoodsOneCollection($goods);
+        return response()->json($feature);
       } catch (Exception $th) {
         //throw $th;
         return response()->json([
@@ -194,10 +213,13 @@
           'brand' => $goodsParam['brand'],
           'imageUrl' => $goodsParam['imageUrl']
         ]);
+
         ProductHasCategory::where('product_id', $existingProduct['id'])
         ->update([
           'product_category_id' => $catParam
         ]);
+
+        $product = ProductHasCategory::where('product_id', $existingProduct['id'])->get();
       } catch (Exception $th) {
         //throw $th;
         return response()->json([
@@ -207,6 +229,7 @@
       }
       return response()->json([
         'success' => true,
+        'product_id' => $product
       ], 200);
     }
 

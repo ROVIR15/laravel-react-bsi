@@ -31,3 +31,4 @@ export { default as InvLayout } from './Finance/Invoice';
 
 export { default as OrderProgressLayout } from './OrderProgress';
 export { default as FacilityTargetLayout } from './LineTarget';
+export { default as MPLayout } from './ManufacturePlanning';
