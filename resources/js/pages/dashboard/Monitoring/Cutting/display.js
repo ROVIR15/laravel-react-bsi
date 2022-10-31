@@ -209,7 +209,7 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
                       <TableCell align="left">{spread_id}</TableCell>
-                      <TableCell align="left">{sales_order.po_number}</TableCell>
+                      <TableCell align="left">{sales_order?.po_number}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{product_feature?.product?.goods?.name}</TableCell>
                       <TableCell align="left">{product_feature?.color}</TableCell>
