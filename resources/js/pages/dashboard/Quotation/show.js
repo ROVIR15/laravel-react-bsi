@@ -237,7 +237,7 @@ function Quotation() {
   const columns = useMemo(() => [
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'name', width: 350, headerName: 'Name', editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },

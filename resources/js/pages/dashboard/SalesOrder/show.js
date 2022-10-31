@@ -300,11 +300,12 @@ function SalesOrder() {
   const columns = useMemo(() => [
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'name', headerName: 'Name', width:350, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
+    { field: 'cm_price', headerName: 'CM Price', editable: true },
     { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
@@ -318,13 +319,14 @@ function SalesOrder() {
     }
   ], [deleteData]);
 
-  const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0})
+  const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0, bb: 0})
   const handlePopulate = () => {
     const {y, z, aa} = populateState;
     if(y === '' && z === 0) return;
     const res = items.map(function(x){
       if(y !== '') x = {...x, shipment_estimated: y}
       if(z !== 0) x = {...x, qty: z}
+      if(bb !== 0) x = {...x, cm_price: bb}
       if(aa !== 0) x = {...x, unit_price: aa}
       return x;
     })
@@ -336,6 +338,7 @@ function SalesOrder() {
     if(name === 'z') setPopulateState({...populateState, z: value});
     if(name === 'y') setPopulateState({...populateState, y: value});
     if(name === 'aa') setPopulateState({...populateState, aa: value});
+    if(name === 'bb') setPopulateState({...populateState, bb: value});
     else return;
   }
 
@@ -488,6 +491,13 @@ function SalesOrder() {
                       value={populateState.y}
                       onChange={handleChangePopulate}
                     />
+                    <TextField
+                      type="number"
+                      label="CM Price"
+                      name="bb"
+                      value={populateState.bb}
+                      onChange={handleChangePopulate}
+                    />                    
                     <Button onClick={handlePopulate}>Populate</Button>
                   </Stack>
                 </div>

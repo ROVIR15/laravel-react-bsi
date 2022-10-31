@@ -236,7 +236,7 @@ function BillOfMaterial() {
 
   const goodsColumns = useMemo(() => [
     { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false },
+    { field: 'name', width: 300, headerName: 'Name', editable: false },
     { field: 'size', headerName: 'Size', editable: true},
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
@@ -261,7 +261,7 @@ function BillOfMaterial() {
     { field: 'id', headerName: 'ID Feature', editable: false, hideable: true, width: 30},
     { field: 'seq', headerName: 'seq', editable: true, width: 30},
     { field: 'work_center_id', headerName: 'Work Center ID', editable: false, width: 30 },
-    { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
+    { field: 'name', width: 300, headerName: 'Operation Name', editable: false, width: 250 },
     { field: 'work_hours', headerName: 'Working Days', editable: false, width: 100, align: 'left' },
     { field: 'cost_per_hour', headerName: 'Cost per Days', editable: false, width: 100, align: 'left' },
     { field: 'labor_alloc', headerName: 'Labor Allocation', editable: false, width: 100, align: 'left' },

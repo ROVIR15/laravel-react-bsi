@@ -30,6 +30,7 @@ import AlertDialog from '../../../components/DialogBox/OrderCompletionStatus';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
+    { id: 'sales_order_id', label: 'PO Number', alignRight: false },
     { id: 'po_number', label: 'PO Number', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'completion_status', label: 'Status Produksi', alignRight: false },
@@ -103,20 +104,22 @@ function DisplaySalesOrder({ placeHolder }) {
         return
       }
       if(item.approve) {
-        params='?level=approve'
+        params='?level=approve&'
         return
       } 
       if (item.submit) {
-        params='?level=submit'
+        params='?level=submit&'
         return
       }
       if (item.review) {
-        params='?level=review'
+        params='?level=review&'
         return
+      } else {
+        params='?'
       }
     });
 
-    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    params = params + `fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
     try {
       API.getSalesOrder(params,(res) => {
@@ -270,6 +273,7 @@ function DisplaySalesOrder({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{index+1}</TableCell>
+                      <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{ChipStatusProduction(completion_status[0]?.status?.name)}</TableCell>

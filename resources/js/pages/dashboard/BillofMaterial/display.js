@@ -233,7 +233,11 @@ function DisplayBOM({ placeHolder }) {
         return <ChipStyled label={param} color="primary"/>
         break;
 
-      case "Reject Review" || "Reject Approve":
+      case "Reject Review":
+        return <ChipStyled label={param} color="error"/>
+        break;
+
+      case "Reject Approve":
         return <ChipStyled label={param} color="error"/>
         break;
         

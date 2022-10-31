@@ -261,7 +261,7 @@ function BillOfMaterial() {
     { field: 'id', headerName: 'ID', editable: false, hideable: true, width: 30},
     { field: 'seq', headerName: 'seq', editable: true, width: 30},
     { field: 'work_center_id', headerName: 'Work Center ID', editable: false, width: 30 },
-    { field: 'name', headerName: 'Operation Name', editable: false, width: 250 },
+    { field: 'name', width: 300, headerName: 'Operation Name', editable: false, width: 250 },
     { field: 'work_hours', headerName: 'Working Hours', editable: false, width: 100, align: 'left' },
     { field: 'cost_per_hour', headerName: 'Cost per Hours', editable: false, width: 100, align: 'left' },
     { field: 'labor_alloc', headerName: 'Labor Allocation', editable: false, width: 100, align: 'left' },
@@ -280,7 +280,7 @@ function BillOfMaterial() {
 
   const serviceColumns = useMemo(() => [
     { field: 'id', headerName: 'ID', editable: false, hideable: true, width: 30},
-    { field: 'name', headerName: 'Service Name', editable: false, width: 250 },
+    { field: 'name', width: 300, headerName: 'Service Name', editable: false, width: 250 },
     { field: 'unit_price', headerName: 'Harga', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
