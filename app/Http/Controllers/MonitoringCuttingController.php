@@ -19,9 +19,9 @@ class MonitoringCuttingController extends Controller
       $query = [];
 
       if($param){
-        $query = Cutting::groupBy('date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature')->where('sales_order_id', $request->query('sales-order'))->get();
+        $query = Cutting::groupBy('date', 'product_feature_id', 'po_number', 'sales_order_id', 'order_id')->orderBy('date', 'desc')->with('sales_order', 'product_feature')->where('sales_order_id', $request->query('sales-order'))->orderBy('date', 'desc')->get();
       } else {
-        $query = Cutting::groupBy('date', 'po_number', 'product_feature_id')->with('sales_order', 'product_feature')->get();
+        $query = Cutting::groupBy('date', 'po_number', 'product_feature_id')->with('sales_order', 'product_feature')->orderBy('date', 'desc')->get();
       }
 
       return response()->json(['data' => $query]);
