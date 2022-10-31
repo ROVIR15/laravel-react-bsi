@@ -39,18 +39,16 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
       return !array.length;
     }
 
-    if(isEmpty(value) && order_id) {
-      API.getASalesOrder(order_id, (res) => {
-		  if(!res) return
-		  if(!res.data) {
-          setValue(BUYERLIST);
-        } else {
-          
-          let ras = orderItemArrangedData(res.data.order_item)
-          setValue(ras);
-        }
-      });
-    }
+    API.getASalesOrder(order_id, (res) => {
+		if(!res) return
+		if(!res.data) {
+        setValue(BUYERLIST);
+      } else {
+        
+        let ras = orderItemArrangedData(res.data.order_item)
+        setValue(ras);
+      }
+    });
   }, [order_id])
 
   return (
