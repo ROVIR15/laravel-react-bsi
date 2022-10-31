@@ -248,7 +248,7 @@ function SalesOrder() {
 
   const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0, bb: 0})
   const handlePopulate = () => {
-    const {y, z, aa} = populateState;
+    const {y, z, aa, bb} = populateState;
     if(y === '' && z === 0) return;
     const res = items.map(function(x){
       if(y !== '') x = {...x, shipment_estimated: y}

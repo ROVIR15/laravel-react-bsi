@@ -55,6 +55,7 @@
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
+            'cm_price' => $key['cm_price'],
             'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
           ]);
         }

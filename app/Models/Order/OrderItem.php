@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
         'order_id',
         'qty',
         'unit_price',
+        'cm_price',
         'shipment_estimated',
         'product_feature_id'
     ];

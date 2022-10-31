@@ -19,6 +19,7 @@
         'order_id' => $this->order_id,
         'qty' => $this->qty,
         'unit_price' => $this->unit_price,
+        'cm_price' => $this->cm_price,
         'shipment_estimated' => $this->shipment_estimated,
         'product_feature' => $this->product_feature
       ];
