@@ -188,7 +188,7 @@ function DisplayQuote({ placeHolder }) {
                     sales_order,
                     po_number,
                     output,
-                    product_feature: { product: { goods }, ...product_feature }
+                    product_feature
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -211,7 +211,7 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell align="left">{spread_id}</TableCell>
                       <TableCell align="left">{sales_order.po_number}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{goods.name}</TableCell>
+                      <TableCell align="left">{product_feature?.product?.goods?.name}</TableCell>
                       <TableCell align="left">{product_feature?.color}</TableCell>
                       <TableCell align="left">{product_feature?.size}</TableCell>
                       <TableCell align="left">{output}</TableCell>
