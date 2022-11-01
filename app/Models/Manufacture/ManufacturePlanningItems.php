@@ -25,4 +25,9 @@ class ManufacturePlanningItems extends Model
     public function sales_order() {
         return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('sum');
     }
+
+    public function info() {
+        return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('avg_price');
+    }
+    
 }

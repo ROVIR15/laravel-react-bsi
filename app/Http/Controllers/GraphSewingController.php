@@ -6,6 +6,7 @@ use DB;
 use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\Monitoring\Sewing; 
+use App\Models\Manufacture\ManufacturePlanning;
 
 class GraphSewingController extends Controller
 {
@@ -124,6 +125,11 @@ class GraphSewingController extends Controller
                   ->orderBy('date', 'asc')
                   ->get();
 
+        $month = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+        $month = date_format($month, 'm');
+
+        $planning = ManufacturePlanning::with('items_with_price')->where('month', intval($month))->get();
+
       } catch (Throwable $th) {
         //throw $th;
         return response()->json([
@@ -135,6 +141,7 @@ class GraphSewingController extends Controller
       return response()->json([
         'success' => true,
         'data' => $amount,
+        'planning' => $planning,
         'fromDate' => $fromDate,
         'thruDate' => $thruDate
       ]);

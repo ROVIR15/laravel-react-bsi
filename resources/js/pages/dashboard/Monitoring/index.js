@@ -97,7 +97,13 @@ function lineData(data){
 
 function Monitoring() {
   const [ amount, setAmount ] = useState(null);
-  const [ qty, setQty ] = useState(null);
+  const [ qty, setQty ] = useState(1);
+
+  const [ expectedOutput, setExpectedOutput] = useState(1);
+  const [ expectedIncome, setExpectedIncome] = useState(null);
+
+  const [ percentage, setPercentage ] = useState(0);
+
   const [ data, setData ] = useState([]);
   const [labels, setLabels] = React.useState([]);
   const [lineChartData, setLineChartData] = React.useState([]);
@@ -174,10 +180,28 @@ function Monitoring() {
               total_income : initial.total_income + Math.floor(next.total_output * next.order_item?.unit_price),
               total_qty : initial.total_qty + Math.floor(next.total_output)
             }
-          }, {total_income: 0, total_qty: 0})
+          }, {total_income: 0, total_qty: 0});
           
+          let planning = res.planning[0]?.items_with_price?.reduce(function(initial, next){
+            if(!next.expected_output || !next.work_days) return initial
+            else {
+              return {
+                total_expected_output: initial.total_expected_output + Math.floor(next.expected_output * parseFloat(next.work_days)),
+                total_expected_income: initial.total_expected_income + Math.floor(next.expected_output * parseFloat(next.work_days) * next.info.avg_price[0]?.cm_price_avg) 
+              }
+            }
+          }, {
+            total_expected_income: 0,
+            total_expected_output: 0
+          });
+
+
           setAmount(test.total_income);
           setQty(test.total_qty);
+
+          setExpectedOutput(planning.total_expected_output);
+          setExpectedIncome(planning.total_expected_income);
+          // setPercentage(res);
         }
       }) 
       
@@ -187,10 +211,22 @@ function Monitoring() {
         setLineChartData(hahaha)
         setLabels(res.data.label);
       }) 
+
     } catch (error) {
       alert(error);
     }
   }
+
+  useEffect(() => {
+    console.log("here");
+
+    setTimeout(() => {
+      let haha = (qty/expectedOutput)*100
+      setPercentage(parseInt(haha))
+      return;
+    })
+
+  }, [qty, expectedOutput])
 
   useEffect(() => {
     handleUpdateData2();
@@ -235,7 +271,13 @@ function Monitoring() {
         </Stack> 
         </Grid>
         <Grid item xs={12}>
-          <PaperStatus value={amount} qty={qty}/>
+          <PaperStatus 
+            value={amount} 
+            qty={qty}
+            expectedIncome={expectedIncome}
+            expectedOutput={expectedOutput}
+            percentage={percentage}
+          />
         </Grid> 
         <Grid item xs={6}>
           <Chart 

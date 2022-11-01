@@ -2,8 +2,12 @@ import TrendUp from '@iconify/icons-eva/trending-up-fill'
 import TrendDown from '@iconify/icons-eva/trending-down-fill'
 import { Icon } from '@iconify/react'
 import { Box, Grid, Paper, styled, Typography } from '@mui/material'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { fCurrency, fNumber } from '../../../../utils/formatNumber';
+
+import { isEmpty, merge } from 'lodash';
+import ReactApexChart from 'react-apexcharts';
+import { BaseOptionChart } from '../../../../components/charts';
 
 const DataRevenue = styled(Paper)(({theme}) => ({
   transition: "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms", 
@@ -67,10 +71,88 @@ const TextThree = styled(Typography)(({theme}) => ({
   opacity: "0.72"
 }))
 
-function Test({value, qty}) {
+function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
+
+
+  const chartOptions = merge(BaseOptionChart(), {        
+    plotOptions: {
+      radialBar: {
+        hollow: {
+          margin: 15,
+          size: "55%"
+        },
+        colors: ["#fff"],
+        dataLabels: {
+          show: true,
+          label: {
+            show: false
+          },
+          value: {
+            color: "#fff",
+            fontSize: "20px",
+            offsetY: "-10",
+            show: true,
+          },
+          total: {
+            show: false,
+            formatter: function(w){
+              console.log(w);
+              return w.globals.seriesTotals[0] + '%'
+            }
+          }
+        }
+      }
+    },
+    fill: {
+      type: "solid",
+      colors: ["#fff"]
+    },
+    stroke: {
+      lineCap: "round",
+    },
+    legend: {
+      show: false
+    },
+    labels: [""]
+  });
+
   return (
     <Grid container spacing={2}>
-      <Grid item xs={6}>
+      <Grid item xs={4}>
+        <DataRevenue sx={{ backgroundColor: "rgb(204, 244, 254)", color: "rgb(1, 41, 114)"}}>
+          <ComponentOne>
+            <div>
+            <TextOne component="p">
+              Total Expected Income
+            </TextOne>
+
+            <TextTwo component="p" sx={{minSize: '2rem'}}>
+              Rp. {fCurrency(expectedIncome)}
+            </TextTwo>
+            </div>
+            <div>
+              <ComponentTwo>
+                <Icon icon={TrendUp}/>
+                <Typography 
+                  component="span" 
+                  sx={{
+                    margin: "0px 0px 0px 4px", 
+                    fontWeight: "600", 
+                    lineHeight: "1.57143", 
+                    fontSize: "0.875rem"
+                  }}
+                >
+                  0 %
+                </Typography>
+              </ComponentTwo>
+              <TextThree component="span" variant="subtitle1">
+                than last month
+              </TextThree>
+            </div>
+          </ComponentOne>
+        </DataRevenue>
+      </Grid>
+      <Grid item xs={4}>
         <DataRevenue>
           <ComponentOne>
             <div>
@@ -104,11 +186,17 @@ function Test({value, qty}) {
           </ComponentOne>
         </DataRevenue>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={4}>
         <DataQuantity>
-          <Box>
+          <div>
+          <ReactApexChart type="radialBar" series={[percentage]} options={chartOptions} height={150} width={100} />
+          </div>
+          <Box sx={{marginLeft: "24px"}}>
             <Typography variant="h4">
               {fNumber(qty)}
+            </Typography>
+            <Typography variant="h4">
+              {fNumber(expectedOutput)}
             </Typography>
             <Typography variant="body2" component="p">
               Total Garment
