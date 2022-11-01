@@ -219,7 +219,7 @@ function Monitoring() {
                 po_number: item?.info?.po_number,
                 total_qty: Math.floor(item?.expected_output * item?.work_days),
                 total_real: Math.floor(item?.ckck[0]?.total_output),
-                percentage: fPercent((item?.expected_output * item?.work_days) / item?.ckck[0]?.total_output)
+                percentage: fPercent(item?.ckck[0]?.total_output/(item?.expected_output * item?.work_days))
               }  
             }
             // Math.floor(item?.ckck[0]?.total_output)
