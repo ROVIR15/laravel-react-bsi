@@ -32,7 +32,7 @@ class ManufacturePlanningItems extends Model
     }
 
     public function ckck(){
-        return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id')->select('sales_order_id', DB::raw('sum(output) as total_output'))->groupBy('sales_order_id');
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id')->select('sales_order_id', 'date', DB::raw('sum(output) as total_output'))->groupBy('sales_order_id');
     }
     
 }
