@@ -96,7 +96,6 @@ function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
           total: {
             show: false,
             formatter: function(w){
-              console.log(w);
               return w.globals.seriesTotals[0] + '%'
             }
           }
@@ -126,7 +125,7 @@ function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
               Total Expected Income
             </TextOne>
 
-            <TextTwo component="p" sx={{minSize: '2rem'}}>
+            <TextTwo component="p" sx={{minSize: '1rem'}}>
               Rp. {fCurrency(expectedIncome)}
             </TextTwo>
             </div>
@@ -160,7 +159,7 @@ function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
               Total Income
             </TextOne>
 
-            <TextTwo component="p" sx={{minSize: '2rem'}}>
+            <TextTwo component="p" sx={{minSize: '1rem'}}>
               Rp. {fCurrency(value)}
             </TextTwo>
             </div>
@@ -204,6 +203,7 @@ function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
           </Box>
         </DataQuantity>
       </Grid>
+
     </Grid>
   )
 }

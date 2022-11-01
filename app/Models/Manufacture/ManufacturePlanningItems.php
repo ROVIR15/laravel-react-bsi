@@ -3,6 +3,7 @@
 namespace App\Models\Manufacture;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class ManufacturePlanningItems extends Model
 {
@@ -28,6 +29,10 @@ class ManufacturePlanningItems extends Model
 
     public function info() {
         return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('avg_price');
+    }
+
+    public function ckck(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id')->select('sales_order_id', DB::raw('sum(output) as total_output'))->groupBy('sales_order_id');
     }
     
 }

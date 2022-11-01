@@ -45,10 +45,17 @@ const columns = [
   { field: 'completion', width: 150, headerName: 'Completion (%)', editable: false }
 ];
 
+const columns2 = [
+  { field: 'id', width: 50, headerName: 'ID', editable: false},
+  { field: 'po_number', width: 200, headerName: 'Line Name', editable: false},
+  { field: 'total_qty', width: 200, headerName: 'Planning Output', editable: false},
+  { field: 'total_real', width: 200, headerName: 'Realisasi Output', editable: false},
+  { field: 'percentage', width: 200, headerName: '%', editable: false},
+];
+
 function makeData(array) {
   if(!isArray(array)) return [];
   let a = array.map(function(x, index) {
-    console.log(x)
     let _p = (parseFloat(x.total_output)/parseFloat(x.target?.target)) * 100
     return {
       id: index+1,
@@ -105,6 +112,8 @@ function Monitoring() {
   const [ percentage, setPercentage ] = useState(0);
 
   const [ data, setData ] = useState([]);
+  const [ data2, setData2 ] = useState([]);
+  const [ dataMonetary, setDataMonetary ] = useState([]);
   const [labels, setLabels] = React.useState([]);
   const [lineChartData, setLineChartData] = React.useState([]);
 
@@ -195,13 +204,36 @@ function Monitoring() {
             total_expected_output: 0
           });
 
+          let planningDetail = res.planning[0]?.items_with_price?.map(function(item){
+            if(isEmpty(item?.ckck[0])){
+              return {
+                id: item.id,
+                po_number: item?.info?.po_number,
+                total_qty: Math.floor(item?.expected_output * item?.work_days),
+                total_real: 0,
+                percentage: 0
+              }  
+            } else {
+              return {
+                id: item.id,
+                po_number: item?.info?.po_number,
+                total_qty: Math.floor(item?.expected_output * item?.work_days),
+                total_real: Math.floor(item?.ckck[0]?.total_output),
+                percentage: fPercent((item?.expected_output * item?.work_days) / item?.ckck[0]?.total_output)
+              }  
+            }
+            // Math.floor(item?.ckck[0]?.total_output)
+            // fPercentage(Math.floor(total_qty / total_real))
+          })
+
 
           setAmount(test.total_income);
           setQty(test.total_qty);
 
           setExpectedOutput(planning.total_expected_output);
           setExpectedIncome(planning.total_expected_income);
-          // setPercentage(res);
+
+          setData2(planningDetail);
         }
       }) 
       
@@ -218,7 +250,6 @@ function Monitoring() {
   }
 
   useEffect(() => {
-    console.log("here");
 
     setTimeout(() => {
       let haha = (qty/expectedOutput)*100
@@ -279,6 +310,13 @@ function Monitoring() {
             percentage={percentage}
           />
         </Grid> 
+
+        <Grid item xs={12}>
+          <DataGrid 
+            rows={data2} 
+            columns={columns2} 
+          />
+        </Grid>
         <Grid item xs={6}>
           <Chart 
             data={lineChartData}

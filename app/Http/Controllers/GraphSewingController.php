@@ -128,7 +128,7 @@ class GraphSewingController extends Controller
         $month = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
         $month = date_format($month, 'm');
 
-        $planning = ManufacturePlanning::with('items_with_price')->where('month', intval($month))->get();
+        $planning = ManufacturePlanning::with('items_with_price')->where('month', intval($month))->orderBy('id', 'asc')->get();
 
       } catch (Throwable $th) {
         //throw $th;
