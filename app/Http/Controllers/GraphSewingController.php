@@ -128,7 +128,13 @@ class GraphSewingController extends Controller
         $month = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
         $month = date_format($month, 'm');
 
-        $planning = ManufacturePlanning::with('items_with_price')->where('month', intval($month))->orderBy('id', 'asc')->get();
+        $planning = ManufacturePlanning::with('items_with_price')
+                  ->whereHas('items_with_price', function($query) use ($fromDate, $thruDate){
+                    $query->whereHas('ckck', function($query2) use ($fromDate, $thruDate){
+                      $query2->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
+                    });
+                  })
+                  ->where('month', intval($month))->orderBy('id', 'asc')->get();
 
       } catch (Throwable $th) {
         //throw $th;
