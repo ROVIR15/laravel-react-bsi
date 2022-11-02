@@ -5,20 +5,40 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
-import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, MenuList } from '@mui/material';
+import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, Stack, MenuList } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
 
-import { isArray } from 'lodash'
+import { isArray, isEmpty } from 'lodash'
 //API
 import API from '../../../helpers'
 import { useParams } from 'react-router-dom';
+import { fCurrency, fNumber } from '../../../utils/formatNumber';
+
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+}));
+
 
 function calculateOutput(params){
   const layer = parseFloat(params.row.expected_output)*parseFloat(params.row.work_days);
   return Math.floor(layer);
 }
+
+const FloatingPaper = styled(Box)(({theme}) => ({
+  padding: "4px 30px", 
+  bottom: "24px", 
+  zIndex: "999", 
+  position: "fixed", 
+  boxShadow: "rgb(99 115 129 / 36%) -12px 12px 32px -4px", 
+  backdropFilter: "blur(6px)", 
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  minWidth: "72rem"
+}))
 
 const columns = [
   { field: 'id', width: 50, headerName: 'ID', editable: false},
@@ -33,77 +53,16 @@ function Goods() {
 
   const {id} = useParams();
 
-  const GoodsSchema = Yup.object().shape({
-    monthYear: Yup.date().required('is required'),
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      monthYear: ''
-    },
-    validationSchema: GoodsSchema,
-    onSubmit: (values) => {
-      const haha = values.monthYear.split("-");
-      try {
-        const payload = {
-          month: parseInt(haha[1]),
-          year: haha[0],
-          items
-        }
-
-        try {
-          API.setManufacturePlanning(payload, function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })          
-        } catch (error) {
-          alert('error')  
-        }
-
-      } catch (error) {
-        alert('error')        
-      }
-      setSubmitting(false);
-    }
-  });
-
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
-
-  useEffect(() => {
-    handleUpdateData();
-  }, [id])
-  
-  const handleUpdateData = () => {
-    try {
-      API.getAManufacturePlanning(id, (res) => {
-        if(!res) alert('failed');
-        else {
-          setFieldValue('monthYear', `${res.year}-${res.month}`);
-          const payload = res.items.map(function(item){
-            return {
-              id: item?.sales_order_id,
-              po_number: item?.sales_order?.po_number,
-              total_qty: item?.sales_order?.sum[0]?.total_qty,
-              expected_output: item?.expected_output,
-              work_days: item?.work_days
-            }
-          })
-          setItems(payload);
-        }
-      })
-    } catch (error) {
-      alert('error')
-    }
-  }
-  
-  const handleMultiSelect = (name, value) => {
-    setFieldValue(name, value);
-  }
-
   //Data Grid
   const [items, setItems] = useState([])
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
+
+
+  const [ collected, setCollected ] = React.useState({
+    qty: 0,
+    money: 0
+  })
 
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
@@ -134,6 +93,19 @@ function Goods() {
           });
         });
 
+
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value
+
+        try {
+          API.updateManufacturePlanningItems(id, data, function(res){
+            if(res.success) alert('success');
+            else alert('failed aa');
+          })            
+        } catch {
+          alert('error')
+        }
+
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -142,6 +114,87 @@ function Goods() {
     },
     [editRowData]
   );
+
+  //
+  const GoodsSchema = Yup.object().shape({
+    monthYear: Yup.date().required('is required'),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      monthYear: ''
+    },
+    validationSchema: GoodsSchema,
+    onSubmit: (values) => {
+      const haha = values.monthYear.split("-");
+      try {
+        const payload = {
+          month: parseInt(haha[1]),
+          year: haha[0],
+          items
+        }
+
+          API.setManufacturePlanning(payload, function(res){
+            if(res.success) alert('success');
+            else alert('failed bb')
+          })          
+
+      } catch (error) {
+        alert('error')        
+      }
+      setSubmitting(false);
+    }
+  });
+
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+
+  useEffect(() => {
+    if(!id) return;
+    handleUpdateData();
+  }, [id])
+  
+  const handleUpdateData = () => {
+    try {
+      API.getAManufacturePlanning(id, (res) => {
+        if(!res) return undefined
+        else {
+          const payload = res.items_with_price.map(function(item){
+            return {
+              id: item?.sales_order_id,
+              po_number: item?.info?.po_number,
+              total_qty: item?.info?.avg_price[0]?.total_qty,
+              expected_output: item?.expected_output,
+              work_days: item?.work_days,
+              total_plan_qty: Math.floor(item?.expected_output * item?.work_days),
+              total_plan_amount: Math.floor(item?.expected_output * item?.work_days * parseFloat(item?.info?.avg_price[0]?.cm_price_avg))
+            }
+          })
+
+          const result = payload?.reduce(function(initial, next){
+            return {
+              qty: initial.qty + next?.total_plan_qty,
+              money: initial.money + next?.total_plan_amount
+            }
+          }, {
+            qty: 0,
+            money: 0
+          })
+          
+          setCollected(result)
+          setItems(payload);
+
+          setFieldValue('monthYear', `${res.year}-${res.month}`);
+        }
+      })
+    } catch (error) {
+      alert(error)
+    }
+  }
+  
+  
+  const handleMultiSelect = (name, value) => {
+    setFieldValue(name, value);
+  }
   
 
   return (
@@ -157,11 +210,13 @@ function Goods() {
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
+
+            <Grid item xs={12}>
+
+            </Grid>
+
             <Grid item xs={12}>
               <Card >
-                <CardHeader
-                  title="Line Target Information"
-                />
                 <CardContent>
                 <Grid container spacing={2}>
                   
@@ -177,12 +232,28 @@ function Goods() {
                     />
                   </Grid>
 
+                  <Grid item xs={12} lg={7}>
+                    <Stack 
+                      direction="row"
+                      spacing={2}
+                    >
+                      <Item>
+                        <Typography variant="body2">Total Qty</Typography>
+                        <Typography variant="h5"> {fNumber(collected.qty)}</Typography>
+                      </Item>
+                      <Item>
+                        <Typography variant="body2">Total Expected Revenue</Typography>
+                        <Typography variant="h5"> Rp. {fCurrency(collected.money)}</Typography>
+                      </Item>
+                    </Stack>
+                  </Grid>
+
                 </Grid>
                 </CardContent>
               </Card>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} mb={2}>
               <DataGrid 
                 columns={columns} 
                 rows={items}
@@ -192,7 +263,7 @@ function Goods() {
             </Grid>
 
             <Grid item xs={12}>
-              <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
+              <FloatingPaper>
                 <LoadingButton
                   size="large"
                   type="submit"
@@ -210,7 +281,7 @@ function Goods() {
                 >
                   Cancel
                 </Button>
-              </Card>
+              </FloatingPaper>
             </Grid>
           </Grid>
           </Form>

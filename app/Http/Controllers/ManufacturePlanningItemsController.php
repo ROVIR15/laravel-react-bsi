@@ -44,7 +44,7 @@ class ManufacturePlanningItemsController extends Controller
         $payload = $request->all()['payload'];
 
         try {
-            ManufacturePlanningItems::update($payload)->find($id);
+            ManufacturePlanningItems::find($id)->update($payload);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([

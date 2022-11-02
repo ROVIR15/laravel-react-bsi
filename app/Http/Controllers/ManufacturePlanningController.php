@@ -91,7 +91,7 @@ class ManufacturePlanningController extends Controller
     public function show($id)
     {
       try {
-        $query = ManufacturePlanning::with('items')->find($id);
+        $query = ManufacturePlanning::with('items_with_price')->find($id);
         return response()->json($query);
         // return new ManufactureOneCollection($query[0]);
     } catch (Exception $th) {
