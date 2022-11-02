@@ -64,6 +64,7 @@
         "notistack": "^2.0.3",
         "numeral": "^2.0.6",
         "react-apexcharts": "^1.4.0",
+        "react-draggable": "^4.4.5",
         "react-helmet-async": "^1.2.3",
         "react-router-dom": "^6.2.1",
         "simplebar-react": "^2.3.7",
