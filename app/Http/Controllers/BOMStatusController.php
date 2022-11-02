@@ -46,7 +46,7 @@
           'user_id' => $BOMStatusData['user_id'],
           'bom_id' => $BOMStatusData['bom_id'],
           'status_type' => $BOMStatusData['status_type'],
-          'unit_price' => $BOMStatusData['unit_price'],
+          'unit_price' => $BOMStatusData['final_price'],
           'description' => $BOMStatusData['description']
         ]);
       } catch (Exception $th) {
