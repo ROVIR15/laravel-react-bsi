@@ -70,7 +70,16 @@ function Goods() {
   const handleCloseModal = () => setOpenM(false);
 
   const handleAddItems = (values) => {
-    setItems(values);
+    try {
+      API.setManufacturePlanningItems(values, (res) => {
+        if(!res.success) alert("failed");
+        else alert('success');
+
+        handleUpdateData();
+      })
+    } catch (error) {
+      alert('error')
+    }
   }
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
@@ -206,6 +215,7 @@ function Goods() {
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}
+        update={handleUpdateData}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

@@ -2285,6 +2285,16 @@ const main = {
       })
     },
     //
+    setManufacturePlanningItems(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/manufacture-planning-item', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     updateManufacturePlanningItems(id, _data, cb){
       if(!_data) {
           console.error('data not found');

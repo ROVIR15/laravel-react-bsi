@@ -17,6 +17,8 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
 // api
 import API from '../../../../helpers';
+import { useLocation, useParams } from 'react-router-dom';
+import { isEditCondition } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -61,7 +63,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
+function TableD({ list, placeHolder, update, selected, setSelected}) {
+  const {id} = useParams();
+  const { pathname } = useLocation();
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -89,7 +93,23 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     const selectedIndex = selected.map(e => e.id).indexOf(name.id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      if(isEditCondition(pathname.split('/'), id)) {
+        try {
+          let payload = {
+            manufacture_planning_id: id,
+            sales_order_id: name.id,
+            expected_output: 0,
+            work_days: 0
+          }
+          API.setManufacturePlanningItems(payload, function(res){
+            if(res.success) alert('success');
+            else alert('failed')
+          })
+          update();
+        } catch(e) {
+          alert(e);
+        }
+      }
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {

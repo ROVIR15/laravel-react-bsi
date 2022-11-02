@@ -28,7 +28,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ order_id, payload, open, options, handleClose, selected, setSelected}) {
+export default function BasicModal({ order_id, payload, update, open, options, handleClose, selected, setSelected}) {
   const [value, setValue] = React.useState([])
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
@@ -71,7 +71,7 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
             Select Sales Order
           </Typography>
 
-          <Table list={value} selected={selected} setSelected={setSelected}/>
+          <Table list={value} selected={selected} setSelected={setSelected} update={update}/>
         </Card>
       </Modal>
     </div>
