@@ -107,7 +107,7 @@ function Goods() {
         data[editedColumnName] = editRowData[editedColumnName].value
 
         try {
-          API.updateManufacturePlanningItems(id, data, function(res){
+          API.updateManufacturePlanningItems(editedIds, data, function(res){
             if(res.success) alert('success');
             else alert('failed aa');
           })            
@@ -136,18 +136,8 @@ function Goods() {
     validationSchema: GoodsSchema,
     onSubmit: (values) => {
       const haha = values.monthYear.split("-");
-      try {
-        const payload = {
-          month: parseInt(haha[1]),
-          year: haha[0],
-          items
-        }
-
-          API.setManufacturePlanning(payload, function(res){
-            if(res.success) alert('success');
-            else alert('failed bb')
-          })          
-
+      try {     
+        alert('done')
       } catch (error) {
         alert('error')        
       }
