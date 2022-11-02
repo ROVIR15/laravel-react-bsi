@@ -170,8 +170,8 @@
         $tes = $product->where('goods_id', $id)->get();
         $goods = $goods->find($tes[0]['goods_id']);
 
-        // return new GoodsOneCollection($goods);
-        return response()->json($feature);
+        return new GoodsOneCollection($goods);
+        // return response()->json($feature);
       } catch (Exception $th) {
         //throw $th;
         return response()->json([
