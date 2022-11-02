@@ -42,10 +42,21 @@ const RootStyle = styled(Page)(({ theme }) => ({
   }
 }));
 
+const FloatingBox = styled(Box)(({theme}) => ({
+  padding: "4px 30px", 
+  bottom: "24px", 
+  zIndex: "999", 
+  position: "fixed", 
+  boxShadow: "rgb(99 115 129 / 36%) -12px 12px 32px -4px", 
+  backdropFilter: "blur(6px)", 
+  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  minWidth: "72rem"
+}))
+
 const SpaceBetween = styled(Box)(({theme}) => ({
   display: "flex", 
   justifyContent: "space-between", 
-  marginBottom: "40px"
+  margin: '0.5rem'
 }))
 
 
@@ -365,6 +376,7 @@ function Document(){
           type={warning.type}
           send={warning.send}
         />
+        <FloatingBox>
         <SpaceBetween>
           <div >
             <IconButton>
@@ -395,7 +407,8 @@ function Document(){
             </Button>
           </div>
 
-        </SpaceBetween>        
+        </SpaceBetween>  
+        </FloatingBox>      
           <PaperStyled elevation={2} sx={{}}>
             {/* Product Info */}
             <Grid container 
