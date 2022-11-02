@@ -15,7 +15,7 @@
 
     protected $fillable = [
         'description',
-        'unit_price',
+        'final_price',
         'status_type',
         'user_id',
         'bom_id',
@@ -24,5 +24,9 @@
 
     public function bom() {
         return $this->belongsTo('App\Models\Manufacture\BOM', 'bom_id');
+    }
+
+    public function user() {
+      return $this->belongsTo('App\User')->select("id", "name");
     }
   }
