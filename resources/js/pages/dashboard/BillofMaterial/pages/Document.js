@@ -31,6 +31,7 @@ import { getPages } from '../../../../utils/getPathname';
 import { jsPDF } from 'jspdf'
 import { toBlob, toPng } from 'html-to-image';
 import Dialog from '../../../../components/DialogBox/dialog';
+import DialogDraggable from '../components/DialogBoxDragable';
 import { sum } from 'lodash';
 import { fPercent } from '../../../../utils/formatNumber';
 
@@ -116,6 +117,16 @@ function Document(){
     title: "",
     message: ""
   });
+
+  //Dialog Draggable
+  const [dialogDragableActive, setDialogDragableActive] = useState(false);
+  const handleOpenDialogDraggable = () => {
+    setDialogDragableActive(true);
+  }
+
+  const handleCloseDialogDraggable = () => {
+    setDialogDragableActive(false);
+  }
 
   const [status, setStatus] = useState({});
 
@@ -339,6 +350,11 @@ function Document(){
 
   return (
       <MHidden width="mdDown">
+        <DialogDraggable
+          bom_id={id}
+          open={dialogDragableActive}
+          handleClose={handleCloseDialogDraggable}
+        />
         <Dialog 
           title={warning.title}
           message={warning.message}
@@ -352,7 +368,7 @@ function Document(){
         <SpaceBetween>
           <div >
             <IconButton>
-              <Icon icon={editFill} width={20} height={20} />
+              <Icon icon={editFill} onClick={handleOpenDialogDraggable} width={20} height={20} />
             </IconButton>
             <IconButton>
               <Icon icon={downloadFill} width={20} height={20} />

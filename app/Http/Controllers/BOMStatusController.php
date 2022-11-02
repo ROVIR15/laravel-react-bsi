@@ -67,7 +67,10 @@
     public function show($id)
     {
       try {
-        $BOMStatusData = BOMStatus::find($id);
+        $BOMStatusData = BOMStatus::with('user')
+                          ->where('bom_id',$id)
+                          ->orderBy('created_at', 'desc')
+                          ->get();
         // return new BOMStatusOneCollection($BOMStatusData);
         return response()->json($BOMStatusData);
 

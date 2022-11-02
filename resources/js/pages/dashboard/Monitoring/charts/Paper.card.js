@@ -60,7 +60,7 @@ const TextTwo = styled(Typography)(({theme}) => ({
   margin: "0px", 
   fontWeight: "700", 
   lineHeight: "1.5", 
-  fontSize: "2rem"
+  fontSize: "1.6rem"
 }))
 
 const TextThree = styled(Typography)(({theme}) => ({

@@ -196,3 +196,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
