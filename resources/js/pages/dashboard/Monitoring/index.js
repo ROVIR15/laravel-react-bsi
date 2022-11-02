@@ -122,7 +122,7 @@ function Monitoring() {
   const [filterDate, setFilterDate] = useState(now);
   const [filterRangeDate, setFilterRangeDate] = useState({
     'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+    'fromDate': moment(new Date()).subtract(30, 'days').format('YYYY-MM-DD')
   });
 
   const handleDateChanges = (event) => {
@@ -228,7 +228,7 @@ function Monitoring() {
 
 
           setAmount(test.total_income);
-          setQty(test.total_qty);
+          setQty(res?.qty?.total_output);
 
           setExpectedOutput(planning.total_expected_output);
           setExpectedIncome(planning.total_expected_income);

@@ -125,6 +125,10 @@ class GraphSewingController extends Controller
                   ->orderBy('date', 'asc')
                   ->get();
 
+        $qty_get = Sewing::select(DB::raw('sum(output) as total_output'))
+                    ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                    ->get();
+
         $month = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
         $month = date_format($month, 'm');
 
@@ -146,10 +150,9 @@ class GraphSewingController extends Controller
 
       return response()->json([
         'success' => true,
+        'qty' => $qty_get[0],
         'data' => $amount,
         'planning' => $planning,
-        'fromDate' => $fromDate,
-        'thruDate' => $thruDate
       ]);
     }
 }
