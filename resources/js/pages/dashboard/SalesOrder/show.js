@@ -128,10 +128,10 @@ function SalesOrder() {
   })
 
   useEffect(async () => {
-    handleUpdateData()
+    await handleUpdateData()
   }, [id]);
 
-  const handleUpdateData = () => {
+  const handleUpdateData = async () => {
     if(!id) return;
     const load = await axios.get(process.env.MIX_API_URL  + '/sales-order' + `/${id}`)
     .then(function({data: {data}}) {
