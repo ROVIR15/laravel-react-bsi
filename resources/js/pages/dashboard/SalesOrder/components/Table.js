@@ -58,7 +58,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -97,7 +97,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
           const {id} = name;
-          let payload = {product_feature_id: id, order_id, qty: 0, unit_price: 0, shipment_estimated: "2022-09-03"}
+          let payload = {product_feature_id: id, order_id, qty: 0, unit_price: 0, cm_price: 0, shipment_estimated: "2022-09-03"}
           API.insertSalesOrderItem([payload], function(res){
             if(res.success) alert('success');
             else alert('failed')
