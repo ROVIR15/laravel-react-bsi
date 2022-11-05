@@ -128,6 +128,10 @@ function SalesOrder() {
   })
 
   useEffect(async () => {
+    handleUpdateData()
+  }, [id]);
+
+  const handleUpdateData = () => {
     if(!id) return;
     const load = await axios.get(process.env.MIX_API_URL  + '/sales-order' + `/${id}`)
     .then(function({data: {data}}) {
@@ -164,8 +168,7 @@ function SalesOrder() {
       return {...product_feature, product_feature_id: product_feature.id, id: key.id, name: product_feature.product.goods.name, shipment_estimated: new Date(key.shipment_estimated), ...key}
     })
     setItems(c);
-
-  }, [id]);
+  }
 
   useEffect(() => {
     let active = true;
@@ -292,7 +295,7 @@ function SalesOrder() {
 
     var c = load2.map((key)=>{
       const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), ...key}
+      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), name: product_feature?.product?.goods?.name, ...key}
     })
     setItems(c);
   };
