@@ -9,67 +9,12 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import Scrollbar from '../../../../components/Scrollbar';
+import Scrollbar from '../Scrollbar';
 import { Icon } from '@iconify/react';
 import { IconButton, Stack } from '@mui/material';
 
 import searchFill from '@iconify/icons-eva/search-fill';
 import closeCircle from '@iconify/icons-eva/close-outline';
-
-import API from '../../../../helpers';
-
-const content = [
-  {
-    one: "Party",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party2",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party3",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party4",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party5",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party6",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party7",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party6",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-  {
-    one: "Party7",
-    two: "This party is employee",
-    three: "What the heel is this"
-  },
-];
 
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
   WebkitTapHighlightColor: "transparent", 
@@ -165,7 +110,7 @@ function applySortFilter(array, comparator, query) {
 
 function SimpleDialog(props) {
 
-  const { onClose, selectedValue, open, options } = props;
+  const { title, onClose, selectedValue, open, options } = props;
   const [filterName, setFilterName] = useState('');
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -190,7 +135,7 @@ function SimpleDialog(props) {
     <DialogStyled onClose={handleClose} open={open} fullWidth>
       <Stack direction="row" justifyContent="space-between" alignItems="center" pt={"12px"} pl={"20px"} pr={"20px"}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-        Choose Sales Order
+        {title}
         </Typography>
         <IconButton onClick={handleClose} color="error">
           <Icon icon={closeCircle}/>

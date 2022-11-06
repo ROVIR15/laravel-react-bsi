@@ -18,7 +18,7 @@ import API from '../../../../helpers'
 // Data Grid
 import DataGrid from './DataGrid';
 import Modal from './Modal';
-import DialogBox from './DialogBox';
+import DialogBox from '../../../../components/DialogBox/dialog.list';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -232,6 +232,7 @@ const [id, setId] = React.useState(0);
                         </Typography>
                       </div>
                       <DialogBox
+                        title="Choose Sales Order"
                         options={options}
                         loading={loading}
                         error={Boolean(touched.order_id && errors.order_id)}

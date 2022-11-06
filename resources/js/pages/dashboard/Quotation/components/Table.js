@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
+  Box,
   Checkbox,
   Table,
   TableBody,
@@ -8,6 +9,7 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Typography
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -26,8 +28,8 @@ import { isEditCondition } from '../../../../helpers/data';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
     { id: 'color', label: 'Color', alignRight: false },
+    { id: 'size', label: 'Size', alignRight: false },
     { id: 'value', label: 'Value', alignRight: false },
   ];
 
@@ -58,7 +60,10 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => {
+      let b = `${_b?.name} ${_b?.color} ${_b?.size}`
+      return b.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -85,11 +90,12 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
   const handleClick = (event, name) => {
@@ -159,7 +165,7 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
   return (
     <div>
       <ListToolbar
-        numSelected={selected.length}
+        numSelected={0}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -186,8 +192,8 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
                   const {
                     id,
                     name,
-                    size,
                     color,
+                    size,
                     value
                   } = row;
                   return (
@@ -241,6 +247,22 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      <Box
+      sx={{
+        ...(selected.length > 0 && {
+          color: 'primary.main',
+          bgcolor: 'primary.lighter'
+        })
+      }}
+      >
+        {selected.length > 0 ? (
+          <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
+            {selected.length} selected
+          </Typography>): null
+        }
+      </Box>
+
     </div>
   )
 }
