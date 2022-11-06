@@ -2,6 +2,7 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import {styled} from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
@@ -22,6 +23,17 @@ const style = {
   transform: 'translate(-50%, -50%)',
   p: 4,
 };
+
+const StyledCard = styled(Card)(({theme}) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  p: 4,
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '320px'
+  }
+}))
 
 export default function BasicModal({ order_id, so_id, payload, open, options, handleClose, selected, setSelected}) {
   const [value, setValue] = React.useState([])
@@ -63,7 +75,7 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card sx={style}>
+        <StyledCard sx={style}>
           <Stack direction="row" justifyContent="space-between">
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Select Product 
@@ -74,7 +86,7 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
           </Stack>
           
           <Table list={value} selected={selected} setSelected={setSelected}/>
-        </Card>
+        </StyledCard>
       </Modal>
     </div>
   );
