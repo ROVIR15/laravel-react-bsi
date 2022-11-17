@@ -78,16 +78,15 @@ function applySortFilter(array, comparator, query) {
 function PurchaseOrder({ placeHolder }) {
 
   const [purchaseOrderData, setpurchaseOrderData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
-  });
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   const { user } = useAuth();
 
@@ -95,9 +94,15 @@ function PurchaseOrder({ placeHolder }) {
 
   }, [])
 
+  useEffect(() => {
+    handleUpdateData()
+  }, [filterMonthYear])
+
   const handleUpdateData = () => {
     const { role } = user;
     let params;
+
+    setLoading(true);
 
     role.map((item) => {
       if(item.approve && item.submit && item.review) {
@@ -118,7 +123,7 @@ function PurchaseOrder({ placeHolder }) {
       }
     });
 
-    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    params = params + `&monthYear=${filterMonthYear}`;
 
     try {
       API.getPurchaseOrder(params,(res) => {
@@ -132,6 +137,9 @@ function PurchaseOrder({ placeHolder }) {
     } catch (error) {
       alert('error')
     }
+
+    setLoading(false);
+
   }
 
   const handleRequestSort = (event, property) => {
@@ -148,6 +156,11 @@ function PurchaseOrder({ placeHolder }) {
     }
     setSelected([]);
   };
+
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  }
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -208,12 +221,14 @@ function PurchaseOrder({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
+
     API.deletePurchaseOrder(id, function(res){
       if(res.success) setpurchaseOrderData([]);
     }).catch(function(error){
-      alert('error')
+      alert(error)
     });
+
+    handleUpdateData();
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrderData.length) : 0;
@@ -226,9 +241,9 @@ function PurchaseOrder({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -238,6 +253,7 @@ function PurchaseOrder({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -245,7 +261,6 @@ function PurchaseOrder({ placeHolder }) {
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
-              active={false}
             />
             <TableBody>
               {filteredData
@@ -299,7 +314,10 @@ function PurchaseOrder({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
+                    {loading ? 
+                      (<Typography variant="body2" align="center">Please Wait</Typography>):
+                      (<SearchNotFound searchQuery={filterName} />)
+                    }
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -308,7 +326,7 @@ function PurchaseOrder({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={purchaseOrderData.length}
         rowsPerPage={rowsPerPage}

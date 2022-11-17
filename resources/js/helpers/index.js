@@ -348,7 +348,6 @@ const main = {
         cb(err.response)
       })
     },
-    // Product Feature
     getFabric(cb){
       axios.get( uri + '/fabric').then(function(res){
         cb(res.data)
@@ -356,6 +355,14 @@ const main = {
         cb(err.response)
       })
     },
+    getFinishedGoods(cb){
+      axios.get( uri + '/finished-goods').then(function(res){
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    // Product Feature
     newProductFeature(_data, cb){
       axios.post( uri + '/product-feature', {payload: _data}).then( function(res){
         cb(res.data);
@@ -2305,5 +2312,28 @@ const main = {
           cb(err.response);
       });
     },
+    deleteManufacturePlanningItem(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/manufacture-planning-item/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getCostingList(cb){
+      axios.get( uri + '/costing-list').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getACostingList(id, cb){
+      if(!id) throw new Error('No ID');
+      axios.get( uri + '/costing-list/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    }
   }
 export default main;

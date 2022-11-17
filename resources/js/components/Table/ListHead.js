@@ -42,7 +42,6 @@ export default function ListHead({
           />
         </TableCell>
         ) : null
-
       }
         {headLabel.map((headCell) => (
           <TableCell

@@ -77,26 +77,28 @@ function applySortFilter(array, comparator, query) {
 function DisplaySalesOrder({ placeHolder }) {
 
   const [salesOrderData, setSalesOrderData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
-  });
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   const { user } = useAuth();
 
   useEffect(() => {
-    handleUpdateData();
-  }, [])
+    handleUpdateData()
+  }, [filterMonthYear])
 
   const handleUpdateData = () => {
     const { role } = user;
     let params;
+
+    setLoading(true);
 
     role.map((item) => {
       if(item.approve && item.submit && item.review) {
@@ -119,7 +121,7 @@ function DisplaySalesOrder({ placeHolder }) {
       }
     });
 
-    params = params + `fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    params = params + `&monthYear=${filterMonthYear}`;
 
     try {
       API.getSalesOrder(params,(res) => {
@@ -133,6 +135,8 @@ function DisplaySalesOrder({ placeHolder }) {
     } catch (error) {
       alert('error')
     }
+
+    setLoading(false);
   }
 
   const handleRequestSort = (event, property) => {
@@ -175,6 +179,12 @@ function DisplaySalesOrder({ placeHolder }) {
     })
   }
 
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  }
+
+
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -208,12 +218,16 @@ function DisplaySalesOrder({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
+
+    try {
+      API.deleteQuote(id, function(res){
+        if(res.success) setQuoteData([]);
+        handleUpdateData();
+      })
+    } catch {
       alert('error')
-    });
+    }
+
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesOrderData.length) : 0;
@@ -226,10 +240,9 @@ function DisplaySalesOrder({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
-        onGo={handleUpdateData}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -299,7 +312,10 @@ function DisplaySalesOrder({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
+                    {loading ? 
+                      (<Typography variant="body2" align="center">Please Wait</Typography>):
+                      (<SearchNotFound searchQuery={filterName} />)
+                    }
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -308,7 +324,7 @@ function DisplaySalesOrder({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={salesOrderData.length}
         rowsPerPage={rowsPerPage}

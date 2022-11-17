@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -7,8 +7,12 @@ import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, Stack, MenuList } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { GridActionsCellItem } from '@mui/x-data-grid';
+
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
+import SelectEdit from './components/SelectEdit';
+import AutoComplete from './components/AutoComplete';
 
 import { isArray, isEmpty } from 'lodash'
 //API
@@ -16,6 +20,10 @@ import API from '../../../helpers'
 import { useParams } from 'react-router-dom';
 import { fCurrency, fNumber } from '../../../utils/formatNumber';
 
+//Icons
+import { Icon } from '@iconify/react';
+import editFill from '@iconify/icons-eva/edit-2-fill';
+import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -38,36 +46,85 @@ const FloatingPaper = styled(Box)(({theme}) => ({
   backdropFilter: "blur(6px)", 
   backgroundColor: "rgba(255, 255, 255, 0.8)",
   minWidth: "72rem"
-}))
+}));
 
-const columns = [
-  { field: 'id', width: 50, headerName: 'ID', editable: false},
-  { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
-  { field: 'total_qty', headerName: 'Total Qty', editable: false},
-  { field: 'expected_output', headerName: 'Expected Output', editable: true},
-  { field: 'work_days', headerName: 'Work Days Output', editable: true},
-  { field: 'expected_total_output', headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
-];
+const renderSelectEditInputCell = (params) => {
+  return <SelectEdit {...params} />;
+};
+
+const renderAutoCompleteCell = (params) => {
+  return <AutoComplete {...params} />;
+};
 
 function Goods() {
 
   const {id} = useParams();
 
   //Data Grid
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
-
 
   const [ collected, setCollected ] = React.useState({
     qty: 0,
     money: 0
   })
 
+  const columns = useMemo(() => [
+    { field: 'id', width: 50, headerName: 'ID', editable: false},
+    { field: 'facility_name', headerName: 'Line', width: 250, editable: false},
+    { field: 'costing_name', headerName: 'Costing', width: 250, editable: false},
+    { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
+    { field: 'total_qty', headerName: 'Total Qty', editable: false},
+    { field: 'expected_output', headerName: 'Expected Output', editable: true},
+    { field: 'work_days', headerName: 'Work Days Output', editable: true},
+    { field: 'expected_total_output', headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
+    { field: 'actions', type: 'actions', width: 50, 
+      getActions: (params) => [
+        // <GridActionsCellItem
+        //   icon={<Icon icon={editFill} width={24} height={24} />}
+        //   label="Edit"
+        //   onClick={editData(params)}
+        //   showInMenu
+        // />,
+        <GridActionsCellItem
+          icon={<Icon icon={trash2Outline} width={24} height={24} />}
+          label="Delete"
+          onClick={deleteData(params.id)}
+          showInMenu
+        />
+      ]
+    }
+  ], [deleteData]);
+
+  // const editData = useCallback(
+  //   (params) => () => {
+  //     setSelected(params.row);
+  //     handleOpenModal();
+  //   }
+  // )
+
+  const deleteData = useCallback(
+    (id) => () => {
+      try {
+        API.deleteManufacturePlanningItem(id, function(res){
+          handleUpdateData();
+        })
+      } catch(err){
+        alert('err')
+      }
+
+    }, []
+  )
+
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
-  const handleCloseModal = () => setOpenM(false);
+  const handleCloseModal = () => {
+    setOpenM(false);
+    handleUpdateData();
+  }
 
   const handleAddItems = (values) => {
     try {
@@ -159,7 +216,12 @@ function Goods() {
         else {
           const payload = res.items_with_price.map(function(item){
             return {
-              id: item?.sales_order_id,
+              id: item?.id,
+              bom_id: item?.bom_id,
+              costing_name: item?.costing?.name,
+              facility_id: item?.facility_id,
+              facility_name: item?.facility?.name,
+              sales_order_id: item?.sales_order_id,
               po_number: item?.info?.po_number,
               total_qty: item?.info?.avg_price[0]?.total_qty,
               expected_output: item?.expected_output,
@@ -203,8 +265,8 @@ function Goods() {
         open={openM}
         onAddItems={handleAddItems}
         handleClose={handleCloseModal}
-        selected={items}
-        setSelected={setItems}
+        selected={selected}
+        setSelected={setSelected}
         update={handleUpdateData}
       />
         <FormikProvider value={formik}>
@@ -259,6 +321,7 @@ function Goods() {
                 rows={items}
                 onEditRowsModelChange={handleEditRowsModelChange}
                 handleAddRow={handleOpenModal}
+                experimentalFeatures={{ newEditingApi: true }}
               />
             </Grid>
 

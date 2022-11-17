@@ -26,15 +26,28 @@ class ShipmentController extends Controller
     {
       $param = $request->all();
       $type = $request->query('shipment_type');
+      $monthYear = $request->query('monthYear');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
 
       if(isset($type)){
         $query = Shipment::with('order', 'type', 'status')
         ->whereHas('type', function($query) use ($type){
           $query->where('id', $type);
         })
+        ->whereYear('delivery_date', '=', $year)
+        ->whereMonth('delivery_date', '=', $month)
         ->get();
       } else {
         $query = Shipment::with('order', 'type', 'status')
+        ->whereYear('delivery_date', '=', $year)
+        ->whereMonth('delivery_date', '=', $month)
         ->get();
       }
 

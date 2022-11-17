@@ -133,7 +133,7 @@ import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
 
 import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
-import ShowIncomingShipment from '../pages/dashboard/Shipment/Outgoing/show';
+import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
 
 import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 

@@ -21,8 +21,9 @@ function calculateOutput(params){
 
 const columns = [
   { field: 'id', width: 50, headerName: 'ID', editable: false},
+  { field: 'facility_name', headerName: 'Line', width: 250, editable: false},
+  { field: 'costing_name', headerName: 'Costing', width: 250, editable: false},
   { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
-  { field: 'sold_to', headerName: 'Buyer', width: 250, editable: false},
   { field: 'total_qty', headerName: 'Total Qty', editable: false},
   { field: 'expected_output', headerName: 'Expected Output', editable: true},
   { field: 'work_days', headerName: 'Work Days Output', editable: true},
@@ -60,6 +61,8 @@ function Goods() {
       } catch (error) {
         alert('error')        
       }
+
+      handleReset();
       setSubmitting(false);
     }
   });
@@ -78,10 +81,12 @@ function Goods() {
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
-  const handleCloseModal = () => setOpenM(false);
+  const handleCloseModal = () => {
+    setOpenM(false);
+  }
 
   const handleAddItems = (values) => {
-    setItems(values);
+    setItems((prevItems) => prevItems.concat(values));
   }
   const handleEditRowsModelChange = React.useCallback(
     (model) => {

@@ -26,15 +26,14 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // API
 import API from '../../../helpers';
-
 // Components
 import ColumnBox from '../../../components/ColumnBox';
 import SpaceBetweenBox from '../../../components/SpaceBetweenBox';
 import DialogBoxParty from './components/DialogBoxParty'
 
 import DataGrid from '../../../components/DataGrid';
-import Modal from './components/ModalShowP';
-import Modal2 from './components/ModalShowO';
+import Modal from './components/ModalNewP';
+import Modal2 from './components/ModalNewO';
 import Modal3 from './components/ModalShowS';
 
 //Icons
@@ -42,10 +41,23 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { optionProductFeature, partyArrangedData, serviceList, BomServiceList } from '../../../helpers/data';
+import { gt } from 'lodash';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
+}
+
+function isEmpty(data) {
+  return !gt(data, 0)
+}
+
+function totalConsumption(params){
+  return ((parseFloat(params.row.allowance)/100) + 1) * parseFloat(params.row.consumption)
+}
+
+function totalMoney(params){
+  return ((((parseFloat(params.row.allowance)/100) + 1) * parseFloat(params.row.consumption)) * params.row.unit_price).toFixed(4)
 }
 
 function BillOfMaterial() {
@@ -241,10 +253,10 @@ function BillOfMaterial() {
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
     { field: 'consumption', headerName: 'Konsumsi', editable: true },
-    { field: 'allowance', headerName: 'Allowance', editable: true },
+    { field: 'allowance', headerName: 'Allowance %', editable: true },
     { field: 'unit_price', headerName: 'Harga', editable: true },
-    { field: 'qty', headerName: 'Total Konsumsi', editable: true},
-    { field: 'jumlah', headerName: 'Total Biaya', editable: true, valueGetter: (params) => ((parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) * parseFloat(params.row.unit_price))  },
+    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption},
+    { field: 'jumlah', headerName: 'Total Biaya', editable: true, valueGetter: totalMoney},
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -315,6 +327,7 @@ function BillOfMaterial() {
       name: load.name,
       qty: load.qty,
       margin: load?.margin,
+      starting_price: load?.starting_price,
       tax: load?.tax,
       start_date: load.start_date,
       end_date: load.end_date,
@@ -563,6 +576,8 @@ function BillOfMaterial() {
           bom_id={id}
           open={openM}
           options={options}
+          items={component}
+          setItems={setComponent}
           handleClose={handleCloseModal}
           updateIt={handleUpdateAllComponentRows}
         />
@@ -571,6 +586,8 @@ function BillOfMaterial() {
           bom_id={id}
           open={openMO}
           options={options2}
+          items={operation}
+          setItems={setOperation}
           handleClose={handleCloseModalO}
           updateIt={handleUpdateAllOperationRows}
         />
@@ -717,44 +734,60 @@ function BillOfMaterial() {
                     <TabContext value={valueTab}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                          <Tab label="Work" value="1" />
-                          <Tab label="Material" value="2" />
-                          <Tab label="Service" value="3" />
-                          <Tab label="Tax" value="4" />
+                          <Tab label="Initial Price" value="1" />
+                          <Tab label="Work" value="2" />
+                          <Tab label="Material" value="3" />
+                          <Tab label="Service" value="4" />
+                          <Tab label="Tax" value="5" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="body1">Starting Price</Typography>
+                          <TextField 
+                            autoComplete="starting_price"
+                            type="number"
+                            {...getFieldProps('starting_price')}
+                            error={Boolean(touched.starting_price && errors.starting_price)}
+                            helperText={touched.starting_price && errors.starting_price}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
+                            }}
+                            sx={{ '& .MuiInputBase-input': {
+                                    textAlign: 'right'
+                                  }
+                                }}
+                          />
+                        </Stack>
+                      </TabPanel>
+                      <TabPanel value="2">
                         <DataGrid 
                           columns={operationColumns}
                           rows={operation}
                           handleAddRow={handleOpenModalO}
                           onEditRowsModelChange={handleEditOperationRowsModelChange}
-                          handleResetRows={handleResetComponentRows}
-                          handleUpdateAllRows={handleUpdateAllOperationRows}
+                          handleResetRows={handleResetOperationRows}
                         />
                       </TabPanel>
-                      <TabPanel value="2">
+                      <TabPanel value="3">
                         <DataGrid 
                           columns={goodsColumns}
                           rows={component}
                           handleAddRow={handleOpenModal}
                           onEditRowsModelChange={handleEditComponentRowsModelChange}
                           handleResetRows={handleResetComponentRows}
-                          handleUpdateAllRows={handleUpdateAllComponentRows}
-                        />                        
+                        />
                       </TabPanel>
-                      <TabPanel value="3">
+                      <TabPanel value="4">
                         <DataGrid 
                           columns={serviceColumns}
                           rows={service}
                           handleAddRow={handleOpenModalS}
-                          onEditRowsModelChange={handleEditServiceRowsModelChange}
-                          handleResetRows={handleResetServiceRows}
-                          handleUpdateAllRows={handleUpdateAllServiceRows}
-                        />                        
+                          onEditRowsModelChange={handleEditComponentRowsModelChange}
+                          handleResetRows={handleResetComponentRows}
+                        />
                       </TabPanel>
-
-                      <TabPanel value="4">
+                      <TabPanel value="5">
                         <Stack direction="row" spacing={2} alignItems="center">
                         <Typography variant="body1">Tax</Typography>
                         <TextField 
@@ -766,10 +799,13 @@ function BillOfMaterial() {
                           InputProps={{
                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                           }}
+                          sx={{ '& .MuiInputBase-input': {
+                                  textAlign: 'right'
+                                }
+                              }}
                         />
                         </Stack>
                       </TabPanel>
-
                     </TabContext>
                   </Box>
                 </CardContent>

@@ -70,25 +70,31 @@ function applySortFilter(array, comparator, query) {
 function DisplayRFQ({ placeHolder }) {
 
   const [quoteData, setQuoteData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
-  });
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const { user } = useAuth();
 
   useEffect(() => {
     handleUpdateData();
   }, [])
 
+  useEffect(() => {
+    handleUpdateData()
+  }, [filterMonthYear])
+
+
   const handleUpdateData = () => {
     const { role } = user;
     let params;
+    
+    setLoading(true);
 
     role.map((item) => {
       if(item.approve && item.submit && item.review) {
@@ -109,7 +115,7 @@ function DisplayRFQ({ placeHolder }) {
       }
     });
 
-    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    params = params + `&monthYear=${filterMonthYear}`;
 
     try{
       API.getRFQ(params, (res) => {
@@ -123,6 +129,9 @@ function DisplayRFQ({ placeHolder }) {
     } catch(error) {
       alert('error')
     }
+
+    setLoading(false);
+
   }
 
   const handleRequestSort = (event, property) => {
@@ -140,29 +149,9 @@ function DisplayRFQ({ placeHolder }) {
     setSelected([]);
   };
 
-  const handleDateChanges = (event) => {
-    const { name, value} = event.target;
-    setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
-          alert('from date cannot be more than to date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
-          alert('to date cannot be less than fron date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
   }
 
 
@@ -199,12 +188,17 @@ function DisplayRFQ({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
-    API.deleteQuote(id, function(res){
-      if(res.success) setQuoteData([]);
-    }).catch(function(error){
+
+    try {
+      API.deleteQuote(id, function(res){
+        if(res.success) setQuoteData([]);
+        handleUpdateData();
+      })
+    } catch {
       alert('error')
-    });
+    }
+
+    handleUpdateData();
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
@@ -217,10 +211,9 @@ function DisplayRFQ({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
-        onGo={handleUpdateData}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -229,6 +222,7 @@ function DisplayRFQ({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -261,12 +255,6 @@ function DisplayRFQ({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">
@@ -294,7 +282,10 @@ function DisplayRFQ({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
+                    {loading ? 
+                      (<Typography variant="body2" align="center">Please Wait</Typography>):
+                      (<SearchNotFound searchQuery={filterName} />)
+                    }
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -303,7 +294,7 @@ function DisplayRFQ({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={quoteData.length}
         rowsPerPage={rowsPerPage}

@@ -6,7 +6,6 @@ import {
   CardHeader, 
   CardContent, 
   Container, 
-  Divider,
   Grid, 
   Tab,
   TextField, 
@@ -29,6 +28,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../../helpers';
+import { _partyAddress } from '../../../../helpers/data'
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -170,7 +170,8 @@ function OutboundDelivery() {
       delivery_date: values.delivery_date
     })
 
-    setSelectedValueSO(data.bought_from)
+    let _bought_from = _partyAddress(data.bought_from)
+    setSelectedValueSO(_bought_from)
   }
 
   const columns = useMemo(() => [
@@ -354,11 +355,13 @@ function OutboundDelivery() {
                             Select
                           </Button>
                         </SpaceBetweenBox>
-                        <div>
-                          <Typography variant="body1">
-                            {selectedValueSO.name}
-                          </Typography>
-                        </div>
+                        { selectedValueSO.name ? (
+                          <div>
+                            <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                            <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                            <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                          </div>
+                        ) : null}
                       </ColumnBox>
                     </Grid>
                   </Grid>

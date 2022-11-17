@@ -29,6 +29,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../../helpers';
+import { _partyAddress } from '../../../../helpers/data';
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -138,15 +139,20 @@ function OutboundDelivery() {
       const _data = {
         ...values, shipment_type_id: 2, user_id: user.id, OD_items: items
       }
-      API.insertShipment(_data, (res)=>{
-        if(!res) return undefined;
-        if(!res.success) alert('failed');
-        else alert('success');
-      })
+      try {
+        API.insertShipment(_data, (res)=>{
+          if(!res) return undefined;
+          if(!res.success) alert('failed');
+          else {
+            handleReset();
+            setSelectedValueSO({});
+            setItems([]);
+          }
+        })  
+      } catch (error) {
+        alert(`error occured ${error}`);
+      }
       setSubmitting(false);
-      handleReset();
-      setSelectedValueSO({});
-      setItems([])
     }
   })
 
@@ -170,7 +176,9 @@ function OutboundDelivery() {
       delivery_date: values.delivery_date
     })
 
-    setSelectedValueSO(data.party)
+    let _party = _partyAddress(data.party)
+
+    setSelectedValueSO(_party)
   }
 
   const columns = useMemo(() => [
@@ -354,11 +362,13 @@ function OutboundDelivery() {
                             Select
                           </Button>
                         </SpaceBetweenBox>
-                        <div>
-                          <Typography variant="body1">
-                            {selectedValueSO.name}
-                          </Typography>
-                        </div>
+                        { selectedValueSO.name ? (
+                          <div>
+                            <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                            <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                            <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                          </div>
+                        ) : null}
                       </ColumnBox>
                     </Grid>
                   </Grid>

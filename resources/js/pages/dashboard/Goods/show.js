@@ -210,21 +210,19 @@ function Goods() {
       return (
         <Paper sx={{padding: 2, height: '100%'}}>
           <img src={file} alt="Image"/>
-          <label htmlFor='upload-file'>
-          <input 
-            accept="image/*" 
-            multiple 
-            id="upload-file" 
-            type="file" 
-            onChange={handleOnFileChange}
-            style={{display: 'none'}}
-          />
-            <Button>
+            <Button component="label" htmlFor="upload-file">
+              <input 
+                accept="image/*" 
+                multiple 
+                id="upload-file" 
+                type="file" 
+                onChange={handleOnFileChange}
+                hidden
+              />              
               <Typography variant="h5">
                 Change File
               </Typography>
             </Button>
-          </label>
         </Paper>
       )
     } else {

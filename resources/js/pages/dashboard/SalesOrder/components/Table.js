@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty } from 'lodash';
 import {
   Box,
   Checkbox,
@@ -155,16 +155,18 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
     setSelected([])
   }
 
+  console.log(selected)
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list?.length) : 0;
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData?.length === 0;  
 
   return (
     <div>
       <ListToolbar
-        numSelected={selected.length}
+        numSelected={selected?.length}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -177,8 +179,8 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={list.length}
-              numSelected={selected.length}
+              rowCount={list?.length}
+              numSelected={selected?.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
             />
@@ -186,7 +188,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  let isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
                   const {
                     id,
                     name,
@@ -239,7 +241,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={list.length}
+        count={list?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -247,13 +249,13 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
       />
       <Box
       sx={{
-        ...(selected.length > 0 && {
+        ...(selected?.length > 0 && {
           color: 'primary.main',
           bgcolor: 'primary.lighter'
         })
       }}
       >
-        {selected.length > 0 ? (
+        {selected?.length > 0 ? (
           <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
             {selected.length} selected
           </Typography>): null

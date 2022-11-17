@@ -83,9 +83,9 @@ export default function BasicTable({ payload, tax }) {
               </TableCell>
               <TableCell align="right">{row.consumption}</TableCell>
               <TableCell align="right">{row.allowance}</TableCell>
-              <TableCell align="right">{row.qty}</TableCell>
+              <TableCell align="right">{parseFloat(row.consumption * ((row.allowance/100)+1)).toFixed(4)}</TableCell>
               <TableCell align="right">{fCurrency(row.unit_price)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(Math.floor(row.qty * row.unit_price))}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(Math.floor((row.consumption * ((row.allowance/100)+1)) * row.unit_price))}</TableCell>
             </TableRow>
           ))}
           

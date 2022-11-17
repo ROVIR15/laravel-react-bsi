@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Page from '../../../components/Page';
 import { 
+  Box,
   Card, 
   CardHeader, 
   CardContent, 
   Container, 
   Divider,
   Grid, 
+  Tab, 
   TextField, 
   Typography, 
   Paper, 
@@ -14,6 +16,7 @@ import {
   Button 
 } from '@mui/material'
 import { styled } from '@mui/material/styles';
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
@@ -33,6 +36,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../helpers/data';
 import { RFQSchema } from '../../../helpers/FormerSchema';
+import { isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -74,6 +78,15 @@ function RFQ() {
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
+
+  /**
+   * TAB Panel
+   */
+  const [valueTab, setValueTab] = React.useState('1');
+
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -224,12 +237,10 @@ function RFQ() {
   }
 
   const columns = useMemo(() => [
-    { field: 'PR_item_id', headerName: 'Purchase Re Item ID', editable: false, visible: 'hide' },
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'id', headerName: 'Purchase Re Item ID', editable: false, visible: 'hide' },
+    { field: 'name', headerName: 'Name', width: 350, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'color', headerName: 'Color', width: 150, editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
@@ -271,11 +282,14 @@ function RFQ() {
                       Select
                     </Button>
                   </SpaceBetweenBox>
-                  <div>
-                    <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
-                    <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
-                    <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
-                  </div>
+                  { selectedValueSO.name ? (
+                    <div>
+                      <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                      <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                      <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                    </div>
+                  ) : null}
+
                   <DialogBox
                     options={options}
                     loading={loading}
@@ -296,11 +310,14 @@ function RFQ() {
                       Select
                     </Button>
                   </SpaceBetweenBox>
+                  { selectedValueSH.name ? (
                   <div>
                     <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
                     <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
                     <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
                   </div>
+                  ) : null}
+
                   <DialogBox
                     options={options2}
                     loading={loading2}
@@ -318,65 +335,79 @@ function RFQ() {
           </Card>
 
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item xs={7}>
+            <Box sx={{ width: '100%', typography: 'body1' }}>
+              <TabContext value={valueTab}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                    <Tab label="Purchase Items" value="1" />
+                    <Tab label="Finance" value="2" />
+                  </TabList>
+                </Box>
+
+              <TabPanel 
+                value="1"
+              >
+              {/* Here You Go */}
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item xs={7}>
+                      <TextField
+                        fullWidth
+                        autoComplete="po_number"
+                        type="text"
+                        label="No PO"
+                        {...getFieldProps('po_number')}
+                        error={Boolean(touched.po_number && errors.po_number)}
+                        helperText={touched.po_number && errors.po_number}
+                      />    
+                    </Grid>
+                  </Grid>       
+                </CardContent>
+                <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
+                <div style={{display: 'flex'}}>
                   <TextField
                     fullWidth
-                    autoComplete="po_number"
-                    type="text"
-                    label="No PO"
-                    {...getFieldProps('po_number')}
-                    error={Boolean(touched.po_number && errors.po_number)}
-                    helperText={touched.po_number && errors.po_number}
-                  />    
-                </Grid>
-              </Grid>       
-            </CardContent>
-            <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
-            <div style={{display: 'flex'}}>
-              <TextField
-                fullWidth
-                autoComplete="issue_date"
-                type="date"
-                placeholder='valid'
-                label="PO Date"
-                {...getFieldProps('issue_date')}
-                error={Boolean(touched.issue_date && errors.issue_date)}
-                helperText={touched.issue_date && errors.issue_date}
-              />
-              <TextField
-                fullWidth
-                autoComplete="valid_thru"
-                type="date"
-                label="Valid to"
-                placeholder='valid'
-                {...getFieldProps('valid_thru')}
-                error={Boolean(touched.valid_thru && errors.valid_thru)}
-                helperText={touched.valid_thru && errors.valid_thru}
-              />
-              <TextField
-                fullWidth
-                autoComplete="delivery_date"
-                type="date"
-                label='Tanggal Pengiriman'
-                {...getFieldProps('delivery_date')}
-                error={Boolean(touched.delivery_date && errors.delivery_date)}
-                helperText={touched.delivery_date && errors.delivery_date}
-              />
-            </div>
-            <DataGrid 
-              columns={columns} 
-              rows={items}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleAddRow={handleOpenModal}
-              handleReset={handleResetRows}
-              handleUpdateAllRows={false}
-            />
-            </CardContent>
+                    autoComplete="issue_date"
+                    type="date"
+                    placeholder='valid'
+                    label="PO Date"
+                    {...getFieldProps('issue_date')}
+                    error={Boolean(touched.issue_date && errors.issue_date)}
+                    helperText={touched.issue_date && errors.issue_date}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="valid_thru"
+                    type="date"
+                    label="Valid to"
+                    placeholder='valid'
+                    {...getFieldProps('valid_thru')}
+                    error={Boolean(touched.valid_thru && errors.valid_thru)}
+                    helperText={touched.valid_thru && errors.valid_thru}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="delivery_date"
+                    type="date"
+                    label='Tanggal Pengiriman'
+                    {...getFieldProps('delivery_date')}
+                    error={Boolean(touched.delivery_date && errors.delivery_date)}
+                    helperText={touched.delivery_date && errors.delivery_date}
+                  />
+                </div>
+                <DataGrid 
+                  columns={columns} 
+                  rows={items}
+                  onEditRowsModelChange={handleEditRowsModelChange}
+                  handleAddRow={handleOpenModal}
+                  handleReset={handleResetRows}
+                  handleUpdateAllRows={false}
+                />
+                </CardContent>              
+              </TabPanel>
+
+              </TabContext>
+            </Box>
           </Card>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton

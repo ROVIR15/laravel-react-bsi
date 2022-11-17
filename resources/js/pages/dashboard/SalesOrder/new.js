@@ -156,10 +156,10 @@ function SalesOrder() {
     const orderItem = data.quote_items.map(function(key, index){
       const {id, product_id, name, size, color} = productItemArrangedData(key.product)
       return {
-        'id': index,
+        'product_feature_id' : id,
+        'id': index+1,
         'quote_item_id' : key.id,
         'product_id' : product_id,
-        'product_feature_id' : id,
         'name' : name,
         'size' : size,
         'color' : color,
@@ -179,6 +179,7 @@ function SalesOrder() {
     });
     setSelectedValueSO(data.party)
     setSelectedValueSH(data.ship)
+
     setItems(orderItem);
   }
 
@@ -294,7 +295,8 @@ function SalesOrder() {
     <Page>
       <Container>
       <Modal 
-        payload={items}
+        items={items}
+        setItems={setItems}
         open={openM}
         options={optionsP}
         handleClose={handleCloseModal}

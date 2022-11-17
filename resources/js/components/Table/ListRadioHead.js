@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // material
 import { visuallyHidden } from '@mui/utils';
-import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
+import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel, Radio } from '@mui/material';
+import { isEmpty } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -32,8 +33,10 @@ export default function ListHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-
+        <TableCell padding="radio">
+          <Radio
+            checked={!isEmpty(numSelected)}
+          />
         </TableCell>
         {headLabel.map((headCell) => (
           <TableCell

@@ -109,6 +109,10 @@ function OutboundDelivery() {
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
   useEffect(() => {
+    handleUpdateData(id)
+  }, [id])
+
+  function handleUpdateData(id){
     try {
       API.getAShipment(id, function(res){
         if(!res) return;
@@ -128,8 +132,7 @@ function OutboundDelivery() {
     } catch (error) {
       alert(error)
     }
-
-  }, [id])
+  }
 
   function changeData(data){
 

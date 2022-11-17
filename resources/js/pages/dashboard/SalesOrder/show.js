@@ -305,7 +305,7 @@ function SalesOrder() {
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
     { field: 'name', headerName: 'Name', width:350, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'color', headerName: 'Color', width: 150, editable: false },
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
     { field: 'cm_price', headerName: 'CM Price', editable: true },
@@ -350,6 +350,7 @@ function SalesOrder() {
       <Container>
       <Modal 
         items={items}
+        setItems={setItems}
         order_id={values.order_id}
         open={openM}
         options={optionsP}

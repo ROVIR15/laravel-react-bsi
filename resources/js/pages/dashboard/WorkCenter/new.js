@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Page from '../../../components/Page';
 import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Stack, Paper, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
@@ -6,6 +6,11 @@ import { styled } from '@mui/material/styles';
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
+
+//Components
+import ColumnBox from '../../../components/ColumnBox';
+import SpaceBetweenBox from '../../../components/SpaceBetweenBox';
+import DialogBoxParty from './components/DialogBox';
 
 //API
 import API from '../../../helpers'
@@ -42,26 +47,36 @@ function WorkCenter() {
     initialValues: {
       name: '',
       work_hours: 0,
-      company_name: '',
+      company_name: 'PT Buana Sandang Indonesia',
       overhead_cost: 0,
       prod_capacity: 0,
       layout_produksi: 0,
       oee_target: '0.0',
       cost_per_hour: 0,
       labor_alloc: 0,
-      description: ''
+      description: '',
+      goods_id: 0
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
-      API.insertWorkCenter(values, function(res){
-        if(res.success) alert('success');
-        else alert('failed')
-      })
-      setSubmitting(false);
+
+      try {
+        API.insertWorkCenter(values, function(res){
+          if(res.success) alert('success');
+          else alert('failed')
+        })
+      } catch(error) {
+        
+      }
+
+      setSubmitting(false);  
+      handleReset();
+      setSelectedValueSH({ name: ''});
+      setImageUrl(null);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, getFieldProps, handleReset } = formik;
 
   const [qty, setQty] = React.useState(0);
   const [layProd, setLayProd] = React.useState(0);
@@ -80,14 +95,99 @@ function WorkCenter() {
     }
   }, [values.labor_alloc, values.cost_per_hour, values.oee_target, qty, values.layout_produksi])
 
+
+  // DialogBox for Party
+  const [optionPF, setOptionPF] = useState([]);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSH = openSH && optionPF.length === 0;
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+  });
+  const [ imageUrl, setImageUrl ] = useState(null);
+
+  const handleSelectProduct = (data) => {
+    if(!data) {
+      return;
+    } else {
+      const { imageUrl, ...rest} = data;
+      setImageUrl(data.imageUrl);
+      setSelectedValueSH(rest);
+      setFieldValue('goods_id', rest.id);
+    }
+    setOpenSH(false);  
+
+  }
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      try {
+        await API.getFinishedGoods((res) => {
+          if(!res) return
+          else {
+            const data = res.data.map(function(item){
+              const { product: {goods}, category } = item;
+              return {...goods, category: category.name};
+            })
+
+            console.log(data);
+
+            setOptionPF(data);
+          }
+        })  
+          
+      } catch (error) {
+        alert('error');        
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+
+  }, [loadingSH]);
   return (
     <Page>
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
+          {/* Select Product */}
+          <Grid item xs={4}>
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+              <CardContent>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Product </Typography>
+                    <Button
+                      onClick={() => setOpenSH(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  {imageUrl ? (<img src={imageUrl} alt="Image"/>) : null}
+                  <div sx={{ 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                   }}>
+                    <Typography variant="body1">
+                      {selectedValueSH?.name}
+                    </Typography>
+                  </div>
+                  <DialogBoxParty
+                    options={optionPF}
+                    loading={loadingSH}
+                    open={openSH}
+                    onClose={(value) => handleSelectProduct(value)}
+                  />
+                </ColumnBox>
+              </CardContent>
+            </Card>  
+          </Grid>
           {/* Work Center Information */}
-          <Grid item xs={12}>
+          <Grid item xs={8}>
             <Card >
               <CardHeader
                 title="Work Center Information"
@@ -95,7 +195,7 @@ function WorkCenter() {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item
-                    xs={6}
+                    xs={12}
                   >
                     <TextField
                       fullWidth
@@ -108,7 +208,7 @@ function WorkCenter() {
                     />
                   </Grid>
                   <Grid item
-                    xs={6}
+                    xs={12}
                   >
                     <TextField
                       fullWidth

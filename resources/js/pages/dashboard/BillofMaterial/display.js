@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isUndefined, isNull, uniqBy } from 'lodash';
 import { styled } from '@mui/material/styles';
 import {
   Card,
@@ -12,10 +12,13 @@ import {
   TablePagination,
   Chip,
 } from '@mui/material';
+
 //components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
+
 // api
 import API from '../../../helpers';
 
@@ -65,10 +68,20 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+  console.log(query)
   if (query[1] !== "All") {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
+    if(query[2] !== 0) {
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 
+              && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1
+              && _b.party?.id === query[2]);
+    } else {
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 
+              && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
+    }
   } else {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    if(query[2] !== 0) return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+                                && _b.party?.id === query[2]);
+    else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -77,23 +90,26 @@ function DisplayBOM({ placeHolder }) {
   let now = new Date()
   
   const [bomData, setBomData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterBuyer, setFilterBuyer] = useState(0);
   const [filterStatus, setFilterStatus] = useState('All');
-  const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(now).format('YYYY-MM-DD'),
-    'fromDate': moment(now).subtract(7, 'days').format('YYYY-MM-DD')
-  });
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   const { user } = useAuth();
 
   useEffect(() => {
     handleUpdateData();
-  }, []);
+  }, [filterMonthYear]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -145,34 +161,15 @@ function DisplayBOM({ placeHolder }) {
     setFilterStatus(event.target.value);
   }
 
-  const handleDateChanges = (event) => {
-    const { name, value} = event.target;
-    setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
-          alert('from date cannot be more than to date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
-          alert('to date cannot be less than fron date');
-          return prevValue;
-        } else {
-          return ({...prevValue, [name]: value});
-        }
-      }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
   }
 
   const handleUpdateData = () => {
     const { role } = user;
     let params;
+
+    setLoading(true);
 
     role.map((item) => {
       if(item.approve) {
@@ -189,7 +186,7 @@ function DisplayBOM({ placeHolder }) {
       }
     });
 
-    params = params + `&fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
+    params = params + `&monthYear=${filterMonthYear}`;
 
     try {
       API.getBOM(params, (res) => {
@@ -197,12 +194,31 @@ function DisplayBOM({ placeHolder }) {
         if(!res.data) {
           setBomData([]);
         } else {
+
+          let buyer = res.data.filter(function(item, index, arr){
+            return !isNull(item.party)
+          }).map(function(obj){
+            return obj.party;
+          })
+
+          let _buyer = uniqBy(buyer, 'id');
+          
+          console.log(_buyer)
+          setOptionsBuyer(_buyer);
+          
           setBomData(res.data);
         }
       });        
     } catch (error) {
       alert(error);
     }
+
+    setLoading(false);
+  }
+
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
   }
 
   const handleDeleteData = (event, id) => {
@@ -222,12 +238,11 @@ function DisplayBOM({ placeHolder }) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bomData.length) : 0;
 
-  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), [filterName, filterStatus]);
+  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), [filterName, filterStatus, filterBuyer]);
   
   const isDataNotFound = filteredData.length === 0;  
 
   function ChipStatus(param, _id){
-    console.log(_id)
     switch (param) {
       case "Submit":
         return <ChipStyled label={param} color="primary"/>
@@ -262,14 +277,18 @@ function DisplayBOM({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
-        dateActive={true}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         statusActive={true}
         filterName={filterName}
         filterStatus={filterStatus}
-        filterDate={filterDate}
         onFilterName={handleFilterByName}
         onFilterStatus={handleFilterByStatus}
-        onFilterDate={handleDateChanges}
         onGo={handleUpdateData}
         placeHolder={placeHolder}
       />
@@ -277,8 +296,8 @@ function DisplayBOM({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
-              order={order}
               active={false}
+              order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
               rowCount={bomData.length}
@@ -345,7 +364,7 @@ function DisplayBOM({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 50]}
+        rowsPerPageOptions={[15, 20, 25]}
         component="div"
         count={bomData.length}
         rowsPerPage={rowsPerPage}

@@ -53,7 +53,6 @@ class OperationController extends Controller
 
         foreach($param as $key){
             array_push($operationsCreation, [
-              
               'name' => $key['name'],
               'seq' => $key['seq'],
               'work_center_id' => $key['work_center_id'],

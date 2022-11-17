@@ -45,11 +45,11 @@
     }
 
     public function party(){
-      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
+      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id')->with('address');
     }
 
     public function ship(){
-        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
     }
 
     public function status(){

@@ -790,11 +790,17 @@ export function _partyArrangedData(data) {
   const { id, name, email, npwp, address: {street, city, province, country, postal_code}, party_roles } = data
   return {
     id, name, email, npwp, phone_number: '083231', address: street, city, province, country, postal_code, 
-    role_type_id: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type.id : null,
-    role_type: party_roles[0].role_type?.valueOf() ? party_roles[0].role_type : null
+    role_type_id: party_roles[0]?.role_type?.valueOf() ? party_roles[0]?.role_type.id : null,
+    role_type: party_roles[0]?.role_type?.valueOf() ? party_roles[0]?.role_type : null
   }
 }
 
+export function _partyAddress(data) {
+  const { id, name, email, npwp, address: {street, city, province, country, postal_code} } = data
+  return {
+    id, name, email, npwp, phone_number: '083231', street, city, province, country, postal_code, 
+  }
+}
 
 // Party
 
@@ -833,7 +839,7 @@ export function bomDocumentArranged(data){
   } else {
     cal_operations = operations.reduce((prevValue, nextValue) => {
       return {
-        total_work_days: prevValue + nextValue.work_center_info.work_hours,
+        total_work_days: prevValue + Math.floor((qty/nextValue.work_center_info.prod_capacity) + nextValue.work_center_info.layout_produksi),
         total_labors: prevValue + nextValue.work_center_info.labor_alloc,
         total_overhead_cost:prevValue + nextValue.work_center_info.overhead_cost,
         total_cost_of_wc: (prevValue) + (nextValue.work_center_info.work_hours * nextValue.work_center_info.cost_per_hour),
@@ -842,6 +848,10 @@ export function bomDocumentArranged(data){
       }
     }, 0);
 
+  }
+
+  function totalConsumption(params){
+    return ((parseFloat(params.allowance)/100) + 1) * parseFloat(params.consumption)
   }
 
   if(isEmpty(bom_items)) {
@@ -853,8 +863,8 @@ export function bomDocumentArranged(data){
   } else {
     cal_material_items = bom_items.reduce((prevValue, nextValue) => {
       return {
-        total_cost_of_items: prevValue.total_cost_of_items + Math.floor(parseFloat(nextValue.qty)*qty*nextValue.unit_price),
-        average_of_product_cost: prevValue.average_of_product_cost + Math.floor(parseFloat(nextValue.qty)*nextValue.unit_price),
+        total_cost_of_items: prevValue.total_cost_of_items + Math.floor(totalConsumption(nextValue)*qty*nextValue.unit_price),
+        average_of_product_cost: prevValue.average_of_product_cost + Math.floor(totalConsumption(nextValue)*nextValue.unit_price),
         components_numbers: bom_items.length
       }
     }, {

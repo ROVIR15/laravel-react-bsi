@@ -9,7 +9,15 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-export default function ValidateRowModelControlGrid({ columns, rows, handleUpdateAllRows, handleAddRow, ...rest }) {
+export default function ValidateRowModelControlGrid({ 
+	columns, 
+	rows, 
+	handleUpdateAllRows, 
+	handleAddRow, 
+	updateActive=false,
+	addItemActive=false,
+	...rest 
+}) {
   
   return (
     <Box
@@ -37,11 +45,11 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleUpdat
         alignItems="flex-start"
         columnGap={1}
       >
-        <Button size="small" onClick={handleUpdateAllRows}>
+        <Button size="small" onClick={handleUpdateAllRows} disabled={!updateActive}>
           Update
         </Button>
 
-				<Button size="small" onClick={handleAddRow}>
+				<Button size="small" onClick={handleAddRow} disabled={!addItemActive}>
           Add Items
         </Button>
       </Stack>

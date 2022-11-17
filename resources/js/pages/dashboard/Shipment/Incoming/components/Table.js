@@ -119,11 +119,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
-    });
+    // API.deleteSalesOrder(id, function(res){
+    //   if(res.success) setSalesOrderData([]);
+    // }).catch(function(error){
+    //   alert('error')
+    // });
   }
 
   const handleDeleteSelected = () => {

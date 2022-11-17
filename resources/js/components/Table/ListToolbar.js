@@ -68,17 +68,21 @@ export default function ListToolbar({
   filterName, 
   filterStatus, 
   filterDate,
+  filterMonthYear,
   filterCategory,
   statusActive=false,
   dateActive=false,
+  monthYearActive=false,
   categoryFilterActive=false,
   onFilterName, 
   onFilterStatus,
   onFilterDate,
+  onFilterMonthYear,
   onFilterCategoryAndSub,
   onGo,
   onDeletedSelected, 
-  placeHolder 
+  placeHolder,
+  sizeSearchBox="medium"
 }) {
   
   function dateForm(){
@@ -90,6 +94,7 @@ export default function ListToolbar({
     if(dateActive)  return (
       <>
         <Stack direction="row" spacing={2}>
+          
         <FormControl fullWidth>
           <TextField
             type="date"
@@ -115,6 +120,27 @@ export default function ListToolbar({
         </FormControl> 
 
         <Button onClick={handleClick}>Go</Button> 
+        </Stack>    
+      </>
+    )
+  }
+
+  function monthYearForm(){
+
+    if(monthYearActive)  return (
+      <>
+        <Stack direction="row" spacing={2}>
+
+        <FormControl fullWidth>
+          <TextField
+            type="month"
+            label="Month"
+            value={filterMonthYear}
+            onChange={onFilterMonthYear}
+            name="month-year"
+          />
+        </FormControl>
+
         </Stack>    
       </>
     )
@@ -169,22 +195,13 @@ export default function ListToolbar({
   }
   
   return (
-    <RootStyle
-      sx={{
-        ...(numSelected > 0 && {
-          color: 'primary.main',
-          bgcolor: 'primary.lighter'
-        })
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography component="div" variant="subtitle1">
-          {numSelected} selected
-        </Typography>
-      ) : (
+    <RootStyle>
+
         <Stack direction="row" spacing={2}>
 
         {dateForm()}
+
+        {monthYearForm()}
 
         {statusFilter()}
 
@@ -195,6 +212,7 @@ export default function ListToolbar({
           onChange={onFilterName}
           placeholder={placeHolder}
           fullWidth
+          size={sizeSearchBox}
           startAdornment={
             <InputAdornment position="start">
               <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
@@ -204,7 +222,6 @@ export default function ListToolbar({
 
         </Stack>
 
-      )}
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">

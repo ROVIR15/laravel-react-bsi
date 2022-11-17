@@ -160,6 +160,7 @@ function Labor({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -183,12 +184,6 @@ function Labor({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{email}</TableCell>
                       <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>

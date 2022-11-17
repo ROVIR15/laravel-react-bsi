@@ -4,9 +4,45 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Manufacture\ManufacturePlanningItems;
+use App\Models\Manufacture\BOM;
 
 class ManufacturePlanningItemsController extends Controller
 {
+    
+    public function getCosting(){
+      try {
+        //code...
+        $query = BOM::whereHas('status', function($query3){
+          $query3->whereIn('status_type', ['Approve', 'Review']);
+        })
+        ->get();
+        return response()->json($query);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json($th);
+      }
+    }
+
+    public function getACosting($id){
+      try {
+        //code...
+        $query = BOM::find($id);
+        return response()->json([
+          'success' => true,
+          'data' => [
+            'id' => $query->id,
+            'name' => $query->name
+          ]
+        ]);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false
+        ]);
+      }
+    }
+
+
     //
     public function store(Request $request)
     {
@@ -14,6 +50,8 @@ class ManufacturePlanningItemsController extends Controller
 
       try {
           ManufacturePlanningItems::create([
+            'facility_id' => $param['facility_id'],
+            'bom_id' => $param['costing_id'],
             'manufacture_planning_id' => $param['manufacture_planning_id'],
             'sales_order_id' => $param['sales_order_id'],
             'expected_output' => $param['expected_output'],
@@ -66,7 +104,7 @@ class ManufacturePlanningItemsController extends Controller
     public function destroy($id)
     {
       try {
-        ManufacturePlanning::destroy($id);
+        ManufacturePlanningItems::find($id)->delete();
         return response()->json([
           'success' => true,
         ], 200);

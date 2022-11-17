@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
+use App\Models\Product\Goods;
 use App\Models\Product\ProductInformationView;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\Product as ProductOneCollection;
@@ -22,9 +23,10 @@ class ProductController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ProductInformationView::all();
+      $query = Goods::all();
 
-      return new ProductCollection($query);
+      return response()->json($query);
+      // return new ProductCollection($query);
     }
 
     /**

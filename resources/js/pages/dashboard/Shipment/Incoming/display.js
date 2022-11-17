@@ -76,7 +76,7 @@ function OutboundDelivery({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   useEffect(() => {
     function isEmpty(array){
@@ -189,6 +189,7 @@ function OutboundDelivery({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -219,12 +220,7 @@ function OutboundDelivery({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
+
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">
                         <b>{status[0]?.status_type?.name}</b>
@@ -259,7 +255,7 @@ function OutboundDelivery({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={goodsReceipt.length}
         rowsPerPage={rowsPerPage}

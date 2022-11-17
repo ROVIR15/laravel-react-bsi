@@ -37,7 +37,7 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 //Helpers
-import {productFeatureArrangedData, productItemArrangedData} from '../../../helpers/data'
+import {productFeatureArrangedData, productItemArrangedData, _partyAddress} from '../../../helpers/data'
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -170,8 +170,12 @@ function SalesOrder() {
       valid_thru: data.valid_thru,
       delivery_date: data.delivery_date,
     });
-    setSelectedValueSO(data.party)
-    setSelectedValueSH(data.ship)
+
+    let _party = _partyAddress(data.party)
+    let _ship = _partyAddress(data.ship)
+
+    setSelectedValueSO(_party)
+    setSelectedValueSH(_ship)
     setItems(orderItem);
   }
 
@@ -251,11 +255,9 @@ function SalesOrder() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
+    { field: 'name', headerName: 'Name', width: 350, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'color', headerName: 'Color', width: 150, editable: false },
     { field: 'qty', headerName: 'Quantity', type: 'number', editable: true },
     { field: 'unit_price', type: 'number', headerName: 'Unit Price', editable: true },
     { field: 'delivery_date', type: 'date', headerName: 'Delivery Date', editable: true },
@@ -346,11 +348,13 @@ function SalesOrder() {
                         Select
                       </Button>
                     </SpaceBetweenBox>
-                    <div>
-                      <Typography variant="body1">
-                        {selectedValueSO.name}
-                      </Typography>
-                    </div>
+                    { selectedValueSO.name ? (
+                      <div>
+                        <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                        <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                        <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                      </div>
+                    ) : null}
                   </ColumnBox>
                   <Divider orientation="vertical" variant="middle" flexItem />
                   <ColumnBox>
@@ -362,11 +366,13 @@ function SalesOrder() {
                         Select
                       </Button>
                     </SpaceBetweenBox>
+                    { selectedValueSH.name ? (
                     <div>
-                      <Typography variant="body1">
-                        {selectedValueSH.name}
-                      </Typography>
+                      <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
+                      <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
+                      <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
                     </div>
+                    ) : null}
                   </ColumnBox>
 
                 </Stack>

@@ -24,11 +24,16 @@ class WorkCenter extends Model
         'cost_per_hour',
         'labor_alloc',
         'oee_target',
+        'goods_id',
         'description'
     ];
 
     public function operation(){
         return $this->hasMany('App\Models\Manufacture\Operation');
+    }
+
+    public function goods(){
+        return $this->belongsTo('App\Models\Product\Goods', 'goods_id', 'id');
     }
 
 }

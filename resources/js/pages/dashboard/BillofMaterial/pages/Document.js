@@ -115,6 +115,7 @@ function Document(){
   const { pathname } = useLocation();
 
   const [margin, setMargin] = useState('0');
+  const [startingPrice, setStartingPrice] = useState('0');
   const [finalPrice, setFinalPrice] = useState('0');
 
   const [submit, setSubmit] = useState(false);
@@ -258,6 +259,7 @@ function Document(){
         setItems(res.data?.bom_items);
         setService(res.data?.bom_services);
         setOp(res.data?.operations);
+        setStartingPrice(res.data?.starting_price);
         setFinalPrice(res.data?.final_price);
         setStatus(res.data?.status[0]);
       })
@@ -569,6 +571,7 @@ function Document(){
                 review={review} 
                 margin={margin} 
                 setMargin={setMargin} 
+                startingPrice={startingPrice}
                 finalPrice={finalPrice} 
                 setFinalPrice={setFinalPrice} 
                 tax={data.tax}

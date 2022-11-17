@@ -1,24 +1,24 @@
 import * as React from 'react';
+import * as Yup from 'yup';
+import { LoadingButton } from '@mui/lab';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import { Autocomplete, Button, CardActions, Grid, MenuItem, Select, TextField } from '@mui/material';
 
-import { Icon } from '@iconify/react';
-import SquareOutline from '@iconify/icons-eva/square-outline';
-import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
-
-const icon = <Icon icon={SquareOutline}/>;
-const checkedIcon = <Icon icon={CheckSquareOutline} />;
+import { useFormik, Form, FormikProvider } from 'formik';
 
 // Components
 import API from '../../../../helpers';
 
+import { isArray, isEmpty, isString } from 'lodash'
 import Table from './Table';
-import { orderItemArrangedData } from '../../../../helpers/data';
+import { useLocation, useParams } from 'react-router-dom';
+import { isEditCondition } from '../../../../helpers/data';
+
+import { IconButton, Stack } from '@mui/material';
+import { Icon } from '@iconify/react';
+import closeCircle from '@iconify/icons-eva/close-outline';
 
 const style = {
   position: 'absolute',
@@ -28,16 +28,96 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ order_id, payload, update, open, options, handleClose, selected, setSelected}) {
+export default function BasicModal({ order_id, onAddItems, update, open, options, handleClose, selected, setSelected}) {
+  const {id} = useParams();
+  const { pathname } = useLocation();
   const [value, setValue] = React.useState([])
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
 
-  React.useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
+  const GoodsSchema = Yup.object().shape({
+    facility_id: Yup.number().min(1, 'The minimum is one').required('Facility is required'),
+    costing_id: Yup.number().min(1, 'The minimum amount is one').required('is required'),
+    selectedItem: Yup.object().required('You Fucked up')
+  });
+
+  //Formik
+  const formik = useFormik({
+    initialValues: {
+      facility_id: 0,
+      costing_id: 0,
+      selectedItem: {}
+    },
+    validationSchema: GoodsSchema,
+    onSubmit: (values) => {
+      console.log(values)
+      let { selectedItem, facility_id, costing_id } = values;
+      let payload = { ...selectedItem, facility_id, costing_id };
+      if(isEditCondition(pathname.split('/'), id)) {
+        // if(isEmpty(values?.id)) {
+          // let { costing_name, facility_name, id, ...rest} = selectedItem;
+          // try {
+          //   API.updateManufacturePlanningItems(id, rest, function(){
+          //     if(res.success) alert('success');
+          //     else throw new Error('failed')
+          //   })
+          // } catch (error) {
+          //   alert(error);
+          // }
+        // } else {
+          try {
+            API.setManufacturePlanningItems(payload, function(res){
+              if(!res.success) throw new Error('Failed');
+              else alert('success');
+            })
+          } catch(error) {
+            alert(error)
+          }  
+        // }
+      } else {
+        onAddItems(payload)
+      }
+
+      handleClose();
+      handleReset();
+      setItems([]);
+      setSubmitting(false);
     }
+  });
+
+  const { 
+    errors, 
+    touched, 
+    values, 
+    isSubmitting, 
+    setSubmitting, 
+    handleSubmit, 
+    handleReset,
+    setValues,
+    getFieldProps, 
+    setFieldValue 
+  } = formik;
+
+  const handleSelectedItems = (value) => {
+    setFieldValue('selectedItem', value);
+  }
+
+  const handleAutoComplete = (value) => {
+    if(isString(value)) {
+      setFieldValue('costing_id', value.split('-')[0])
+    }
+  }
+
+  //Line Option
+  const [optionsLine, setOptionsLine] = React.useState([]);
+  const loadingLine = optionsLine.length === 0;
+
+  //Costing Option
+  const [optionsCosting, setOptionsCosting] = React.useState([]);
+  const loadingCosting = optionsCosting.length === 0;
+
+
+  React.useEffect(() => {
 
     API.getSalesOrder('', (res) => {
 		if(!res) return
@@ -59,6 +139,62 @@ export default function BasicModal({ order_id, payload, update, open, options, h
     });
   }, [order_id])
 
+  React.useEffect(() => {
+    let active = true;
+
+    if(!loadingLine){
+      return undefined
+    }
+
+    if(optionsLine.length > 0 || optionsLine.length != 0) return
+    else {
+
+      try {
+        API.getFacility('?type=line-sewing', function(res){
+          setOptionsLine(res.data);
+        })          
+      } catch (error) {
+        alert('error') 
+      }
+    }
+
+    return () => {
+      active= false
+    }
+  }, [loadingLine])
+
+  React.useEffect(() => {
+    let active = true;
+
+    if(!loadingCosting){
+      return undefined
+    }
+
+    if(optionsCosting.length > 0 || optionsCosting.length != 0) return
+    else {
+      try {
+        API.getCostingList(function(res){
+          if(!res.length) return;
+          else {
+            let _data = res.map(function(item){
+              return {
+                id: item?.id,
+                name: item?.name
+              }
+            })
+            setOptionsCosting(_data);  
+          }
+        })          
+      } catch (error) {
+        alert('error') 
+      }
+    }
+
+    return () => {
+      active= false
+    }
+  }, [loadingCosting])
+
   return (
     <div>
       <Modal
@@ -66,13 +202,89 @@ export default function BasicModal({ order_id, payload, update, open, options, h
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
+      <FormikProvider value={formik}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Card sx={style}>
-          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Sales Order
-          </Typography>
+          <Grid container direction="row" spacing={2}>
+            <Grid item xs={12}>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Add New Items 
+                </Typography>
+                <IconButton onClick={handleClose} color="error">
+                  <Icon icon={closeCircle}/>
+                </IconButton>
+              </Stack>
+            </Grid>
 
-          <Table list={value} selected={selected} setSelected={setSelected} update={update}/>
+            <Grid item xs={6}>
+              <Select
+                size='small'
+                fullWidth
+                sutoComplete="Line"
+                value={values.facility_id}
+                {...getFieldProps('facility_id')}
+                error={Boolean(touched.facility_id && errors.facility_id)}
+                helperText={touched.facility_id && errors.facility_id}
+                sx={{ height: 1 }}
+                autoFocus
+              >
+                {
+                  (!isArray(optionsLine)? 'Loading...' : 
+                    optionsLine.map(function(x){
+                      return (
+                        <MenuItem value={x.id}>{x.name}</MenuItem>
+                      ) 
+                    })
+                  )
+                }
+              </Select>
+            </Grid>
+
+
+            <Grid item xs={6}>
+              <Autocomplete
+                size='small'
+                disablePortal
+                onInputChange={(event, newInputValue) => {
+                  handleAutoComplete(newInputValue);
+                }}
+                options={optionsCosting}
+                isOptionEqualToValue={(option, value) => {
+                  return option.id === value
+                }}
+                getOptionLabel={(option) => `${option.id}-${option.name}`}
+                renderInput={(params) => <TextField fullWidth {...params} />}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Table list={value} selected={values.selectedItem} setSelected={handleSelectedItems} update={update}/>
+            </Grid>
+          </Grid>
+
+          <CardActions sx={{ justifyContent: 'end'}}>
+            <LoadingButton
+              size="small"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button
+              size="medium"
+              color="grey"
+              variant="contained"
+              sx={{ m: 1 }}
+            >
+              Cancel
+            </Button>
+          </CardActions>
         </Card>
+      </Form>
+      </FormikProvider>
       </Modal>
     </div>
   );

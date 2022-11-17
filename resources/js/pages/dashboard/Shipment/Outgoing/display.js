@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { filter, isArray } from 'lodash';
 import {
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableRow,
@@ -18,11 +18,9 @@ import {
   ListToolbar, 
   MoreMenu 
 } from '../../../../components/Table';
-//
-import BUYERLIST from '../../../../_mocks_/buyer';
+
 // api
 import API from '../../../../helpers';
-import { outboundShipmentArrangedData } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -63,7 +61,8 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`
+    return filter(array, (_b) => _b.serial_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -76,17 +75,26 @@ function OutboundDelivery({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   useEffect(() => {
+    handleUpdateData();
+  }, [filterMonthYear])
+
+  const handleUpdateData = () => {
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
       return !array.length;
     }
 
     if(isEmpty(goodsReceipt)) {
+      let params = '?shipment_type=2';
+      params = params + `&monthYear=${filterMonthYear}`;
+
       try {
-        API.getShipment('?shipment_type=2', (res) => {
+        API.getShipment(params, (res) => {
           if(!res) return
           if(!res.data) {
             setGoodsReceipt([]);
@@ -95,25 +103,14 @@ function OutboundDelivery({ placeHolder }) {
           }
         });
       } catch (error) {
-        alert(error)
+        alert(`error occured ${error}`)
       }
-
     }
-  }, [])
+  }
 
-  const changeData = (payload) => {
-    if(!payload) return undefined;
-    if(!Array.isArray(payload)) return undefined;
-    let newData = payload.map((item) => {
-      return {
-        id: item.id,
-        delivery_date: item.delivery_date,
-        buyer_name: item.buyer.name,
-        receiver_name: item.ship.name,
-        po_number: item.sales.po_number
-      }
-    });
-    setGoodsReceipt(newData);
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
   }
 
   const handleRequestSort = (event, property) => {
@@ -131,24 +128,6 @@ function OutboundDelivery({ placeHolder }) {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -164,10 +143,17 @@ function OutboundDelivery({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteGoodsReceipt(id, function(res){
-      if(res.success) setGoodsReceipt([]);
-      else alert('error');
-    });
+
+    try {
+      API.deleteGoodsReceipt(id, function(res){
+        if(res.success) setGoodsReceipt([]);
+        else alert('failed');
+      });  
+    } catch(error) {
+      alert(`error occured ${error}`)
+    }
+
+    handleUpdateData();
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
@@ -180,6 +166,9 @@ function OutboundDelivery({ placeHolder }) {
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
@@ -188,6 +177,7 @@ function OutboundDelivery({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -218,12 +208,6 @@ function OutboundDelivery({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">
                         <b>{status[0]?.status_type?.name}</b>
@@ -258,7 +242,7 @@ function OutboundDelivery({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 20, 25]}
         component="div"
         count={goodsReceipt.length}
         rowsPerPage={rowsPerPage}

@@ -1,18 +1,11 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
+import { IconButton, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 
 import { Icon } from '@iconify/react';
-import SquareOutline from '@iconify/icons-eva/square-outline';
-import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
-
-const icon = <Icon icon={SquareOutline}/>;
-const checkedIcon = <Icon icon={CheckSquareOutline} />;
+import closeCircle from '@iconify/icons-eva/close-outline';
 
 // Components
 import API from '../../../../helpers';
@@ -26,7 +19,6 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   p: 4,
 };
 
@@ -65,9 +57,14 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Product to Inquiry Item
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Select Items 
+            </Typography>
+            <IconButton onClick={handleClose} color="error">
+              <Icon icon={closeCircle}/>
+            </IconButton>
+          </Stack>
           <Table list={options} selected={items} setSelected={setItems}/>
         </Card>
       </Modal>

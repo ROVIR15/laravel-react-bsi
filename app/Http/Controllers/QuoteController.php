@@ -30,14 +30,23 @@ class QuoteController extends Controller
       $level = $request->query('level');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
-      
+      $monthYear = $request->query('monthYear');
+
       if(empty($fromDate) || empty($thruDate)){
         $thruDate = date('Y-m-d');
         $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
         $fromDate = date_format($fromDate, 'Y-m-d');
       }
 
+      if(empty($monthYear)){
+        $monthYear = date('Y-m-d');
+      }
+
       $query;
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
 
       switch ($type) {
         case 'SO':
@@ -47,7 +56,10 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              })
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
               // return response()->json($query);
               return new QuoteViewCollection($query);
               break;
@@ -56,15 +68,26 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Submit', 'Reject Approve', 'Reject Review']);
-              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              })
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
               return new QuoteViewCollection($query);
               break;
               
-            default:
+            case 'submit':
               # code...
-              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
+              
               return new QuoteViewCollection($query);
               break;
+
+            default:
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->get();
+              return new QuoteViewCollection($query);
           }
         case 'PO':
           # code...
@@ -73,7 +96,11 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              })
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
+
               return new QuoteViewCollection($query);
               break;
 
@@ -81,21 +108,40 @@ class QuoteController extends Controller
               # code...
               $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function($query2){
                 $query2->whereIn('status_type', ['Submit', 'Review', 'Reject Review']);
-              })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              })
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
+
               return new QuoteViewCollection($query);
               break;
               
-            default:
+            case 'submit':
               # code...
               // $query = QuoteStatus::whereHas
-              $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+              $query = Quote::with('sum', 'status')              
+              ->where('quote_type', 'PO')
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
+
               return new QuoteViewCollection($query);
               break;
+
+            default:
+              $query = Quote::with('sum', 'status')              
+                        ->get();
+
+              return new QuoteViewCollection($query);
           }
         default:
           # code...
-          $query = Quote::with('sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
-          return new QuoteViewCollection($query);
+          $query = Quote::with('sum')
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
+
+          // return new QuoteViewCollection($query);
           break;
       }
 

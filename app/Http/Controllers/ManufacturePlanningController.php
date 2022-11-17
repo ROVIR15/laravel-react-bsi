@@ -57,6 +57,8 @@ class ManufacturePlanningController extends Controller
 
         foreach ($param['items'] as $key) {
             array_push($list, [
+                'facility_id' => $key['facility_id'],
+                'bom_id' => $key['costing_id'],
                 'manufacture_planning_id' => $plan['id'],
                 'sales_order_id' => $key['id'],
                 'expected_output' => $key['expected_output'],

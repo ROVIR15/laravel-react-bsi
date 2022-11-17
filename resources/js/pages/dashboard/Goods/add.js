@@ -5,8 +5,26 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
-import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormControl, Grid, InputLabel, MenuItem, Typography, Select, TextField, MenuList } from '@mui/material';
+import { 
+  Paper, 
+  Button, 
+  Container, 
+  Card, 
+  CardHeader, 
+  CardContent, 
+  FormControl, 
+  Grid, 
+  InputLabel, 
+  MenuItem, 
+  Typography, 
+  Select, 
+  TextField, 
+  MenuList, 
+  InputAdornment 
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
+
+import { fNumber } from '../../../utils/formatNumber';
 import CustomMultiSelect from '../../../components/CustomMultiSelect';
 
 import { isArray } from 'lodash'
@@ -56,9 +74,18 @@ function Goods() {
         feature_one: feature_one.split(','),
         feature_two: feature_two.split(',')
       }
-      API.insertGoods(_new, function(res){
-        handleReset();
-      })
+
+      try {
+        API.insertGoods(_new, function(res){
+          if(res.success) alert('success');
+          else alert('failed')
+        })  
+      } catch (error) {
+        alert(`error occured is ${error}`);
+      }
+
+      handleReset();
+      setFile(null)
       setSubmitting(false);
     }
   });
@@ -130,21 +157,19 @@ function Goods() {
       return (
         <Paper sx={{padding: 2, height: '100%'}}>
           <img src={file} alt="Image"/>
-          <label htmlFor='upload-file'>
-          <input 
-            accept="image/*" 
-            multiple 
-            id="upload-file" 
-            type="file" 
-            onChange={handleOnFileChange}
-            style={{display: 'none'}}
-          />
-            <Button>
+            <Button component="label" htmlFor="upload-file">
+              <input 
+                accept="image/*" 
+                multiple 
+                id="upload-file" 
+                type="file" 
+                onChange={handleOnFileChange}
+                hidden
+              />              
               <Typography variant="h5">
                 Change File
               </Typography>
             </Button>
-          </label>
         </Paper>
       )
     } else {
@@ -243,7 +268,7 @@ function Goods() {
                     />
                   </Grid>
 
-                  <Grid item xs={7}>
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="unit_measurement"
@@ -254,12 +279,14 @@ function Goods() {
                       helperText={touched.unit_measurement && errors.unit_measurement}
                     />
                   </Grid>
-
-                  <Grid item xs={7}>
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">Rp.</InputAdornment>
+                      }}
                       autoComplete="value"
-                      type="text"
+                      type="number"
                       label="Nilai Produk"
                       {...getFieldProps('value')}
                       error={Boolean(touched.value && errors.value)}

@@ -9,16 +9,16 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Radio,
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListRadioHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
 // api
 import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
-import { isEditCondition } from '../../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +65,6 @@ function applySortFilter(array, comparator, query) {
 
 function TableD({ list, placeHolder, update, selected, setSelected}) {
   const {id} = useParams();
-  const { pathname } = useLocation();
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -80,47 +79,16 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
   const handleClick = (event, name) => {
-    const selectedIndex = selected.map(e => e.id).indexOf(name.id);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      if(isEditCondition(pathname.split('/'), id)) {
-        try {
-          let payload = {
-            manufacture_planning_id: id,
-            sales_order_id: name.id,
-            expected_output: 0,
-            work_days: 0
-          }
-          API.setManufacturePlanningItems(payload, function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
-          update();
-        } catch(e) {
-          alert(e);
-        }
-      }
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+    let payload = {
+      id: name.id,
+      manufacture_planning_item_id: name.id,
+      manufacture_planning_id: id,
+      sales_order_id: name.id,
+      expected_output: 0,
+      work_days: 0
     }
-    setSelected(newSelected);
+    setSelected(payload);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -138,7 +106,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
     API.deleteSalesOrder(id, function(res){
       if(res.success) setSalesOrderData([]);
     }).catch(function(error){
@@ -164,24 +131,28 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
         onDeletedSelected={handleDeleteSelected}
+        sizeSearchBox="small"
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
-            <ListHead
+          <Table
+            size="small"
+          >
+            <ListRadioHead
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
               rowCount={list.length}
-              numSelected={selected.length}
+              numSelected={selected}
               onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
+              // onSelectAllClick={handleSelectAllClick}
             />
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
+                  let isItemSelected = false;
+                  if(selected?.manufacture_planning_item_id || selected?.sales_order_id) isItemSelected = selected.manufacture_planning_item_id === row.id || selected.sales_order_id === row.id;
                   const {
                     id,
                     order_id,
@@ -195,12 +166,12 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                       hover
                       key={id}
                       tabIndex={-1}
-                      role="checkbox"
+                      role="radio"
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
+                      <TableCell padding="radio">
+                        <Radio
                           checked={isItemSelected}
                           onChange={(event) => handleClick(event, row)}
                         />

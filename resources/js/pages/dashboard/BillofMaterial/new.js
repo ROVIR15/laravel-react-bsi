@@ -43,6 +43,19 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { optionProductFeature, partyArrangedData, serviceList } from '../../../helpers/data'
+import { gt } from 'lodash';
+
+function isEmpty(data) {
+  return !gt(data, 0)
+}
+
+function totalConsumption(params){
+  return ((parseFloat(params.row.allowance)/100) + 1) * parseFloat(params.row.consumption)
+}
+
+function totalMoney(params){
+  return ((((parseFloat(params.row.allowance)/100) + 1) * parseFloat(params.row.consumption)) * params.row.unit_price).toFixed(4)
+}
 
 function BillOfMaterial() {
   const { pathname } = useLocation();
@@ -163,6 +176,7 @@ function BillOfMaterial() {
       company_name: 'PT Buana Sandang Indonesia',
       qty: 0,
       margin: 0,
+      starting_price: 0,
       tax: 11,      
       start_date: '',
       end_date: ''
@@ -242,9 +256,9 @@ function BillOfMaterial() {
     { field: 'color', headerName: 'Color', editable: true },
     { field: 'brand', headerName: 'Brand', editable: false },
     { field: 'consumption', headerName: 'Konsumsi', editable: true },
-    { field: 'allowance', headerName: 'Allowance', editable: true },
+    { field: 'allowance', headerName: 'Allowance %', editable: true },
     { field: 'unit_price', headerName: 'Harga', editable: true },
-    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: (params) => (parseFloat(params.row.allowance) + parseFloat(params.row.consumption)) },
+    { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -400,14 +414,16 @@ function BillOfMaterial() {
           open={openM}
           options={options}
           handleClose={handleCloseModal}
-          setComponent={setComponent}
+          items={component}
+          setItems={setComponent}
         />
         <Modal2
           payload={[]}
           open={openMO}
           options={options2}
           handleClose={handleCloseModalO}
-          setComponent={setOperation}
+          items={operation}
+          setItems={setOperation}
         />
         <Modal3
           payload={[]}
@@ -553,13 +569,33 @@ function BillOfMaterial() {
                     <TabContext value={valueTab}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                          <Tab label="Work" value="1" />
-                          <Tab label="Material" value="2" />
-                          <Tab label="Service" value="3" />
-                          <Tab label="Tax" value="4" />
+                          <Tab label="Initial Price" value="1" />
+                          <Tab label="Work" value="2" />
+                          <Tab label="Material" value="3" />
+                          <Tab label="Service" value="4" />
+                          <Tab label="Tax" value="5" />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="body1">Starting Price</Typography>
+                          <TextField 
+                            autoComplete="starting_price"
+                            type="number"
+                            {...getFieldProps('starting_price')}
+                            error={Boolean(touched.starting_price && errors.starting_price)}
+                            helperText={touched.starting_price && errors.starting_price}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
+                            }}
+                            sx={{ '& .MuiInputBase-input': {
+                                    textAlign: 'right'
+                                  }
+                                }}
+                          />
+                        </Stack>
+                      </TabPanel>
+                      <TabPanel value="2">
                         <DataGrid 
                           columns={operationColumns}
                           rows={operation}
@@ -568,7 +604,7 @@ function BillOfMaterial() {
                           handleResetRows={handleResetOperationRows}
                         />
                       </TabPanel>
-                      <TabPanel value="2">
+                      <TabPanel value="3">
                         <DataGrid 
                           columns={goodsColumns}
                           rows={component}
@@ -577,7 +613,7 @@ function BillOfMaterial() {
                           handleResetRows={handleResetComponentRows}
                         />
                       </TabPanel>
-                      <TabPanel value="3">
+                      <TabPanel value="4">
                         <DataGrid 
                           columns={serviceColumns}
                           rows={service}
@@ -586,7 +622,7 @@ function BillOfMaterial() {
                           handleResetRows={handleResetComponentRows}
                         />
                       </TabPanel>
-                      <TabPanel value="4">
+                      <TabPanel value="5">
                         <Stack direction="row" spacing={2} alignItems="center">
                         <Typography variant="body1">Tax</Typography>
                         <TextField 
@@ -598,6 +634,10 @@ function BillOfMaterial() {
                           InputProps={{
                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                           }}
+                          sx={{ '& .MuiInputBase-input': {
+                                  textAlign: 'right'
+                                }
+                              }}
                         />
                         </Stack>
                       </TabPanel>

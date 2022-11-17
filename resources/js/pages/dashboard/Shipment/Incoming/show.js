@@ -29,6 +29,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../../helpers';
+import { _partyAddress, _shipmentItem } from '../../../../helpers/data';
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -39,7 +40,6 @@ import AutoComplete from './components/AutoComplete';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { useParams } from 'react-router-dom';
-import { _shipmentItem } from '../../../../helpers/data';
 import useAuth from '../../../../context';
 
 const ColumnBox = styled('div')(({theme}) => ({
@@ -90,6 +90,10 @@ function OutboundDelivery() {
    */
 
   useEffect(() => {
+    handleChangeData(id);
+  }, [id])
+
+  function handleChangeData(id){
     if(!id) return;
 
     try {
@@ -97,6 +101,7 @@ function OutboundDelivery() {
         if(!res) return;
         if(!res.data) return;
         else {
+
           const { 
             order,
             items,
@@ -105,8 +110,9 @@ function OutboundDelivery() {
             ...info
           } = res.data;
           setValues(info);
-          setPONumber(order?.sales_order?.po_number);
-          setSelectedValueSO(order?.sales_order?.ship);
+          setPONumber(order?.purchase_order?.po_number);
+          let _ship = _partyAddress(order?.purchase_order?.ship)
+          setSelectedValueSO(_ship);
           setStatus(status[0]?.shipment_type_status_id)
           let _items = _shipmentItem(items);
           setItems(_items);
@@ -115,7 +121,7 @@ function OutboundDelivery() {
     } catch (error){
       alert('error')
     }
-  }, [id])
+  }
   
   /**
    * TAB Panel
@@ -369,11 +375,14 @@ function OutboundDelivery() {
                             Select
                           </Button>
                         </SpaceBetweenBox>
-                        <div>
-                          <Typography variant="body1">
-                            {selectedValueSO.name}
-                          </Typography>
-                        </div>
+                        { selectedValueSO.name ? (
+                          <div>
+                            <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
+                            <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
+                            <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                          </div>
+                        ) : null}
+
                       </ColumnBox>
                     </Grid>
                   </Grid>
@@ -399,8 +408,9 @@ function OutboundDelivery() {
                       rows={items}
                       onEditRowsModelChange={handleEditRowsModelChange}
                       handleAddRow={handleOpenModal}
+                      addItemActive={false}
+                      updateActive={false}
                       handleReset={handleResetRows}
-                      handleUpdateAllRows={false}
                     />
                   </TabPanel>
                   {/* Status of Shipment */}

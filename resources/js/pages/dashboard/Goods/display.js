@@ -58,7 +58,7 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
+  
   if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
       return (
@@ -66,8 +66,13 @@ function applySortFilter(array, comparator, query) {
         && _b.category_id === query[1]
       )
     });
+  } else {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      )
+    });
   }
-  return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayBuyer({ placeHolder }) {
@@ -78,7 +83,7 @@ function DisplayBuyer({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [filterCategory, setFilterCategory] = useState(0);
 
   useEffect(() => {
@@ -180,6 +185,7 @@ function DisplayBuyer({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -203,12 +209,6 @@ function DisplayBuyer({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
@@ -241,7 +241,7 @@ function DisplayBuyer({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 20, 25]}
         component="div"
         count={goodsData.length ? goodsData.length : 0}
         rowsPerPage={rowsPerPage}

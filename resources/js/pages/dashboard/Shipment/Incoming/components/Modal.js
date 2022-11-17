@@ -35,24 +35,21 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
     }
 
     if(order_id) {
-      API.getAPurchaseOrderItem(order_id, (res) => {
-        if(!res) return
-        if(!res.data.length) {
-            setValue([]);
-        } else {
-          let ras = _orderItem(res.data);
-          setValue(ras)
-        }
-      });
-      // API.getMonitoringSupermarket(`?sales-order=${order_id}`, (res) => {
-		  // if(!res) return
-		  // if(!res.data.length) {
-      //     setValue([]);
-      //   } else {
-      //     let ras = optionSupermarket(res.data);
-      //     setValue(ras)
-      //   }
-      // });
+
+      try {
+        API.getAPurchaseOrderItem(order_id, (res) => {
+          if(!res) return
+          if(!res.data.length) {
+              setValue([]);
+          } else {
+            let ras = _orderItem(res.data);
+            setValue(ras)
+          }
+        });  
+      } catch (error) {
+        alert(error);
+      }
+
     }
   }, [order_id])
 

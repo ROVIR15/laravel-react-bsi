@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Page from '../../../components/Page';
 import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
@@ -13,21 +13,29 @@ import { LoadingButton } from '@mui/lab';
 import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 
-//Component
-import DataGrid from '../../../components/DataGrid';
+//Components
+import ColumnBox from '../../../components/ColumnBox';
+import SpaceBetweenBox from '../../../components/SpaceBetweenBox';
+import DialogBoxParty from './components/DialogBox';
 
+
+function capacityProd(labor_alloc, oee_target){
+  return Math.floor(parseInt(labor_alloc) * parseFloat(oee_target) * 8);
+}
 
 function costEachDay(work_hours, cost_per_hour, overhead_cost){
   return Math.floor((parseInt(work_hours) * parseInt(cost_per_hour)) + parseInt(overhead_cost));
 }
 
 function daysOfWorks(qty, targetEachDay, layout_produksi){
+  if(!layout_produksi) return "Isi inputan layout produksi"
   return Math.floor(parseFloat(parseInt(qty)/parseFloat(targetEachDay))+Math.floor(layout_produksi))
 }
 
 function ShowWorkCenter() {
 
   const {id} = useParams();
+  const [qty, setQty] = useState(0);
 
   const WorkCenterSchema = Yup.object().shape({
     id: Yup.string().required('is required'),
@@ -51,9 +59,10 @@ function ShowWorkCenter() {
       company_name: '',
       overhead_cost: 0,
       prod_capacity: 0,
-      layout_produksi: 0,
+      layout_produksi: 1,
       oee_target: 0,
       cost_per_hour: 0,
+      qty: 0,
       labor_alloc: 0,
       description: ''
     },
@@ -67,25 +76,145 @@ function ShowWorkCenter() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setValues, setFieldValue, getFieldProps } = formik;
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if(!id) return;
     
-    API.getAWorkCenter(id, (res) => {
-      setValues(res.data);
-    })
+    try{
+      API.getAWorkCenter(id, (res) => {
+        if(!res.data) alert('failed');
+        else {
+          setValues(res.data);
+          setSelectedValueSH(res.data.goods);
+          setImageUrl(res.data.goods.imageUrl);  
+          calculate(res.data)
+        }
+      })
+    } catch (error) {
+      alert('error');
+    }
 
   }, [id]);
+
+  React.useEffect(() => {
+    if(!qty) return;
+    else calculate(values);
+  }, [qty, values.layout_produksi])
+
+  function calculate(values){
+    if(!values.labor_alloc) return;
+    let { labor_alloc, cost_per_hour, layout_produksi, prod_capacity, oee_target, work_hours} = values;
+    if(labor_alloc !== 0 && oee_target !== 0) {
+      let _prod = capacityProd(labor_alloc, oee_target);
+      setFieldValue('prod_capacity', _prod)  
+      setFieldValue('prod_capacity', _prod)  
+    }
+    if(qty !== 0 && prod_capacity !== 0) {
+      let _lp = 1
+      if(layout_produksi > 0) {
+        _lp = layout_produksi;
+      }
+      let _work = daysOfWorks(qty, capacityProd(labor_alloc, oee_target), _lp);
+      setFieldValue('work_hours', _work)  
+    } else {
+      return undefined;
+    }
+  }
+
+  // DialogBox for Party
+  const [optionPF, setOptionPF] = useState([]);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSH = openSH && optionPF.length === 0;
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: '',
+  });
+  const [ imageUrl, setImageUrl ] = useState(null);
+
+  const handleSelectProduct = (data) => {
+    if(!data) {
+      return;
+    } else {
+      const { imageUrl, ...rest} = data;
+      setImageUrl(data.imageUrl);
+      setSelectedValueSH(rest);
+      setFieldValue('goods_id', rest.id);
+    }
+    setOpenSH(false);  
+
+  }
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      try {
+        await API.getFinishedGoods((res) => {
+          if(!res) return
+          else {
+            const data = res.data.map(function(item){
+              const { product: {goods}, category } = item;
+              return {...goods, category: category.name};
+            })
+
+            console.log(data);
+
+            setOptionPF(data);
+          }
+        })  
+          
+      } catch (error) {
+        alert('error');        
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+
+  }, [loadingSH]);
 
   return (
     <Page>
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
+          {/* Select Product */}
+          <Grid item xs={4}>
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+              <CardContent>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Product </Typography>
+                    <Button
+                      onClick={() => setOpenSH(true)}
+                    >
+                      Select
+                    </Button>
+                  </SpaceBetweenBox>
+                  {imageUrl ? (<img src={imageUrl} alt="Image"/>) : null}
+                  <div sx={{ 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                   }}>
+                    <Typography variant="body1">
+                      {selectedValueSH?.name}
+                    </Typography>
+                  </div>
+                  <DialogBoxParty
+                    options={optionPF}
+                    loading={loadingSH}
+                    open={openSH}
+                    onClose={(value) => handleSelectProduct(value)}
+                  />
+                </ColumnBox>
+              </CardContent>
+            </Card>  
+          </Grid>
           {/* Work Center Information */}
-          <Grid item xs={12}>
+          <Grid item xs={8}>
             <Card >
               <CardHeader
                 title="Work Center Information"
@@ -93,7 +222,7 @@ function ShowWorkCenter() {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item
-                    xs={6}
+                    xs={12}
                   >
                     <TextField
                       fullWidth
@@ -106,7 +235,7 @@ function ShowWorkCenter() {
                     />
                   </Grid>
                   <Grid item
-                    xs={6}
+                    xs={12}
                   >
                     <TextField
                       fullWidth
@@ -132,7 +261,7 @@ function ShowWorkCenter() {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item 
-                    sm={12} xs={12}
+                    sm={6} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -142,6 +271,17 @@ function ShowWorkCenter() {
                       {...getFieldProps('oee_target')}
                       error={Boolean(touched.oee_target && errors.oee_target)}
                       helperText={touched.oee_target && errors.oee_target}
+                    />
+                  </Grid>
+                  <Grid item 
+                    sm={6} xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      autoComplete="qty"
+                      type="number"
+                      label="Rencana Produksi"
+                      onChange={(event) => setQty(event.target.value)}
                     />
                   </Grid>
 
@@ -177,7 +317,7 @@ function ShowWorkCenter() {
                     <TextField
                       fullWidth
                       autoComplete="layout_produksi"
-                      type="text"
+                      type="number"
                       label="Layout Produksi"
                       {...getFieldProps('layout_produksi')}
                       error={Boolean(touched.layout_produksi && errors.layout_produksi)}

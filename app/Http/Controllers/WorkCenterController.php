@@ -20,7 +20,7 @@ class WorkCenterController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = WorkCenter::all();
+      $query = WorkCenter::with('goods')->orderBy('id', 'desc')->get();
 
       return new WorkCenterCollection($query);
     }
@@ -55,6 +55,7 @@ class WorkCenterController extends Controller
           'cost_per_hour' => $param['cost_per_hour'],
           'oee_target' => $param['oee_target'],
           'labor_alloc' => $param['labor_alloc'],
+          'goods_id' => $param['goods_id'],
           'description' => $param['description']
         ]);
       } catch (Exception $th) {
@@ -77,7 +78,7 @@ class WorkCenterController extends Controller
     public function show($id)
     {
       try {
-        $query = WorkCenter::find($id);
+        $query = WorkCenter::with('goods')->find($id);
         return new WorkCenterOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

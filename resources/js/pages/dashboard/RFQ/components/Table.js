@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
-  Card,
+  Box,
   Checkbox,
   Table,
   TableBody,
@@ -9,6 +9,7 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Typography
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -26,7 +27,7 @@ const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
+    { id: 'color', label: 'Color', width: 150, alignRight: false },
     { id: 'category', label: 'Category', alignRight: false },
     { id: 'sub_category', label: 'Sub Category', alignRight: false },
     { id: 'value', label: 'Value', alignRight: false },
@@ -241,6 +242,21 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      <Box
+      sx={{
+        ...(selected?.length > 0 && {
+          color: 'primary.main',
+          bgcolor: 'primary.lighter'
+        })
+      }}
+      >
+        {selected?.length > 0 ? (
+          <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
+            {selected.length} selected
+          </Typography>): null
+        }
+      </Box>
     </div>
   )
 }

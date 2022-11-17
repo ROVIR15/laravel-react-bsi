@@ -18,6 +18,7 @@ class BOM extends Model
         'product_id',
         'product_feature_id',
         'margin',
+        'starting_price',
         'final_price',
         'tax',
         'name',

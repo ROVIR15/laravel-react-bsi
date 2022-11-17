@@ -31,6 +31,7 @@
       $level = $request->query('level');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
+      $monthYear = $request->query('monthYear');
       
       if(empty($fromDate) || empty($thruDate)){
         $thruDate = date('Y-m-d');
@@ -38,24 +39,41 @@
         $fromDate = date_format($fromDate, 'Y-m-d');
       }
 
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
       switch ($level) {
         case 'approve':
           # code...
           $query = BOM::with('party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve', 'Reject Review']);
-          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
           break;
 
         case 'review':
           # code...
           $query = BOM::with('party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
-          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
           break;
         
         default:
           # code...
-          $query = BOM::with('status', 'party')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          $query = BOM::with('status', 'party')
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
           break;
       }
 
@@ -94,6 +112,7 @@
               'qty' => $param['qty'],
               'margin' => $param['margin'],
               'tax' => $param['tax'],
+              'starting_price' => $param['starting_price'],
               'start_date' => $param['start_date'],
               'end_date' => $param['end_date'],
               'company_name' => $param['company_name']

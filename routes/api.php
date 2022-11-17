@@ -69,7 +69,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('manufacture-component', 'ManufactureComponentController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('operation-result', 'MOperationResultController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('production-record', 'ProductionRecorderController')->only(['store']);
-    Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'delete', 'store']);
 
     //Operation
     Route::resource('operation', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -192,7 +191,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('order', 'OrderController')->only(['index', 'show']);
     Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
-
-    Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'delete']);
 });
 
+Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+Route::get('finished-goods', 'GoodsController@showFG');
+Route::get('costing-list', 'ManufacturePlanningItemsController@getCosting');
+Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');
+Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'destroy']);
+Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'destroy', 'store']);

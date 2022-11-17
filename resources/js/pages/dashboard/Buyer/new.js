@@ -1,7 +1,17 @@
 import React from 'react';
 import Page from '../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button } from '@mui/material'
-
+import { 
+  Box,
+  Card, 
+  CardHeader, 
+  CardContent, 
+  Container, 
+  Grid, 
+  Tab, 
+  TextField, 
+  Button 
+} from '@mui/material'
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 
@@ -48,38 +58,48 @@ function Buyer() {
 
   const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
-// Auto Complete
-const [open, setOpen] = React.useState(false);
+  // Auto Complete
+  const [open, setOpen] = React.useState(false);
 
-const [options, setOptions] = React.useState([]);
-const loading = open && options.length === 0;
+  const [options, setOptions] = React.useState([]);
+  const loading = open && options.length === 0;
 
-React.useEffect(() => {
-  let active = true;
+  React.useEffect(() => {
+    let active = true;
 
-  // get labor categories
-  if (!loading) {
-    return undefined;
+    // get labor categories
+    if (!loading) {
+      return undefined;
+    }
+
+    API.getRoleType('?type=Buyer', (res) => {
+      if(!res) return
+      if(!res.data) {
+        setOptions([]);
+      } else {
+        setOptions(res.data);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [loading])
+
+  const handleChangeAC = async (newValue) => {
+    setChoosen(newValue);
+    await setFieldValue('role_type_id', newValue.id);
   }
 
-  API.getRoleType('?type=Buyer', (res) => {
-    if(!res) return
-    if(!res.data) {
-      setOptions([]);
-    } else {
-      setOptions(res.data);
-    }
-  });
+  /**
+   * TAB Panel
+   */
+  const [valueTab, setValueTab] = React.useState('1');
 
-  return () => {
-    active = false;
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
   };
-}, [loading])
 
-const handleChangeAC = async (newValue) => {
-  setChoosen(newValue);
-  await setFieldValue('role_type_id', newValue.id);
-}
 
   return (
     <Page>
@@ -137,106 +157,112 @@ const handleChangeAC = async (newValue) => {
         </Grid>
 
         <Grid item xs={12}>
-        <Card>
-          <CardHeader
-            title="Address Information"
-          />
-          <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                autoComplete="address"
-                type="text"
-                label="Alamat"
-                {...getFieldProps('address')}
-                error={Boolean(touched.address && errors.address)}
-                helperText={touched.address && errors.address}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="city"
-                type="text"
-                label="Kota"
-                {...getFieldProps('city')}
-                error={Boolean(touched.city && errors.city)}
-                helperText={touched.city && errors.city}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="province"
-                type="text"
-                label="Provinsi"
-                {...getFieldProps('province')}
-                error={Boolean(touched.province && errors.province)}
-                helperText={touched.province && errors.province}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="country"
-                type="text"
-                label="Country"
-                {...getFieldProps('country')}
-                error={Boolean(touched.country && errors.country)}
-                helperText={touched.country && errors.country}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="postal code"
-                type="text"
-                label="Postal Code"
-                {...getFieldProps('postal_code')}
-                error={Boolean(touched.postal_code && errors.postal_code)}
-                helperText={touched.postal_code && errors.postal_code}
-              />
-            </Grid>
-          </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
+          <Card>
+            <Box sx={{ width: '100%', typography: 'body1' }}>
+              <TabContext value={valueTab}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                    <Tab label="Address" value="1" />
+                    <Tab label="Contact Information" value="2" />
+                  </TabList>
+                </Box>
 
-        <Grid item xs={12}>
-          <Card >
-            <CardHeader
-              title="Contact Information"
-            />
-            <CardContent>
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  autoComplete="email"
-                  type="email"
-                  label="Email address"
-                  {...getFieldProps('email')}
-                  error={Boolean(touched.email && errors.email)}
-                  helperText={touched.email && errors.email}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  autoComplete="phone number"
-                  type="text"
-                  label="Phone Number"
-                  {...getFieldProps('phone_number')}
-                  error={Boolean(touched.phone_number && errors.phone_number)}
-                  helperText={touched.phone_number && errors.phone_number}
-                />
-              </Grid>
-            </Grid>
-            </CardContent>
+              <TabPanel 
+                value="1"
+              >
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="address"
+                      type="text"
+                      label="Alamat"
+                      {...getFieldProps('address')}
+                      error={Boolean(touched.address && errors.address)}
+                      helperText={touched.address && errors.address}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="city"
+                      type="text"
+                      label="Kota"
+                      {...getFieldProps('city')}
+                      error={Boolean(touched.city && errors.city)}
+                      helperText={touched.city && errors.city}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="province"
+                      type="text"
+                      label="Provinsi"
+                      {...getFieldProps('province')}
+                      error={Boolean(touched.province && errors.province)}
+                      helperText={touched.province && errors.province}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="country"
+                      type="text"
+                      label="Country"
+                      {...getFieldProps('country')}
+                      error={Boolean(touched.country && errors.country)}
+                      helperText={touched.country && errors.country}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="postal code"
+                      type="text"
+                      label="Postal Code"
+                      {...getFieldProps('postal_code')}
+                      error={Boolean(touched.postal_code && errors.postal_code)}
+                      helperText={touched.postal_code && errors.postal_code}
+                    />
+                  </Grid>
+                </Grid>
+              </TabPanel>
+
+              <TabPanel
+                value="2"
+              >
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="email"
+                      type="email"
+                      label="Email address"
+                      {...getFieldProps('email')}
+                      error={Boolean(touched.email && errors.email)}
+                      helperText={touched.email && errors.email}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      autoComplete="phone number"
+                      type="text"
+                      label="Phone Number"
+                      {...getFieldProps('phone_number')}
+                      error={Boolean(touched.phone_number && errors.phone_number)}
+                      helperText={touched.phone_number && errors.phone_number}
+                    />
+                  </Grid>
+                </Grid>
+              </TabPanel>
+
+            </TabContext>
+            </Box>
           </Card>
-
         </Grid>
+
         <Grid item xs={12}>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton

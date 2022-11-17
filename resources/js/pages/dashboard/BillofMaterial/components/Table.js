@@ -30,7 +30,7 @@ function createData(
   return { name, details, total_cost};
 }
 
-export default function BasicTable({ payload, status, approval, review, margin, setMargin, finalPrice, setFinalPrice, tax }) {
+export default function BasicTable({ payload, status, approval, review, margin, setMargin, startingPrice, finalPrice, setFinalPrice, tax }) {
 
   const [price, setPrice] = React.useState(0);
   const {total_labors, total_work_days, qty_to_produce, components_numbers, cm_cost, average_of_product_cost, total_cost_of_wc, total_overhead_cost, total_cost_of_items, additionalCost, average_add_cost, list_of_service} = payload;
@@ -82,7 +82,7 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Total Costs Expected </Typography>
+                <Typography variant="inherit"> Grand Total Biaya Produksi </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -95,11 +95,11 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Unit Produced </Typography>
+                <Typography variant="inherit"> Qty Produksi </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {fCurrency(qty_to_produce)} </Typography>
+                <Typography variant="body1"> {fCurrency(qty_to_produce)} pcs </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -108,7 +108,7 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography value={margin} variant="inherit"> Material Cost </Typography>
+                <Typography value={margin} variant="inherit"> Biaya Material (per pcs) </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -122,7 +122,7 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Additional Cost </Typography>
+                <Typography variant="inherit"> Biaya Tambahan (per pcs) </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -136,7 +136,7 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> CM Cost </Typography>
+                <Typography variant="inherit"> Biaya CM (per pcs) </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -150,20 +150,94 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Cost per Product </Typography>
+                <Typography variant="inherit"> HPP (per pcs) </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
                 <Typography variant="body1"> {fCurrency(sum([cm_cost, average_of_product_cost, average_add_cost]))} </Typography>
               </NoBorderCell>
             </TableRow>
+
+            <TableRow
+              key="Total"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Harga Awal (per pcs) </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(startingPrice)} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
             <TableRow
               key="margin"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Margin </Typography>
+                <Typography variant="inherit"> Margin (Harga Awal) </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+                  <Input
+                    id="filled-adornment-amount"
+                    disabled={true}
+                    inputProps={{ style: {textAlign: 'end'}}}
+                    value={parseFloat((startingPrice-sum([cm_cost, average_of_product_cost, average_add_cost]))/sum([cm_cost, average_of_product_cost, average_add_cost])*100).toFixed(2)}
+                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                  />
+                </FormControl>
+              </NoBorderCell>
+            </TableRow>
+
+            <TableRow
+              key="Total"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> HPP </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <Typography variant="body1"> {fCurrency(sum([cm_cost, average_of_product_cost, average_add_cost]))} </Typography>
+              </NoBorderCell>
+            </TableRow>
+
+            <TableRow
+              key="margin"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Final Price (per pcs) </Typography>
+              </NoBorderCell>
+              <NoBorderCell align="right">
+                <BoxStyle />
+                <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+                  <Input
+                    id="filled-adornment-amount"
+                    disabled={!(!review ^ !approval) ^ !(status || !approval)}
+                    value={finalPrice} 
+                    inputProps={{ style: {textAlign: 'end'}}}
+                    onChange={(e) => setFinalPrice(e.target.value)}
+                    startAdornment={<InputAdornment position="start">Rp.</InputAdornment>}
+                  />
+                </FormControl>
+              </NoBorderCell>
+            </TableRow>
+
+            <TableRow
+              key="margin"
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <NoBorderCell align="right" colSpan={3}>
+                <BoxStyle />
+                <Typography variant="inherit"> Margin (Harga Terakhir) </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
@@ -186,43 +260,6 @@ export default function BasicTable({ payload, status, approval, review, margin, 
             >
               <NoBorderCell align="right" colSpan={3}>
                 <BoxStyle />
-                <Typography variant="inherit"> Offering Price </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {fCurrency(OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost])))} </Typography>
-              </NoBorderCell>
-            </TableRow>
-
-            <TableRow
-              key="margin"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={3}>
-                <BoxStyle />
-                <Typography variant="inherit"> Final Price </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
-                  <Input
-                    id="filled-adornment-amount"
-                    disabled={!(!review ^ !approval) ^ !(status || !approval)}
-                    value={finalPrice} 
-                    inputProps={{ style: {textAlign: 'end'}}}
-                    onChange={(e) => setFinalPrice(e.target.value)}
-                    startAdornment={<InputAdornment position="start">Rp.</InputAdornment>}
-                  />
-                </FormControl>
-              </NoBorderCell>
-            </TableRow>
-
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={3}>
-                <BoxStyle />
                 <Typography variant="inherit"> Offering Price + Tax {tax} % </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
@@ -230,7 +267,6 @@ export default function BasicTable({ payload, status, approval, review, margin, 
                 <Typography variant="body1"> {fCurrency(OfferingPriceAndTax(OfferingPrice(sum([cm_cost, average_of_product_cost, average_add_cost])),tax))} </Typography>
               </NoBorderCell>
             </TableRow>
-
         </TableBody>
       </Table>
     </TableContainer>

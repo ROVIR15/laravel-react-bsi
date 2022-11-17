@@ -28,6 +28,7 @@
       $level = $request->query('level');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
+      $monthYear = $request->query('monthYear');
       $completion_status = $request->query('completion_status');
 
       if(empty($level)){
@@ -48,24 +49,42 @@
         $fromDate = date_format($fromDate, 'Y-m-d');
       }
 
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
       switch ($level) {
         case 'approve':
           # code...
           $query = PurchaseOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
           break;
 
         case 'review':
           # code...
           $query = PurchaseOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
-          })->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
           break;
         
         default:
           # code...
-          $query = PurchaseOrder::with('completion_status', 'status', 'sum')->whereBetween(DB::raw('DATE(created_at)'), [$fromDate, $thruDate])->get();
+          $query = PurchaseOrder::with('completion_status', 'status', 'sum')
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
+
           break;
       }
 

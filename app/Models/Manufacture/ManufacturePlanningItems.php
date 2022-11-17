@@ -17,6 +17,8 @@ class ManufacturePlanningItems extends Model
 
     protected $fillable = [
         'id',
+        'facility_id',
+        'bom_id',
         'manufacture_planning_id',
         'sales_order_id',
         'expected_output',
@@ -35,4 +37,11 @@ class ManufacturePlanningItems extends Model
         return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id')->select('sales_order_id', 'date', DB::raw('sum(output) as total_output'))->groupBy('sales_order_id');
     }
     
+    public function facility() {
+        return $this->belongsTo('App\Models\Facility\Facility', 'facility_id');
+    }
+
+    public function costing() {
+        return $this->belongsTo('App\Models\Manufacture\BOM', 'bom_id');
+    }
 }
