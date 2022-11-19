@@ -139,7 +139,6 @@ function PurchaseOrder({ placeHolder }) {
     }
 
     setLoading(false);
-
   }
 
   const handleRequestSort = (event, property) => {
