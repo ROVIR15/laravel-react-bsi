@@ -157,6 +157,7 @@ function OutboundDelivery() {
 
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Purchase Order is required'),
+    serial_number: Yup.string().required('Serial Number is required'),
     delivery_date: Yup.date().required('Delivery Date is required'),
     est_delivery_date: Yup.date().required('Estimated Delivery Date is required'),
   });
@@ -200,12 +201,12 @@ function OutboundDelivery() {
   } = formik;
 
   const columns = useMemo(() => [
-    { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', width: 350, editable: false},
+    { field: 'id', headerName: 'ID', width: 50, editable: false, visible: 'hide' },
+    { field: 'name', headerName: 'Name', width: 400, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'qty_order', headerName: 'Qty Order', editable: false },
-    { field: 'deliv_qty', headerName: 'Delivery Qty', editable: false },
+    { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -217,6 +218,7 @@ function OutboundDelivery() {
       ]
     }
   ], [deleteData]);
+
 
   const deleteData = useCallback(
     (id) => () => {

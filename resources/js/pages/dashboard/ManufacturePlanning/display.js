@@ -19,6 +19,7 @@ import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 import { serviceList2 } from '../../../helpers/data';
+import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
@@ -186,7 +187,7 @@ function DisplayBuyer({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{index}</TableCell>
-                      <TableCell align="left">{`Planning - ${month}`}</TableCell>
+                      <TableCell align="left">{`Planning - ${moment(new Date(`${year}-${month}`)).format("MMMM")}`}</TableCell>
                       <TableCell align="left">{year}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} deleteActive={false}/>

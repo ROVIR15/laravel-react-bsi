@@ -232,12 +232,18 @@
           'imageUrl' => $goodsParam['imageUrl']
         ]);
 
-        ProductHasCategory::where('product_id', $existingProduct['id'])
+        $_goods = Product::where('goods_id', $id)->get();
+
+        if(sizeof($_goods) === 0){
+          return response()->json(sizeOf($_goods));
+          throw new Exception("Goods Not Found", 1);
+        }
+
+        ProductHasCategory::where('product_id', $_goods[0]['id'])
         ->update([
           'product_category_id' => $catParam
         ]);
 
-        $product = ProductHasCategory::where('product_id', $existingProduct['id'])->get();
       } catch (Exception $th) {
         //throw $th;
         return response()->json([
@@ -247,7 +253,6 @@
       }
       return response()->json([
         'success' => true,
-        'product_id' => $product
       ], 200);
     }
 

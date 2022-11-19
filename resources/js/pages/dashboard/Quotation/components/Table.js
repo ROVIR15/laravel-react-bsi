@@ -75,7 +75,7 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
 //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { pathname } = useLocation();
   const { id } = useParams();
@@ -173,7 +173,9 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table
+            size='small'
+          >
             <ListHead
               order={order}
               orderBy={orderBy}
@@ -239,7 +241,7 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 15, 25]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}

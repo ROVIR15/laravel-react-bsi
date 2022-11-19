@@ -16,8 +16,6 @@ import { IconButton, Stack } from '@mui/material';
 import searchFill from '@iconify/icons-eva/search-fill';
 import closeCircle from '@iconify/icons-eva/close-outline';
 
-import API from '../../../../helpers';
-
 const content = [
   {
     one: "Party",

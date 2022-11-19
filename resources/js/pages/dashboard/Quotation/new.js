@@ -262,11 +262,13 @@ const handleChangePopulate = (e) => {
                       Select
                     </Button>
                   </SpaceBetweenBox>
-                  <div>
-                    <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
-                    <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
-                    <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
-                  </div>
+                  { selectedValueSO?.name ? (
+                    <div>
+                      <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                      <Typography component="span" variant="caption">{selectedValueSO?.street}</Typography>
+                      <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
+                    </div>
+                  ) : null}
                   <DialogBox
                     options={options}
                     loading={loading}
@@ -287,11 +289,13 @@ const handleChangePopulate = (e) => {
                       Select
                     </Button>
                   </SpaceBetweenBox>
+                  { selectedValueSH?.name ? (
                   <div>
-                    <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
-                    <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
-                    <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
+                    <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSH?.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
                   </div>
+                  ) : null}
                   <DialogBox
                     options={options}
                     loading={loading}

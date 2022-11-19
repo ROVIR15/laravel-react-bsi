@@ -67,8 +67,13 @@ function applySortFilter(array, comparator, query) {
         && _b.category_id === query[1]
       )
     });
+  } else {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      )
+    });
   }
-  return stabilizedThis.map((el) => el[0]);
 }
 
 function TableD({ list, placeHolder, selected, setSelected}) {
@@ -78,7 +83,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterCategory, setFilterCategory] = useState(0);
 
   const { pathname } = useLocation();
@@ -93,7 +98,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
     }
@@ -183,7 +188,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               order={order}
               orderBy={orderBy}
@@ -255,7 +260,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}

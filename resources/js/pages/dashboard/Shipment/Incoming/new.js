@@ -28,7 +28,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 
 // api
 import API from '../../../../helpers';
-import { _partyAddress } from '../../../../helpers/data'
+import { _partyAddress, productItemArrangedData } from '../../../../helpers/data'
 
 //Component
 import DataGrid from './components/DataGrid';
@@ -121,6 +121,7 @@ function OutboundDelivery() {
 
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Purchase Order is required'),
+    serial_number: Yup.string().required('Serial Number is required'),
     delivery_date: Yup.date().required('Delivery Date is required'),
     est_delivery_date: Yup.date().required('Estimated Delivery Date is required'),
   });
@@ -138,11 +139,16 @@ function OutboundDelivery() {
       const _data = {
         ...values, shipment_type_id: 1, user_id: user.id, OD_items: items
       }
-      API.insertShipment(_data, (res)=>{
-        if(!res) return undefined;
-        if(!res.success) alert('failed');
-        else alert('success');
-      })
+
+      try {
+        API.insertShipment(_data, (res)=>{
+          if(!res) throw new Error('failed')
+          if(!res.success) throw new Error('failed');
+          else alert('success');
+        })  
+      } catch(error) {
+        alert(error)
+      }
       setSubmitting(false);
       handleReset();
       setSelectedValueSO({});
@@ -165,6 +171,24 @@ function OutboundDelivery() {
 
 
   function changeData(data){
+    const quoteItem = data.order_item.map(function(key, index){
+      const {id, product_id, name, size, satuan, color} = productItemArrangedData(key.product_feature)
+      return {
+        'id': index,
+        'order_item_id' : key.id,
+        'product_id' : product_id,
+        'product_feature_id' : id,
+        'name' : name,
+        'size' : size,
+        'satuan' : satuan,
+        'color' : color,
+        'deliv_qty' : key.qty_receipt || 0,
+        'qty_order' : key.qty || 0
+      }
+    });
+
+    setItems(quoteItem);
+
     setValues({
       order_id: data.order_id,
       delivery_date: values.delivery_date
@@ -181,7 +205,8 @@ function OutboundDelivery() {
     { field: 'color', headerName: 'Color', editable: false },
     { field: 'satuan', headerName: 'Satuan', editable: false },
     { field: 'qty_order', headerName: 'Qty Order', editable: false },
-    { field: 'deliv_qty', headerName: 'Delivery Qty', editable: true },
+    { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
+    // { field: 'qty_received', headerName: 'Qty Received', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -355,7 +380,7 @@ function OutboundDelivery() {
                             Select
                           </Button>
                         </SpaceBetweenBox>
-                        { selectedValueSO.name ? (
+                        { selectedValueSO?.name ? (
                           <div>
                             <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
                             <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>

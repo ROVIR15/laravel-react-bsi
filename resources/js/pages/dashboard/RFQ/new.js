@@ -282,11 +282,11 @@ function RFQ() {
                       Select
                     </Button>
                   </SpaceBetweenBox>
-                  { selectedValueSO.name ? (
+                  { selectedValueSO?.name ? (
                     <div>
-                      <Typography variant="subtitle1">{selectedValueSO.name}</Typography>
-                      <Typography component="span" variant="caption">{selectedValueSO.street}</Typography>
-                      <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
+                      <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                      <Typography component="span" variant="caption">{selectedValueSO?.street}</Typography>
+                      <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
                     </div>
                   ) : null}
 
@@ -310,11 +310,11 @@ function RFQ() {
                       Select
                     </Button>
                   </SpaceBetweenBox>
-                  { selectedValueSH.name ? (
+                  { selectedValueSH?.name ? (
                   <div>
-                    <Typography variant="subtitle1">{selectedValueSH.name}</Typography>
-                    <Typography component="span" variant="caption">{selectedValueSH.street}</Typography>
-                    <Typography variant="body2">{`${selectedValueSH.city}, ${selectedValueSH.province}, ${selectedValueSH.country}`}</Typography>
+                    <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                    <Typography component="span" variant="caption">{selectedValueSH?.street}</Typography>
+                    <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
                   </div>
                   ) : null}
 
@@ -335,6 +335,7 @@ function RFQ() {
           </Card>
 
           <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <CardContent>
             <Box sx={{ width: '100%', typography: 'body1' }}>
               <TabContext value={valueTab}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -348,22 +349,19 @@ function RFQ() {
                 value="1"
               >
               {/* Here You Go */}
-                <CardContent>
-                  <Grid container spacing={3}>
-                    <Grid item xs={7}>
-                      <TextField
-                        fullWidth
-                        autoComplete="po_number"
-                        type="text"
-                        label="No PO"
-                        {...getFieldProps('po_number')}
-                        error={Boolean(touched.po_number && errors.po_number)}
-                        helperText={touched.po_number && errors.po_number}
-                      />    
-                    </Grid>
-                  </Grid>       
-                </CardContent>
-                <CardContent sx={{paddingTop: '0', paddingBottom: '0'}}>
+                <Grid container spacing={3}>
+                  <Grid item xs={7}>
+                    <TextField
+                      fullWidth
+                      autoComplete="po_number"
+                      type="text"
+                      label="No PO"
+                      {...getFieldProps('po_number')}
+                      error={Boolean(touched.po_number && errors.po_number)}
+                      helperText={touched.po_number && errors.po_number}
+                    />    
+                  </Grid>
+                </Grid>       
                 <div style={{display: 'flex'}}>
                   <TextField
                     fullWidth
@@ -403,11 +401,11 @@ function RFQ() {
                   handleReset={handleResetRows}
                   handleUpdateAllRows={false}
                 />
-                </CardContent>              
               </TabPanel>
 
               </TabContext>
             </Box>
+            </CardContent>
           </Card>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton

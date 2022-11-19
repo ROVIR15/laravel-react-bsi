@@ -35,6 +35,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 // Helper
 import {productItemArrangedData, partyArrangedData} from '../../../helpers/data';
+import { isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({theme}) => ({
   display: "flex",
@@ -246,7 +247,7 @@ function GoodsReceipt() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'ID', width: 50, editable: false, visible: 'hide' },
-    // { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
+    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'name', headerName: 'Name', width: 400, editable: false},
     { field: 'size', headerName: 'Size', editable: false },
     { field: 'color', headerName: 'Color', editable: false },
@@ -275,6 +276,12 @@ function GoodsReceipt() {
 
     // Dialog Box
     const handleClose = (name, value) => {
+      if(isEmpty(value)) {
+        setOpenSO(false)
+        setOpenSH(false)
+        setOptions([]);
+        return;
+      }
       if(name === 'facility_id') {
         setOpenSO(false)
         setSelectedValueSH(value);

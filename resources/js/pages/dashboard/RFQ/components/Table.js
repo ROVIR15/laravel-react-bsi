@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
-  Box,
+  Card,
   Checkbox,
   Table,
   TableBody,
@@ -9,7 +9,6 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
-  Typography
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -26,11 +25,12 @@ import { isEditCondition } from '../../../../helpers/data';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
+    { id: 'category', label: 'Kategori', alignRight: false },
+    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
     { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', width: 150, alignRight: false },
-    { id: 'category', label: 'Category', alignRight: false },
-    { id: 'sub_category', label: 'Sub Category', alignRight: false },
-    { id: 'value', label: 'Value', alignRight: false },
+    { id: 'color', label: 'Color', alignRight: false },
+    { id: 'satuan', label: 'Satuan', alignRight: false },
+    { id: 'brand', label: 'Brand', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -59,20 +59,32 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+
+  if (isArray(query) && query[1] > 0) {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+        && _b.category_id === query[1]
+      )
+    });
+  } else {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      )
+    });
   }
-  return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, update, selected, setSelected}) {
+function TableD({ list, placeHolder, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
 //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filterCategory, setFilterCategory] = useState(0);
 
   const { pathname } = useLocation();
   const { id } = useParams();
@@ -86,7 +98,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
       setSelected(newSelecteds);
       return;
     }
@@ -94,17 +106,18 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id, quote_id: id, inquiry_item_id: null, id: selected.length+1, unit_price: 0, qty: 0}
+    name = {...name, product_feature_id: name.id}
     const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
-          API.insertQuoteItem([name], function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
-          update();
+          let dateNow = new Date();
+          // API.insertGoodsReceiptItem([name], function(res){
+          //   if(res.success) alert('success');
+          //   else alert('failed')
+          // })
+          // update();
         } catch(e) {
           alert(e);
         }
@@ -137,10 +150,18 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
     setFilterName(event.target.value);
   };
 
+  const handleFilterCategoryAndSub = (event) => {
+    setFilterCategory(event.target.value)
+  }
+
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    setSelected((prevSelected) => (prevSelected.filter((item) => (item.id !== id))));
+    API.deleteSalesOrder(id, function(res){
+      if(res.success) setSalesOrderData([]);
+    }).catch(function(error){
+      alert('error')
+    });
   }
 
   const handleDeleteSelected = () => {
@@ -149,7 +170,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), [filterName, filterCategory]);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -161,10 +182,13 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
         onDeletedSelected={handleDeleteSelected}
+        filterCategory={filterCategory}
+        onFilterCategoryAndSub={handleFilterCategoryAndSub}
+        categoryFilterActive={true}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               order={order}
               orderBy={orderBy}
@@ -187,7 +211,8 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                     color,
                     category,
                     sub_category,
-                    value
+                    satuan,
+                    brand
                   } = row;
                   return (
                     <TableRow
@@ -207,11 +232,12 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{value}</TableCell>
+                      <TableCell align="left">{size}</TableCell>
+                      <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{satuan}</TableCell>
+                      <TableCell align="left">{brand}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -234,7 +260,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}
@@ -242,21 +268,6 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
-      <Box
-      sx={{
-        ...(selected?.length > 0 && {
-          color: 'primary.main',
-          bgcolor: 'primary.lighter'
-        })
-      }}
-      >
-        {selected?.length > 0 ? (
-          <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
-            {selected.length} selected
-          </Typography>): null
-        }
-      </Box>
     </div>
   )
 }

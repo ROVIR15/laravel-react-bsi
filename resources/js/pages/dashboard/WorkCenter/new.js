@@ -180,7 +180,9 @@ function WorkCenter() {
                     options={optionPF}
                     loading={loadingSH}
                     open={openSH}
-                    onClose={(value) => handleSelectProduct(value)}
+                    selectedValue={selectedValueSH}
+                    onSelect={handleSelectProduct}
+                    onClose={() => setOpenSH(false)}
                   />
                 </ColumnBox>
               </CardContent>

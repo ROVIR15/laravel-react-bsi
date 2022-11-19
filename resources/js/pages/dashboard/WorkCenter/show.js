@@ -42,7 +42,6 @@ function ShowWorkCenter() {
     name: Yup.string().required('is required'),
     company_name: Yup.string().required('is required'),
     work_hours: Yup.number().required('is required'),
-    layout_produksi: Yup.number().required('is required'),
     overhead_cost: Yup.number().required('is required'),
     prod_capacity: Yup.number().required('is required'),
     oee_target: Yup.number().required('is required'),
@@ -59,7 +58,7 @@ function ShowWorkCenter() {
       company_name: '',
       overhead_cost: 0,
       prod_capacity: 0,
-      layout_produksi: 1,
+      layout_produksi: 0,
       oee_target: 0,
       cost_per_hour: 0,
       qty: 0,
@@ -207,7 +206,9 @@ function ShowWorkCenter() {
                     options={optionPF}
                     loading={loadingSH}
                     open={openSH}
-                    onClose={(value) => handleSelectProduct(value)}
+                    selectedValue={selectedValueSH}
+                    onSelect={handleSelectProduct}
+                    onClose={() => setOpenSH(false)}
                   />
                 </ColumnBox>
               </CardContent>

@@ -15,7 +15,8 @@ class ProductHasCategory extends Model
 
     protected $fillable = [
         'product_id',
-        'product_category_id'
+        'product_category_id',
+        'product_sub_category_id'
     ];
 
     public function category(){

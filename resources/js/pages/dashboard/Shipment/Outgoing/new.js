@@ -122,6 +122,7 @@ function OutboundDelivery() {
 
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Sales Order is required'),
+    serial_number: Yup.string().required('Serial Number is required'),
     delivery_date: Yup.date().required('Delivery Date is required'),
     est_delivery_date: Yup.date().required('Estimated Delivery Date is required'),
   });
