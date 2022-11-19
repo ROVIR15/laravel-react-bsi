@@ -40,7 +40,7 @@ export default function BasicTable({ payload, tax }) {
   const sumSubTotal = () => {
     var sub = 0;
     sub = payload.reduce((prev, next) => {
-      return prev + Math.floor(next.qty * next.unit_price);
+      return prev + Math.floor((next.consumption * ((next.allowance/100)+1)) * next.unit_price);
     }, 0)
     return fCurrency(Math.floor(sub));
   }
