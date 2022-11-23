@@ -221,14 +221,18 @@ function BillOfMaterial() {
         }
       })
 
-      await API.getProduct((res) => {
-        if(!res) return
-		    if(!res.data) {
+      await API.getFinishedGoods((res) => {
+        if(isUndefined(res)) return
+		    if(!res.success) {
           setOptions3([]);
         } else {
-          setOptions3(res.data);
+          const _data = res.data.map(function(item){
+            const { product: {id, goods: {name}}, category } = item;
+            return {id, name, category: category.name};
+          });
+          setOptions3(_data);
         }
-      });
+      })
 
       await API.getService((res) => {
         if(!res) return

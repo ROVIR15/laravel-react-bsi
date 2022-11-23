@@ -43,7 +43,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { optionProductFeature, partyArrangedData, serviceList } from '../../../helpers/data'
-import { gt } from 'lodash';
+import { gt, isUndefined } from 'lodash';
 
 function isEmpty(data) {
   return !gt(data, 0)
@@ -218,12 +218,16 @@ function BillOfMaterial() {
         }
       })
 
-      await API.getProduct((res) => {
-        if(!res) return
-		    if(!res.data) {
+      await API.getFinishedGoods((res) => {
+        if(isUndefined(res)) return
+		    if(!res.success) {
           setOptions3([]);
         } else {
-          setOptions3(res.data);
+          const _data = res.data.map(function(item){
+            const { product: {id, goods: {name}}, category } = item;
+            return {id, name, category: category.name};
+          });
+          setOptions3(_data);
         }
       })
 
