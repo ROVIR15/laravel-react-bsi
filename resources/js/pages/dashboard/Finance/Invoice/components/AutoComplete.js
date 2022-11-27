@@ -19,6 +19,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
       if(!value) return
       let id = value.split('.')[1]
       id = id.split('/')[0]
+      
       API.getAShipment(id, (res) => {
         if(!res) return
         if(!res.data) {
@@ -39,7 +40,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ sales: {po_number}, id}) => (`SHIP-NO.${id}/${po_number}`)}
+      getOptionLabel={({ name, date, id}) => (`SHIP-NO.${id}/${date}/${name}`)}
       options={options}
       loading={loading}
       value={choosen} 

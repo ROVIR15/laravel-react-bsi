@@ -55,5 +55,11 @@ class BOM extends Model
     public function party(){
         return $this->belongsTo('App\Models\Party\Party', 'party_id');
     }
+
+    public function get_target_output(){
+        return $this->belongsTo('App\Models\Manufacture\Operation', 'id', 'bom_id')->select('id', 'bom_id', 'work_center_id')->with(['work_center' => function($query){
+            $query->select('id', 'prod_capacity');
+        }]);
+    }
     
 }

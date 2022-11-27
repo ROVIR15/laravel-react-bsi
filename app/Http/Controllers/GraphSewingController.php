@@ -7,6 +7,7 @@ use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\Monitoring\Sewing; 
 use App\Models\Manufacture\ManufacturePlanning;
+use App\Models\Manufacture\ManufacturePlanningItems;
 
 class GraphSewingController extends Controller
 {
@@ -103,6 +104,120 @@ class GraphSewingController extends Controller
         ], 500);
       }
     }
+
+    // Work Detail
+    public function testingAPI1(Request $request){
+      $monthYear = $request->query('monthYear');
+      $facility = $request->query('facility');
+      
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try {
+        $sewing = Sewing::with('sales_order', 'order_item')
+        ->where('facility_id', $facility)
+        ->whereYear('date', '=', $year)
+        ->whereMonth('date', '=', $month)
+        ->orderBy('date', 'asc')
+        ->get();
+        
+      } catch(Throwable $th) {
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        // 'date' => $date,
+        'data' => $sewing,
+      ]);
+    }
+
+    // Per Order
+    public function testingAPI2(Request $request){
+      $monthYear = $request->query('monthYear');
+      $facility = $request->query('facility');
+      $sales_order_id = $request->query('sales_order_id');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try {
+        $mp = ManufacturePlanning::with(['test_sum_based_on_mpi' => function($query) use ($facility){
+          $query->with(['ckckck' => function($query2) use ($facility){
+            $query2->where('facility_id', $facility);
+          }])
+          ->where('facility_id', $facility);
+        }])
+        ->where('year', '=', $year)
+        ->where('month', '=', $month)
+        ->get();
+
+      } catch(Throwable $th) {
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $mp
+      ]);
+    }
+
+    // 
+    public function testingAPI3($id, Request $request){
+      $monthYear = $request->query('monthYear');
+      $facility = $request->query('facility');
+      $sales_order_id = $request->query('sales_order_id');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try {
+        $mp = ManufacturePlanningItems::with(['sewing' => function($query) use ($year, $month, $facility, $sales_order_id){
+          $query
+          ->select('date', 'sales_order_id', 'facility_id', DB::raw('sum(output) as total_output'))
+          ->where('facility_id', $facility)
+          ->where('sales_order_id', $sales_order_id)
+          ->whereYear('date', $year)
+          ->whereMonth('date', $month)
+          ->groupBy('date');
+        }])
+        ->with('bom')
+        ->find($id);
+
+      } catch(Exception $th) {
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $mp
+      ]);
+    }
+
 
     public function getAmountOfMoney(Request $request)
     {

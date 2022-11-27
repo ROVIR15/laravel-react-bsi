@@ -30,6 +30,8 @@ import {
   UserManagementLayout,
   OrderProgressLayout,
   FacilityTargetLayout,
+  FacilityLayout,
+  FactoryLayout,
   MPLayout
 } from '../pages/dashboard';
 
@@ -69,6 +71,8 @@ import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
 import AddMachine from '../pages/dashboard/Machine/add';
 import AddLineTarget from '../pages/dashboard/LineTarget/add';
+import AddFacility from '../pages/dashboard/Facility/add';
+import AddFactory from '../pages/dashboard/Factory/add';
 import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
 import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
 import AddMP from '../pages/dashboard/ManufacturePlanning/add';
@@ -102,6 +106,8 @@ import DisplayMachine from '../pages/dashboard/Machine/display';
 import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
 import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
 import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
+import DisplayFacility from '../pages/dashboard/Facility/display';
+import DisplayFactory from '../pages/dashboard/Factory/display';
 
 import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
 import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
@@ -131,6 +137,8 @@ import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
 import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
+import ShowFacility from '../pages/dashboard/Facility/show';
+import ShowFactory from '../pages/dashboard/Factory/show';
 
 import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
 import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
@@ -183,6 +191,8 @@ import DisplayMNumbering from '../pages/dashboard/Monitoring/Numbering/display';
 import MonitoringSupermarketLayout from '../pages/dashboard/Monitoring/Supermarket'; //
 import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add'; //
 import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
+
+import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
 
 import { 
   IncomingLayout,
@@ -518,6 +528,10 @@ export default function TestRouter() {
                 { path: 'display', element: <DisplayOutputPerSalesOrder/>},
                 { path: ':id', element: <DisplayOutputPerSalesOrderDetail/>}
               ]
+            },
+            {
+              path: 'production',
+              element: <MonitoringProduction />
             }
           ]
         },
@@ -560,7 +574,25 @@ export default function TestRouter() {
         },
         // Finance
         { 
-          path: 'facility/target', 
+          path: 'factory', 
+          element: <FactoryLayout />,
+          children: [
+            { path: 'add', element: <AddFactory /> },
+            { path: ':id', element: <ShowFactory /> },
+            { path: 'display', element: <DisplayFactory /> }
+          ]
+        },
+        { 
+          path: 'facility', 
+          element: <FacilityLayout />,
+          children: [
+            { path: 'add', element: <AddFacility /> },
+            { path: ':id', element: <ShowFacility /> },
+            { path: 'display', element: <DisplayFacility /> }
+          ]
+        },
+        { 
+          path: 'facility-target', 
           element: <FacilityTargetLayout />,
           children: [
             { path: 'add', element: <AddLineTarget /> },

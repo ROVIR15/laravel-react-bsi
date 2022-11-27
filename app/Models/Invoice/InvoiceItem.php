@@ -19,4 +19,8 @@ class InvoiceItem extends Model
         'qty',
         'amount'
     ];
+
+    public function order_item(){
+        return $this->belongsTo('App\Models\Order\OrderItem', 'order_item_id')->with('product_feature');
+    }
 }

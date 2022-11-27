@@ -27,4 +27,8 @@ class ManufacturePlanning extends Model
     public function items_with_price() {
         return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems')->with('info', 'ckck', 'costing', 'facility');
     }
+
+    public function test_sum_based_on_mpi() {
+        return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems')->with('ckckck', 'sales_order');
+    }
 }

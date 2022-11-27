@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Facility\Facility;
+use App\Models\Facility\Factory;
+use App\Models\Facility\FactoryHasFacility;
 use App\Models\Facility\FacilityType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Facility\FacilityCollection;
@@ -24,19 +25,7 @@ class FactoryController extends Controller
 
       try {
         //code...
-        $query;
-
-        if(!isset($type)){
-          $query = Facility::all();          
-        } else {
-          $query = FacilityType::with('facilities')
-          ->where('name', $type)
-          ->first();
-
-          return response()->json([
-            'data' => $query->facilities
-          ]);
-        }
+        $query = Factory::all();
       } catch (\Throwable $th) {
         //throw $th;
         return response()->json([
@@ -45,7 +34,10 @@ class FactoryController extends Controller
         ]);
       }
 
-      return new FacilityCollection($query);
+      return response()->json([
+        'success' => true,
+        'data' => $query      
+      ]);
     }
 
     /**
@@ -68,11 +60,30 @@ class FactoryController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Facility::create([
+        $factory = Factory::create([
           'name' => $param['name'],
-          'type' => $param['type'],
-          'qty_on_hand' => $param['qty_on_hand']
+          'description' => $param['description']
         ]);
+
+        $facilities = [];
+
+        if(!isset($factory)) throw new Error('failed to store factory');
+        if(!isset($param['facilities'])) {
+          return response()->json([
+            'success' => true
+          ]);
+        }
+
+        foreach ($param['facilities'] as $key) {
+          # code...
+          array_push(facilities, [
+            'factory_id' => $factory->id,
+            'facility_id' => $key[facility_id]
+          ]);
+        }
+
+        FactoryHasFacility::insert($facilities);
+        
       } catch (Exception $th) {
         //throw $th;
         return response()->json(
@@ -89,6 +100,72 @@ class FactoryController extends Controller
     }
 
     /**
+     * Store a newly facility on factory resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function insertNewFacilityToFactory(Request $request)
+    {
+      $param = $request->all()['payload'];
+
+      try {
+        // $facilities = [];
+        // if(sizeOf(params)){
+        //   foreach ($param as $key) {
+        //     # code...
+        //     array_push(facilities, [
+        //       'factory_id' => $factory->id,
+        //       'facility_id' => $key[facility_id]
+        //     ]);
+        //   }
+        // } else {
+        //   throw new Exception("Error Processing Request", 1);
+        // }
+
+        FactoryHasFacility::create([
+          'factory_id' => $param['factory_id'],
+          'facility_id' => $param['facility_id']
+        ]);
+
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage(),
+          'data' => $param
+        ]);
+      }
+
+      return response()->json([
+        'success' => true
+      ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\X  $X
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyFacilityFactory($id)
+    {
+      try {
+        FactoryHasFacility::where($id)->delete();
+      } catch (Exception $th) {
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getError()
+        ], 500);
+      }
+      return response()->json([
+        'success'=> true
+      ], 200);
+    }
+
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\X  $X
@@ -99,8 +176,11 @@ class FactoryController extends Controller
         //
         try {
           //code...
-          $query = Facility::find($id);
-          return new FacilityOneCollection($query);
+          $query = Factory::with('items')->find($id);
+          return response()->json([
+            'success' => true,
+            'data' => $query
+          ]);
 
         } catch (Exception $th) {
           return response()->json([
@@ -132,7 +212,7 @@ class FactoryController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Facility::find($id)->update($param);
+        Factory::find($id)->update($param);
       } catch (Exception $th) {
         return response()->json(
           [

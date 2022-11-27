@@ -16,6 +16,11 @@ class Factory extends Model
 
     protected $fillable = [
         'id',
-        'factory_type',
+        'name',
+        'description'
     ];
+
+    public function facility(){
+        return $this->hasMany('App\Models\Facility\FactoryHasCategory', 'id', 'facility_id');
+    }
 }

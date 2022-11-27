@@ -28,30 +28,50 @@ class ShipmentController extends Controller
       $type = $request->query('shipment_type');
       $monthYear = $request->query('monthYear');
 
-      if(empty($monthYear)){
-        $monthYear = date('Y-m');
+
+      try {
+        //code...
+        if(isset($monthYear)){    
+          $monthYear = date_create($monthYear);
+          $month = date_format($monthYear, 'm');
+          $year = date_format($monthYear, 'Y');
+    
+          if(isset($type)){
+            $query = Shipment::with('order', 'type', 'status')
+            ->whereHas('type', function($query) use ($type){
+              $query->where('id', $type);
+            })
+            ->whereYear('delivery_date', '=', $year)
+            ->whereMonth('delivery_date', '=', $month)
+            ->get();
+          } else {
+            $query = Shipment::with('order', 'type', 'status')
+            ->whereYear('delivery_date', '=', $year)
+            ->whereMonth('delivery_date', '=', $month)
+            ->get();
+          }  
+        } else {
+          if(isset($type)){
+            $query = Shipment::with('order', 'type', 'status')
+            ->where('shipment_type_id', $type)
+            ->orderBy('order_id', 'asc')
+            ->get();
+          } else {
+            $query = Shipment::with('order', 'type', 'status')
+            ->get();
+          }  
+        }
+  
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage
+        ]);
       }
 
-      $monthYear = date_create($monthYear);
-      $month = date_format($monthYear, 'm');
-      $year = date_format($monthYear, 'Y');
-
-      if(isset($type)){
-        $query = Shipment::with('order', 'type', 'status')
-        ->whereHas('type', function($query) use ($type){
-          $query->where('id', $type);
-        })
-        ->whereYear('delivery_date', '=', $year)
-        ->whereMonth('delivery_date', '=', $month)
-        ->get();
-      } else {
-        $query = Shipment::with('order', 'type', 'status')
-        ->whereYear('delivery_date', '=', $year)
-        ->whereMonth('delivery_date', '=', $month)
-        ->get();
-      }
-
-      return response()->json(['data' => $query]);
+      return response()->json(['data' => $query, 'type' => $type]);
     }
 
     /**

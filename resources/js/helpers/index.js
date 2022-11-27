@@ -70,6 +70,14 @@ const main = {
         cb(err.response);
       });
     },
+    insertPages(_data, cb){
+      if(!_data) throw new Error('data empty');
+      axios.post( uri + '/pages', { payload: _data }).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     getPagesAccess(cb) {
       axios.get( uri + '/pages-access').then( function(res){
         cb(res.data);
@@ -1974,12 +1982,62 @@ const main = {
         cb(err.response);
       });
     },
+    //Factory
+    getFactory(params=null, cb){
+      axios.get( uri + '/factory' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAFactory(id, cb){
+      axios.get( uri + '/factory/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    insertFactory(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/factory', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateFactory(id, _data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.put( uri + '/factory' + id , { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertFacilityToFactory(_data, cb){
+      if(!_data) throw new Error('error gan')
+      axios.post( uri + '/factory-has-facility', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     //Facility
     getFacility(params=null, cb){
       axios.get( uri + '/facility' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
+      })
+    },
+    getFacilityType(params=null, cb){
+      axios.get( uri + '/facility-type' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
       })
     },
     getFacilityTarget(params=null, cb){
@@ -2029,22 +2087,22 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/sales-invoice', { payload:  _data } ).then( function(res) {
+      axios.post( uri + '/invoice', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
       });
     },
-    getSalesInvoice(cb){
-      axios.get( uri + '/sales-invoice').then(function(res){
+    getSalesInvoice(params=null, cb){
+      axios.get( uri + '/invoice' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
       })
     },
-    getASalesInvoice(id, cb){
+    getASalesInvoice(id, params=null, cb){
       if(!id) console.error('ID not found')
-      axios.get( uri + '/sales-invoice' + `/${id}`).then( function(res){
+      axios.get( uri + '/invoice' + `/${id}${params}`).then( function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -2238,6 +2296,28 @@ const main = {
     insertMonitoringFG(data, cb){
       if(!data) return;
       axios.post(uri + '/monitoring-fg', {payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    // Graph
+    getWorkDetail(params, cb){
+      axios.get(uri + '/new-api-test' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getPerOrder(params, cb){
+      axios.get(uri + '/new-api-test-2' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getPerRecordOrderGraph(id, params, cb){
+      axios.get(uri + `/new-api-test-3/${id}` + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

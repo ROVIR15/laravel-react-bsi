@@ -11,7 +11,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 // Components
 import API from '../../../../helpers';
 
-import { isArray, isEmpty, isString } from 'lodash'
+import { filter, isArray, isEmpty, isString } from 'lodash'
 import Table from './Table';
 import { useLocation, useParams } from 'react-router-dom';
 import { isEditCondition } from '../../../../helpers/data';
@@ -50,37 +50,40 @@ export default function BasicModal({ order_id, onAddItems, update, open, options
     },
     validationSchema: GoodsSchema,
     onSubmit: (values) => {
-      console.log(values)
-      let { selectedItem, facility_id, costing_id } = values;
-      let payload = { ...selectedItem, facility_id, costing_id };
+      let { selectedItem, facility_id, costing_id, facility_name, costing_name } = values;
+      let payload = { ...selectedItem, facility_id, costing_id};
       if(isEditCondition(pathname.split('/'), id)) {
-        // if(isEmpty(values?.id)) {
-          // let { costing_name, facility_name, id, ...rest} = selectedItem;
-          // try {
-          //   API.updateManufacturePlanningItems(id, rest, function(){
-          //     if(res.success) alert('success');
-          //     else throw new Error('failed')
-          //   })
-          // } catch (error) {
-          //   alert(error);
-          // }
-        // } else {
+        if(!isEmpty(values?.id)) {
+          let { costing_name, facility_name, po_number, total_qty, expected_output, work_days, total_plan_amount, total_plan_qty, id, ...rest} = selectedItem;
+          try {
+            let aa = { ...rest, bom_id: costing_id, facility_id};
+            API.updateManufacturePlanningItems(values.id, aa, function(res){
+              if(res.success) alert('success');
+              else throw new Error('failed')
+            })
+          } catch (error) {
+            alert(error);
+          }
+        } else {
           try {
             API.setManufacturePlanningItems(payload, function(res){
+            console.log(res)
               if(!res.success) throw new Error('Failed');
               else alert('success');
             })
           } catch(error) {
             alert(error)
           }  
-        // }
+        }
       } else {
+        // let _p = {...selectedItem,}
         onAddItems(payload)
       }
 
       handleClose();
       handleReset();
       setItems([]);
+      setSelected(null)
       setSubmitting(false);
     }
   });
@@ -105,6 +108,7 @@ export default function BasicModal({ order_id, onAddItems, update, open, options
   const handleAutoComplete = (value) => {
     if(isString(value)) {
       setFieldValue('costing_id', value.split('-')[0])
+      setFieldValue('costing_name', value)
     }
   }
 
@@ -195,6 +199,17 @@ export default function BasicModal({ order_id, onAddItems, update, open, options
     }
   }, [loadingCosting])
 
+  React.useEffect(() => {
+    if(isEmpty(selected)) return;
+    else {
+      const { id, bom_id, facility_id, facility_name, ...rest} = selected; 
+      setFieldValue('id', id);
+      setFieldValue('costing_id', bom_id);
+      setFieldValue('facility_id', facility_id);
+      setFieldValue('selectedItem', rest);
+    }
+  }, [selected])
+
   return (
     <div>
       <Modal
@@ -223,7 +238,11 @@ export default function BasicModal({ order_id, onAddItems, update, open, options
                 fullWidth
                 sutoComplete="Line"
                 value={values.facility_id}
-                {...getFieldProps('facility_id')}
+                onChange={(event) => {
+                  let line = optionsLine.filter((value) => (value.id === event.target.value));
+                  setFieldValue('facility_name', line[0].name);
+                  setFieldValue('facility_id', event.target.value);
+                }}
                 error={Boolean(touched.facility_id && errors.facility_id)}
                 helperText={touched.facility_id && errors.facility_id}
                 sx={{ height: 1 }}

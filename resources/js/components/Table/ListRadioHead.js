@@ -33,7 +33,7 @@ export default function ListHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="radio">
+        <TableCell padding='none'>
           <Radio
             checked={!isEmpty(numSelected)}
           />

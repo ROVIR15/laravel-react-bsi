@@ -7,6 +7,7 @@ import Form from './components/Form';
 import ResetPassword from './components/ResetPassword';
 import Submission from './role';
 import Pages from './pages';
+import PagesNEW from './new_pages';
 
 import API from '../../../helpers';
 
@@ -47,14 +48,16 @@ function Test() {
         <TabList onChange={handleChange} aria-label="lab API tabs example">
           <Tab label="General" value="1" />
           <Tab label="Submission Access" value="2" />
-          <Tab label="Pages Access" value="3" />
-          <Tab label="Reset Password" value="4" />
+          <Tab label="Pages" value="3" />
+          <Tab label="Pages Access" value="4" />
+          <Tab label="Reset Password" value="5" />
         </TabList>
       </Box>
       <TabPanel value="1"><Form data={user}/></TabPanel>
       <TabPanel value="2"><Submission data={roles}/></TabPanel>
-      <TabPanel value="3"><Pages data={pages}/></TabPanel>
-      <TabPanel value="4"><ResetPassword id={id}/></TabPanel>
+      <TabPanel value="3"><PagesNEW/></TabPanel>
+      <TabPanel value="4"><Pages data={pages}/></TabPanel>
+      <TabPanel value="5"><ResetPassword id={id}/></TabPanel>
     </TabContext>
   )
 }

@@ -18,6 +18,7 @@ import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
 import cardOutlined from '@iconify/icons-eva/credit-card-outline';
 import dollarCircle from '@iconify/icons-ant-design/dollar-circle-filled';
 import monitorOutline from '@iconify/icons-ant-design/monitor-outline';
+import dollarOutlined from '@iconify/icons-ant-design/dollar-outlined';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -198,6 +199,10 @@ const sidebarConfig = [
         path: '/dashboard/monitoring/main'
       },
       {
+        title: 'Produksi',
+        path: '/dashboard/monitoring/production'
+      },
+      {
         title: 'Cutting',
         path: '/dashboard/monitoring/cutting'
       },
@@ -224,55 +229,41 @@ const sidebarConfig = [
     ]
   },
   {
+    title: 'Finance',
+    name: 'finance',
+    icon: getIcon(dollarOutlined),
+    path: '/dashboard/finance',
+    children: [
+      {
+        title: 'Vendor Bills',
+        path: '/dashboard/finance/vendor-bills',
+      },
+      {
+        title: 'Invoice',
+        path: '/dashboard/finance/invoice'
+      },      
+    ]
+  },
+  {
     title: 'User Management',
     name: 'user-management',
     path: '/dashboard/user-management',
   },
   {
-    title: 'Work Center',
-    name: 'work-center',
-    path: '/dashboard/production/work-center',
-  },
-  {
-    title: 'Spreading',
-    name: 'operator-spreading',
-    path: '/dashboard/inputer-spreading',
-  },
-  {
-    title: 'Cutting',
-    name: 'operator-cutting',
-    path: '/dashboard/inputer-cutting',
-  },
-  {
-    title: 'Numbering',
-    name: 'operator-numbering',
-    path: '/dashboard/inputer-numbering',
-  },
-  {
-    title: 'Supermarket',
-    name: 'operator-supermarket',
-    path: '/dashboard/inputer-supermarket',
-  },
-  {
-    title: 'Sewing',
-    name: 'operator-sewing',
-    path: '/dashboard/inputer-sewing',
-  },
-  {
-    title: 'QC',
-    name: 'operator-qc',
-    path: '/dashboard/inputer-qc',
-  },
-  {
-    title: 'Finished Goods',
-    name: 'operator-finished',
-    path: '/dashboard/inputer-finished-goods',
-  },
-  {
     title: 'Facility',
     name: 'facility',
-    path: '/dashboard/facility/target',
+    path: '/dashboard/facility',
   },
+  {
+    title: 'Factory',
+    name: 'factory',
+    path: '/dashboard/factory',
+  },
+  {
+    title: 'Line Target',
+    name: 'line-target',
+    path: '/dashboard/facility-target',
+  }
 ];
 
 export default sidebarConfig;

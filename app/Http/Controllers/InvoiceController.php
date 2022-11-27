@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Invoice\Invoice;
 use App\Models\Invoice\InvoiceItem;
+use App\Models\Invoice\InvoiceHasType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
 use App\Http\Resources\Study\InvoiceCollection;
@@ -20,9 +21,42 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = Invoice::all();
+        $type = $request->query('invoice_type');
+        $monthYear = $request->query('monthYear');
 
-        return new InvoiceReceiptCollection($query);
+        try {
+          if(isset($monthYear)){
+            $monthYear = date_create($monthYear);
+            $month = date_format($monthYear, 'm');
+            $year = date_format($monthYear, 'Y');
+            if(isset($type)) {
+              $query = InvoiceHasType::with('sales_invoice')
+              ->where('invoice_type_id', $type)
+              ->whereYear('invoice_date', '=', $year)
+              ->whereMonth('invoice_date', '=', $month)
+              ->get();
+            } else {
+              $query = Invoice::all();
+            }
+          } else {
+            if(isset($type)){
+              $query = InvoiceHasType::with('sales_invoice')
+              ->where('invoice_type_id', $type)
+              ->get();
+            } else {
+              $query = Invoice::all();
+            }
+          }
+        } catch (\Throwable $th) {
+          return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+          ]);
+        }
+
+        return response()->json([
+          'data' => $query
+        ]);
     }
 
         /**
@@ -47,20 +81,25 @@ class InvoiceController extends Controller
 
       try {
         //Goods Receipt Creation
-        $Invoice = Invoice::create([
-            'purchase_order_id' => $param['purchase_order_id'],
-            'amount' => $param['amount'],
-            'qty' => $param['qty'],
+        $invoice = Invoice::create([
             'invoice_date' => $param['invoice_date'],
-            'posting_date' => $param['posting_date']
+            'order_id' => $param['order_id'],
+            'sold_to' => $param['sold_to'],
+            'tax' => $param['tax'],
+            'description' => $param['description']
         ]);
-
         //Create purchase order item
+        if(!isset($invoice)) throw new Error('Invoice failed to Store');
+        if(!isset($param['items'])) {
+          return response()->json([
+            'success' => true
+          ]);
+        }
+        
         $IRItems = [];
-
-        foreach($param['IRItems'] as $key){
+        foreach($param['items'] as $key){
           array_push($IRItems, [
-            'invoice_receipt_id' => $Invoice->id,
+            'invoice_id' => $invoice->id,
             'order_item_id' => $key['order_item_id'],
             'amount' => $key['amount'],
             'qty' => $key['qty']
@@ -68,6 +107,11 @@ class InvoiceController extends Controller
         }
 
         InvoiceItem::insert($IRItems);
+
+        InvoiceHasType::create([
+          'invoice_id' => $invoice->id,
+          'invoice_type_id' => $param['type']
+        ]);
 
       } catch (Exception $e) {
         //throw $th;
@@ -81,7 +125,8 @@ class InvoiceController extends Controller
       }
       
       return response()->json([
-        'success' => true
+        'success' => true,
+        'param' => $param
       ], 200);
     }
 
@@ -91,17 +136,28 @@ class InvoiceController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
+      $type = $request->query('invoice_type');
+
       try {
-        $invoiceData = Invoice::find($id);
-        return new oneInvoiceReceipt($invoiceData);
+
+        if(isset($type)){
+            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order')->find($id);  
+        } else {
+            $query = Invoice::with('party')->find($id);
+        }
+
     } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
         ], 500);
       }
+
+      return response()->json([
+        'data' => $query
+      ]);
     }
 
     /**

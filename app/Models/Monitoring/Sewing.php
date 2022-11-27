@@ -36,8 +36,8 @@ class Sewing extends Model
     }
 
     public function sales_order(){
-        return $this->belongsTo('App\Models\Order\SalesOrder');
-      }
+        return $this->belongsTo('App\Models\Order\SalesOrder')->with('party');
+    }
   
     public function inventory(){
         return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id')->with('facility');
@@ -56,6 +56,10 @@ class Sewing extends Model
         ->selectRaw('sum(output) as output_qc, sales_order_id, po_number')
         ->groupBy('sales_order_id', 'po_number')
         ->with('detail');
+    }
+
+    public function planning_items(){
+        return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems', 'sales_order_id', 'sales_order_id')->with('month_archive');
     }
 
 }

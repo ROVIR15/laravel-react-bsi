@@ -77,17 +77,17 @@ function Goods() {
     { field: 'costing_name', headerName: 'Costing', width: 250, editable: false},
     { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
     { field: 'total_qty', headerName: 'Total Qty', editable: false},
-    { field: 'expected_output', headerName: 'Expected Output', editable: true},
-    { field: 'work_days', headerName: 'Work Days Output', editable: true},
-    { field: 'expected_total_output', headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
+    { field: 'expected_output', width: 200, alignItem: 'right',headerName: 'Expected Output', editable: true},
+    { field: 'work_days', width: 200, alignItem: 'right',headerName: 'Work Days Output', editable: true},
+    { field: 'expected_total_output', width: 200, alignItem: 'right',headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
     { field: 'actions', type: 'actions', width: 50, 
       getActions: (params) => [
-        // <GridActionsCellItem
-        //   icon={<Icon icon={editFill} width={24} height={24} />}
-        //   label="Edit"
-        //   onClick={editData(params)}
-        //   showInMenu
-        // />,
+        <GridActionsCellItem
+          icon={<Icon icon={editFill} width={24} height={24} />}
+          label="Edit"
+          onClick={editData(params)}
+          showInMenu
+        />,
         <GridActionsCellItem
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
@@ -96,14 +96,14 @@ function Goods() {
         />
       ]
     }
-  ], [deleteData]);
+  ], [deleteData, editData]);
 
-  // const editData = useCallback(
-  //   (params) => () => {
-  //     setSelected(params.row);
-  //     handleOpenModal();
-  //   }
-  // )
+  const editData = useCallback(
+    (params) => () => {
+      setSelected(params.row);
+      handleOpenModal();
+    }
+  )
 
   const deleteData = useCallback(
     (id) => () => {
@@ -138,6 +138,7 @@ function Goods() {
       alert('error')
     }
   }
+
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
       const editedIds = Object.keys(model);
@@ -149,7 +150,6 @@ function Goods() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-    
           return prevItems.map((row, index) => {
             if(row.id === parseInt(itemToUpdateIndex)){
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
@@ -159,15 +159,14 @@ function Goods() {
           });
         });
 
-
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value
 
         try {
           API.updateManufacturePlanningItems(editedIds, data, function(res){
             if(res.success) alert('success');
-            else alert('failed aa');
-          })            
+            else throw new Error('failed');
+          })
         } catch {
           alert('error')
         }
@@ -304,7 +303,7 @@ function Goods() {
                         <Typography variant="h5"> {fNumber(collected.qty)}</Typography>
                       </Item>
                       <Item>
-                        <Typography variant="body2">Total Expected Revenue</Typography>
+                        <Typography variant="body2">Total Expected X Revenue</Typography>
                         <Typography variant="h5"> Rp. {fCurrency(collected.money)}</Typography>
                       </Item>
                     </Stack>
@@ -321,7 +320,6 @@ function Goods() {
                 rows={items}
                 onEditRowsModelChange={handleEditRowsModelChange}
                 handleAddRow={handleOpenModal}
-                experimentalFeatures={{ newEditingApi: true }}
               />
             </Grid>
 

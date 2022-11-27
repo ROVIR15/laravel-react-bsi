@@ -11,6 +11,8 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 
+import { fCurrency } from '../../../../../utils/formatNumber';
+
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 12
 }));
@@ -34,15 +36,26 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, subTotal }) {
+export default function BasicTable({ payload }) {
 
   const total = () => {
-    return  (subTotal * 1.1).toFixed(2);
+    return  (subTotal() * 1.1).toFixed(2);
+  }
+
+  const subTotal = () => {
+    return payload.reduce((initial, next) => {
+      return initial + (next.qty * next.amount)
+    }, 0)
+  }
+
+  const total_price = (qty, amount) => {
+    let total = qty * amount
+    return total
   }
 
   return (
     <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
-      <Table sx={{ minWidth: 120 }} aria-label="simple table">
+      <Table sx={{ minWidth: 120 }} size='small' aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell align="left">#</TableCell>
@@ -60,11 +73,12 @@ export default function BasicTable({ payload, subTotal }) {
             >
               <TableCell align="left">{index+1}</TableCell>
               <TableCell component="th" scope="row">
-                {`${row.name} ${row.color} ${row.size}`}
+                {`${row.name}`}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
-              <TableCell align="right">{(row.qty * row.amount)}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(row.amount)}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(total_price(row.qty, row.amount))}
+              </TableCell>
             </TableRow>
           ))}
             <TableRow
@@ -77,7 +91,7 @@ export default function BasicTable({ payload, subTotal }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {subTotal } </Typography>
+                <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -103,7 +117,7 @@ export default function BasicTable({ payload, subTotal }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {total()} </Typography>
+                <Typography variant="body1">Rp. {fCurrency(total())} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

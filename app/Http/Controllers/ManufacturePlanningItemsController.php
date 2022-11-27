@@ -82,16 +82,17 @@ class ManufacturePlanningItemsController extends Controller
         $payload = $request->all()['payload'];
 
         try {
-            ManufacturePlanningItems::find($id)->update($payload);
+          ManufacturePlanningItems::find($id)->update($payload);
         } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json([
-              'success' => false,
-              'error' => $th->getMessage()
-            ], 200);
+          //throw $th;
+          return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+          ], 200);
         }
         return response()->json([
           'success' => true,
+          'payload' => $payload
         ], 200);        
     }
 

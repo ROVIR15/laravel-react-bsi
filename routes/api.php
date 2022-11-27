@@ -28,6 +28,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::resource('upload', 'UploadController')->only(['store']);
 
+    // Costing
+    Route::get('costing-list', 'ManufacturePlanningItemsController@getCosting');
+    Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');    
+
     //Party
     Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -53,7 +57,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('product', 'ProductController')->only(['index']);
     Route::resource('product-category', 'ProductCategoryController')->only(['index']);
     Route::resource('product-feature', 'ProductFeatureController')->only(['index', 'store', 'update', 'destroy', 'show']);
-
+    Route::get('finished-goods', 'GoodsController@showFG');
     Route::resource('goods-option', 'GoodsOptionController')->only(['index']);
 
     //BOM
@@ -69,7 +73,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('manufacture-component', 'ManufactureComponentController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('operation-result', 'MOperationResultController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('production-record', 'ProductionRecorderController')->only(['store']);
-
+    Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'destroy']);
+    Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'destroy', 'store']);
+    
     //Operation
     Route::resource('operation', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
@@ -117,12 +123,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Inventory
     Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('goods-receipt-item', 'GRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('inventory', 'InventoryController')->only(['index', 'store']);
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
 
+    //Accounting
+    Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    
     //Purchasing
     Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
 
@@ -133,28 +141,30 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('production-study', 'ProductionStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     //Invoice
+    Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('billing-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('billing-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-transaction', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-status', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-term', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('payment', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('payment-application', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
-    Route::resource('sales-invoice', 'SalesInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('purchase-invoice', 'PurchaseInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('sales-invoice', 'SalesInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('purchase-invoice', 'PurchaseInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-item', 'InvoiceItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Facilitiy
-    Route::resource('facility', 'FactoryController')->only(['index', 'show', 'store']);
     Route::resource('facility-target', 'FacilityTargetController')->only('index', 'store', 'update', 'show');
-    
+    Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
+    Route::resource('factory', 'FactoryController')->only(['index', 'show', 'store']);
+    Route::get('facility-type', 'FacilityController@getFacilityType');
+    Route::post('factory-has-facility', 'FactoryController@insertNewFacilityToFactory');
+
     // Action on Manufacturing Order
     Route::resource('action', 'ActionController')->only(['index', 'show', 'store']);
 
@@ -177,7 +187,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::resource('machine', 'MachineController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
-    Route::resource('graph-api', 'GraphSewingController')->only(['index']);
     Route::resource('purchase-requisition', 'PurchaseRequisitionController')->only('index', 'store', 'destroy', 'update', 'show');
     Route::resource('pages', 'PagesController')->only('index', 'store', 'destroy', 'update', 'show');
     Route::resource('pages-access', 'PagesAccessController')->only('index', 'store', 'destroy', 'update', 'show');
@@ -190,12 +199,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order', 'OrderController')->only(['index', 'show']);
     Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+    // Graph
+    Route::resource('graph-api', 'GraphSewingController')->only(['index']);
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+    Route::get('new-api-test', 'GraphSewingController@testingAPI1');
+    Route::get('new-api-test-2', 'GraphSewingController@testingAPI2');
+    Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');    
+
 });
 
-Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
-Route::get('finished-goods', 'GoodsController@showFG');
-Route::get('costing-list', 'ManufacturePlanningItemsController@getCosting');
-Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');
-Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'destroy']);
-Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'destroy', 'store']);
+Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');

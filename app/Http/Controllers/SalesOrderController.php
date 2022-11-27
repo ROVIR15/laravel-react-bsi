@@ -4,6 +4,7 @@
   
   use Carbon\Carbon;
   use DB;  
+  use PDF;
 
   use App\Models\Order\Order;
   use App\Models\Order\OrderStatus;
@@ -181,6 +182,24 @@
         return response()->json([
           'success'=> false,
           'errors'=> $th->getError()
+        ]);
+      }
+    }
+
+    public function createPDF()
+    {
+      try {
+        //code..
+        $salesOrder = SalesOrder::all();
+
+        // $pdf = PDF::loadview('apa.pdf',['order'=>$order]);
+
+        return view('order_pdf',['order'=>$salesOrder]);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success'=> false,
+          'errors'=> $th->getMessage()
         ]);
       }
     }

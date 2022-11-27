@@ -21,7 +21,21 @@ class ShipmentItemController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ShipmentItem::all();
+      $shipment = $request->query('shipment');
+
+      try {
+        if(isset($shipment)){
+          $query = ShipmentItem::where('shipment_id', $shipment)->get();
+        } else {
+          $query = ShipmentItem::all();
+        }
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
 
       return new ShipmentItemCollection($query);
     }

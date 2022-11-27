@@ -1,26 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Page from '../../../components/Page';
-import { 
+import {
   Box,
-  Card, 
-  CardHeader, 
-  CardContent, 
-  Container, 
+  Card,
+  CardHeader,
+  CardContent,
+  Container,
   Divider,
   FormControl,
   InputAdornment,
   InputLabel,
   MenuItem,
   Tab,
-  TextField, 
-  Typography, 
-  Paper, 
+  TextField,
+  Typography,
+  Paper,
   Select,
-  Stack, 
-  Button, 
+  Stack,
+  Button,
   Grid
-} from '@mui/material'
-import {TabContext, TabList, TabPanel} from '@mui/lab';
+} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -44,24 +44,24 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import useAuth from '../../../context';
 
-import {_partyAddress} from '../../../helpers/data'
+import { _partyAddress } from '../../../helpers/data';
 
-const ColumnBox = styled('div')(({theme}) => ({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%"
-}))
+const ColumnBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%'
+}));
 
-const SpaceBetweenBox = styled('div')(({theme}) => ({
-  display: "flex", 
-  flexDirection: "row", 
-  alignItems: "center", 
-  justifyContent: "space-between", 
-  marginBottom: "8px"
-}))
+const SpaceBetweenBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '8px'
+}));
 
 function SalesOrder() {
-  const {id} = useParams();
+  const { id } = useParams();
   const { user } = useAuth();
 
   //Dialog Interaction
@@ -72,7 +72,7 @@ function SalesOrder() {
   const [options, setOptions] = useState([]);
 
   // Option for Product Items
-  const [optionsP, setOptionsP] = useState([])
+  const [optionsP, setOptionsP] = useState([]);
 
   //AutoComplete
   const [open, setOpen] = useState(false);
@@ -83,7 +83,7 @@ function SalesOrder() {
   const [editRowData, setEditRowData] = React.useState({});
 
   // Sales Order Items storage variable on Data Grid
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
 
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
@@ -93,11 +93,11 @@ function SalesOrder() {
   /**
    * TAB Panel
    */
-   const [valueTab, setValueTab] = React.useState('1');
+  const [valueTab, setValueTab] = React.useState('1');
 
-   const handleChangeTab = (event, newValue) => {
-     setValueTab(newValue);
-   };
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
+  };
 
   const SalesOrderSchema = Yup.object().shape({
     order_id: Yup.string().required('Order ID is required'),
@@ -123,25 +123,27 @@ function SalesOrder() {
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {
-      API.updateSalesOrder(id, values, function(res){
+      API.updateSalesOrder(id, values, function (res) {
         alert('success');
       });
       setSubmitting(false);
     }
-  })
+  });
 
   useEffect(async () => {
-    await handleUpdateData()
+    await handleUpdateData();
   }, [id]);
 
   const handleUpdateData = async () => {
-    if(!id) return;
-    const load = await axios.get(process.env.MIX_API_URL  + '/sales-order' + `/${id}`)
-    .then(function({data: {data}}) {
-      return(data);
-    }).catch((error) => {
+    if (!id) return;
+    const load = await axios
+      .get(process.env.MIX_API_URL + '/sales-order' + `/${id}`)
+      .then(function ({ data: { data } }) {
+        return data;
+      })
+      .catch((error) => {
         alert(error);
-    })
+      });
 
     setValues({
       id: load.id,
@@ -151,49 +153,56 @@ function SalesOrder() {
       sold_to: load.sold_to,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
-      delivery_date: load.delivery_date,
-    })
-    let _party = _partyAddress(load.party)
-    let _ship = _partyAddress(load.ship)
-    setSelectedValueSO(_party)
-    setSelectedValueSH(_ship)
+      delivery_date: load.delivery_date
+    });
+    let _party = _partyAddress(load.party);
+    let _ship = _partyAddress(load.ship);
+    setSelectedValueSO(_party);
+    setSelectedValueSH(_ship);
 
     setStatus(load.completion_status[0]?.status?.id);
 
-    const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${load.order_id}`)
-    .then(function({data: {data}}) {
-      return(data);
-    }).catch((error) => {
+    const load2 = await axios
+      .get(process.env.MIX_API_URL + '/order-item' + `/${load.order_id}`)
+      .then(function ({ data: { data } }) {
+        return data;
+      })
+      .catch((error) => {
         alert(error);
-    })
+      });
 
-    var c = load2.map((key)=>{
-      const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, name: product_feature.product.goods.name, shipment_estimated: new Date(key.shipment_estimated), ...key}
-    })
+    var c = load2.map((key) => {
+      const { product_feature } = key;
+      return {
+        ...product_feature,
+        product_feature_id: product_feature.id,
+        id: key.id,
+        name: product_feature.product.goods.name,
+        shipment_estimated: new Date(key.shipment_estimated),
+        ...key
+      };
+    });
     setItems(c);
-  }
+  };
 
   useEffect(() => {
     let active = true;
 
     (async () => {
-
       API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
+        if (!res) return;
+        if (!res.data) {
           setOptionsP([]);
         } else {
           setOptionsP(res.data);
         }
-      })
-
+      });
     })();
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
   const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps } = formik;
 
@@ -204,45 +213,47 @@ function SalesOrder() {
   const [status, setStatus] = React.useState(0);
 
   const handleSubmitCompletionStatus = () => {
-    if(!status) { alert('Stop'); return undefined}
-    try {
-      API.insertOrderCompletionStatus({
-        user_id: user.id,
-        order_id: values.order_id,
-        completion_status_id: status}, function(res){
-        if(!res.success) alert('Failed');
-        alert('done')
-      })
-    } catch (error) {
-        alert(error)
+    if (!status) {
+      alert('Stop');
+      return undefined;
     }
-  }
- 
+    try {
+      API.insertOrderCompletionStatus(
+        {
+          user_id: user.id,
+          order_id: values.order_id,
+          completion_status_id: status
+        },
+        function (res) {
+          if (!res.success) alert('Failed');
+          alert('done');
+        }
+      );
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
-  }  
+  };
 
-  const deleteData = useCallback(
-    (id) => () => {
-      setItems((prevItems) => {
-        const rowToDeleteIndex = id;
-        return [
-          ...items.slice(0, rowToDeleteIndex),
-          ...items.slice(rowToDeleteIndex + 1),
-        ];
-      });
+  const deleteData = useCallback((id) => () => {
+    setItems((prevItems) => {
+      const rowToDeleteIndex = id;
+      return [...items.slice(0, rowToDeleteIndex), ...items.slice(rowToDeleteIndex + 1)];
+    });
 
-      API.deleteSalesOrderItem(id, (res)=> {
-        alert('success')
-      });
+    API.deleteSalesOrderItem(id, (res) => {
+      alert('success');
+    });
 
-      handleUpdateAllRows();
-  })
+    handleUpdateAllRows();
+  });
 
   useEffect(() => {
     var orderItem;
-  }, [items])
-  
+  }, [items]);
 
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
@@ -256,124 +267,130 @@ function SalesOrder() {
 
         function formatDate(date) {
           var d = new Date(date),
-              month = '' + (d.getMonth() + 1),
-              day = '' + d.getDate(),
-              year = d.getFullYear();
-      
-          if (month.length < 2) 
-              month = '0' + month;
-          if (day.length < 2) 
-              day = '0' + day;
-      
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+          if (month.length < 2) month = '0' + month;
+          if (day.length < 2) day = '0' + day;
+
           return [year, month, day].join('-');
-      }
+        }
 
         switch (editedColumnName) {
           case 'shipment_estimated':
             let date = formatDate(editRowData[editedColumnName].value);
             data[editedColumnName] = date;
             break;
-        
+
           default:
             data[editedColumnName] = editRowData[editedColumnName].value;
             break;
         }
         // update on firebase
-        API.updateSalesOrderItem(editedIds, data, function(res){
+        API.updateSalesOrderItem(editedIds, data, function (res) {
           alert(JSON.stringify(res));
         });
       } else {
         setEditRowData(model[editedIds[0]]);
       }
-  
+
       setEditRowsModel(model);
     },
     [editRowData]
   );
 
-  const handleUpdateAllRows = async() => {
-    const load2 = await axios.get(process.env.MIX_API_URL  + '/order-item' + `/${values.order_id}`)
-    .then(function({data: {data}}) {
-      return(data);
-    })
+  const handleUpdateAllRows = async () => {
+    const load2 = await axios
+      .get(process.env.MIX_API_URL + '/order-item' + `/${values.order_id}`)
+      .then(function ({ data: { data } }) {
+        return data;
+      });
 
-    var c = load2.map((key)=>{
-      const { product_feature } = key
-      return {...product_feature, product_feature_id: product_feature.id, id: key.id, shipment_estimated: new Date(key.shipment_estimated), name: product_feature?.product?.goods?.name, ...key}
-    })
+    var c = load2.map((key) => {
+      const { product_feature } = key;
+      return {
+        ...product_feature,
+        product_feature_id: product_feature.id,
+        id: key.id,
+        shipment_estimated: new Date(key.shipment_estimated),
+        name: product_feature?.product?.goods?.name,
+        ...key
+      };
+    });
     setItems(c);
   };
 
-  const columns = useMemo(() => [
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', width:350, editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', width: 150, editable: false },
-    { field: 'qty', headerName: 'Quantity', editable: true },
-    { field: 'unit_price', headerName: 'Unit Price', editable: true },
-    { field: 'cm_price', headerName: 'CM Price', editable: true },
-    { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-          onClick={deleteData(params.id)}
-          showInMenu
-        />
-      ]
-    }
-  ], [deleteData]);
+  const columns = useMemo(
+    () => [
+      { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
+      { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
+      { field: 'name', headerName: 'Name', width: 350, editable: false },
+      { field: 'size', headerName: 'Size', editable: false },
+      { field: 'color', headerName: 'Color', width: 150, editable: false },
+      { field: 'qty', headerName: 'Quantity', editable: true },
+      { field: 'unit_price', headerName: 'Unit Price', editable: true },
+      { field: 'cm_price', headerName: 'CM Price', editable: true },
+      { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
+      {
+        field: 'actions',
+        type: 'actions',
+        width: 100,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<Icon icon={trash2Outline} width={24} height={24} />}
+            label="Delete"
+            onClick={deleteData(params.id)}
+            showInMenu
+          />
+        ]
+      }
+    ],
+    [deleteData]
+  );
 
-  const [populateState, setPopulateState] = useState({y: '', z: 0, aa: 0, bb: 0})
+  const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0, bb: 0 });
   const handlePopulate = () => {
-    const {y, z, aa, bb} = populateState;
-    if(y === '' && z === 0) return;
-    const res = items.map(function(x){
-      if(y !== '') x = {...x, shipment_estimated: y}
-      if(z !== 0) x = {...x, qty: z}
-      if(bb !== 0) x = {...x, cm_price: bb}
-      if(aa !== 0) x = {...x, unit_price: aa}
+    const { y, z, aa, bb } = populateState;
+    if (y === '' && z === 0) return;
+    const res = items.map(function (x) {
+      if (y !== '') x = { ...x, shipment_estimated: y };
+      if (z !== 0) x = { ...x, qty: z };
+      if (bb !== 0) x = { ...x, cm_price: bb };
+      if (aa !== 0) x = { ...x, unit_price: aa };
       return x;
-    })
+    });
     setItems(res);
-  }
+  };
 
   const handleChangePopulate = (e) => {
     const { name, value } = e.target;
-    if(name === 'z') setPopulateState({...populateState, z: value});
-    if(name === 'y') setPopulateState({...populateState, y: value});
-    if(name === 'aa') setPopulateState({...populateState, aa: value});
-    if(name === 'bb') setPopulateState({...populateState, bb: value});
+    if (name === 'z') setPopulateState({ ...populateState, z: value });
+    if (name === 'y') setPopulateState({ ...populateState, y: value });
+    if (name === 'aa') setPopulateState({ ...populateState, aa: value });
+    if (name === 'bb') setPopulateState({ ...populateState, bb: value });
     else return;
-  }
+  };
 
   return (
     <Page>
       <Container>
-      <Modal 
-        items={items}
-        setItems={setItems}
-        order_id={values.order_id}
-        open={openM}
-        options={optionsP}
-        handleClose={handleCloseModal}
-        update={handleUpdateAllRows}
-      />        
+        <Modal
+          items={items}
+          setItems={setItems}
+          order_id={values.order_id}
+          open={openM}
+          options={optionsP}
+          handleClose={handleCloseModal}
+          update={handleUpdateAllRows}
+        />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid 
-              container
-              spacing={2}
-            >
-              <Grid
-                item
-                xs={4}
-              >
-                <Card >
-                  <CardHeader title="Choose Quotation"/>
-                  <CardContent sx={{paddingBottom: '6px'}}>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Card>
+                  <CardHeader title="Choose Quotation" />
+                  <CardContent sx={{ paddingBottom: '6px' }}>
                     <Stack direction="column" spacing={1}>
                       <TextField
                         fullWidth
@@ -395,32 +412,27 @@ function SalesOrder() {
                         helperText={touched.po_number && errors.po_number}
                         disabled={true}
                       />
-                    </Stack>              
+                    </Stack>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Grid
-                item
-                xs={8}
-              >
-                <Card >
+              <Grid item xs={8}>
+                <Card>
                   <CardContent>
                     <Paper>
                       <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                         <ColumnBox>
                           <SpaceBetweenBox>
                             <Typography variant="h6"> Pembeli </Typography>
-                            <Button
-                              disabled
-                            >
-                              Select
-                            </Button>
+                            <Button disabled>Select</Button>
                           </SpaceBetweenBox>
-                          { selectedValueSO?.name ? (
+                          {selectedValueSO?.name ? (
                             <div>
                               <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                              <Typography component="span" variant="caption">{selectedValueSO?.street}</Typography>
+                              <Typography component="span" variant="caption">
+                                {selectedValueSO?.street}
+                              </Typography>
                               <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
                             </div>
                           ) : null}
@@ -429,31 +441,25 @@ function SalesOrder() {
                         <ColumnBox>
                           <SpaceBetweenBox>
                             <Typography variant="h6"> Penerima </Typography>
-                            <Button
-                              disabled
-                            >
-                              Select
-                            </Button>
+                            <Button disabled>Select</Button>
                           </SpaceBetweenBox>
-                          { selectedValueSH?.name ? (
+                          {selectedValueSH?.name ? (
                             <div>
                               <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
-                              <Typography component="span" variant="caption">{selectedValueSH?.street}</Typography>
+                              <Typography component="span" variant="caption">
+                                {selectedValueSH?.street}
+                              </Typography>
                               <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
                             </div>
                           ) : null}
                         </ColumnBox>
-
                       </Stack>
                     </Paper>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Grid
-                item
-                xs={12}
-              >
+              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <TabContext value={valueTab}>
@@ -462,17 +468,17 @@ function SalesOrder() {
                           <Tab label="Overview" value="1" />
                           <Tab label="Status" value="2" />
                           <Tab label="Finance" value="3" />
-                        </TabList>  
+                        </TabList>
                       </Box>
 
                       <TabPanel value="1">
-                      <Stack direction="column" spacing={2}>
-                          <Stack direction="row" spacing={2} >
+                        <Stack direction="column" spacing={2}>
+                          <Stack direction="row" spacing={2}>
                             <TextField
                               fullWidth
                               autoComplete="issue_date"
                               type="date"
-                              placeholder='valid'
+                              placeholder="valid"
                               label="Diterbitkan"
                               {...getFieldProps('issue_date')}
                               error={Boolean(touched.issue_date && errors.issue_date)}
@@ -483,7 +489,7 @@ function SalesOrder() {
                               autoComplete="valid_thru"
                               type="date"
                               label="Valid to"
-                              placeholder='valid'
+                              placeholder="valid"
                               {...getFieldProps('valid_thru')}
                               error={Boolean(touched.valid_thru && errors.valid_thru)}
                               helperText={touched.valid_thru && errors.valid_thru}
@@ -492,100 +498,91 @@ function SalesOrder() {
                               fullWidth
                               autoComplete="delivery_date"
                               type="date"
-                              label='Tanggal Pengiriman'
+                              label="Tanggal Pengiriman"
                               {...getFieldProps('delivery_date')}
                               error={Boolean(touched.delivery_date && errors.delivery_date)}
                               helperText={touched.delivery_date && errors.delivery_date}
                             />
                           </Stack>
 
-                          <div>
-                            <Stack direction="row" spacing={4}>
-                              <TextField
-                                type="number"
-                                label="Qty"
-                                name="z"
-                                value={populateState.z}
-                                onChange={handleChangePopulate}
-                              />
-                              <TextField
-                                type="number"
-                                label="Harga Barang"
-                                name="aa"
-                                value={populateState.aa}
-                                onChange={handleChangePopulate}
-                              />
-                              <TextField
-                                type="date"
-                                label="Tanggal Kirim"
-                                name="y"
-                                value={populateState.y}
-                                onChange={handleChangePopulate}
-                              />
-                              <TextField
-                                type="number"
-                                label="CM Price"
-                                name="bb"
-                                value={populateState.bb}
-                                onChange={handleChangePopulate}
-                              />
-                              <Button onClick={handlePopulate}>Populate</Button>
-                            </Stack>
-                          </div>                          
+                          <Stack direction="row" spacing={4}>
+                            <TextField
+                              type="number"
+                              label="Qty"
+                              name="z"
+                              value={populateState.z}
+                              onChange={handleChangePopulate}
+                            />
+                            <TextField
+                              type="number"
+                              label="Harga Barang"
+                              name="aa"
+                              value={populateState.aa}
+                              onChange={handleChangePopulate}
+                            />
+                            <TextField
+                              type="date"
+                              label="Tanggal Kirim"
+                              name="y"
+                              value={populateState.y}
+                              onChange={handleChangePopulate}
+                            />
+                            <TextField
+                              type="number"
+                              label="CM Price"
+                              name="bb"
+                              value={populateState.bb}
+                              onChange={handleChangePopulate}
+                            />
+                            <Button onClick={handlePopulate}>Populate</Button>
+                          </Stack>
                         </Stack>
 
-                      <DataGrid 
-                        columns={columns} 
-                        rows={items}
-                        onEditRowsModelChange={handleEditRowsModelChange}
-                        handleUpdateAllRows={handleUpdateAllRows}
-                        handleAddRow={handleOpenModal}
-                      />
+                        <DataGrid
+                          columns={columns}
+                          rows={items}
+                          onEditRowsModelChange={handleEditRowsModelChange}
+                          handleUpdateAllRows={handleUpdateAllRows}
+                          handleAddRow={handleOpenModal}
+                        />
                       </TabPanel>
 
                       <TabPanel value="2">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <FormControl fullWidth>
-                            <InputLabel >Selet Status</InputLabel>
-                            <Select
-                              value={status}
-                              label="Status"
-                              onChange={handleChangeStatus}
-                            >
+                            <InputLabel>Selet Status</InputLabel>
+                            <Select value={status} label="Status" onChange={handleChangeStatus}>
                               <MenuItem value={5}>Draft</MenuItem>
                               <MenuItem value={1}>Completed</MenuItem>
                               <MenuItem value={2}>Running</MenuItem>
                               <MenuItem value={3}>Waiting</MenuItem>
                               <MenuItem value={4}>On Shipment</MenuItem>
                             </Select>
-                          </FormControl>  
+                          </FormControl>
 
-                          <Button onClick={handleSubmitCompletionStatus}> Update </Button>     
-                        </Stack>           
+                          <Button onClick={handleSubmitCompletionStatus}> Update </Button>
+                        </Stack>
                       </TabPanel>
 
                       <TabPanel value="3">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
-                          <TextField 
+                          <TextField
                             autoComplete="tax"
                             type="number"
                             InputProps={{
-                              endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                              endAdornment: <InputAdornment position="end">%</InputAdornment>
                             }}
                           />
                         </Stack>
                       </TabPanel>
-                    </TabContext>   
+                    </TabContext>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Grid
-                item
-                xs={12}
-              >
-                <Card sx={{display: 'flex', justifyContent: 'end' }}>
+              <Grid item xs={12}>
+                <Card sx={{ display: 'flex', justifyContent: 'end' }}>
                   <LoadingButton
                     size="large"
                     type="submit"
@@ -595,24 +592,17 @@ function SalesOrder() {
                   >
                     Save
                   </LoadingButton>
-                  <Button
-                    size="large"
-                    color="grey"
-                    variant="contained"
-                    sx={{ m: 1 }}
-                  >
+                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                     Cancel
                   </Button>
                 </Card>
-
               </Grid>
-
             </Grid>
           </Form>
         </FormikProvider>
       </Container>
     </Page>
-  )
+  );
 }
 
 export default SalesOrder;

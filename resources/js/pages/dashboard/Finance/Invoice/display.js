@@ -23,11 +23,13 @@ import API from '../../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'name', label: 'Buyer', alignRight: false },
-  { id: 'invoice_date', label: 'Invoice Date', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'invoice_date', label: 'Issued Date', alignRight: false },
+  { id: 'serial_number', label: 'No. Invoice', alignRight: false },
+  { id: 'billed_to', label: 'Billed To', alignRight: false },
   { id: 'total_qty', label: 'Total Qty', alignRight: false },
-  { id: 'total_price', label: 'Total Price', alignRight: false }
+  { id: 'total_amount', label: 'Total Amount Billed', alignRight: false },
+  { id: 'tax', label: 'Tax', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -79,14 +81,31 @@ function Invoice({ placeHolder }) {
     }
 
     if(isEmpty(invoice)) {
-      API.getSalesInvoice((res) => {
-		    if(!res) return
-		    if(!res.data) {
-          setInvoice(BUYERLIST);
-        } else {
-          setInvoice(res.data);
-        }
-      });
+      try {
+        API.getSalesInvoice('?invoice_type=1', (res) => {
+          if(!res) return
+          if(!res.data) {
+            setInvoice([]);
+          } else {
+            const _data = res.data.map(function(item){
+              const { sales_invoice } = item
+              return {
+                id: sales_invoice?.id,
+                invoice_date: sales_invoice?.invoice_date,
+                tax: sales_invoice?.tax,
+                billed_to: sales_invoice?.party?.name,
+                serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
+                total_qty: 0,
+                total_amount: 0,
+                status: 'Done'
+              }
+            });
+            setInvoice(_data);
+          }
+        });          
+      } catch (error) {
+        alert(error)
+      }
     }
   }, [])
 
@@ -162,6 +181,7 @@ function Invoice({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -176,11 +196,13 @@ function Invoice({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    po_number,
-                    sold_to: {name},
+                    status,
                     invoice_date,
+                    serial_number,
+                    billed_to,
                     total_qty,
-                    total_price
+                    total_amount,
+                    tax
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -192,18 +214,14 @@ function Invoice({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">{status}</TableCell>
                       <TableCell align="left">{invoice_date}</TableCell>
+                      <TableCell align="left">{serial_number}</TableCell>
+                      <TableCell align="left">{billed_to}</TableCell>
                       <TableCell align="left">{total_qty}</TableCell>
-                      <TableCell align="left">{total_price}</TableCell>
+                      <TableCell align="left">{total_amount}</TableCell>
+                      <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

@@ -131,8 +131,6 @@ function WorkCenter() {
               return {...goods, category: category.name};
             })
 
-            console.log(data);
-
             setOptionPF(data);
           }
         })  

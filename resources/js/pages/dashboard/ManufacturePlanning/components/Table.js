@@ -104,14 +104,14 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
     setFilterName(event.target.value);
   };
 
-  const handleDeleteData = (event, id) => {
-    event.preventDefault();
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
-    });
-  }
+  // const handleDeleteData = (event, id) => {
+  //   event.preventDefault();
+  //   API.deleteSalesOrder(id, function(res){
+  //     if(res.success) setSalesOrderData([]);
+  //   }).catch(function(error){
+  //     alert('error')
+  //   });
+  // }
 
   const handleDeleteSelected = () => {
     setSelected([])
@@ -152,7 +152,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   let isItemSelected = false;
-                  if(selected?.manufacture_planning_item_id || selected?.sales_order_id) isItemSelected = selected.manufacture_planning_item_id === row.id || selected.sales_order_id === row.id;
+                  if(selected?.sales_order_id) isItemSelected = selected.sales_order_id === row.id;
                   const {
                     id,
                     order_id,
