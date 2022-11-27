@@ -233,7 +233,7 @@ class GraphSewingController extends Controller
       try {
         //code...
         // $alternative_two = OrderItem
-        $amount = Sewing::select('id', 'order_item_id', 'product_feature_id', 'date', DB::raw('sum(output) as total_output'))
+        $amount = Sewing::select('id', 'order_item_id', 'order_id', 'sales_order_id', 'product_feature_id', 'date', DB::raw('sum(output) as total_output'))
                   ->with('order_item')
                   ->groupBy('order_item_id')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
@@ -246,14 +246,27 @@ class GraphSewingController extends Controller
 
         $month = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
         $month = date_format($month, 'm');
+        
+        $planning = ManufacturePlanning::with(['items_with_price' => function($query) use ($fromDate, $thruDate){
+                      $query->with(['ckck' => function($query2) use ($fromDate, $thruDate){
+                        $query2->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
+                      }]);
+                    }])
+                  ->where('month', intval($month))
+                  ->orderBy('id', 'asc')->get();
+        
+        $total_garment_made = Sewing::select(DB::raw('sum(output) as total_output'))
+                  ->whereMonth('date', 10)
+                  ->get();
 
-        $planning = ManufacturePlanning::with('items_with_price')
-                  ->whereHas('items_with_price', function($query) use ($fromDate, $thruDate){
-                    $query->whereHas('ckck', function($query2) use ($fromDate, $thruDate){
-                      $query2->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
-                    });
-                  })
-                  ->where('month', intval($month))->orderBy('id', 'asc')->get();
+        $group_of_order_id = Sewing::select('id', 'order_id')
+        ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->groupBy('order_id')
+        ->get();
+
+        $list_of_sewing = Sewing::with('order_item')
+        ->whereMonth('date', 10)
+        ->get();
 
       } catch (Throwable $th) {
         //throw $th;
@@ -268,6 +281,9 @@ class GraphSewingController extends Controller
         'qty' => $qty_get[0],
         'data' => $amount,
         'planning' => $planning,
+        // 'total_garment_made' => $total_garment_made,
+        // 'list_order' => count($group_of_order_id),
+        // 'list_of_sewing' => $list_of_sewing
       ]);
     }
 }
