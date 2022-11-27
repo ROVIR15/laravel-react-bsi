@@ -52,7 +52,8 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const {line, sales_order_id, date} = values
-      let data = items.map(({id, brand, name, size, color, numbering, ...x}) => ({ ...x, order_item_id: id, line, facility_id: line+6, sales_order_id, date}));
+      let data = items.map(({id, brand, name, size, color, numbering, ...x}) => ({ ...x, line, facility_id: line+6, sales_order_id, date}));
+      // console.log(data);
       API.insertMonitoringSewing(data, function(res){
         if(res.success) {
           setItems([]);
@@ -183,6 +184,7 @@ const [id, setId] = React.useState(0);
 
 // Modal
   const handleAddItems = (values) => {
+    console.log(values)
     setItems(values);
   }
 
