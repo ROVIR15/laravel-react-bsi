@@ -206,6 +206,8 @@ function Monitoring() {
             { total_income: 0, total_qty: 0, error: [] }
           );
 
+          console.log(test.error);
+
           let planning = res.planning[0]?.items_with_price?.reduce(function(initial, next){
             if(!next.expected_output || !next.work_days) return initial
             else {
