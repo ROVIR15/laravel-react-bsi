@@ -186,8 +186,8 @@ function Monitoring() {
               if (isNull(next.order_item) ) {
                 return {
                   total_income:
-                    initial.total_income + 0,
-                  total_qty: initial.total_qty + next.total_output,
+                    initial.total_income + Math.floor(next.total_output * next.price[0]?.avg_value[0]?.unit_price),
+                    total_qty: initial.total_qty + next.total_output,
                   error: [...initial.error, {
                     sales_order_id: next.sales_order_id,
                     order_id: next.order_id,
@@ -206,7 +206,7 @@ function Monitoring() {
             { total_income: 0, total_qty: 0, error: [] }
           );
 
-          console.log(test.error);
+          console.log(test.error, res.data.length);
 
           let planning = res.planning[0]?.items_with_price?.reduce(function(initial, next){
             if(!next.expected_output || !next.work_days) return initial

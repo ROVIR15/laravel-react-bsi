@@ -234,7 +234,7 @@ class GraphSewingController extends Controller
         //code...
         // $alternative_two = OrderItem
         $amount = Sewing::select('id', 'order_item_id', 'order_id', 'sales_order_id', 'product_feature_id', 'date', DB::raw('sum(output) as total_output'))
-                  ->with('order_item')
+                  ->with('order_item', 'price')
                   ->groupBy('order_item_id')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'asc')
@@ -256,7 +256,7 @@ class GraphSewingController extends Controller
                   ->orderBy('id', 'asc')->get();
         
         $total_garment_made = Sewing::select(DB::raw('sum(output) as total_output'))
-                  ->whereMonth('date', 10)
+                  ->whereMonth('date', 11)
                   ->get();
 
         $group_of_order_id = Sewing::select('id', 'order_id')
@@ -265,7 +265,7 @@ class GraphSewingController extends Controller
         ->get();
 
         $list_of_sewing = Sewing::with('order_item')
-        ->whereMonth('date', 10)
+        ->whereMonth('date', 11)
         ->get();
 
       } catch (Throwable $th) {

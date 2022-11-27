@@ -62,4 +62,8 @@ class Sewing extends Model
         return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems', 'sales_order_id', 'sales_order_id')->with('month_archive');
     }
 
+    public function price(){
+        return $this->hasMany('App\Models\Order\Order', 'id', 'order_id')->with('avg_value');
+    }
+
 }

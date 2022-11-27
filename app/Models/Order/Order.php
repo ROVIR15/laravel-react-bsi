@@ -1,6 +1,7 @@
 <?php
 
   namespace App\Models\Order;
+  use DB;
   
   use Illuminate\Database\Eloquent\Model;
   
@@ -41,5 +42,9 @@
 
     public function completion_status(){
       return $this->hasMany('App\Models\Order\OrderCompletionStatus', 'id', 'order_id')->orderBy('created_at', 'desc');
+    }
+
+    public function avg_value(){
+      return $this->hasMany('App\Models\Order\OrderItem')->select('id', 'order_id', DB::raw('avg(unit_price) as unit_price'))->groupBy('order_id');
     }
   }
