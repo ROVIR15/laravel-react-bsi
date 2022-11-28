@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -31,7 +31,7 @@ const TABLE_HEAD = [
   { id: 'color', label: 'Color', alignRight: false },
   { id: 'line', label: 'Line', alignRight: false },
   { id: 'qty_loading', label: 'Qty Loading', alignRight: false },
-  { id: 'output', label: 'Output', alignRight: false },
+  { id: 'output', label: 'Output', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -53,7 +53,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,13 +61,15 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.sales_order?.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(
+      array,
+      (_b) => _b.sales_order?.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayQuote({ placeHolder }) {
-
   const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -76,29 +78,29 @@ function DisplayQuote({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+    thruDate: moment(new Date()).format('YYYY-MM-DD'),
+    fromDate: moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
   });
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, []);
 
   const handleUpdateData = () => {
     let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
-    try { 
+    try {
       API.getMonitoringSewing(params, (res) => {
-        if(!res.data) {
+        if (!res.data) {
           setQuoteData([]);
         } else {
           setQuoteData(res.data);
         }
       });
     } catch (error) {
-      alert('error')
+      alert('error');
     }
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -149,43 +151,36 @@ function DisplayQuote({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteQuote(id, function(res){
-      if(res.success) setQuoteData([]);
-    }).catch(function(error){
-      alert('error')
-    });
-  }
+  };
 
   const handleDateChanges = (event) => {
-    const { name, value} = event.target;
+    const { name, value } = event.target;
     setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
+      if (name === 'fromDate') {
+        if (value > prevValue.thruDate) {
           alert('from date cannot be more than to date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
+      } else if (name === 'thruDate') {
+        if (value < prevValue.fromDate) {
           alert('to date cannot be less than fron date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
+      } else {
+        return { ...prevValue, [name]: value };
       }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
-  }
+    });
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
   const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -238,7 +233,7 @@ function DisplayQuote({ placeHolder }) {
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                        onChange={(event) => handleClick(event, name)}
+                          onChange={(event) => handleClick(event, name)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
@@ -278,14 +273,14 @@ function DisplayQuote({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[25, 50, 75]}
         component="div"
-        count={quoteData.length}
+        count={filteredData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayQuote;
