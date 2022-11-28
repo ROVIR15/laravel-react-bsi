@@ -161,7 +161,7 @@ export default function ListToolbar({
           >
             <MenuItem value="All">All</MenuItem>
             <MenuItem value="Approve">Approve</MenuItem>
-            <MenuItem value="Reject">Reject</MenuItem>
+            <MenuItem value="Dropped">Dropped</MenuItem>
             <MenuItem value="Review">Review</MenuItem>
             <MenuItem value="Submit">Submit</MenuItem>
           </Select>

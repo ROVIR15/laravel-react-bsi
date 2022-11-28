@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isUndefined, isNull, uniqBy } from 'lodash';
+import { filter, isArray, isEmpty, isNull, uniqBy } from 'lodash';
 import { styled } from '@mui/material/styles';
 import {
   Card,
@@ -34,7 +34,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'BOM Name', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
-  { id: 'company_name', label: 'Company Name', alignRight: false },
+  { id: 'remarks', label: 'Remarks', alignRight: false, width: 300 },
 ];
 
 const ChipStyled = styled(Chip)(({theme}) => ({
@@ -68,7 +68,6 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  console.log(query)
   if (query[1] !== "All") {
     if(query[2] !== 0) {
       return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 
@@ -76,7 +75,7 @@ function applySortFilter(array, comparator, query) {
               && _b.party?.id === query[2]);
     } else {
       return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 
-              && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
+              && !isEmpty(_b.status) && _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1);
     }
   } else {
     if(query[2] !== 0) return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
@@ -233,7 +232,6 @@ function DisplayBOM({ placeHolder }) {
     }
 
     handleUpdateData();
-
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bomData.length) : 0;
@@ -248,11 +246,7 @@ function DisplayBOM({ placeHolder }) {
         return <ChipStyled label={param} color="primary"/>
         break;
 
-      case "Reject Review":
-        return <ChipStyled label={param} color="error"/>
-        break;
-
-      case "Reject Approve":
+      case "Dropped":
         return <ChipStyled label={param} color="error"/>
         break;
         
@@ -294,7 +288,7 @@ function DisplayBOM({ placeHolder }) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               active={false}
               order={order}
@@ -338,7 +332,7 @@ function DisplayBOM({ placeHolder }) {
                         {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
                       </TableCell>
                       <TableCell align="left">{qty}</TableCell>
-                      <TableCell align="left">{company_name}</TableCell>
+                      <TableCell align="left">{`${status[0]?.user?.name} - ${status[0]?.description}`}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
