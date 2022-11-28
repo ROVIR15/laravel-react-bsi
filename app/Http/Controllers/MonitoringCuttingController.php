@@ -43,6 +43,7 @@ class MonitoringCuttingController extends Controller
                   ->orderBy('date', 'desc')
                   ->get();
         }
+        
       } catch (Throwable $th) {
         return response()->json(['success' => false, 'error' => $th->getMessage()]);
       }
