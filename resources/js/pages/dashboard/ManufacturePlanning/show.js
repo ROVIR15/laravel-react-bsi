@@ -100,7 +100,6 @@ function Goods() {
 
   const editData = useCallback(
     (params) => () => {
-      console.log('on click edit data', params.row);
       setSelected(params.row);
       handleOpenModal();
     }

@@ -95,7 +95,6 @@ export default function BasicModal({
         } else {
           try {
             API.setManufacturePlanningItems(payload, function (res) {
-              console.log(res);
               if (!res.success) throw new Error('Failed');
               else alert('success');
             });
@@ -225,10 +224,8 @@ export default function BasicModal({
   }, [loadingCosting]);
 
   React.useEffect(() => {
-    console.log('1', selected)
     if (isEmpty(selected)) return;
     else {
-      console.log(2, selected)
       const { id, bom_id, facility_id, facility_name, ...rest } = selected;
       setFieldValue('id', id);
       setFieldValue('costing_id', bom_id);
@@ -238,18 +235,16 @@ export default function BasicModal({
   }, [selected]);
 
   React.useEffect(() => {
-    console.log(3, selected)
     if (isEmpty(selected)) return;
     else {
-      console.log(4, selected)
       const { id, bom_id, facility_id, facility_name, ...rest } = selected;
       setFieldValue('id', id);
       setFieldValue('costing_id', bom_id);
       setFieldValue('facility_id', facility_id);
       setFieldValue('selectedItem', rest);
     }
-  }, []);  
-  
+  }, []);
+
   return (
     <div>
       <Modal

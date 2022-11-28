@@ -183,65 +183,81 @@ function Monitoring() {
         else {
           let test = res.data?.reduce(
             function (initial, next) {
-              if (isNull(next.order_item) ) {
+              if (isNull(next.order_item)) {
                 return {
                   total_income:
-                    initial.total_income + Math.floor(next.total_output * next.price[0]?.avg_value[0]?.unit_price),
-                    total_qty: initial.total_qty + next.total_output,
-                  error: [...initial.error, {
-                    sales_order_id: next.sales_order_id,
-                    order_id: next.order_id,
-                    order_item_id: next.order_item_id
-                  }]
-                }; 
+                    initial.total_income +
+                    Math.floor(next.total_output * next.price[0]?.avg_value[0]?.unit_price),
+                  total_qty: initial.total_qty + next.total_output,
+                  error: [
+                    ...initial.error,
+                    {
+                      sales_order_id: next.sales_order_id,
+                      order_id: next.order_id,
+                      order_item_id: next.order_item_id
+                    }
+                  ]
+                };
               } else {
                 return {
                   total_income:
-                    initial.total_income + Math.floor(next.total_output * next.order_item?.unit_price),
+                    initial.total_income +
+                    Math.floor(next.total_output * next.order_item?.unit_price),
                   total_qty: initial.total_qty + next.total_output,
                   error: initial.error
-                };  
+                };
               }
             },
             { total_income: 0, total_qty: 0, error: [] }
           );
 
-          console.log(test.error, res.data.length);
-
-          let planning = res.planning[0]?.items_with_price?.reduce(function(initial, next){
-            if(!next.expected_output || !next.work_days) return initial
-            else {
-              return {
-                total_expected_output: initial.total_expected_output + Math.floor(next.expected_output * parseFloat(next.work_days)),
-                total_expected_income: initial.total_expected_income + Math.floor(next.expected_output * parseFloat(next.work_days) * next.info.avg_price[0]?.cm_price_avg)
+          let planning = res.planning[0]?.items_with_price?.reduce(
+            function (initial, next) {
+              if (!next.expected_output || !next.work_days) return initial;
+              else {
+                return {
+                  total_expected_output:
+                    initial.total_expected_output +
+                    Math.floor(next.expected_output * parseFloat(next.work_days)),
+                  total_expected_income:
+                    initial.total_expected_income +
+                    Math.floor(
+                      next.expected_output *
+                        parseFloat(next.work_days) *
+                        next.info.avg_price[0]?.cm_price_avg
+                    )
+                };
               }
+            },
+            {
+              total_expected_income: 0,
+              total_expected_output: 0
             }
-          }, {
-            total_expected_income: 0,
-            total_expected_output: 0
-          });
+          );
 
-          let planningDetail = res.planning[0]?.items_with_price?.map(function(item){
-            if(isEmpty(item?.ckck[0])){
+          let planningDetail = res.planning[0]?.items_with_price?.map(function (item) {
+            if (isEmpty(item?.ckck[0])) {
               return {
                 id: item.id,
                 po_number: item?.info?.po_number,
                 total_qty: Math.floor(item?.expected_output * item?.work_days),
                 total_real: 0,
                 percentage: 0
-              }
+              };
             } else {
               return {
                 id: item.id,
                 po_number: item?.info?.po_number,
                 total_qty: Math.floor(item?.expected_output * item?.work_days),
                 total_real: Math.floor(item?.ckck[0]?.total_output),
-                percentage: fPercent((item?.ckck[0]?.total_output/(item?.expected_output * item?.work_days)) * 100)
-              }
+                percentage: fPercent(
+                  (item?.ckck[0]?.total_output / (item?.expected_output * item?.work_days)) * 100
+                )
+              };
             }
             // Math.floor(item?.ckck[0]?.total_output)
             // fPercentage(Math.floor(total_qty / total_real))
-          })
+          });
 
           setAmount(test.total_income);
           setQty(res?.qty?.total_output);

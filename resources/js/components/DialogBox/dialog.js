@@ -9,15 +9,20 @@ import TextField from '@mui/material/TextField';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 
-const Transition = React.forwardRef(function Transition(
-  props,
-  ref
-) {
+const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} TransitionProps {...props} />;
 });
 
-export default function AlertDialogSlide({ title, message, send, open, setOpen, comment, setComment, type}) {
-
+export default function AlertDialogSlide({
+  title,
+  message,
+  send,
+  open,
+  setOpen,
+  comment,
+  setComment,
+  type
+}) {
   const [content, setContent] = React.useState('');
   const handleClickOpen = () => {
     setOpen(true);
@@ -30,18 +35,18 @@ export default function AlertDialogSlide({ title, message, send, open, setOpen, 
 
   const handleReject = () => {
     setComment(true);
-  }
+  };
 
   const handleSendRejection = (type, content) => {
     send(`reject-${type}`, content);
     setComment(false);
-  }
+  };
 
   const handleChange = (e) => {
     setContent(e.target.value);
-  }
+  };
 
-  if(type === 'submit'){
+  if (type === 'submit') {
     return (
       <div>
         <Dialog
@@ -53,13 +58,34 @@ export default function AlertDialogSlide({ title, message, send, open, setOpen, 
         >
           <DialogTitle>{title}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              {message}
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-slide-description">{message}</DialogContentText>
+          </DialogContent>
+          <DialogContent sx={{width: 400}}>
+            <TextField
+              autoFocus
+              multiline
+              rows={6}
+              margin="dense"
+              id="name"
+              label="Comment"
+              type="text"
+              fullWidth
+              variant="outlined"
+              onChange={handleChange}
+            />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="warning">Cancel</Button>
-            <Button onClick={() => {send(type); setComment(false)}}>Agree</Button>
+            <Button onClick={handleClose} color="warning">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                send(type, content);
+                setComment(false);
+              }}
+            >
+              Agree
+            </Button>
           </DialogActions>
         </Dialog>
       </div>
@@ -76,23 +102,42 @@ export default function AlertDialogSlide({ title, message, send, open, setOpen, 
         >
           <DialogTitle>{title}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              {message}
-            </DialogContentText>
-            {comment ? <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Comment"
-              type="text"
-              fullWidth
-              variant="outlined"
-              onChange={handleChange}
-            /> : null}
+            <DialogContentText id="alert-dialog-slide-description">{message}</DialogContentText>
+            <DialogContent sx={{width: 400}}>
+              <TextField
+                autoFocus
+                multiline
+                rows={6}
+                margin="dense"
+                id="name"
+                label="Comment"
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleChange}
+              />
+            </DialogContent>
           </DialogContent>
           <DialogActions>
-            {comment ? (<Button onClick={() => handleSendRejection(type, content)} color="error">Send Reject</Button>) : (<Button onClick={handleReject} color="warning">Reject</Button>) }
-            {comment ? null : (<Button onClick={() => {send(type, ''); setComment(false)}}>Agree</Button>)}
+            {comment ? (
+              <Button onClick={() => handleSendRejection(type, content)} color="error">
+                Send Reject
+              </Button>
+            ) : (
+              <Button onClick={handleReject} color="warning">
+                Reject
+              </Button>
+            )}
+            {comment ? null : (
+              <Button
+                onClick={() => {
+                  send(type, content);
+                  setComment(false);
+                }}
+              >
+                Agree
+              </Button>
+            )}
           </DialogActions>
         </Dialog>
       </div>

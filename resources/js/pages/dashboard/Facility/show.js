@@ -56,15 +56,18 @@ function Goods() {
 
   useEffect(() => {
     if(!id) return;
-    API.getAFacility(id, function(res){
-      if(!res) alert("Something went wrong!");
-      console.log(res.data.type.id)
-      setValues({
-        ...values,
-        facility_type_id: res?.data?.type?.id,
-        name: res?.data?.name
-      });
-    });
+    try {
+      API.getAFacility(id, function(res){
+        if(!res) throw new Error("Something went wrong!");
+        setValues({
+          ...values,
+          facility_type_id: res?.data?.type?.id,
+          name: res?.data?.name
+        });
+      });        
+    } catch (error) {
+      alert(error)
+    }
   }, [id]);
 
   return (
@@ -106,7 +109,6 @@ function Goods() {
                         {
                           (!isArray(cat)? null : 
                             cat.map(function(x){
-                              console.log(x.id, values.facility_type_id)
                               return (
                                 <MenuItem value={x.id} selected={x.id === values.facility_type_id}>{`${x.name}`}</MenuItem>
                               ) 

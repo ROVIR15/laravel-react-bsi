@@ -26,12 +26,12 @@ import { isEditCondition } from '../../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
-    { id: 'value', label: 'Value', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Style', alignRight: false },
+  { id: 'size', label: 'Size', alignRight: false },
+  { id: 'color', label: 'Color', alignRight: false },
+  { id: 'value', label: 'Value', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,18 +61,17 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      let b = `${_b?.name} ${_b?.color} ${_b?.size}`
-      return b.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      let b = `${_b?.name} ${_b?.color} ${_b?.size}`;
+      return b.toLowerCase().indexOf(query.toLowerCase()) !== -1;
     });
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
-
+function TableD({ list, order_id, update, placeHolder, selected, setSelected }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-//   const [selected, setSelected] = useState([]);
+  //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -88,7 +87,11 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({
+        ...n,
+        product_feature_id: n.id,
+        id: index + 1
+      }));
       setSelected(newSelecteds);
       return;
     } else {
@@ -97,19 +100,28 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
+    const selectedIndex = selected
+      .map((e) => e.product_feature_id)
+      .indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      if(isEditCondition(pathname.split('/'), id)) {
+      if (isEditCondition(pathname.split('/'), id)) {
         try {
-          const {id} = name;
-          let payload = {product_feature_id: id, order_id, qty: 0, unit_price: 0, cm_price: 0, shipment_estimated: "2022-09-03"}
-          API.insertSalesOrderItem([payload], function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
+          const { id } = name;
+          let payload = {
+            product_feature_id: id,
+            order_id,
+            qty: 0,
+            unit_price: 0,
+            cm_price: 0,
+            shipment_estimated: '2022-09-03'
+          };
+          API.insertSalesOrderItem([payload], function (res) {
+            if (res.success) alert('success');
+            else alert('failed');
+          });
           update();
-        } catch(e) {
+        } catch (e) {
           alert(e);
         }
       } else {
@@ -144,24 +156,22 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
+    API.deleteSalesOrder(id, function (res) {
+      if (res.success) setSalesOrderData([]);
+    }).catch(function (error) {
+      alert('error');
     });
-  }
+  };
 
   const handleDeleteSelected = () => {
-    setSelected([])
-  }
-
-  console.log(selected)
+    setSelected([]);
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list?.length) : 0;
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData?.length === 0;  
+  const isDataNotFound = filteredData?.length === 0;
 
   return (
     <div>
@@ -188,14 +198,9 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  let isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  const {
-                    id,
-                    name,
-                    size,
-                    color,
-                    value
-                  } = row;
+                  let isItemSelected =
+                    selected.map((e) => e.product_feature_id).indexOf(row.id) !== -1;
+                  const { id, name, size, color, value } = row;
                   return (
                     <TableRow
                       hover
@@ -248,22 +253,21 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
       <Box
-      sx={{
-        ...(selected?.length > 0 && {
-          color: 'primary.main',
-          bgcolor: 'primary.lighter'
-        })
-      }}
+        sx={{
+          ...(selected?.length > 0 && {
+            color: 'primary.main',
+            bgcolor: 'primary.lighter'
+          })
+        }}
       >
         {selected?.length > 0 ? (
-          <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
+          <Typography component="div" variant="subtitle1" py={'1em'} px={2}>
             {selected.length} selected
-          </Typography>): null
-        }
+          </Typography>
+        ) : null}
       </Box>
-
     </div>
-  )
+  );
 }
 
 export default TableD;

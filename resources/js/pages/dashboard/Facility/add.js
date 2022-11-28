@@ -9,7 +9,7 @@ import { Paper, Box, Button, Container, Card, CardHeader, CardContent, FormContr
 import { styled } from '@mui/material/styles';
 import CustomMultiSelect from '../../../components/CustomMultiSelect';
 
-import { isArray } from 'lodash'
+import { isArray, isUndefined } from 'lodash'
 //API
 import API from '../../../helpers'
 
@@ -65,10 +65,14 @@ function Goods() {
 
     if(cat.length > 0 || cat.length != 0) return
     else {
-      API.getFacilityType('', function(res){
-        console.log(res);
-        setCat(res.data);
-      })
+      try {
+        API.getFacilityType('', function(res){
+          if(isUndefined(res)) throw new Error('Error occured');
+          else setCat(res.data);
+        })        
+      } catch (error) {
+        alert(error);
+      }
     }
 
     return () => {

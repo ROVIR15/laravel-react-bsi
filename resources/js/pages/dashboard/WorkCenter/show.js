@@ -156,8 +156,6 @@ function ShowWorkCenter() {
               return {...goods, category: category.name};
             })
 
-            console.log(data);
-
             setOptionPF(data);
           }
         })  

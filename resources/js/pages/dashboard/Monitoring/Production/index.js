@@ -157,7 +157,6 @@ function Dashboard() {
         else {
           _ewjrbjwe19(res.data);
         }
-        console.log(graphData);
       });
     } catch (error) {
       alert(error);
@@ -175,7 +174,6 @@ function Dashboard() {
           const _data = res.data[0]?.test_sum_based_on_mpi.map(function (res) {
             return _sljeir8(res);
           });
-          console.log(_data);
           setOrderData(_data);
         }
       });
