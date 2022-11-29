@@ -30,6 +30,7 @@ import moment, { isMoment } from 'moment';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'buyer', label: 'Buyer', alignRight: false },
+  { id: 'start_date', label: 'Start Production', alignRight: false },
   { id: 'date', label: 'Issue Date', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
@@ -346,6 +347,9 @@ function DisplayBOM({ placeHolder }) {
                       <TableCell align="left">{index + 1}</TableCell>
                       <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">
+                        {moment(new Date(rest.start_date)).format('DD MMM YYYY')}
+                      </TableCell>
+                      <TableCell align="left">
                         {moment(new Date(rest.created_at)).format('DD MMM YYYY')}
                       </TableCell>
                       <TableCell align="left">{name}</TableCell>
@@ -353,7 +357,7 @@ function DisplayBOM({ placeHolder }) {
                         {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
                       </TableCell>
                       <TableCell align="left">{qty}</TableCell>
-                      <TableCell align="left">{`${status[0]?.user?.name} - ${status[0]?.description}`}</TableCell>
+                      <TableCell align="left">{ (isEmpty(status) && isNull(status[0]?.user)) ? "Tidak ada catetan" : `${status[0]?.user?.name} - ${status[0]?.description}`}</TableCell>
                       <TableCell align="right">
                         <MoreMenu
                           id={id}
