@@ -91,6 +91,26 @@
         //
     }
 
+    public function getBOMMaterials() {
+      try {
+        $query = BOM::select('id', 'name')
+        ->with(['bom_items' => function ($query){
+          return $query->select('id', 'bom_id', 'product_feature_id', 'qty', 'consumption', 'allowance', 'unit_price');
+        }])->get();
+        
+      } catch (\Throwable $th) {
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
