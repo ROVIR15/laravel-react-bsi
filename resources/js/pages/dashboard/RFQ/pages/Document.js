@@ -22,6 +22,7 @@ import { Icon } from '@iconify/react';
 
 //pdf
 import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 import { toBlob, toPng } from 'html-to-image';
 
 import useAuth from '../../../../context';
