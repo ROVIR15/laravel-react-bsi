@@ -779,7 +779,7 @@ function BillOfMaterial() {
                           rows={component}
                           handleAddRow={handleOpenModal}
                           onEditRowsModelChange={handleEditComponentRowsModelChange}
-                          handleResetRows={handleResetComponentRows}
+                          handleUpdateAllRows={handleUpdateAllComponentRows}
                         />
                       </TabPanel>
                       <TabPanel value="4">
@@ -787,8 +787,8 @@ function BillOfMaterial() {
                           columns={serviceColumns}
                           rows={service}
                           handleAddRow={handleOpenModalS}
-                          onEditRowsModelChange={handleEditComponentRowsModelChange}
-                          handleResetRows={handleResetComponentRows}
+                          onEditRowsModelChange={handleEditServiceRowsModelChange}
+                          handleUpdateAllRows={handleUpdateAllServiceRows}
                         />
                       </TabPanel>
                       <TabPanel value="5">
