@@ -130,7 +130,8 @@ class QuoteController extends Controller
 
             default:
               $query = Quote::with('sum', 'status')              
-                        ->get();
+              ->where('quote_type', 'PO')
+              ->get();
 
               return new QuoteViewCollection($query);
           }
