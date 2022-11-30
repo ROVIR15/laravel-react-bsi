@@ -147,7 +147,7 @@
             foreach($param['components'] as $key){
               array_push($bomItemsCreation, [
                 'bom_id' => $billOfMaterial['id'],
-                'product_feature_id' => $key['id'],
+                'product_feature_id' => $key['product_feature_id'],
                 'qty' => floatval($key['consumption']) + floatval($key['allowance']),
                 'consumption' => $key['consumption'],
                 'allowance' => $key['allowance'],
