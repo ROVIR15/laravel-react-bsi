@@ -787,18 +787,18 @@ export function laborArrangedData(data) {
 }
 
 export function _partyArrangedData(data) {
-  const { id, name, email, npwp, address: {street, city, province, country, postal_code}, party_roles } = data
+  const { id, name, email, npwp, address, party_roles } = data
   return {
-    id, name, email, npwp, phone_number: '083231', address: street, city, province, country, postal_code, 
+    id, name, email, npwp, phone_number: '083231', street: address?.street, city: address?.city, province: address?.province, country: address?.country, postal_code: address?.postal_code, 
     role_type_id: party_roles[0]?.role_type?.valueOf() ? party_roles[0]?.role_type.id : null,
     role_type: party_roles[0]?.role_type?.valueOf() ? party_roles[0]?.role_type : null
   }
 }
 
 export function _partyAddress(data) {
-  const { id, name, email, npwp, address: {street, city, province, country, postal_code} } = data
+  const { id, name, email, npwp, address } = data
   return {
-    id, name, email, npwp, phone_number: '083231', street, city, province, country, postal_code, 
+    id, name, email, npwp, phone_number: '083231', street: address?.street, city: address?.city, province: address?.province, country: address?.country, postal_code: address?.postal_code,
   }
 }
 
