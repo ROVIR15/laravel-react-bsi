@@ -807,9 +807,9 @@ export function _partyAddress(data) {
 export function partyArrangedData(array){
   if (!isArray(array)) return;
   return array.map(function(datum){
-    const { role_type, party: {id, name, email, address: {street, city, province, country, postal_code}} } = datum
+    const { role_type, party: {id, name, email, address} } = datum
     return {
-      id, name, email, phone_number: '083231', street, city, province, country, postal_code, 
+      id, name, email, phone_number: '083231', street: address?.street, city: address?.city, province: address?.province, country: address?.country, postal_code: address?.postal_code, 
       role_type_id: role_type?.id ? role_type.id : null,
       role_type: role_type ? role_type : null
     }
