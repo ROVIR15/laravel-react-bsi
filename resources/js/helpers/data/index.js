@@ -141,6 +141,41 @@ export function _orderItem(array){
   return arranged;
 } 
 
+export function _miniFuncCutting(array, _so_id){
+  if(isEmpty(array)) return 
+  let arranged = array.map((x, index) => {
+    const {
+      order_id,
+      product_feature: {
+        product_id, 
+        color, 
+        size, 
+        product: {
+          goods: {
+              name
+          }
+        },
+        ...product_feature 
+      },
+      ...order_item
+    } = x;
+    return {
+      id: index+1,
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      order_id,
+      order_item_id: order_item.id,
+      sales_order_id: _so_id,
+      product_feature_id: product_feature.id,
+      po_number: "",
+      color,
+      size,
+      name,
+    }
+  })
+  
+  return arranged;
+}
+
 export function _miniFunc(array, _so_id){
   if(isEmpty(array)) return 
   let arranged = array.map((x, index) => {
