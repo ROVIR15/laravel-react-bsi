@@ -52,8 +52,6 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         }
       });
     }
-
-
     // if(isEmpty(value) && order_id) {
     //   API.getMonitoringQC(`?sales-order=${order_id}`, (res) => {
 		//   if(!res) return

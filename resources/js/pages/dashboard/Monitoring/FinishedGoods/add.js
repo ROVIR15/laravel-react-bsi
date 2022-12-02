@@ -56,19 +56,19 @@ function WorkCenter() {
       let data = items.map(({id, date, brand, name, size, color, ...x}) => ({ ...x, qc_id: id, line, date: values.date, recorder}));
       API.insertMonitoringFG(data, function(res){
         if(res.success) {
-          setItems([]);
-          handleReset();
-          selectedValueSO({});
           alert(JSON.stringify(res));
         } else {
           alert(error);
         }
       })
+      setItems([]);
+      handleReset();
+      selectedValueSO({});
       setSubmitting(false);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, handleReset, getFieldProps, setFieldValue } = formik;
 
 // columns - Data grid
   const deleteData = useCallback(

@@ -83,7 +83,7 @@ function DisplayBuyer({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterCategory, setFilterCategory] = useState(0);
 
   useEffect(() => {

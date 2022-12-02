@@ -112,12 +112,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
-          let dateNow = new Date();
-          // API.insertGoodsReceiptItem([name], function(res){
-          //   if(res.success) alert('success');
-          //   else alert('failed')
-          // })
-          // update();
+          API.insertQuoteItem([name], function(res){
+            if(res.success) alert('success');
+            else alert('failed')
+          })
+          update();
         } catch(e) {
           alert(e);
         }

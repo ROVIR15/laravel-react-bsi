@@ -2,7 +2,7 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { IconButton, Stack } from '@mui/material';
+import { IconButton, Stack, styled } from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import closeCircle from '@iconify/icons-eva/close-outline';
@@ -21,6 +21,17 @@ const style = {
   transform: 'translate(-50%, -50%)',
   p: 4,
 };
+
+const StyledCard = styled(Card)(({theme}) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  p: 4,
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '320px'
+  }
+}))
 
 export default function BasicModal({ payload, open, handleClose, items, setItems, update}) {
   const [value, setValue] = React.useState([])
@@ -56,17 +67,18 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card sx={style}>
+        <StyledCard sx={style}>
           <Stack direction="row" justifyContent="space-between">
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Items 
+              Select Product 
             </Typography>
             <IconButton onClick={handleClose} color="error">
               <Icon icon={closeCircle}/>
             </IconButton>
           </Stack>
-          <Table list={options} update={update} selected={items} setSelected={setItems}/>
-        </Card>
+          
+          <Table list={value} selected={items} setSelected={setItems}/>
+        </StyledCard>
       </Modal>
     </div>
   );

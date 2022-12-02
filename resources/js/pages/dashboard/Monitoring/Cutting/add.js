@@ -56,11 +56,13 @@ function WorkCenter() {
         if(!res.success) alert('failed, try again')
         else alert('success');
       })
+      handleReset();
+      setItems([])
       setSubmitting(false);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, handleReset, getFieldProps, setFieldValue } = formik;
 
 // columns - Data grid
   const deleteData = useCallback(

@@ -1,24 +1,20 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import {styled} from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
 import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
 
-const icon = <Icon icon={SquareOutline}/>;
-const checkedIcon = <Icon icon={CheckSquareOutline} />;
-
 // Components
 import API from '../../../../helpers';
 
 import Table from './Table';
-import { orderItemArrangedData } from '../../../../helpers/data';
+import { _miniFunc, orderItemArrangedData } from '../../../../helpers/data';
+import { IconButton, Stack } from '@mui/material';
+import closeCircle from '@iconify/icons-eva/close-outline';
 
 const style = {
   position: 'absolute',
@@ -28,7 +24,18 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ order_id, payload, open, options, handleClose, selected, setSelected}) {
+const StyledCard = styled(Card)(({theme}) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  p: 4,
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '320px'
+  }
+}))
+
+export default function BasicModal({ order_id, so_id, payload, open, options, handleClose, selected, setSelected}) {
   const [value, setValue] = React.useState([])
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
@@ -39,16 +46,26 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
       return !array.length;
     }
 
-    API.getASalesOrder(order_id, (res) => {
-		if(!res) return
-		if(!res.data) {
-        setValue(BUYERLIST);
-      } else {
-        
-        let ras = orderItemArrangedData(res.data.order_item)
-        setValue(ras);
-      }
-    });
+    if(order_id) {
+      API.getASalesOrderItem(order_id, (res) => {
+        if(!res) return
+        if(!res.data.length) {
+            setValue([]);
+        } else {
+          let ras = orderItemArrangedData(res.data);
+          setValue(ras)
+        }
+      });
+      // API.getMonitoringSupermarket(`?sales-order=${order_id}`, (res) => {
+		  // if(!res) return
+		  // if(!res.data.length) {
+      //     setValue([]);
+      //   } else {
+      //     let ras = optionSupermarket(res.data);
+      //     setValue(ras)
+      //   }
+      // });
+    }
   }, [order_id])
 
   return (
@@ -58,13 +75,18 @@ export default function BasicModal({ order_id, payload, open, options, handleClo
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card sx={style}>
-          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
-            Select Product to Inquiry Item
-          </Typography>
-
+        <StyledCard sx={style}>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Select Product 
+            </Typography>
+            <IconButton onClick={handleClose} color="error">
+              <Icon icon={closeCircle}/>
+            </IconButton>
+          </Stack>
+          
           <Table list={value} selected={selected} setSelected={setSelected}/>
-        </Card>
+        </StyledCard>
       </Modal>
     </div>
   );

@@ -30,7 +30,6 @@ const TABLE_HEAD = [
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
   { id: 'size', label: 'Size', alignRight: false },
   { id: 'color', label: 'Color', alignRight: false },
-  { id: 'color', label: 'Color', alignRight: false },
   { id: 'size', label: 'Size', alignRight: false },
   { id: 'output', label: 'Output', alignRight: false },
 ];
@@ -204,6 +203,7 @@ function DisplayQuote({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -236,12 +236,6 @@ function DisplayQuote({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
                       <TableCell align="left">{sales_order.po_number}</TableCell>

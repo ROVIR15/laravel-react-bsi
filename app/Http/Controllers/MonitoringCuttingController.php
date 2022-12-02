@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 use App\Models\Monitoring\Cutting;
 
@@ -28,16 +29,16 @@ class MonitoringCuttingController extends Controller
 
       try {
         if($param){
-          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
-                  ->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')
+          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, sum(output) as output')
+                  ->groupBy('date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')
                   ->with('sales_order', 'product_feature', 'qc')
                   ->where('sales_order_id', $request->query('sales-order'))
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'desc')
                   ->get();
         } else {
-          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
-                  ->groupBy('line', 'date', 'po_number', 'sales_order_id')
+          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, sum(output) as output')
+                  ->groupBy('date', 'po_number', 'sales_order_id')
                   ->with('sales_order', 'product_feature', 'qc')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'desc')
