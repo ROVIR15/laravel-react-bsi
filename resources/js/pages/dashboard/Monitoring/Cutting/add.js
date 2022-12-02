@@ -226,7 +226,8 @@ const [selectedValueSp, setSelectedValueSp] = React.useState({});
       <Modal 
         open={openM}
         onAddItems={handleAddItems}
-        order_id={id}
+        so_id={selectedValueSO.id}
+        order_id={selectedValueSO.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

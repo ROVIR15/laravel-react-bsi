@@ -52,7 +52,7 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         if(!res.data.length) {
             setValue([]);
         } else {
-          let ras = orderItemArrangedData(res.data);
+          let ras = _miniFunc(res.data, so_id);
           setValue(ras)
         }
       });
