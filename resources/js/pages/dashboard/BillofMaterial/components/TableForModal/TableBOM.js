@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
-  Box,
-  Checkbox,
+  Radio,
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
-  Typography
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../../components/Scrollbar';
 import SearchNotFound from '../../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../../components/Table';
+import { ListRadioHead, ListToolbar, MoreMenu } from '../../../../../components/Table';
 
 import { fDate } from '../../../../../utils/formatTime';
 
@@ -26,13 +24,10 @@ import { isEditCondition } from '../../../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
-    { id: 'category', label: 'Category', alignRight: false },
-    { id: 'sub_category', label: 'Sub Category', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Style', alignRight: false },
+  { id: 'items', label: 'Length of Materials', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -53,35 +48,24 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  
-  if (isArray(query) && query[1] > 0) {
-    return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-        && _b.category_id === query[1]
-      )
-    });
-  } else {
-    return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-      )
-    });
+
+  if (query) {
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
+  return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected, update}) {
-
+function TableD({ list, placeHolder, selected, setSelected, update }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-//   const [selected, setSelected] = useState([]);
+  //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -100,7 +84,11 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({
+        ...n,
+        product_feature_id: n.id,
+        id: index + 1
+      }));
       setSelected(newSelecteds);
       return;
     } else {
@@ -109,34 +97,21 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id, id: selected.length+1}
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      if(isEditCondition(pathname.split('/'), id)) {
-        try {      
-          API.insertBOMItem([{...name, bom_id: id, qty: 0, unit_price: 0}], function(res){
-            if(res.success) alert('success');
-            else throw new Error('failed')
-          })
-          update();
-        } catch(e) {
-          alert(e);
-        }
-      } else {
-        newSelected = newSelected.concat(selected, name);
+    console.log(name);
+    const _data = name.bom_items.map(function(item, index){
+      let { product_feature, ...rest} = item;
+      return {
+        ...rest,
+        id: index+1,
+        name: product_feature?.product?.goods?.name,
+        color: product_feature?.color,
+        size: product_feature?.size,
+        brand: product_feature?.product?.goods?.brand
       }
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
+    });
+
+    console.log(_data);
+    setSelected(_data);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -155,26 +130,26 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
+    API.deleteSalesOrder(id, function (res) {
+      if (res.success) setSalesOrderData([]);
+    }).catch(function (error) {
+      alert('error');
     });
-  }
+  };
 
   const handleDeleteSelected = () => {
-    setSelected([])
-  }
+    setSelected([]);
+  };
 
   const handleFilterCategoryAndSub = (event) => {
-    setFilterCategory(event.target.value)
-  }
+    setFilterCategory(event.target.value);
+  };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list?.length) : 0;
 
-  const filteredData = applySortFilter(list, getComparator(order, orderBy), [filterName, filterCategory]);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <div>
@@ -182,21 +157,17 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
         numSelected={0}
         filterName={filterName}
         onFilterName={handleFilterByName}
-        categoryFilterActive={true}
-        filterCategory={filterCategory}
-        onFilterCategoryAndSub={handleFilterCategoryAndSub}
         placeHolder={placeHolder}
         onDeletedSelected={handleDeleteSelected}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table size="small">
-            <ListHead
+            <ListRadioHead
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={list.length}
-              numSelected={selected.length}
+              rowCount={list?.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
             />
@@ -204,16 +175,9 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
-                  const {
-                    id,
-                    name,
-                    color,
-                    size,
-                    category,
-                    sub_category,
-                  } = row;
+                  const isItemSelected = false;
+                  const disabled = false;
+                  const { id, name, bom_items } = row;
                   return (
                     <TableRow
                       hover
@@ -223,19 +187,15 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          disabled={disabled}
+                      <TableCell padding="none">
+                        <Radio
                           checked={isItemSelected}
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{bom_items?.length}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -260,14 +220,14 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
       <TablePagination
         rowsPerPageOptions={[15, 20, 25]}
         component="div"
-        count={list.length}
+        count={list?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Box
+      {/* <Box
       sx={{
         ...(selected.length > 0 && {
           color: 'primary.main',
@@ -280,10 +240,9 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
             {selected.length} selected
           </Typography>): null
         }
-      </Box>
-
+      </Box> */}
     </div>
-  )
+  );
 }
 
 export default TableD;

@@ -95,7 +95,7 @@
       try {
         $query = BOM::select('id', 'name')
         ->with(['bom_items' => function ($query){
-          return $query->select('id', 'bom_id', 'product_feature_id', 'qty', 'consumption', 'allowance', 'unit_price');
+          return $query->select('id', 'bom_id', 'product_feature_id', 'qty', 'consumption', 'allowance', 'unit_price')->with('product_feature');
         }])->get();
         
       } catch (\Throwable $th) {

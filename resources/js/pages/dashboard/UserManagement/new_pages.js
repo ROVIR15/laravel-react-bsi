@@ -31,7 +31,6 @@ export default function RegisterForm() {
     },
     validationSchema: RegisterSchema,
     onSubmit: (values) => {
-      console.log(values);
       try {
         API.insertPages(values, function (res) {
           if (!res.success) throw new Error('failed to store new pages');
@@ -61,7 +60,6 @@ export default function RegisterForm() {
 
   const { errors, touched, values, handleSubmit, setValues, getFieldProps } = formik;
 
-  console.log(values);
   return (
     <div>
       <FormikProvider value={formik}>

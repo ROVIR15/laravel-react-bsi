@@ -33,10 +33,11 @@ import DialogBoxParty from './components/DialogBoxParty'
 
 import AutoComplete from './components/AutoComplete';
 import AutoCompleteP from './components/AutoCompleteP';
-import DataGrid from '../../../components/DataGrid';
+import DataGrid from './components/DataGrid';
 import Modal from './components/ModalNewP';
 import Modal2 from './components/ModalNewO';
 import Modal3 from './components/ModalNewS';
+import Modal4 from './components/ModalNewD';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -94,6 +95,13 @@ function BillOfMaterial() {
   const [openS, setOpenS] = React.useState(false);
   const handleOpenModalS = () => setOpenS(true);
   const handleCloseModalS = () => setOpenS(false);
+
+  //Modal Duplicate of BOM
+  const [optionBOMData, setOptionBOMData] = useState([]);
+
+  const [openDuplicate, setOpenDuplicate] = React.useState(false);
+  const handleOpenModalDuplicate = () => setOpenDuplicate(true);
+  const handleCloseModalDuplicate = () => setOpenDuplicate(false);
 
   //Data Grid Component of BOM
   const [editRowsModel, setEditRowsModel] = React.useState({});
@@ -240,6 +248,15 @@ function BillOfMaterial() {
         }
       })
 
+      await API.getBOMMaterialToDuplicate((res) => {
+        if(!res) return 
+        if(!res.data) {
+          setOptionBOMData([])
+        } else {
+          setOptionBOMData(res.data)
+        }
+      });
+
     })();
 
     return () => {
@@ -305,12 +322,12 @@ function BillOfMaterial() {
         <GridActionsCellItem
           icon={<Icon icon={trash2Outline} width={24} height={24} />}
           label="Delete"
-          onClick={deleteDataS(params.id)}
+          onClick={deleteDataService(params.id)}
           showInMenu
         />
       ]
     }
-  ], [deleteDataOperation]);
+  ], [deleteDataService]);
 
   /**
    * Handling Data Grid for a Component BOM
@@ -326,6 +343,40 @@ function BillOfMaterial() {
 
         //update items state
         setComponent((prevItems) => {
+          const itemToUpdateIndex = parseInt(editedIds[0]);
+    
+          return prevItems.map((row, index) => {
+            if(row.id === parseInt(itemToUpdateIndex)){
+              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+            } else {
+              return row
+            }
+          });
+        });
+
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+  
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
+    /**
+   * Handling Data Grid for a Component BOM
+   */
+
+   const handleEditServiceRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        setService((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
     
           return prevItems.map((row, index) => {
@@ -435,6 +486,14 @@ function BillOfMaterial() {
           options={options4}
           handleClose={handleCloseModalS}
           setComponent={setService}
+        />
+        {/* Handle Duplicate Data from another BOM */}
+        <Modal4
+          payload={[]}
+          open={openDuplicate}
+          options={optionBOMData}
+          handleClose={handleCloseModalDuplicate}
+          setItems={setComponent}
         />
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -615,6 +674,8 @@ function BillOfMaterial() {
                           handleAddRow={handleOpenModal}
                           onEditRowsModelChange={handleEditComponentRowsModelChange}
                           handleResetRows={handleResetComponentRows}
+                          handleDuplicate={handleOpenModalDuplicate}
+                          duplicateMaterial={true}
                         />
                       </TabPanel>
                       <TabPanel value="4">
@@ -622,7 +683,7 @@ function BillOfMaterial() {
                           columns={serviceColumns}
                           rows={service}
                           handleAddRow={handleOpenModalS}
-                          onEditRowsModelChange={handleEditComponentRowsModelChange}
+                          onEditRowsModelChange={handleEditServiceRowsModelChange}
                           handleResetRows={handleResetComponentRows}
                         />
                       </TabPanel>

@@ -37,7 +37,7 @@ export default function BasicModal({ payload, open, options, handleClose, setCom
   const handleDoneFill = () => {
     if(!value.length) handleClose();
     const _value = value.map((key, index)=> {
-      return {...key, id: index, name: key.name, work_center_id: key.id, seq: index}
+      return {id: index+1, name: key.name, product_id: key.id, unit_price: 0}
     });
     setComponent((prevComponent) => prevComponent.concat(_value))
     handleClose();

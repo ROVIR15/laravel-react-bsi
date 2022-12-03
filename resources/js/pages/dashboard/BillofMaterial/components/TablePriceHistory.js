@@ -77,7 +77,7 @@ export default function BasicTable({ payload, qty, tax }) {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell align="left">{index+1}</TableCell>
-              {/* <TableCell align="left">{row?.id}</TableCell> */}
+              <TableCell align="left">{row?.id}</TableCell>
               <TableCell align="left">{row?.user?.name}</TableCell>
               <TableCell align="left">{row?.final_price}</TableCell>
               <TableCell align="left">

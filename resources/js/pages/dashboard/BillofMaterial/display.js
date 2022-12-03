@@ -118,7 +118,7 @@ function DisplayBOM({ placeHolder }) {
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
 
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { user } = useAuth();
 

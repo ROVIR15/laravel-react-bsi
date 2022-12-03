@@ -19,7 +19,8 @@ use Illuminate\Database\Eloquent\Model;
         'unit_price',
         'cm_price',
         'shipment_estimated',
-        'product_feature_id'
+        'product_feature_id',
+        'description'
     ];
 
     public function product_feature(){
