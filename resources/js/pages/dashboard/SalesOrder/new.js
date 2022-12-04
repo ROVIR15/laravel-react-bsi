@@ -174,7 +174,8 @@ function SalesOrder() {
         color: color,
         qty: key.qty,
         shipment_estimated: null,
-        unit_price: key.unit_price
+        unit_price: key.unit_price,
+        description: ''
       };
     });
     setValues({

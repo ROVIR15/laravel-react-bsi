@@ -88,6 +88,7 @@ function Goods() {
   const handleAddItems = (values) => {
     setItems((prevItems) => prevItems.concat(values));
   }
+  
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
       const editedIds = Object.keys(model);

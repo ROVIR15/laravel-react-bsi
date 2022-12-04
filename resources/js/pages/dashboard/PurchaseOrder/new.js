@@ -101,7 +101,9 @@ function SalesOrder() {
       po_number: '',
       issue_date: '',
       valid_thru: '',
-      delivery_date: ''
+      delivery_date: '',
+      description: '',
+      tax: 0
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
@@ -171,7 +173,8 @@ function SalesOrder() {
         color: color,
         qty: key.qty,
         delivery_date: null,
-        unit_price: key.unit_price
+        unit_price: key.unit_price,
+        description: ''
       };
     });
     setValues({

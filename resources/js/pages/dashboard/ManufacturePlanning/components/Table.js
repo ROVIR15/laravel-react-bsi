@@ -16,6 +16,8 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListRadioHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
+import { isUndefined } from 'lodash'
+
 // api
 import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
@@ -80,13 +82,26 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    let payload = {
-      id: name.id,
-      manufacture_planning_item_id: name.id,
-      manufacture_planning_id: id,
-      sales_order_id: name.id,
-      expected_output: 0,
-      work_days: 0
+    let payload = {}
+    if(isUndefined(id)){
+      payload = {
+        id: name.id,
+        po_number: name.po_number,
+        total_qty: name.total_qty,
+        manufacture_planning_item_id: name.id,
+        sales_order_id: name.id,
+        expected_output: 0,
+        work_days: 0
+      }
+    } else {
+      payload = {
+        id: name.id,
+        manufacture_planning_item_id: name.id,
+        manufacture_planning_id: id,
+        sales_order_id: name.id,
+        expected_output: 0,
+        work_days: 0
+      }  
     }
     setSelected(payload);
   };

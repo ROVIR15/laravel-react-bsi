@@ -19,7 +19,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 // Components
 import API from '../../../../helpers';
 
-import { isNull, isArray, isEmpty, isString } from 'lodash';
+import { isNull, isArray, isEmpty, isString, isUndefined } from 'lodash';
 import Table from './Table';
 import { useLocation, useParams } from 'react-router-dom';
 import { isEditCondition } from '../../../../helpers/data';
@@ -70,7 +70,7 @@ export default function BasicModal({
       let { selectedItem, facility_id, costing_id, facility_name, costing_name } = values;
       let payload = { ...selectedItem, facility_id, costing_id };
       if (isEditCondition(pathname.split('/'), id)) {
-        if (!isNull(values?.id)) {
+        if (!isUndefined(values?.id)) {
           let {
             costing_name,
             facility_name,
@@ -103,8 +103,9 @@ export default function BasicModal({
           }
         }
       } else {
-        // let _p = {...selectedItem,}
-        onAddItems(payload);
+        console.log(selectedItem)
+        let _p = {...payload, facility_name, costing_name}
+        onAddItems(_p);
       }
 
       handleClose();
