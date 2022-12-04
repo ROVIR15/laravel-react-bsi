@@ -31,7 +31,6 @@ export default function BasicModal({
   items,
   setItems
 }) {
-  const [value, setValue] = React.useState([]);
 
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;

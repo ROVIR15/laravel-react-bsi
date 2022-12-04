@@ -39,7 +39,7 @@ function Invoice() {
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4" gutterBottom>
-          Invoice
+          Vendor Bills
         </Typography>
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
           <Button
@@ -48,7 +48,7 @@ function Invoice() {
             to={getPathname(pathname.split('/')) + '/add'}
             startIcon={<Icon icon={plusFill} />}
           >
-            New Layout
+            New
           </Button>
           <Button
             variant="contained"

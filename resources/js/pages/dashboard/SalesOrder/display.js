@@ -220,13 +220,19 @@ function DisplaySalesOrder({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteQuote(id, function(res){
-        if(res.success) setQuoteData([]);
-        handleUpdateData();
+      API.deleteSalesOrder(id, function(res){
+        if(res.success) {
+          alert('success');
+          setQuoteData([]);
+        } else {
+          throw new Error('failed to delete data')
+        }
       })
-    } catch {
-      alert('error')
+    } catch (error) {
+      alert(error)
     }
+
+    handleUpdateData();
 
   }
 

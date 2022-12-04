@@ -37,7 +37,7 @@
             $query2->where('completion_status_id', 2);
           })->get();
         } else {
-          $query = PurchaseOrder::with('status', 'sum', 'completion_status')->get();
+        $query = PurchaseOrder::with('status', 'sum', 'completion_status')->get();
         }
 
         return new POViewCollection($query);
@@ -116,7 +116,9 @@
         $order = Order::create([
           'quote_id' => $param['quote_id'],
           'issue_date' => $param['issue_date'],
-          'valid_thru' => $param['valid_thru']
+          'valid_thru' => $param['valid_thru'],
+          'tax' => $param['tax'],
+          'description' => $param['description']
         ]);
 
         $purchaseOrder = PurchaseOrder::create([
@@ -142,7 +144,8 @@
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
-            'shipment_estimated' => date('Y-m-d', strtotime($key['delivery_date']))
+            'shipment_estimated' => date('Y-m-d', strtotime($key['delivery_date'])),
+            'description' => $key['description']
           ]);
         }
 

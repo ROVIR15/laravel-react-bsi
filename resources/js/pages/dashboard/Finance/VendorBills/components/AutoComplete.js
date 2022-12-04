@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,31 +12,40 @@ function sleep(delay = 0) {
   });
 }
 
-export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
-    const [value, setValue] = React.useState(null);
+export default function Asynchronous({
+  label,
+  loading,
+  options,
+  open,
+  setOpen,
+  choosen,
+  changeData
+}) {
+  const [value, setValue] = React.useState(null);
 
-    React.useEffect(() => {
-      if(!value) return
-      let id = value.split('.')[1]
-      id = id.split('/')[0]
-      
-      try {
-        API.getAShipment(id, (res) => {
-          if(!res) return
-          if(!res.data) {
-            throw new Error('no Data')
-          } else {
-            // console.log(res.data);
-            changeData(res.data);
-          }        
-        })
-      } catch (error) {
-        alert(error)
-      }
+  React.useEffect(() => {
+    if (!value) return;
+    let id = value.split('.')[1];
+    id = id.split('/')[0];
 
-    }, [value])
+    try {
+      API.getAShipment(id, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          throw new Error('no Data');
+        } else {
+          // console.log(res.data);
+          changeData(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [value]);
 
-    return (
+  console.log(options);
+
+  return (
     <Autocomplete
       open={open}
       onOpen={() => {
@@ -46,14 +55,13 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ name, date, id}) => (`SHIP-NO.${id}/${date}/${name}`)}
+      getOptionLabel={({ name, date, id }) => `SHIP-NO.${id}/${date}/${name}`}
       options={options}
       loading={loading}
-      value={choosen} 
+      value={choosen}
       onInputChange={async (event, newInputValue) => {
-          await setValue(newInputValue);
-        }
-      }
+        await setValue(newInputValue);
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -66,7 +74,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
-            ),
+            )
           }}
         />
       )}

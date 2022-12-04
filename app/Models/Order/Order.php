@@ -17,7 +17,9 @@
         'id',
         'sales_order_id',
         'purchase_order_id',
-        'quote_id'
+        'quote_id',
+        'tax',
+        'description'
     ];
 
     public function order_item(){

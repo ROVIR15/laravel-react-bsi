@@ -30,7 +30,7 @@ class Invoice extends Model
     }
 
     public function purchase_order(){
-        return $this->belongsTo('App\Models\Order\Order')->with('purchase_order');
+        return $this->belongsTo('App\Models\Order\Order', 'order_id', 'id')->with('purchase_order');
     }
 
     public function items(){

@@ -27,6 +27,7 @@ export { default as UserManagementLayout } from './UserManagement';
 export { default as FinishedGoodsLayout } from './Monitoring/FinishedGoods';
 
 export { default as InvLayout } from './Finance/Invoice';
+export { default as VendorBillsLayout } from './Finance/VendorBills';
 
 export { default as OrderProgressLayout } from './OrderProgress';
 export { default as FacilityLayout } from './Facility';

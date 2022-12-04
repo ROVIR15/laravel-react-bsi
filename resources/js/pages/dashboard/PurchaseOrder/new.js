@@ -225,10 +225,17 @@ function SalesOrder() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              return {
-                ...row,
-                [editedColumnName]: formatDate(editRowData[editedColumnName].value)
-              };
+              if (editedColumnName === 'date') {
+                return {
+                  ...row,
+                  [editedColumnName]: formatDate(editRowData[editedColumnName].value)
+                };
+              } else {
+                return {
+                  ...row,
+                  [editedColumnName]: editRowData[editedColumnName].value
+                };
+              }
             } else {
               return row;
             }
@@ -258,7 +265,8 @@ function SalesOrder() {
           color: key.product.color,
           qty: key.qty,
           unit_price: key.unit_price,
-          delivery_date: key.delivery_date
+          delivery_date: key.delivery_date,
+          description: ''
         };
       });
       setItems(temp);
@@ -273,7 +281,8 @@ function SalesOrder() {
       { field: 'color', headerName: 'Color', width: 150, editable: false },
       { field: 'qty', headerName: 'Quantity', type: 'number', editable: true },
       { field: 'unit_price', type: 'number', headerName: 'Unit Price', editable: true },
-      { field: 'delivery_date', type: 'date', headerName: 'Delivery Date', editable: true },
+      { field: 'shipment_estimated', type: 'date', headerName: 'Delivery Date', editable: true },
+      { field: 'description', headerName: 'Description', editable: true, width: 300 },
       {
         field: 'actions',
         type: 'actions',
@@ -305,6 +314,7 @@ function SalesOrder() {
    */
 
   const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0 });
+
   const handlePopulate = () => {
     const { y, z, aa } = populateState;
     if (y === '' && z === 0) return;
@@ -314,6 +324,7 @@ function SalesOrder() {
       if (aa !== 0) x = { ...x, unit_price: aa };
       return x;
     });
+
     setItems(res);
   };
 
@@ -402,7 +413,8 @@ function SalesOrder() {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Overview" value="1" />
-                          <Tab label="Finance" value="2" />
+                          <Tab label="Description" value="2" />
+                          <Tab label="Finance" value="3" />
                         </TabList>
                       </Box>
 
@@ -477,6 +489,20 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="2">
+                        <Stack direction="row" alignItems="center">
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={6}
+                            type="text"
+                            {...getFieldProps('description')}
+                            error={Boolean(touched.description && errors.description)}
+                            helperText={touched.description && errors.description}
+                          />
+                        </Stack>
+                      </TabPanel>
+
+                      <TabPanel value="3">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
                           <TextField
@@ -485,6 +511,9 @@ function SalesOrder() {
                             InputProps={{
                               endAdornment: <InputAdornment position="end">%</InputAdornment>
                             }}
+                            {...getFieldProps('tax')}
+                            error={Boolean(touched.tax && errors.tax)}
+                            helperText={touched.tax && errors.tax}
                           />
                         </Stack>
                       </TabPanel>

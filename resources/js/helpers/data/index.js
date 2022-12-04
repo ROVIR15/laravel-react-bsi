@@ -321,8 +321,8 @@ export function optionProductFeature(array, filter){
         value,
         brand,
         category_id: category?.id,
-        category: category.name,
-        sub_category: sub.name,
+        category: category?.name,
+        sub_category: sub?.name,
         created_at,
         updated_at,
     }

@@ -34,8 +34,6 @@ const StyledCard = styled(Card)(({theme}) => ({
 }))
 
 export default function BasicModal({ payload, open, handleClose, update, items, setItems }) {
-  const [value, setValue] = React.useState([]);
-
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
 
@@ -82,7 +80,7 @@ export default function BasicModal({ payload, open, handleClose, update, items, 
             </IconButton>
           </Stack>
           
-          <Table list={value} selected={items} setSelected={setItems}/>
+          <Table list={options} selected={items} setSelected={setItems}/>
         </StyledCard>
       </Modal>
     </div>

@@ -1,7 +1,6 @@
 import { isArray, isEmpty } from 'lodash';
 
 export const orderItemToInvoiceItem = (payload) => {
-  console.log(payload)
   function total(qty, price) {
     return qty * price;
   }
@@ -20,6 +19,8 @@ export const orderItemToInvoiceItem = (payload) => {
       total: total(item.qty_shipped, item.order_item.unit_price)
     };
   });
+
+  console.log(temp);
 
   return temp;
 };

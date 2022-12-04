@@ -141,7 +141,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('production-study', 'ProductionStudyController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     //Invoice
-    Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('billing-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('billing-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -197,12 +196,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
     Route::get('fabric', 'ProductFeatureController@showFabric');
     Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
-    Route::resource('order', 'OrderController')->only(['index', 'show']);
+    Route::resource('order', 'OrderController')->only(['index', 'show', 'update']);
     Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Graph
     Route::resource('graph-api', 'GraphSewingController')->only(['index']);
-    Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
     Route::get('new-api-test', 'GraphSewingController@testingAPI1');
     Route::get('new-api-test-2', 'GraphSewingController@testingAPI2');
     Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');    
@@ -210,3 +208,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');
+Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+Route::get('bom-items-v1', 'BOMController@getBOMMaterials');
+Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::resource('production-log', 'ProductionLogController')->only(['index', 'show', 'store', 'update', 'destroy']);

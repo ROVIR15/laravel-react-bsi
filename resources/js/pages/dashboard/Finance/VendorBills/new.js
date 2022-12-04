@@ -25,6 +25,7 @@ import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
 
 import AutoComplete from './components/AutoComplete';
+import Page from '../../../../components/Page';
 import API from '../../../../helpers';
 
 //Icons
@@ -60,14 +61,14 @@ function Invoice() {
   const formik = useFormik({
     initialValues: {
       order_id: 0,
-      sales_order_id: 0,
+      purchase_order_id: 0,
       sold_to: 0,
       invoice_date: '',
       description: '',
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 1, tax: 11, description: '' };
+      let _data = { ...values, items, type: 2, tax: 11, description: '' };
       try {
         API.insertSalesInvoice(_data, (res) => {
           if (!res) return undefined;
@@ -194,7 +195,7 @@ function Invoice() {
     let active = true;
 
     (async () => {
-      API.getShipment(`?shipment_type=2`, (res) => {
+      API.getShipment(`?shipment_type=1`, (res) => {
         if (!res) return;
         if (!res.data) {
           setOptionsAutoComplete([]);
@@ -202,7 +203,7 @@ function Invoice() {
           let _done = res.data.map(function (item) {
             return {
               id: item.id,
-              name: item.order?.sales_order?.po_number,
+              name: item.order?.purchase_order?.po_number,
               date: item.delivery_date
             };
           });
@@ -218,7 +219,7 @@ function Invoice() {
 
   const changeData = (payload) => {
     let invoiceItems = orderItemToInvoiceItem(payload.items);
-    setFieldValue('sales_order_id', payload.order.sales_order.id);
+    setFieldValue('purchase_order_id', payload.order.purchase_order.id);
     setFieldValue('order_id', payload.order.id);
     setItems(invoiceItems);
   };
@@ -285,6 +286,18 @@ function Invoice() {
                   <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                     <ColumnBox>
                       <SpaceBetweenBox>
+                        <Typography variant="h6"> Penagih </Typography>
+                        <Button disabled>Select</Button>
+                      </SpaceBetweenBox>
+                      <div>
+                        <Typography variant="body1">{selectedValueSH.name}</Typography>
+                        <Typography variant="body1">{selectedValueSH.address}</Typography>
+                        <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
+                      </div>
+                    </ColumnBox>
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <ColumnBox>
+                      <SpaceBetweenBox>
                         <Typography variant="h6"> Penagihan ke </Typography>
                         <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
                       </SpaceBetweenBox>
@@ -306,18 +319,6 @@ function Invoice() {
                         open={openDialogBox}
                         onClose={(value) => handleClose('sold_to', value)}
                       />
-                    </ColumnBox>
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagih </Typography>
-                        <Button disabled>Select</Button>
-                      </SpaceBetweenBox>
-                      <div>
-                        <Typography variant="body1">{selectedValueSH.name}</Typography>
-                        <Typography variant="body1">{selectedValueSH.address}</Typography>
-                        <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
-                      </div>
                     </ColumnBox>
                   </Stack>
                 </Paper>

@@ -8,30 +8,28 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination
+  TablePagination,
 } from '@mui/material';
 //components
-import Scrollbar from '../../../components/Scrollbar';
-import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import Scrollbar from '../../../../components/Scrollbar';
+import SearchNotFound from '../../../../components/SearchNotFound';
+import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 //
-import BUYERLIST from '../../../_mocks_/buyer';
+import BUYERLIST from '../../../../_mocks_/buyer';
 // api
-import API from '../../../helpers';
-import { partyArrangedData } from '../../../helpers/data';
+import API from '../../../../helpers';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
-  { id: 'role_type', label: 'Bagian', alignRight: false },
-  { id: 'npwp', label: 'Phone Number', alignRight: false },
-  { id: 'street', label: 'Address', alignRight: false },
-  { id: 'city', label: 'City', alignRight: false },
-  { id: 'province', label: 'Province', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'ZIP Code', alignRight: false }
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'invoice_date', label: 'Issued Date', alignRight: false },
+  { id: 'serial_number', label: 'No. Invoice', alignRight: false },
+  { id: 'billed_to', label: 'Billed To', alignRight: false },
+  { id: 'total_qty', label: 'Total Qty', alignRight: false },
+  { id: 'total_amount', label: 'Total Amount Billed', alignRight: false },
+  { id: 'tax', label: 'Tax', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -53,7 +51,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if (!isArray(array)) return [];
+  if(!isArray(array)) return []
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,13 +59,14 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-function Vendor({ placeHolder }) {
-  const [buyerData, setBuyerData] = useState([]);
+function Invoice({ placeHolder }) {
+
+  const [invoice, setInvoice] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -76,22 +75,45 @@ function Vendor({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    function isEmpty(array) {
-      if (!Array.isArray(array)) return true;
+    function isEmpty(array){
+      if(!Array.isArray(array)) return true;
       return !array.length;
     }
 
-    if (isEmpty(buyerData)) {
-      API.getVendors((res) => {
-        if (isEmpty(res)) {
-          setBuyerData([]);
-        } else {
-          const a = partyArrangedData(res);
-          setBuyerData(a);
-        }
-      });
+    if(isEmpty(invoice)) { 
+      handleUpdateData();
     }
-  }, []);
+  }, [])
+
+  const handleUpdateData = () => {
+    try {
+      API.getSalesInvoice('?invoice_type=2', (res) => {
+        if(!res) return
+        if(!res.data) {
+          setInvoice([]);
+        } else {
+          const _data = res.data.map(function(item){
+          const { purchase_invoice } = item
+            return {
+              id: purchase_invoice?.id,
+              invoice_date: purchase_invoice?.invoice_date,
+              tax: purchase_invoice?.tax,
+              billed_to: purchase_invoice?.party?.name,
+              serial_number: `INV. No ${purchase_invoice.id}/${purchase_invoice?.purchase_order?.id}-${purchase_invoice?.purchase_order?.purchase_order?.id}/${purchase_invoice.invoice_date}/${purchase_invoice?.purchase_order?.purchase_order?.po_number}`,
+              total_qty: 0,
+              total_amount: 0,
+              status: 'Done'
+            }
+          });
+
+          console.log(_data);
+          setInvoice(_data);
+        }
+      });          
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -101,7 +123,7 @@ function Vendor({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = buyerData.map((n) => n.name);
+      const newSelecteds = invoice.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -141,14 +163,17 @@ function Vendor({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
-  };
+    API.deleteGoodsReceipt(id, function(res){
+      if(res.success) getSalesInvoice([]);
+      else alert('error');
+    });
+  }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - buyerData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;
 
-  const filteredData = applySortFilter(buyerData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;
+  const isDataNotFound = filteredData.length === 0;  
 
   return (
     <Card>
@@ -166,7 +191,7 @@ function Vendor({ placeHolder }) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={buyerData.length}
+              rowCount={invoice.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -177,15 +202,13 @@ function Vendor({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    role_type,
-                    name,
-                    email,
-                    phone_number,
-                    street,
-                    city,
-                    province,
-                    country,
-                    postal_code
+                    status,
+                    invoice_date,
+                    serial_number,
+                    billed_to,
+                    total_qty,
+                    total_amount,
+                    tax
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -197,15 +220,14 @@ function Vendor({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{email}</TableCell>
-                      <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
-                      <TableCell align="left">{phone_number}</TableCell>
-                      <TableCell align="left">{street}</TableCell>
-                      <TableCell align="left">{city}</TableCell>
-                      <TableCell align="left">{province}</TableCell>
-                      <TableCell align="left">{country}</TableCell>
-                      <TableCell align="left">{postal_code}</TableCell>
+                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{status}</TableCell>
+                      <TableCell align="left">{invoice_date}</TableCell>
+                      <TableCell align="left">{serial_number}</TableCell>
+                      <TableCell align="left">{billed_to}</TableCell>
+                      <TableCell align="left">{total_qty}</TableCell>
+                      <TableCell align="left">{total_amount}</TableCell>
+                      <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -233,14 +255,14 @@ function Vendor({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={buyerData.length}
+        count={invoice.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  );
+  )
 }
 
-export default Vendor;
+export default Invoice;

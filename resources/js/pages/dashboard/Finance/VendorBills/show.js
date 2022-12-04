@@ -20,19 +20,22 @@ import { LoadingButton } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { FormikProvider, Form, useFormik } from 'formik';
+import { isArray, isUndefined } from 'lodash';
+
+import { useParams, useNavigate } from 'react-router-dom';
 
 import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
 
 import AutoComplete from './components/AutoComplete';
+import Page from '../../../../components/Page';
 import API from '../../../../helpers';
-
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
-import { partyArrangedData } from '../../../../helpers/data';
 
-import { orderItemToInvoiceItem } from '../utils';
+import { invoiceItemArrangedData, generateInvSerialNumber } from '../utils';
+import { _partyAddress } from '../../../../helpers/data';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -49,6 +52,9 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 }));
 
 function Invoice() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. BSI Indonesia',
     address:
@@ -59,17 +65,14 @@ function Invoice() {
 
   const formik = useFormik({
     initialValues: {
-      order_id: 0,
-      sales_order_id: 0,
+      sales_order_id: '',
       sold_to: 0,
-      invoice_date: '',
-      description: '',
-      tax: 0
+      invoice_date: ''
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 1, tax: 11, description: '' };
+      let _data = { ...values, items };
       try {
-        API.insertSalesInvoice(_data, (res) => {
+        API.updateSalesInvoice(id, _data, (res) => {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed to store data');
           else alert('success');
@@ -80,6 +83,35 @@ function Invoice() {
       setSubmitting(false);
     }
   });
+
+  // GET DATA from spesific id
+  React.useEffect(() => {
+    if (!id) return undefined;
+
+    try {
+      API.getASalesInvoice(id, '?invoice_type=2', (res) => {
+        if (isUndefined(res)) return;
+        if (!res.data) throw new Error('no data provided');
+        else {
+          setValues({
+            invoice_id: res.data.id,
+            po_number: generateInvSerialNumber(res.data, 2),
+            sold_to: res.data.sold_to.id,
+            invoice_date: res.data.invoice_date
+          });
+          let _data = _partyAddress(res.data.party);
+          setSelectedValueSO({
+            name: _data.name,
+            address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
+            postal_code: _data.postal_code
+          });
+          changeData(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [id]);
 
   // Dialog Box Option
   const [openDialogBox, setOpenDialogBox] = React.useState(false);
@@ -100,7 +132,6 @@ function Invoice() {
     setValueTab(newValue);
   };
 
-  // Preapre data from buyer
   React.useEffect(() => {
     let active = true;
 
@@ -108,16 +139,11 @@ function Invoice() {
       return undefined;
     }
 
-    setOptions([]);
-
     (async () => {
       if (active) {
         API.getBuyers((res) => {
           if (!res) return;
-          else {
-            let data = partyArrangedData(res);
-            setOptions(data);
-          }
+          else setOptions(res);
         });
       }
     })();
@@ -126,6 +152,7 @@ function Invoice() {
       active = false;
     };
   }, [loading]);
+
   const handleClose = (name, value) => {
     setOpenDialogBox(false);
     setOptions([]);
@@ -135,7 +162,8 @@ function Invoice() {
         address: `${value.street} ${value.city} ${value.province} ${value.country}`,
         postal_code: value.postal_code
       });
-      setFieldValue('sold_to', value.id);
+
+      setFieldValue(name, value.id);
     }
   };
 
@@ -155,20 +183,7 @@ function Invoice() {
       { field: 'color', headerName: 'Color', editable: false },
       { field: 'qty', headerName: 'Quantity', type: 'number', editable: false, flex: 1 },
       { field: 'amount', type: 'number', headerName: 'Unit Price', editable: false, flex: 1 },
-      { field: 'total', type: 'number', headerName: 'Total', editable: false, flex: 1 },
-      {
-        field: 'actions',
-        type: 'actions',
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
-            onClick={deleteData(params.id)}
-            showInMenu
-          />
-        ]
-      }
+      { field: 'total', type: 'number', headerName: 'Total', editable: false, flex: 1 }
     ],
     [deleteData]
   );
@@ -190,37 +205,9 @@ function Invoice() {
   const [openAutoComplete, setOpenAutoComplete] = React.useState(false);
   const loadingAutoComplete = openAutoComplete && optionsAutoComplete.length === 0;
 
-  React.useEffect(() => {
-    let active = true;
-
-    (async () => {
-      API.getShipment(`?shipment_type=2`, (res) => {
-        if (!res) return;
-        if (!res.data) {
-          setOptionsAutoComplete([]);
-        } else {
-          let _done = res.data.map(function (item) {
-            return {
-              id: item.id,
-              name: item.order?.sales_order?.po_number,
-              date: item.delivery_date
-            };
-          });
-          setOptionsAutoComplete(_done);
-        }
-      });
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loadingAutoComplete]);
-
   const changeData = (payload) => {
-    let invoiceItems = orderItemToInvoiceItem(payload.items);
-    setFieldValue('sales_order_id', payload.order.sales_order.id);
-    setFieldValue('order_id', payload.order.id);
-    setItems(invoiceItems);
+    const temp = invoiceItemArrangedData(payload.items);
+    setItems(temp);
   };
 
   const {
@@ -238,30 +225,19 @@ function Invoice() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3} direction="row">
+        <Grid container spacing={1} direction="row">
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Info" />
 
               <CardContent>
-                <AutoComplete
-                  fullWidth
-                  autoComplete="shipment_id"
-                  type="text"
-                  label="Shipment ID"
-                  error={Boolean(touched.shipment_id && errors.shipment_id)}
-                  helperText={touched.shipment_id && errors.shipment_id}
-                  options={optionsAutoComplete}
-                  setOpen={setOpenAutoComplete}
-                  loading={loadingAutoComplete}
-                  changeData={changeData}
-                />
+                <TextField disabled fullWidth value={values.po_number} />
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Date" />
               <CardContent>
                 <TextField
@@ -278,14 +254,14 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={12}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Information" />
               <CardContent>
                 <Paper>
                   <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                     <ColumnBox>
                       <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagihan ke </Typography>
+                        <Typography variant="h6"> Pembeli </Typography>
                         <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
                       </SpaceBetweenBox>
                       {selectedValueSO?.name ? (
@@ -310,7 +286,7 @@ function Invoice() {
                     <Divider orientation="vertical" variant="middle" flexItem />
                     <ColumnBox>
                       <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagih </Typography>
+                        <Typography variant="h6"> Penerima </Typography>
                         <Button disabled>Select</Button>
                       </SpaceBetweenBox>
                       <div>
@@ -381,6 +357,15 @@ function Invoice() {
 
           <Grid item xs={12}>
             <Card sx={{ display: 'flex', justifyContent: 'end' }}>
+              <Button
+                size="large"
+                color="grey"
+                variant="contained"
+                onClick={() => navigate(`/dashboard/finance/vendor-bills/document/${id}`)}
+                sx={{ m: 1 }}
+              >
+                Show Document
+              </Button>
               <LoadingButton
                 size="large"
                 type="submit"

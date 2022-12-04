@@ -21,31 +21,70 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
-        $type = $request->query('invoice_type');
+        (int) $type = $request->query('invoice_type');
         $monthYear = $request->query('monthYear');
 
         try {
-          if(isset($monthYear)){
-            $monthYear = date_create($monthYear);
-            $month = date_format($monthYear, 'm');
-            $year = date_format($monthYear, 'Y');
-            if(isset($type)) {
-              $query = InvoiceHasType::with('sales_invoice')
-              ->where('invoice_type_id', $type)
-              ->whereYear('invoice_date', '=', $year)
-              ->whereMonth('invoice_date', '=', $month)
-              ->get();
-            } else {
-              $query = Invoice::all();
-            }
-          } else {
-            if(isset($type)){
-              $query = InvoiceHasType::with('sales_invoice')
-              ->where('invoice_type_id', $type)
-              ->get();
-            } else {
-              $query = Invoice::all();
-            }
+          switch ($type) {
+            case '1':
+              if(isset($monthYear)){
+                $monthYear = date_create($monthYear);
+                $month = date_format($monthYear, 'm');
+                $year = date_format($monthYear, 'Y');
+                if(isset($type)) {
+                  $query = InvoiceHasType::with('sales_invoice')
+                  ->where('invoice_type_id', $type)
+                  ->whereYear('invoice_date', '=', $year)
+                  ->whereMonth('invoice_date', '=', $month)
+                  ->get();
+                } else {
+                  $query = Invoice::all();
+                }
+              } else {
+                if(isset($type)){
+                  $query = InvoiceHasType::with('sales_invoice')
+                  ->where('invoice_type_id', $type)
+                  ->get();
+                } else {
+                  $query = Invoice::all();
+                }
+              }
+              return response()->json([
+                'data' => $query
+              ]);
+              break;
+            
+            case '2':
+              if(isset($monthYear)){
+                $monthYear = date_create($monthYear);
+                $month = date_format($monthYear, 'm');
+                $year = date_format($monthYear, 'Y');
+                if(isset($type)) {
+                  $query = InvoiceHasType::with('purchase_invoice')
+                  ->where('invoice_type_id', $type)
+                  ->whereYear('invoice_date', '=', $year)
+                  ->whereMonth('invoice_date', '=', $month)
+                  ->get();
+                } else {
+                  $query = Invoice::all();
+                }
+              } else {
+                if(isset($type)){
+                  $query = InvoiceHasType::with('purchase_invoice')
+                  ->where('invoice_type_id', $type)
+                  ->get();
+                } else {
+                  $query = Invoice::all();
+                }
+              }
+              return response()->json([
+                'data' => $query
+              ]);
+              break;
+  
+            default:
+              # code...
+              break;
           }
         } catch (\Throwable $th) {
           return response()->json([
@@ -53,10 +92,6 @@ class InvoiceController extends Controller
             'error' => $th->getMessage()
           ]);
         }
-
-        return response()->json([
-          'data' => $query
-        ]);
     }
 
         /**

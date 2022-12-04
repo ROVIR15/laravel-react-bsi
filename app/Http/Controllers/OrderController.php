@@ -151,9 +151,24 @@
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, X $x)
+    public function update($id, Request $request)
     {
-        //
+        $param = $request->all()['payload'];
+
+        try {
+            //code...
+            Order::find($id)->update($param);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     /**

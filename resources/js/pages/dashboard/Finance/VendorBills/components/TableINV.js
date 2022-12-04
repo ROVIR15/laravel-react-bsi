@@ -36,7 +36,7 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, tax }) {
+export default function BasicTable({ payload, tax}) {
 
   const total = () => {
     return  (subTotal() * (1 + (tax/100))).toFixed(2);

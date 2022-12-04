@@ -38,6 +38,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { PurchaseOrderSchema } from '../../../helpers/FormerSchema';
 import { _partyAddress } from '../../../helpers/data';
+import { isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -122,8 +123,11 @@ function SalesOrder() {
       ship_to: load.ship_to.id,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
-      delivery_date: load.delivery_date
+      delivery_date: load.delivery_date,
     });
+
+    setDescription(load.order.description);
+    setTax(load.order.tax);
 
     let _bought_from = _partyAddress(load.bought_from);
     let _ship_to = _partyAddress(load.ship_to);
@@ -147,6 +151,7 @@ function SalesOrder() {
         id: key.id,
         name: product_feature.product.goods.name,
         shipment_estimated: new Date(key.shipment_estimated),
+        description: key.description,
         ...key
       };
     });
@@ -266,6 +271,7 @@ function SalesOrder() {
       { field: 'qty', headerName: 'Quantity', editable: true },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
       { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
+      { field: 'description', headerName: 'Description', type: 'text', width: 400, editable: true },
       {
         field: 'actions',
         type: 'actions',
@@ -316,6 +322,43 @@ function SalesOrder() {
     if (name === 'aa') setPopulateState({ ...populateState, aa: value });
     else return;
   };
+
+  /**
+   * description
+   */
+  const [ description, setDescription ] = useState('');
+
+  const handleUpdateDesc = () => {
+    try {
+      if(isEmpty(description)) throw new Error('description is zero')
+      API.updateOrder(values.order_id, { description }, function(res){
+        if(!res) return;
+        if(res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      })
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  /**
+   * Tax
+   */
+
+  const [ tax, setTax ] = useState('');
+
+  const handleUpdateTax = () => {
+    try {
+      if(isEmpty(tax)) throw new Error('tax is required');
+      API.updateOrder(values.order_id, { tax }, function(res){
+        if(!res) return;
+        if(res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      })
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   return (
     <Page>
@@ -399,7 +442,8 @@ function SalesOrder() {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Overview" value="1" />
-                          <Tab label="Finance" value="2" />
+                          <Tab label="Description" value="2" />
+                          <Tab label="Finance" value="3" />
                         </TabList>
                       </Box>
 
@@ -473,19 +517,33 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="2">
+                        <Stack direction="row" alignItems="center">
+                          <TextField
+                            fullWidth
+                            multiline
+                            value={description}
+                            onChange={(event) => setDescription(event.target.value)}
+                            rows={6}
+                            type="text"
+                          />
+                        </Stack>
+                        <Button onClick={handleUpdateDesc} variant="outlined">Save</Button>
+                      </TabPanel>
+
+                      <TabPanel value="3">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
                           <TextField
                             autoComplete="tax"
                             type="number"
-                            // {...getFieldProps('tax')}
-                            // error={Boolean(touched.tax && errors.tax)}
-                            // helperText={touched.tax && errors.tax}
+                            value={tax}
+                            onChange={(event) => setTax(event.target.value)}
                             InputProps={{
                               endAdornment: <InputAdornment position="end">%</InputAdornment>
                             }}
                           />
                         </Stack>
+                        <Button onClick={handleUpdateTax} variant="outlined">Save</Button>
                       </TabPanel>
                     </TabContext>
                   </CardContent>

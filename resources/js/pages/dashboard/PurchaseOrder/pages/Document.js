@@ -85,6 +85,13 @@ const GridItemX = styled('div')(({ theme }) => ({
   overflow: 'unset'
 }));
 
+const termsandconditions = [
+  ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
+  ['Donec sit amet nibh ac felis congue sagittis.'],
+  ['Mauris ut magna in urna tincidunt congue sed quis justo.'],
+  ['Quisque aliquet tortor eget erat semper, facilisis tincidunt est mattis.']
+];
+
 function FirstPage() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -101,6 +108,16 @@ function FirstPage() {
   const [warning, setWarning] = useState({
     title: '',
     message: ''
+  });
+
+  const [data, setData] = useState({
+    id: '',
+    po_number: '',
+    party: {
+      name: ''
+    },
+    issue_date: '',
+    quote_items: []
   });
 
   function handleDialog(key) {
@@ -172,7 +189,7 @@ function FirstPage() {
       html2canvas(content, { scale: 3, allowTaint: true, useCORS: true }).then((canvas) => {
         const image = { type: 'jpeg', quality: 0.98 };
         const margin = [0.2, 0.2];
-        const filename = 'myfile.pdf';
+        const filename = `PO/${data.po_number}/${data.issue_date}/00${id}`;
 
         var imgWidth = 8.5;
         var pageHeight = 11;
@@ -218,20 +235,10 @@ function FirstPage() {
           pdf.addImage(imgData, image.type, margin[1], margin[0], innerPageWidth, pageHeight);
         }
 
-        pdf.save();
+        pdf.save(filename);
       });
     }, 1000);
   }, [pdfRef]);
-
-  const [data, setData] = useState({
-    id: '',
-    po_number: '',
-    party: {
-      name: ''
-    },
-    issue_date: '',
-    quote_items: []
-  });
 
   useEffect(async () => {
     API.getAPurchaseOrder(id, function (res) {
@@ -249,7 +256,8 @@ function FirstPage() {
             size: size,
             color: color,
             qty: key.qty,
-            unit_price: key.unit_price
+            unit_price: key.unit_price,
+            description: key.description
           };
         });
 
@@ -260,7 +268,9 @@ function FirstPage() {
           po_number: res.data.po_number,
           issue_date: res.data.issue_date,
           quote_items: quoteItem,
-          party: res.data.bought_from
+          description: res.data?.order?.description,
+          party: res.data.bought_from,
+          ship_to: res.data.ship_to
         });
       }
     });
@@ -325,7 +335,7 @@ function FirstPage() {
           <IconButton>
             <Icon icon={editFill} width={20} height={20} />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleDownload}>
             <Icon icon={downloadFill} width={20} height={20} />
           </IconButton>
         </div>
@@ -345,7 +355,7 @@ function FirstPage() {
       <RootStyle>
         <PaperStyled sx={{ width: '210mm', height: '279mm', margin: 'auto' }}>
           {/* Header Info */}
-          <Stack ref={pdfRef} direction="column" spacing={2}>
+          <Stack ref={pdfRef} direction="column" spacing={4}>
             <Grid
               container
               sx={{
@@ -365,19 +375,19 @@ function FirstPage() {
               <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
                 <Box sx={{ textAlign: 'right' }}>
                   <IDontKnow>Purchase Order</IDontKnow>
-                  <Typography variant="h3">PO-{data.id}-A</Typography>
+                  <Typography variant="h6">{data.po_number}-A</Typography>
                 </Box>
               </Grid>
             </Grid>
             <Grid container direction="row" spacing={1}>
-              <Grid item xs={7}>
+              <Grid item xs={4}>
                 <Stack>
                   <Box>
                     <Typography variant="overline" display="block" gutterBottom>
                       PO Number
                     </Typography>
                     <Typography variant="h6" gutterBottom component="div">
-                      {data.po_number}
+                      {data.id}
                     </Typography>
                   </Box>
 
@@ -389,9 +399,19 @@ function FirstPage() {
                       {data.issue_date}
                     </Typography>
                   </BOXColumn>
+
+                  <BOXColumn>
+                    <Typography variant="overline" display="block" gutterBottom>
+                      Delivery Date
+                    </Typography>
+                    <Typography variant="h6" gutterBottom component="div">
+                      {data.delivery_date}
+                    </Typography>
+                  </BOXColumn>
                 </Stack>
               </Grid>
-              <Grid item xs={5}>
+
+              <Grid item xs={4}>
                 <Box>
                   <div>
                     <Typography variant="overline" display="block" gutterBottom>
@@ -400,8 +420,23 @@ function FirstPage() {
                     <Typography variant="h6" component="div">
                       {data.party.name}
                     </Typography>
-                    <Typography variant="body1">{data.party.address?.street}</Typography>
-                    <Typography variant="body1">{`${data.party.address?.city}, ${data.party.address?.province}, ${data.party.address?.country}`}</Typography>
+                    <Typography variant="body2">{data.party.address?.street}</Typography>
+                    <Typography variant="body2">{`${data.party.address?.city}, ${data.party.address?.province}, ${data.party.address?.country}`}</Typography>
+                  </div>
+                </Box>
+              </Grid>
+
+              <Grid item xs={4}>
+                <Box>
+                  <div>
+                    <Typography variant="overline" display="block" gutterBottom>
+                      Ship To
+                    </Typography>
+                    <Typography variant="h6" component="div">
+                      {data.ship_to?.name}
+                    </Typography>
+                    <Typography variant="body2">{data.ship_to?.address?.street}</Typography>
+                    <Typography variant="body2">{`${data.ship_to?.address?.city}, ${data.ship_to?.address?.province}, ${data.ship_to?.address?.country}`}</Typography>
                   </div>
                 </Box>
               </Grid>
@@ -411,11 +446,11 @@ function FirstPage() {
               <Table payload={data.quote_items} />
             </GridItemX>
 
-            <Divider fullWidth />
-            <Grid container>
-              <Box sx={{ marginBottom: 15 }}>
-                <Typography variant="h6">This Document Generated Automatically</Typography>
-              </Box>
+            <Grid item xs={12}>
+              <Typography variant="h5">Catatan</Typography>
+              {data?.description?.split('\n').map((item) => {
+                return <Typography variant="body2">{`${item}`}</Typography>;
+              })}
             </Grid>
           </Stack>
         </PaperStyled>

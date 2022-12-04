@@ -22,6 +22,7 @@ class SalesOrder extends JsonResource
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
+            'order' => $this->order,
             'sold_to' => $this->sold_to,
             'ship_to' => $this->ship_to,
             'party' => new Party($this->party),

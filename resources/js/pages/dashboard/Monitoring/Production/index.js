@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Button, Chip, Grid, Tab, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, Grid, Stack, Tab, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/styles';
 import { isArray, isEmpty, isUndefined, isNull, isEqual } from 'lodash';
 import moment from 'moment';
@@ -7,14 +7,12 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import Layout from '../../../../layouts/Layout';
 
+// Components
+import Modal from './components/ModalLog';
 import TableOrder from './components/TableOrder';
 import TableProblemLog from './components/TableProblemLog';
 import TableWorkDetail from './components/TableWorkDetail';
 import API from '../../../../helpers';
-
-const LineItems = styled('li')(({ theme }) => ({
-  margin: theme.spacing(0.5)
-}));
 
 const CHART_DATA = [
   {
@@ -43,6 +41,7 @@ function Dashboard() {
 
   const [workDetail, setWorkDetail] = useState([]);
   const [orderData, setOrderData] = useState([]);
+  const [log, setLog] = useState([]);
 
   const [graphData, setGraphData] = useState(CHART_DATA);
   const [date, setDate] = useState([
@@ -189,6 +188,13 @@ function Dashboard() {
           setWorkDetail(_data);
         }
       });
+
+      API.getProductionLog(params, function (res) {
+        if (isUndefined(res)) return;
+        else {
+          setLog(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
       // return;
@@ -205,6 +211,22 @@ function Dashboard() {
       alert(error);
     }
   }, []);
+
+  const handleUpdateProductionLog = () => {
+    try {
+      if (isNull(lineSelected)) return;
+      const params = `?monthYear=${filterMonthYear}&facility=${lineSelected.id}`;
+
+      API.getProductionLog(params, function (res) {
+        if (isUndefined(res)) throw new Error('something goes wrong!');
+        else {
+          setLog(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   const chartOptions = {
     stroke: { width: [3, 3] },
@@ -236,8 +258,17 @@ function Dashboard() {
     setValueTab(newValue);
   };
 
+  /**
+   * Modal
+   */
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleClose = () => setIsModalOpen(false);
+  const handleOpen = () => setIsModalOpen(true);
+
   return (
     <Layout>
+      <Modal open={isModalOpen} handleClose={handleClose} facility_id={lineSelected?.id} />
       <Grid container direction="row" spacing={2}>
         <Grid item xs={12}>
           <TextField
@@ -296,7 +327,6 @@ function Dashboard() {
             </TabList>
 
             <TabPanel value="1">
-              Per Order detail with Table on it
               <TableOrder
                 list={orderData}
                 selected={selectedGraph}
@@ -305,13 +335,20 @@ function Dashboard() {
             </TabPanel>
 
             <TabPanel value="2">
-              Work Detail
               <TableWorkDetail list={workDetail} />
             </TabPanel>
 
             <TabPanel value="3">
-              Production Log, contains list of issue occured on this line between range of date
-              <TableProblemLog list={[]} />
+              <Stack direction="column" spacing={2}>
+                <div>
+                  <Button onClick={handleUpdateProductionLog} size="small">Update</Button>
+                  <Button onClick={handleOpen} size="small">
+                    Add Data
+                  </Button>
+                </div>
+
+                <TableProblemLog list={log} />
+              </Stack>
             </TabPanel>
           </TabContext>
         </Grid>

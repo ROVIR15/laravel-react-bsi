@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 
 import {
+  Box,
   Button,
   Card,
   CardHeader,
   CardContent,
   Divider,
   Grid,
+  InputAdornment,
+  Tab,
   Typography,
   Paper,
   Stack,
@@ -15,6 +18,7 @@ import {
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { LoadingButton } from '@mui/lab';
 import { styled } from '@mui/material/styles';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { FormikProvider, Form, useFormik } from 'formik';
 
 import { isArray, isUndefined } from 'lodash';
@@ -69,7 +73,7 @@ function Invoice() {
     onSubmit: (values) => {
       let _data = { ...values, items };
       try {
-        API.updateInvoice(_data, (res) => {
+        API.updateSalesInvoice(id, _data, (res) => {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed to store data');
           else alert('success');
@@ -102,11 +106,11 @@ function Invoice() {
             address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
             postal_code: _data.postal_code
           });
-          changeData(res.data);     
+          changeData(res.data);
         }
       });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
   }, [id]);
 
@@ -210,10 +214,19 @@ function Invoice() {
     getFieldProps
   } = formik;
 
+  /**
+   * TAB Panel
+   */
+  const [valueTab, setValueTab] = React.useState('1');
+
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
+  };
+
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={1} direction="row">
+        <Grid container spacing={2} direction="row">
           <Grid item xs={6}>
             <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Info" />
@@ -288,38 +301,87 @@ function Invoice() {
               </CardContent>
             </Card>
           </Grid>
-        </Grid>
 
-        {/* Data Grid for Invoice Item */}
-        <Grid item xs={12}>
-          <Card>
-            <DataGrid rows={items} columns={columns} />
-          </Card>
-        </Grid>
+          {/* Data Grid for Invoice Item */}
+          <Grid item xs={12}>
+            <Card>
+              <DataGrid rows={items} columns={columns} />
+            </Card>
+          </Grid>
 
-        <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-          <Button
-            size="large"
-            color="grey"
-            variant="contained"
-            onClick={() => navigate(`/dashboard/finance/invoice/document/${id}`)}
-            sx={{ m: 1 }}
-          >
-            Show Document
-          </Button>
-          <LoadingButton
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-            sx={{ m: 1 }}
-          >
-            Save
-          </LoadingButton>
-          <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-            Cancel
-          </Button>
-        </Card>
+          {/* Tab Panel */}
+
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <TabContext value={valueTab}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                      <Tab label="Description" value="1" />
+                      <Tab label="Finance" value="2" />
+                    </TabList>
+                  </Box>
+
+                  <TabPanel value="1">
+                    <Stack direction="row" alignItems="center">
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={6}
+                        type="text"
+                        {...getFieldProps('description')}
+                        error={Boolean(touched.description && errors.description)}
+                        helperText={touched.description && errors.description}
+                      />
+                    </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="2">
+                    <Stack direction="row" spacing={4} alignItems="center">
+                      <Typography variant="body1">Tax</Typography>
+                      <TextField
+                        autoComplete="tax"
+                        type="number"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">%</InputAdornment>
+                        }}
+                        {...getFieldProps('tax')}
+                        error={Boolean(touched.tax && errors.tax)}
+                        helperText={touched.tax && errors.tax}
+                      />
+                    </Stack>
+                  </TabPanel>
+                </TabContext>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Card sx={{ display: 'flex', justifyContent: 'end' }}>
+              <Button
+                size="large"
+                color="grey"
+                variant="contained"
+                onClick={() => navigate(`/dashboard/finance/invoice/document/${id}`)}
+                sx={{ m: 1 }}
+              >
+                Show Document
+              </Button>
+              <LoadingButton
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                sx={{ m: 1 }}
+              >
+                Save
+              </LoadingButton>
+              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                Cancel
+              </Button>
+            </Card>
+          </Grid>
+        </Grid>
       </Form>
     </FormikProvider>
   );

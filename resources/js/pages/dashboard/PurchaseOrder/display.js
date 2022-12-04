@@ -221,11 +221,13 @@ function PurchaseOrder({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
 
-    API.deletePurchaseOrder(id, function(res){
-      if(res.success) setpurchaseOrderData([]);
-    }).catch(function(error){
-      alert(error)
-    });
+    try {
+      API.deletePurchaseOrder(id, function(res){
+        if(res.success) setpurchaseOrderData([]);
+      })  
+    } catch (error) {
+      alert(error);
+    }
 
     handleUpdateData();
   }

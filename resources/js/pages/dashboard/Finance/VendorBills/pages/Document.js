@@ -90,7 +90,7 @@ function FirstPage() {
 
   React.useEffect(() => {
     try {
-      API.getASalesInvoice(id, '?invoice_type=1', (res) => {
+      API.getASalesInvoice(id, '?invoice_type=2', (res) => {
         if (!res) return;
         if (!res.data) alert('failed to load data');
         else {
@@ -128,7 +128,7 @@ function FirstPage() {
 
     setInvInfo({
       invoice_date: payload.invoice_date,
-      invoice_id: generateInvSerialNumber(payload, 1),
+      invoice_id: generateInvSerialNumber(payload, 2),
       total_price: 0,
       description: payload.description,
       tax: payload.tax

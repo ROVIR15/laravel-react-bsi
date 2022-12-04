@@ -15,13 +15,12 @@ import Scrollbar from '../../../../../components/Scrollbar';
 import SearchNotFound from '../../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../../components/Table';
 
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'date', label: 'Sales Order', alignRight: false },
-    { id: 'problem_log', label: 'Buyer Name', alignRight: false }
+    { id: 'id', label: 'ID', alignRight: false, width: '50px' },
+    { id: 'date', label: 'Date', alignRight: false, width: '200px' },
+    { id: 'log', label: 'Problem Log', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -125,6 +124,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const isDataNotFound = filteredData?.length === 0;  
 
+  console.log(list)
+
   return (
     <div>
       <Scrollbar>
@@ -133,6 +134,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
             size="small"
           >
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -145,7 +147,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
                   const {
                     id,
                     date,
@@ -157,15 +158,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       key={id}
                       tabIndex={-1}
                       role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, row)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
                       <TableCell align="left">{log}</TableCell>

@@ -796,6 +796,15 @@ const main = {
         cb(err.response);
       });      
     },
+    updateOrder(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('Data is required');
+      axios.put( uri + '/order/' + id, { payload: _data }).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
     //SalesOrder Item
     insertSalesOrderItem(_data, cb){
       if(!_data) {
@@ -858,6 +867,13 @@ const main = {
       }).catch(function(err){
         cb(err);
       });
+    },
+    getBOMMaterialToDuplicate(cb){
+      axios.get( uri + '/bom-items-v1').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
     },
     getBOM(params='', cb){
       axios.get( uri + '/bom' + params).then(function(res){
@@ -1122,6 +1138,50 @@ const main = {
         cb(err);
       });
     },
+
+    // Production Log
+    insertProductionLog(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/production-log', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getProductionLog(params, cb){
+      axios.get( uri + '/production-log' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getAProductionLog(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/production-log' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteProductionLog(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/production-log/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateProductionLog(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/production-log/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },    
 
     // Work Center 
     insertWorkCenter(_data, cb){
@@ -2110,7 +2170,7 @@ const main = {
     },
     deleteSalesInvoice(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/sales-invoice/' + id).then(function(res){
+      axios.delete( uri + '/invoice/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -2119,7 +2179,7 @@ const main = {
     updateSalesInvoice(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/sales-invoice/' + id, { payload: _data}).then(function(res){
+      axios.put( uri + '/invoice/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

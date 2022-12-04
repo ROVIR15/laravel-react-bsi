@@ -25,6 +25,7 @@ import {
   LaborLayout,
   MOLayout,
   InvLayout,
+  VendorBillsLayout,
   MachineLayout,
   ServiceLayout,
   UserManagementLayout,
@@ -69,6 +70,7 @@ import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
 import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
+import AddVInv from '../pages/dashboard/Finance/VendorBills/new';
 import AddMachine from '../pages/dashboard/Machine/add';
 import AddLineTarget from '../pages/dashboard/LineTarget/add';
 import AddFacility from '../pages/dashboard/Facility/add';
@@ -102,6 +104,7 @@ import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
 import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
+import DisplayVInv from '../pages/dashboard/Finance/VendorBills/display';
 import DisplayMachine from '../pages/dashboard/Machine/display';
 import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
 import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
@@ -135,6 +138,7 @@ import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
 import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
+import ShowVInv from '../pages/dashboard/Finance/VendorBills/show';
 import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
 import ShowFacility from '../pages/dashboard/Facility/show';
@@ -153,6 +157,7 @@ import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
 import DocumentPO from '../pages/dashboard/PurchaseOrder/pages/Document';
 import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
+import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
@@ -570,6 +575,16 @@ export default function TestRouter() {
             { path: ':id', element: <ShowInv /> },
             { path: 'display', element: <DisplayInv /> },
             { path: 'document/:id', element: <DocumentINV/>}
+          ]
+        },
+        { 
+          path: 'finance/vendor-bills', 
+          element: <VendorBillsLayout />,
+          children: [
+            { path: 'add', element: <AddVInv /> },
+            { path: ':id', element: <ShowVInv /> },
+            { path: 'display', element: <DisplayVInv /> },
+            { path: 'document/:id', element: <DocumentVINV/>}
           ]
         },
         // Finance

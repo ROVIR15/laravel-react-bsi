@@ -176,7 +176,7 @@
     public function show($id)
     {
       try {
-        $salesOrder = SalesOrder::with('party', 'order_item', 'ship', 'status', 'completion_status')->find($id);
+        $salesOrder = SalesOrder::with('party', 'order_item', 'ship', 'status', 'completion_status', 'order')->find($id);
         return new oneSalesOrder($salesOrder);
       } catch (Exception $th) {
         return response()->json([

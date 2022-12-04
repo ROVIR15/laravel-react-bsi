@@ -45,6 +45,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import useAuth from '../../../context';
 
 import { _partyAddress } from '../../../helpers/data';
+import { isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -155,6 +156,10 @@ function SalesOrder() {
       valid_thru: load.valid_thru,
       delivery_date: load.delivery_date
     });
+
+    setTax(load.order.tax)
+    setDescription(load.order.description)
+
     let _party = _partyAddress(load.party);
     let _ship = _partyAddress(load.ship);
     setSelectedValueSO(_party);
@@ -372,6 +377,44 @@ function SalesOrder() {
     else return;
   };
 
+  /**
+   * description
+   */
+
+  const [description, setDescription] = useState('');
+
+  const handleUpdateDesc = () => {
+    try {
+      if (isEmpty(description)) throw new Error('description is zero');
+      API.updateOrder(values.order_id, { description }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  /**
+   * Tax
+   */
+
+  const [tax, setTax] = useState('');
+
+  const handleUpdateTax = () => {
+    try {
+      if (isEmpty(tax)) throw new Error('tax is required');
+      API.updateOrder(values.order_id, { tax }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <Page>
       <Container>
@@ -467,7 +510,8 @@ function SalesOrder() {
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Overview" value="1" />
                           <Tab label="Status" value="2" />
-                          <Tab label="Finance" value="3" />
+                          <Tab label="Description" value="3" />
+                          <Tab label="Tax" value="4" />
                         </TabList>
                       </Box>
 
@@ -552,11 +596,11 @@ function SalesOrder() {
                           <FormControl fullWidth>
                             <InputLabel>Selet Status</InputLabel>
                             <Select value={status} label="Status" onChange={handleChangeStatus}>
-                              <MenuItem value={5}>Draft</MenuItem>
-                              <MenuItem value={1}>Completed</MenuItem>
-                              <MenuItem value={2}>Running</MenuItem>
-                              <MenuItem value={3}>Waiting</MenuItem>
-                              <MenuItem value={4}>On Shipment</MenuItem>
+                              <MenuItem value={5} >Draft</MenuItem>
+                              <MenuItem value={1} >Completed</MenuItem>
+                              <MenuItem value={2} >Running</MenuItem>
+                              <MenuItem value={3} >Waiting</MenuItem>
+                              <MenuItem value={4} >On Shipment</MenuItem>
                             </Select>
                           </FormControl>
 
@@ -565,16 +609,37 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="3">
+                        <Stack direction="row" alignItems="center">
+                          <TextField
+                            fullWidth
+                            multiline
+                            value={description}
+                            onChange={(event) => setDescription(event.target.value)}
+                            rows={6}
+                            type="text"
+                          />
+                        </Stack>
+                        <Button onClick={handleUpdateDesc} variant="outlined">
+                          Save
+                        </Button>
+                      </TabPanel>
+
+                      <TabPanel value="4">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
                           <TextField
                             autoComplete="tax"
                             type="number"
+                            value={tax}
+                            onChange={(event) => setTax(event.target.value)}
                             InputProps={{
                               endAdornment: <InputAdornment position="end">%</InputAdornment>
                             }}
                           />
                         </Stack>
+                        <Button onClick={handleUpdateTax} variant="outlined">
+                          Save
+                        </Button>
                       </TabPanel>
                     </TabContext>
                   </CardContent>
