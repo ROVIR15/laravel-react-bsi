@@ -163,7 +163,13 @@ const [id, setId] = React.useState(0);
       if (active) {
         API.getSalesOrder('?completion_status=2', (res) => {
           if(!res) return
-          else setOptions(res.data);
+          else {
+            let _data = res.data.filter(item => {
+              return item.completion_status[0]?.completion_status_id === 2;
+            })
+
+            setOptions(_data);
+          } 
         })  
       }
     })();
