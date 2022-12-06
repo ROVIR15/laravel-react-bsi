@@ -57,11 +57,11 @@ function Invoice() {
   const navigate = useNavigate();
 
   const [selectedValueSH, setSelectedValueSH] = React.useState({
-    name: 'PT. BSI Indonesia',
+    name: 'PT. Buana Sandang Indonesia',
     address:
-      'Jalan Albisindo Raya no 24, Kec. Kaliwungu, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
-    postal_code: 42133,
-    phone_number: '(0291) 2381023'
+      'Jl. Raya Albisindo Desa Gondosari, RT/RW 02/06, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+    postal_code: 59354,
+    phone_number: '(0291) 4251259'
   });
 
   const formik = useFormik({
@@ -98,7 +98,9 @@ function Invoice() {
             invoice_id: res.data.id,
             po_number: generateInvSerialNumber(res.data, 1),
             sold_to: res.data.sold_to.id,
-            invoice_date: res.data.invoice_date
+            invoice_date: res.data.invoice_date,
+            tax: res.data.tax,
+            description: res.data.description
           });
           let _data = _partyAddress(res.data.party);
           setSelectedValueSO({

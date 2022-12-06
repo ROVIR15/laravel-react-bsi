@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Page from '../../../../../components/Page';
 
 import { styled } from '@mui/material/styles';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 
-import { Box, Divider, Grid, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, IconButton, Grid, Paper, Stack, Typography } from '@mui/material';
 import { MHidden } from '../../../../../components/@material-extend';
+
+//Icons
+import editFill from '@iconify/icons-eva/edit-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
+import { Icon } from '@iconify/react';
 
 // Components
 import Table from '../components/TableINV';
@@ -15,6 +20,10 @@ import Table from '../components/TableINV';
 import API from '../../../../../helpers/index';
 import { _partyAddress } from '../../../../../helpers/data';
 import { generateInvSerialNumber } from '../../utils';
+
+//pdf
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const RootStyle = styled(Page)(({ theme }) => ({
   display: 'flex',
@@ -64,8 +73,15 @@ const GridItemX = styled('div')(({ theme }) => ({
   overflow: 'hidden'
 }));
 
+const SpaceBetween = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '40px'
+}));
+
 function FirstPage() {
   const { id } = useParams();
+  const pdfRef = useRef(null);
 
   const [invInfo, setInvInfo] = useState({
     invoice_date: '',
@@ -80,12 +96,12 @@ function FirstPage() {
     postal_code: 0
   });
 
-  const [selectedValueSH] = React.useState({
-    name: 'PT. BSI Indonesia',
+  const [selectedValueSH, setSelectedValueSH] = React.useState({
+    name: 'PT. Buana Sandang Indonesia',
     address:
-      'Jalan Albisindo Raya no 24, Kec. Kaliwungu, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
-    postal_code: 42133,
-    phone_number: '(0291) 2381023'
+      'Jl. Raya Albisindo Desa Gondosari, RT/RW 02/06, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+    postal_code: 59354,
+    phone_number: '(0291) 4251259'
   });
 
   React.useEffect(() => {
@@ -96,7 +112,7 @@ function FirstPage() {
         else {
           changeData(res.data);
         }
-      });        
+      });
     } catch (error) {
       alert(error);
     }
@@ -107,8 +123,8 @@ function FirstPage() {
       return qty * price;
     }
 
-    const temp = payload.items.map((item, index) => {    
-      const { order_item, ...rest } = item
+    const temp = payload.items.map((item, index) => {
+      const { order_item, ...rest } = item;
       return {
         id: rest.id,
         order_item_id: order_item.id,
@@ -137,112 +153,194 @@ function FirstPage() {
     setItems(temp);
   };
 
+  const handleDownload = React.useCallback(() => {
+    const content = pdfRef.current;
+
+    setTimeout(() => {
+      html2canvas(content, { scale: 3, allowTaint: true, useCORS: true }).then((canvas) => {
+        const image = { type: 'jpeg', quality: 0.98 };
+        const margin = [0.2, 0.2];
+        const filename = 'myfile.pdf';
+
+        var imgWidth = 8.5;
+        var pageHeight = 11;
+
+        var innerPageWidth = imgWidth - margin[0] * 2;
+        var innerPageHeight = pageHeight - margin[1] * 4;
+
+        // Calculate the number of pages.
+        var pxFullHeight = canvas.height;
+        var pxPageHeight = Math.floor(canvas.width * (pageHeight / imgWidth));
+        var nPages = Math.ceil(pxFullHeight / pxPageHeight);
+
+        // Define pageHeight separately so it can be trimmed on the final page.
+        var pageHeight = innerPageHeight;
+
+        // Create a one-page canvas to split up the full image.
+        var pageCanvas = document.createElement('canvas');
+        var pageCtx = pageCanvas.getContext('2d');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = pxPageHeight;
+
+        // Initialize the PDF.
+        var pdf = new jsPDF('p', 'in', [8.5, 11]);
+
+        for (var page = 0; page < nPages; page++) {
+          // Trim the final page to reduce file size.
+          if (page === nPages - 1 && pxFullHeight % pxPageHeight !== 0) {
+            pageCanvas.height = pxFullHeight % pxPageHeight;
+            pageHeight = (pageCanvas.height * innerPageWidth) / pageCanvas.width;
+          }
+
+          // Display the page.
+          var w = pageCanvas.width;
+          var h = pageCanvas.height;
+          pageCtx.fillStyle = 'white';
+          pageCtx.fillRect(0, 0, w, h);
+          pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
+
+          // Add the page to the PDF.
+          if (page > 0) pdf.addPage();
+          debugger;
+          var imgData = pageCanvas.toDataURL('image/' + image.type, image.quality);
+          pdf.addImage(imgData, image.type, margin[1], margin[0], innerPageWidth, pageHeight);
+        }
+
+        pdf.save();
+      });
+    }, 1000);
+  }, [pdfRef]);
+
   return (
     <MHidden width="mdDown">
+      <SpaceBetween>
+        <div>
+          <IconButton>
+            <Icon icon={editFill} width={20} height={20} />
+          </IconButton>
+          <IconButton onClick={handleDownload}>
+            <Icon icon={downloadFill} width={20} height={20} />
+          </IconButton>
+        </div>
+
+        <div>
+          <Button disabled>
+            Submit
+          </Button>
+          <Button disabled>
+            Review
+          </Button>
+          <Button disabled>
+            Tandai Approve
+          </Button>
+        </div>
+      </SpaceBetween>
+
       <RootStyle>
         <PaperStyled sx={{ minHeight: '279mm' }}>
           {/* Header Info */}
-          <Stack direction="column" spacing={2}>
-            <Grid
-              container
-              sx={{
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexFlow: 'row wrap',
-                width: '100%'
-              }}
-            >
-              <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
-                <Box
-                  component="img"
-                  src="/data_file/bsi_logo.jpeg"
-                  sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
-                />
+          <div ref={pdfRef}>
+            <Stack direction="column" spacing={2}>
+              <Grid
+                container
+                sx={{
+                  boxSizing: 'border-box',
+                  display: 'flex',
+                  flexFlow: 'row wrap',
+                  width: '100%'
+                }}
+              >
+                <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
+                  <Box
+                    component="img"
+                    src="/data_file/bsi_logo.jpeg"
+                    sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
+                  />
+                </Grid>
+                <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <IDontKnow>INVOICE</IDontKnow>
+                    <Typography variant="h6">{invInfo.invoice_id}</Typography>
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
-                <Box sx={{ textAlign: 'right' }}>
-                  <IDontKnow>INVOICE</IDontKnow>
-                  <Typography variant="h6">{invInfo.invoice_id}</Typography>
-                </Box>
-              </Grid>
-            </Grid>
-            <Grid container direction="row" spacing={1}>
-              <Grid item xs={6}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Invoice From
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {selectedValueSH.name}
-                    </Typography>
-                    <Typography variant="body1" gutterBottom component="div">
-                      {selectedValueSH.address}
-                    </Typography>
-                    <Typography variant="body1" gutterBottom component="div">
-                      {selectedValueSH.postal_code}
-                    </Typography>
-                  </div>
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Invoice To
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {selectedValueSO.name}
-                    </Typography>
-                    <Typography variant="body1" gutterBottom component="div">
-                      {selectedValueSO.address}
-                    </Typography>
-                    <Typography variant="body1" gutterBottom component="div">
-                      {selectedValueSO.postal_code}
-                    </Typography>
-                  </div>
-                </Box>
-              </Grid>
+              <Grid container direction="row" spacing={1}>
+                <Grid item xs={6}>
+                  <Box>
+                    <div>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Invoice From
+                      </Typography>
+                      <Typography variant="h6" gutterBottom component="div">
+                        {selectedValueSH.name}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom component="div">
+                        {selectedValueSH.address}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom component="div">
+                        {selectedValueSH.postal_code}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box>
+                    <div>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Invoice To
+                      </Typography>
+                      <Typography variant="h6" gutterBottom component="div">
+                        {selectedValueSO.name}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom component="div">
+                        {selectedValueSO.address}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom component="div">
+                        {selectedValueSO.postal_code}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
 
-              <Grid item xs={6}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Issued Date
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {moment(invInfo.invoice_date, 'YYYY-MM-DD').format('DD MMMM YYYY')}
-                    </Typography>
-                  </div>
-                </Box>
+                <Grid item xs={6}>
+                  <Box>
+                    <div>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Issued Date
+                      </Typography>
+                      <Typography variant="h6" gutterBottom component="div">
+                        {moment(invInfo.invoice_date, 'YYYY-MM-DD').format('DD MMMM YYYY')}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box>
+                    <div>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Due Date
+                      </Typography>
+                      <Typography variant="h6" gutterBottom component="div">
+                        {moment(invInfo.invoice_date, 'YYYY-MM-DD')
+                          .add('days', 7)
+                          .format('DD MMMM YYYY')}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Due Date
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {moment(invInfo.invoice_date, 'YYYY-MM-DD')
-                        .add('days', 7)
-                        .format('DD MMMM YYYY')}
-                    </Typography>
-                  </div>
-                </Box>
+              <GridItemX>
+                <Table payload={items} subTotal={invInfo.total_price} tax={invInfo.tax} />
+              </GridItemX>
+
+              <Grid item xs={12}>
+                <Typography variant="h5">Catatan</Typography>
+                {invInfo?.description?.split('\n').map((item) => {
+                  return <Typography variant="body2">{`${item}`}</Typography>;
+                })}
               </Grid>
-            </Grid>
-            <GridItemX>
-              <Table payload={items} subTotal={invInfo.total_price} tax={invInfo.tax}/>
-            </GridItemX>
-
-            <Grid item xs={12}>
-              <Typography variant="h5">Catatan</Typography>
-              {invInfo?.description?.split('\n').map((item) => {
-                return <Typography variant="body2">{`${item}`}</Typography>;
-              })}
-            </Grid>
-
-          </Stack>
+            </Stack>
+          </div>
         </PaperStyled>
       </RootStyle>
     </MHidden>

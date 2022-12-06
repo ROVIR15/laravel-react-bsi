@@ -50,11 +50,11 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 
 function Invoice() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({
-    name: 'PT. BSI Indonesia',
+    name: 'PT. Buana Sandang Indonesia',
     address:
-      'Jalan Albisindo Raya no 24, Kec. Kaliwungu, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
-    postal_code: 42133,
-    phone_number: '(0291) 2381023'
+      'Jl. Raya Albisindo Desa Gondosari, RT/RW 02/06, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+    postal_code: 59354,
+    phone_number: '(0291) 4251259'
   });
 
   const formik = useFormik({
@@ -67,7 +67,7 @@ function Invoice() {
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 1, tax: 11, description: '' };
+      let _data = { ...values, items, type: 1 };
       try {
         API.insertSalesInvoice(_data, (res) => {
           if (!res) return undefined;

@@ -79,12 +79,6 @@ function Invoice({ placeHolder }) {
   }, [])
 
   const handleUpdateData = () => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
-
-    if(isEmpty(invoice)) {
       try {
         API.getSalesInvoice('?invoice_type=1', (res) => {
           if(!res) return
@@ -110,7 +104,6 @@ function Invoice({ placeHolder }) {
       } catch (error) {
         alert(error)
       }
-    }
   }
 
   const handleRequestSort = (event, property) => {
@@ -164,13 +157,14 @@ function Invoice({ placeHolder }) {
 
     try {
       API.deleteSalesInvoice(id, function(res){
-        if(res.success) setInvoice([]);
+        if(res.success) alert('success');
         else throw new Error('failed to delete data')
       });  
     } catch(error) {
       alert(error)
     }
 
+    setInvoice([])
     handleUpdateData();
 
   }
