@@ -322,7 +322,7 @@ function FirstPage() {
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {moment(invInfo.invoice_date, 'YYYY-MM-DD')
-                          .add('days', 7)
+                          .add('days', 21)
                           .format('DD MMMM YYYY')}
                       </Typography>
                     </div>
