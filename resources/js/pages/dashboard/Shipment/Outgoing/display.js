@@ -8,16 +8,12 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { 
-  ListHead, 
-  ListToolbar, 
-  MoreMenu 
-} from '../../../../components/Table';
+import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
 // api
 import API from '../../../../helpers';
@@ -31,7 +27,7 @@ const TABLE_HEAD = [
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
-  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
+  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -53,7 +49,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,14 +57,16 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`
-    return filter(array, (_b) => _b.serial_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`;
+    return filter(
+      array,
+      (_b) => _b.serial_number.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function OutboundDelivery({ placeHolder }) {
-
   const [goodsReceipt, setGoodsReceipt] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -81,37 +79,30 @@ function OutboundDelivery({ placeHolder }) {
 
   useEffect(() => {
     handleUpdateData();
-  }, [filterMonthYear])
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+    let params = '?shipment_type=2';
+    params = params + `&monthYear=${filterMonthYear}`;
 
-    if(isEmpty(goodsReceipt)) {
-      let params = '?shipment_type=2';
-      params = params + `&monthYear=${filterMonthYear}`;
-
-      try {
-        API.getShipment(params, (res) => {
-          if(!res) return
-          if(!res.data) {
-            setGoodsReceipt([]);
-          } else {
-            setGoodsReceipt(res.data);
-          }
-        });
-      } catch (error) {
-        alert(`error occured ${error}`)
-      }
+    try {
+      API.getShipment(params, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setGoodsReceipt([]);
+        } else {
+          setGoodsReceipt(res.data);
+        }
+      });
+    } catch (error) {
+      alert(`error occured ${error}`);
     }
-  }
+  };
 
   const handleMonthYearChanges = (event) => {
     const { value } = event.target;
     setFilterMonthYear(value);
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -145,22 +136,22 @@ function OutboundDelivery({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteGoodsReceipt(id, function(res){
-        if(res.success) setGoodsReceipt([]);
+      API.deleteGoodsReceipt(id, function (res) {
+        if (res.success) setGoodsReceipt([]);
         else alert('failed');
-      });  
-    } catch(error) {
-      alert(`error occured ${error}`)
+      });
+    } catch (error) {
+      alert(`error occured ${error}`);
     }
 
     handleUpdateData();
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
 
   const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -190,14 +181,8 @@ function OutboundDelivery({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const {
-                    id,
-                    serial_number,
-                    delivery_date,
-                    est_delivery_date,
-                    order,
-                    status
-                  } = row;
+                  const { id, serial_number, delivery_date, est_delivery_date, order, status } =
+                    row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -251,7 +236,7 @@ function OutboundDelivery({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default OutboundDelivery;
