@@ -28,7 +28,9 @@ import { Icon } from '@iconify/react';
 import useAuth from '../../../../context';
 import { getPages } from '../../../../utils/getPathname';
 
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 import { toBlob, toPng } from 'html-to-image';
 import Dialog from '../../../../components/DialogBox/dialog';
 import DialogDraggable from '../components/DialogBoxDragable';
@@ -109,6 +111,8 @@ function Document() {
   const [imageUrl, setImageUrl] = useState(null);
 
   const pdfRef = useRef(null);
+  const pdfRef2 = useRef(null);
+  const pdfRef3 = useRef(null);
 
   const { user } = useAuth();
   const { pathname } = useLocation();
@@ -178,30 +182,88 @@ function Document() {
     }
   }
 
-  const handleDownloadPng = React.useCallback(() => {
+  const handleDownload = React.useCallback(async () => {
     const content = pdfRef.current;
+    const content2 = pdfRef2.current;
+    const content3 = pdfRef3.current;
+    const doc = new jsPDF('pt', 'mm');
+    const imgWidth = 190;
+    const pageHeight = 280;
 
-    // toBlob(content, {cacheBust: true})
-    // .then((blob) => {
-    //   const doc = new jsPDF();
 
-    //   doc.addImage(blob);
-    //   doc.save('hehe.pdf')
-    // })
-    // .catch((err) => {
-    //   alert(err)
-    // })
+    let a = await html2canvas(content, { allowTaint: true, useCORS: true }).then(
+      (canvas) => {
+        let image1 = canvas.toDataURL('image/png');
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const doc = new jsPDF('pt', 'mm');
+        doc.addImage(image1, 'SVG', 10, imgWidth, imgHeight + 25);    
+        return doc;
+      }
+    );
 
-    toPng(content, { cacheBust: true })
-      .then((dataUrl) => {
-        const doc = new jsPDF();
+    a.save('download.pdf');
 
-        doc.addImage(dataUrl, 5, 5);
-        doc.save('hehe.pdf');
-      })
-      .catch((err) => {
-        alert(err);
-      });
+    // let image1 = a.toDataURL('image/png');
+    // let imgHeight = (image1.height * imgWidth) / image1.width;
+    // doc.addImage(image1, 'SVG', 10, 10, imgWidth, imgHeight + 25);
+
+    // let b = await html2canvas(content2, { scale: 3, allowTaint: true, useCORS: true }).then(
+    //   (canvas) => {
+    //     return canvas;
+    //   }
+    // );
+
+    // doc.addPage();
+    // let image2 = b.toDataURL('image/png');
+    // const imgHeight = (b.height * imgWidth) / b.width;
+    // let heightLeft = imgHeight;
+    // let position = 0;
+    // heightLeft -= pageHeight;
+    // doc.addImage(image2, 'SVG', 10, 10, imgWidth, imgHeight + 25);
+    // while (heightLeft >= 0) {
+    //   position = heightLeft - imgHeight;
+    //   doc.addPage();
+    //   doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight + 25);
+    //   heightLeft -= pageHeight;
+    // }
+
+
+    // let c = await html2canvas(content3, { scale: 3, allowTaint: true, useCORS: true }).then(
+    //   (canvas) => {
+    //     return canvas;
+    //   }
+    // );
+
+    // let image3 = c.toDataURL('image/png');
+    // doc.addPage();
+    // doc.addImage(image3, 'SVG', 10, 10, imgWidth, imgHeight + 25);
+
+    doc.save('download.pdf')
+
+    // setTimeout(async () => {
+    //   html2canvas(content, { scale: 3, allowTaint: true, useCORS: true }).then((canvas) => {
+    //     const imgData = canvas.toDataURL('image/png');
+    //     const imgWidth = 190;
+    //     const pageHeight = 280;
+    //     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    //     let heightLeft = imgHeight;
+    //     const doc = new jsPDF('pt', 'mm');
+    //     let position = 0;
+    //     doc.addImage(imgData, 'SVG', 10, 10, imgWidth, imgHeight + 25);
+    //     heightLeft -= pageHeight;
+    //     while (heightLeft >= 0) {
+    //       console.log(heightLeft, imgHeight, heightLeft % pageHeight === heightLeft);
+    //       position = heightLeft - imgHeight;
+    //       doc.addPage();
+    //       doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight + 25);
+    //       if (pageHeight) heightLeft -= pageHeight;
+    //     }
+    //     // return imgData
+    //     doc.save('download.pdf');
+    //     setLoader(false);
+    //   });
+
+      // doc.save();
   }, [pdfRef]);
 
   // state for document
@@ -386,7 +448,7 @@ function Document() {
               <Icon icon={editFill} onClick={handleOpenDialogDraggable} width={20} height={20} />
             </IconButton>
             <IconButton>
-              <Icon icon={downloadFill} width={20} height={20} />
+              <Icon icon={downloadFill} onClick={handleDownload} width={20} height={20} />
             </IconButton>
           </div>
           <div>
@@ -410,123 +472,125 @@ function Document() {
       </FloatingBox>
       <PaperStyled elevation={2} sx={{}}>
         {/* Product Info */}
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexFlow: 'row wrap',
-            width: '100%'
-          }}
-        >
-          <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box
-              component="img"
-              src="/data_file/bsi_logo.jpeg"
-              sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
-            />
-          </Grid>
-          <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box sx={{ textAlign: 'right' }}>
-              <IDontKnow>Costing</IDontKnow>
-              <Typography variant="h3">{bom_name}</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider fullWidth />
-          </Grid>
-          <Grid item xs={12} md={6} lg={7}>
-            <Box
-              sx={{
-                width: '65%',
-                lineHeight: '0',
-                display: 'block',
-                overflow: 'hidden',
-                position: 'relative',
-                paddingTop: '100%',
-                cursor: 'zoom-in',
-                padding: '8px',
-                margin: 'auto'
-              }}
-            >
+        <div ref={pdfRef}>
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexFlow: 'row wrap',
+              width: '100%'
+            }}
+          >
+            <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
               <Box
                 component="img"
-                src={imageUrl ? imageUrl : null}
-                sx={{
-                  height: '300px',
-                  margin: 'auto',
-                  objectFit: 'cover',
-                  borderRadius: '16px'
-                }}
+                src="/data_file/bsi_logo.jpeg"
+                sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
               />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6} lg={5}>
-            <Box sx={{ marginTop: '30px' }}>
-              <div>
-                <Typography variant="overline" display="block" gutterBottom>
-                  Product Name
-                </Typography>
-                <Typography variant="h5" gutterBottom component="div">
-                  {goods_name}
-                </Typography>
-              </div>
+            </Grid>
+            <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Box sx={{ textAlign: 'right' }}>
+                <IDontKnow>Costing</IDontKnow>
+                <Typography variant="h3">{bom_name}</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider fullWidth />
+            </Grid>
+            <Grid item xs={12} md={6} lg={7}>
+              <Box
+                sx={{
+                  width: '65%',
+                  lineHeight: '0',
+                  display: 'block',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  paddingTop: '100%',
+                  cursor: 'zoom-in',
+                  padding: '8px',
+                  margin: 'auto'
+                }}
+              >
+                <Box
+                  component="img"
+                  src={imageUrl ? imageUrl : null}
+                  sx={{
+                    height: '300px',
+                    margin: 'auto',
+                    objectFit: 'cover',
+                    borderRadius: '16px'
+                  }}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6} lg={5}>
+              <Box sx={{ marginTop: '30px' }}>
+                <div>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Product Name
+                  </Typography>
+                  <Typography variant="h5" gutterBottom component="div">
+                    {goods_name}
+                  </Typography>
+                </div>
 
-              <div>
-                <Typography variant="overline" display="block" gutterBottom>
-                  Variant
-                </Typography>
-                <Typography variant="h5" gutterBottom component="div">
-                  {`${color} - ${size}`}
-                </Typography>
-              </div>
+                <div>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Variant
+                  </Typography>
+                  <Typography variant="h5" gutterBottom component="div">
+                    {`${color} - ${size}`}
+                  </Typography>
+                </div>
 
-              <div>
-                <Typography variant="overline" display="block" gutterBottom>
-                  Expected Start Date
-                </Typography>
-                <Typography variant="h5" gutterBottom component="div">
-                  {start_date ? fDate(start_date) : '-'}
-                </Typography>
-              </div>
-              <div>
-                <Typography variant="overline" display="block" gutterBottom>
-                  Expected End Date
-                </Typography>
-                <Typography variant="h5" gutterBottom component="div">
-                  {end_date ? fDate(end_date) : '-'}
-                </Typography>
-              </div>
-              <div>
-                <Typography variant="overline" display="block" gutterBottom>
-                  Work Duration
-                </Typography>
-                <Typography variant="h5" gutterBottom component="div">
-                  {data.total_work_days} Days
-                </Typography>
-              </div>
-            </Box>
+                <div>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Expected Start Date
+                  </Typography>
+                  <Typography variant="h5" gutterBottom component="div">
+                    {start_date ? fDate(start_date) : '-'}
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Expected End Date
+                  </Typography>
+                  <Typography variant="h5" gutterBottom component="div">
+                    {end_date ? fDate(end_date) : '-'}
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Work Duration
+                  </Typography>
+                  <Typography variant="h5" gutterBottom component="div">
+                    {data.total_work_days} Days
+                  </Typography>
+                </div>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-        <GridItemX sx={{ marginTop: 8, marginBottom: 4 }}>
-          {/**
-           *
-           * Table Primary
-           */}
-          <Table
-            payload={rest}
-            approval={approve}
-            review={review}
-            margin={margin}
-            setMargin={setMargin}
-            startingPrice={startingPrice}
-            finalPrice={finalPrice}
-            setFinalPrice={setFinalPrice}
-            tax={data.tax}
-            status={status?.status_type?.toLowerCase() === 'approve'}
-          />
-        </GridItemX>
+          <GridItemX sx={{ marginTop: 8, marginBottom: 4 }}>
+            {/**
+             *
+             * Table Primary
+             */}
+            <Table
+              payload={rest}
+              approval={approve}
+              review={review}
+              margin={margin}
+              setMargin={setMargin}
+              startingPrice={startingPrice}
+              finalPrice={finalPrice}
+              setFinalPrice={setFinalPrice}
+              tax={data.tax}
+              status={status?.status_type?.toLowerCase() === 'approve'}
+            />
+          </GridItemX>
+        </div>
         <Divider fullWidth />
         <Grid container>
           <Box sx={{ marginBottom: 15 }}>
@@ -536,42 +600,44 @@ function Document() {
       </PaperStyled>
 
       <PaperStyled>
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexFlow: 'row wrap',
-            width: '100%'
-          }}
-        >
-          <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box
-              component="img"
-              src="/data_file/bsi_logo.jpeg"
-              sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
-            />
+        <div ref={pdfRef2}>
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexFlow: 'row wrap',
+              width: '100%'
+            }}
+          >
+            <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Box
+                component="img"
+                src="/data_file/bsi_logo.jpeg"
+                sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
+              />
+            </Grid>
+            <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Box sx={{ textAlign: 'right' }}>
+                <IDontKnow>Costing</IDontKnow>
+                <Typography variant="h3">{bom_name}</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider fullWidth />
+            </Grid>
           </Grid>
-          <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box sx={{ textAlign: 'right' }}>
-              <IDontKnow>Costing</IDontKnow>
-              <Typography variant="h3">{bom_name}</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider fullWidth />
-          </Grid>
-        </Grid>
 
-        <Grid item>
-          <Typography m={2} variant="h5">
-            Breakdown Material Cost
-          </Typography>
-        </Grid>
-        <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-          <TableComponent payload={items} tax={data.tax} />
-        </GridItemX>
+          <Grid item>
+            <Typography m={2} variant="h5">
+              Breakdown Material Cost
+            </Typography>
+          </Grid>
+          <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
+            <TableComponent payload={items} tax={data.tax} />
+          </GridItemX>
+        </div>
         <Divider fullWidth />
         <Grid container>
           <Box sx={{ marginBottom: 15 }}>
@@ -581,51 +647,52 @@ function Document() {
       </PaperStyled>
 
       <PaperStyled>
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexFlow: 'row wrap',
-            width: '100%'
-          }}
-        >
-          <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box
-              component="img"
-              src="/data_file/bsi_logo.jpeg"
-              sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
-            />
+        <div ref={pdfRef3}>
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexFlow: 'row wrap',
+              width: '100%'
+            }}
+          >
+            <Grid item md={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Box
+                component="img"
+                src="/data_file/bsi_logo.jpeg"
+                sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
+              />
+            </Grid>
+            <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Box sx={{ textAlign: 'right' }}>
+                <IDontKnow>Costing</IDontKnow>
+                <Typography variant="h3">{bom_name}</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider fullWidth />
+            </Grid>
           </Grid>
-          <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
-            <Box sx={{ textAlign: 'right' }}>
-              <IDontKnow>Costing</IDontKnow>
-              <Typography variant="h3">{bom_name}</Typography>
-            </Box>
+          <Grid item>
+            <Typography m={2} variant="h5">
+              Breakdown Service Cost
+            </Typography>
           </Grid>
-          <Grid item xs={12}>
-            <Divider fullWidth />
-          </Grid>
-        </Grid>
-        <Grid item>
-          <Typography m={2} variant="h5">
-            Breakdown Service Cost
-          </Typography>
-        </Grid>
-        <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-          <TableService payload={service} qty={data?.qty} tax={data.tax} />
-        </GridItemX>
+          <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
+            <TableService payload={service} qty={data?.qty} tax={data.tax} />
+          </GridItemX>
 
-        <Grid item>
-          <Typography m={2} variant="h5">
-            Breakdown CM Cost
-          </Typography>
-        </Grid>
-        <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-          <TableCM payload={op} qty={data?.qty} tax={data.tax} />
-        </GridItemX>
-
+          <Grid item>
+            <Typography m={2} variant="h5">
+              Breakdown CM Cost
+            </Typography>
+          </Grid>
+          <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
+            <TableCM payload={op} qty={data?.qty} tax={data.tax} />
+          </GridItemX>
+        </div>
         <Divider fullWidth />
         <Grid container>
           <Box sx={{ marginBottom: 15 }}>
