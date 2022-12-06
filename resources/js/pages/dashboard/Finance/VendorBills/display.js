@@ -163,10 +163,18 @@ function Invoice({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteGoodsReceipt(id, function(res){
-      if(res.success) getSalesInvoice([]);
-      else alert('error');
-    });
+
+    try {
+      API.deleteSalesInvoice(id, function(res){
+        if(res.success) getSalesInvoice([]);
+        else throw new Error('failed to delete data')
+      });  
+    } catch(error) {
+      alert(error)
+    }
+
+    handleUpdateData();
+
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;

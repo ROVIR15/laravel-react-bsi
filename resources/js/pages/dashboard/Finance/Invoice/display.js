@@ -75,6 +75,10 @@ function Invoice({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
+    handleUpdateData();
+  }, [])
+
+  const handleUpdateData = () => {
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
       return !array.length;
@@ -107,7 +111,7 @@ function Invoice({ placeHolder }) {
         alert(error)
       }
     }
-  }, [])
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -157,10 +161,18 @@ function Invoice({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteSalesInvoice(id, function(res){
-      if(res.success) getSalesInvoice([]);
-      else alert('error');
-    });
+
+    try {
+      API.deleteSalesInvoice(id, function(res){
+        if(res.success) getSalesInvoice([]);
+        else throw new Error('failed to delete data')
+      });  
+    } catch(error) {
+      alert(error)
+    }
+
+    handleUpdateData();
+
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;

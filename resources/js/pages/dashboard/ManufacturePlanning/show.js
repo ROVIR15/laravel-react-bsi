@@ -131,12 +131,13 @@ function Goods() {
       API.setManufacturePlanningItems(values, (res) => {
         if(!res.success) alert("failed");
         else alert('success');
-
-        handleUpdateData();
       })
     } catch (error) {
       alert('error')
     }
+
+    setItems([])
+    handleUpdateData();
   }
 
   const handleEditRowsModelChange = React.useCallback(
