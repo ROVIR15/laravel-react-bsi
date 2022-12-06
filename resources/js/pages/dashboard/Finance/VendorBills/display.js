@@ -166,7 +166,7 @@ function Invoice({ placeHolder }) {
 
     try {
       API.deleteSalesInvoice(id, function(res){
-        if(res.success) getSalesInvoice([]);
+        if(res.success) setInvoice([]);
         else throw new Error('failed to delete data')
       });  
     } catch(error) {
