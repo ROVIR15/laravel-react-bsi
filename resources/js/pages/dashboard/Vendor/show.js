@@ -31,13 +31,15 @@ function getEditPathname(array) {
   return '/' + array[1] + '/' + array[2] + `/${array[3]}`;
 }
 
+const initialVendor = {
+  id: 0,
+  name: '',
+  role: ''
+}
+
 function Vendor() {
   const { id } = useParams();
-  const [choosen, setChoosen] = React.useState({
-    id: 0,
-    name: '',
-    role: ''
-  });
+  const [choosen, setChoosen] = React.useState(initialVendor)
 
   const formik = useFormik({
     initialValues: {
@@ -45,7 +47,7 @@ function Vendor() {
       role_type_id: 0,
       name: '',
       npwp: '',
-      address: '',
+      street: '',
       city: '',
       province: '',
       country: '',
@@ -57,7 +59,7 @@ function Vendor() {
       name,
       npwp,
       email,
-      address,
+      street,
       city,
       province,
       country,
@@ -71,21 +73,23 @@ function Vendor() {
           npwp
         },
         address: {
-          street: address,
-          city,
-          province,
-          country,
-          postal_code
+          street, city, province, country, postal_code
         },
         roles: {
           role_type_id,
           relationship_id: 2
         }
       };
-      API.editVendor(id, data, function (res) {
-        setSubmitting(false);
-        alert(JSON.stringify(res));
-      });
+      try {
+        API.editVendor(id, data, function (res) {
+          if(!res) return;
+          if(!res.success) throw new Error('failed');
+          else alert('succees');
+        });          
+      } catch (error) {
+        alert(error)
+      }
+      setSubmitting(false);
     }
   });
 
@@ -103,13 +107,24 @@ function Vendor() {
 
   useEffect(() => {
     if (!id) return;
-    API.getVendor(id, function (res) {
-      if (!res.data === 200) alert('Something went wrong!');
-      const { role_type, ...arrangedData } = _partyArrangedData(res.data);
-      setValues(arrangedData);
-      setChoosen(role_type);
-    });
+
+    try {
+      API.getVendor(id, function (res) {
+        if(!res) return;
+        if(!res.data) throw new Error(`failed to load data vendor ${id}`)
+        const { role_type, ...arrangedData } = _partyArrangedData(res.data);
+        setValues(arrangedData);
+        setChoosen(role_type);
+      });        
+    } catch (error) {
+      alert(error)
+    }
   }, [id]);
+
+  useEffect(() => {
+  console.log(errors);
+
+  }, [])
 
   /**
    * TAB Panel
@@ -134,14 +149,18 @@ function Vendor() {
       return undefined;
     }
 
-    API.getRoleType('?type=Vendor', (res) => {
-      if (!res) return;
-      if (!res.data) {
-        setOptions([]);
-      } else {
-        setOptions(res.data);
-      }
-    });
+    try {
+      API.getRoleType('?type=Vendor', (res) => {
+        if (!res) return;
+        if (!res.data) {
+          throw new Error('failed to laod vendor');
+        } else {
+          setOptions(res.data);
+        }
+      });        
+    } catch (error) {
+      alert(error);
+    }
 
     return () => {
       active = false;
@@ -222,12 +241,12 @@ function Vendor() {
                           <Grid item xs={12}>
                             <TextField
                               fullWidth
-                              autoComplete="address"
+                              autoComplete="street"
                               type="text"
                               label="Alamat"
-                              {...getFieldProps('address')}
-                              error={Boolean(touched.address && errors.address)}
-                              helperText={touched.address && errors.address}
+                              {...getFieldProps('street')}
+                              error={Boolean(touched.street && errors.street)}
+                              helperText={touched.street && errors.street}
                             />
                           </Grid>
                           <Grid item xs={6}>

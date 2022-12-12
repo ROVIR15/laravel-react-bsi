@@ -6,6 +6,7 @@ import {
   Card,
   CardHeader,
   CardContent,
+  Container,
   Divider,
   Grid,
   InputAdornment,
@@ -28,11 +29,7 @@ import { BuyerSchema } from '../../../helpers/FormerSchema';
 import API from '../../../helpers';
 
 function Vendor() {
-  const [choosen, setChoosen] = React.useState({
-    id: 0,
-    name: '',
-    role: ''
-  });
+  const [choosen, setChoosen] = React.useState(initialVendor);
 
   const formik = useFormik({
     initialValues: {
@@ -73,10 +70,19 @@ function Vendor() {
         },
         role_type_id
       };
-      API.setVendor(data, function (res) {
-        alert(JSON.stringify(res));
-      });
+
+      try {
+        API.setVendor(data, function (res) {
+          if(!res) return;
+          if(!res.success) throw new Error('failed');
+          else alert('done')
+        })          
+      } catch (error) {
+        alert(error);
+      }
+      handleReset();
       setSubmitting(false);
+      setChoosen(initialVendor);
     }
   });
 
@@ -87,6 +93,7 @@ function Vendor() {
     isSubmitting,
     setSubmitting,
     handleSubmit,
+    handleReset,
     getFieldProps,
     setFieldValue
   } = formik;
@@ -285,53 +292,6 @@ function Vendor() {
                       </TabPanel>
                     </TabContext>
                   </Box>
-                </Card>
-              </Grid>
-
-              {/* Tab Panel */}
-
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <TabContext value={valueTab}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                          <Tab label="Description" value="1" />
-                          <Tab label="Finance" value="2" />
-                        </TabList>
-                      </Box>
-
-                      <TabPanel value="1">
-                        <Stack direction="row" alignItems="center">
-                          <TextField
-                            fullWidth
-                            multiline
-                            rows={6}
-                            type="text"
-                            {...getFieldProps('description')}
-                            error={Boolean(touched.description && errors.description)}
-                            helperText={touched.description && errors.description}
-                          />
-                        </Stack>
-                      </TabPanel>
-
-                      <TabPanel value="2">
-                        <Stack direction="row" spacing={4} alignItems="center">
-                          <Typography variant="body1">Tax</Typography>
-                          <TextField
-                            autoComplete="tax"
-                            type="number"
-                            InputProps={{
-                              endAdornment: <InputAdornment position="end">%</InputAdornment>
-                            }}
-                            {...getFieldProps('tax')}
-                            error={Boolean(touched.tax && errors.tax)}
-                            helperText={touched.tax && errors.tax}
-                          />
-                        </Stack>
-                      </TabPanel>
-                    </TabContext>
-                  </CardContent>
                 </Card>
               </Grid>
 

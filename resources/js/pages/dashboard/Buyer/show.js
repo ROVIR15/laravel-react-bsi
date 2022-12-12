@@ -41,7 +41,7 @@ function Buyer() {
       email : "",
       name : "",
       npwp : "",
-      address : "",
+      street : "",
       city : "",
       province : "",
       country : "",
@@ -49,24 +49,30 @@ function Buyer() {
       phone_number :"" 
     },
     validationSchema: BuyerSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
+    onSubmit: ({ name, npwp, email, street, city, province, country, postal_code, role_type_id}) => {
       const data = {
         party_info: {
           name, email, npwp
         },
         address: {
-          street: address,
-          city, province, country, postal_code
+          street, city, province, country, postal_code
         }, 
         roles : {
           role_type_id,
           relationship_id: 1
         }
       }
-      API.editBuyer(id, data, function(res){
-        setSubmitting(false);
-        alert(JSON.stringify(res));
-      });
+
+      try {
+        API.editBuyer(id, data, function(res){
+          if(!res) return;
+          if(!res.success) throw new Error('failed');
+          else alert('success');
+        });
+      } catch (error) {
+        alert(error);
+      }
+      setSubmitting(false);
     }
   })
 
@@ -197,12 +203,12 @@ function Buyer() {
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      autoComplete="address"
+                      autoComplete="street"
                       type="text"
                       label="Alamat"
-                      {...getFieldProps('address')}
-                      error={Boolean(touched.address && errors.address)}
-                      helperText={touched.address && errors.address}
+                      {...getFieldProps('street')}
+                      error={Boolean(touched.street && errors.street)}
+                      helperText={touched.street && errors.street}
                     />
                   </Grid>
                   <Grid item xs={6}>
