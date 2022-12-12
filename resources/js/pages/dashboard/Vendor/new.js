@@ -28,6 +28,12 @@ import { BuyerSchema } from '../../../helpers/FormerSchema';
 //api
 import API from '../../../helpers';
 
+const initialVendor = {
+  id: 0,
+  name: '',
+  role: ''
+}
+
 function Vendor() {
   const [choosen, setChoosen] = React.useState(initialVendor);
 
