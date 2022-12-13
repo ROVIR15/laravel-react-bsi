@@ -233,7 +233,7 @@ function WorkCenter() {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item 
-                    sm={6} xs={12}
+                    sm={12} xs={12}
                   >
                     <TextField
                       fullWidth
@@ -246,24 +246,13 @@ function WorkCenter() {
                     />
                   </Grid>
                   <Grid item 
-                    sm={6} xs={12}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="qty"
-                      type="number"
-                      label="Rencana Produksi"
-                      onChange={(event) => setQty(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid item 
                     sm={12} xs={12}
                   >
                     <TextField
                       fullWidth
                       autoComplete="labor_alloc"
                       type="text"
-                      label="Alokasi Labor"
+                      label="Manpower"
                       {...getFieldProps('labor_alloc')}
                       error={Boolean(touched.labor_alloc && errors.labor_alloc)}
                       helperText={touched.labor_alloc && errors.labor_alloc}
@@ -307,19 +296,6 @@ function WorkCenter() {
               />
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item 
-                    sm={12} xs={12}
-                  >
-                    <TextField
-                      fullWidth
-                      autoComplete="work_hours"
-                      type="text"
-                      label="Hari Kerja"
-                      {...getFieldProps('work_hours')}
-                      error={Boolean(touched.work_hours && errors.work_hours)}
-                      helperText={touched.work_hours && errors.cost_per_hour}
-                    />
-                  </Grid>
                   <Grid item 
                     sm={12} xs={12}
                   >
