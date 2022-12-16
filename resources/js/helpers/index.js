@@ -2185,6 +2185,17 @@ const main = {
         cb(err.response);
       });
     },
+    // Action on Invoice Status
+    insertInvoiceStatus(_data, cb){
+      if(!_data){
+        console.error('data not found');
+      }
+      axios.post( uri + '/invoice-status', { payload: _data}).then(function(res){
+        cb(res);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
     // Action on Manufacture Order
     insertAction(_data, cb){
       if(!_data) {

@@ -97,7 +97,6 @@ function TableD({ list, placeHolder, selected, setSelected, update }) {
   };
 
   const handleClick = (event, name) => {
-    console.log(name);
     const _data = name.bom_items.map(function(item, index){
       let { product_feature, ...rest} = item;
       return {
@@ -109,8 +108,6 @@ function TableD({ list, placeHolder, selected, setSelected, update }) {
         brand: product_feature?.product?.goods?.brand
       }
     });
-
-    console.log(_data);
     setSelected(_data);
   };
 

@@ -121,11 +121,6 @@ function Vendor() {
     }
   }, [id]);
 
-  useEffect(() => {
-  console.log(errors);
-
-  }, [])
-
   /**
    * TAB Panel
    */

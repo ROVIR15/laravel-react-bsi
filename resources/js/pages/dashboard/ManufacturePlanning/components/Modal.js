@@ -103,7 +103,6 @@ export default function BasicModal({
           }
         }
       } else {
-        console.log(selectedItem)
         let _p = {...payload, facility_name, costing_name}
         onAddItems(_p);
       }
