@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableRow,
@@ -10,6 +9,8 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+
+import { fNumber, fCurrency } from '../../../../utils/formatNumber'
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
@@ -93,8 +94,8 @@ function Invoice({ placeHolder }) {
                 tax: sales_invoice?.tax,
                 billed_to: sales_invoice?.party?.name,
                 serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
-                total_qty: 0,
-                total_amount: 0,
+                total_qty: sales_invoice?.sum[0]?.total_qty,
+                total_amount: sales_invoice?.sum[0]?.total_amount,
                 status: 'Done'
               }
             });
@@ -225,8 +226,8 @@ function Invoice({ placeHolder }) {
                       <TableCell align="left">{invoice_date}</TableCell>
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>
-                      <TableCell align="left">{total_qty}</TableCell>
-                      <TableCell align="left">{total_amount}</TableCell>
+                      <TableCell align="left">{fNumber(total_qty)}</TableCell>
+                      <TableCell align="left">Rp. {fCurrency(total_amount*((tax/100)+1))}</TableCell>
                       <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />

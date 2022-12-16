@@ -3,6 +3,7 @@
 namespace App\Models\Invoice;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Invoice extends Model
 {
@@ -35,5 +36,9 @@ class Invoice extends Model
 
     public function items(){
         return $this->hasMany('App\Models\Invoice\InvoiceItem', 'invoice_id')->with('order_item');
+    }
+
+    public function sum(){
+        return $this->hasMany('App\Models\Invoice\InvoiceItem', 'invoice_id')->select('id', 'invoice_id', DB::raw('sum(qty) as total_qty, sum(amount*qty) as total_amount'))->groupBy('invoice_id');
     }
 }
