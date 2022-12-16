@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isUndefined } from 'lodash';
 import {
   Card,
   Table,
@@ -96,7 +96,7 @@ function Invoice({ placeHolder }) {
                 serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
                 total_qty: sales_invoice?.sum[0]?.total_qty,
                 total_amount: sales_invoice?.sum[0]?.total_amount,
-                status: 'Done'
+                status: sales_invoice?.status[0]?.type?.name
               }
             });
             setInvoice(_data);
@@ -222,7 +222,7 @@ function Invoice({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{status}</TableCell>
+                      <TableCell align="left">{isUndefined(status) ? 'None' : status}</TableCell>
                       <TableCell align="left">{invoice_date}</TableCell>
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>

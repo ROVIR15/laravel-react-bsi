@@ -19,11 +19,11 @@ class InvoiceHasType extends Model
     ];
 
     public function sales_invoice(){
-        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('sales_order', 'party', 'sum');
+        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('sales_order', 'party', 'sum', 'status');
     }
 
     public function purchase_invoice(){
-        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('purchase_order', 'party', 'sum');
+        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('purchase_order', 'party', 'sum', 'status');
     }
 
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isUndefined } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -10,6 +10,7 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+import { fNumber, fCurrency } from '../../../../utils/formatNumber'
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
@@ -100,9 +101,9 @@ function Invoice({ placeHolder }) {
               tax: purchase_invoice?.tax,
               billed_to: purchase_invoice?.party?.name,
               serial_number: `INV. No ${purchase_invoice.id}/${purchase_invoice?.purchase_order?.id}-${purchase_invoice?.purchase_order?.purchase_order?.id}/${purchase_invoice.invoice_date}/${purchase_invoice?.purchase_order?.purchase_order?.po_number}`,
-              total_qty: 0,
-              total_amount: 0,
-              status: 'Done'
+              total_qty: purchase_invoice?.sum[0]?.total_qty,
+              total_amount: purchase_invoice?.sum[0]?.total_amount,
+              status: purchase_invoice?.status[0]?.type?.name
             }
           });
 
@@ -229,12 +230,12 @@ function Invoice({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{status}</TableCell>
+                      <TableCell align="left">{isUndefined(status) ? 'None' : status}</TableCell>
                       <TableCell align="left">{invoice_date}</TableCell>
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>
-                      <TableCell align="left">{total_qty}</TableCell>
-                      <TableCell align="left">{total_amount}</TableCell>
+                      <TableCell align="left">{fNumber(total_qty)}</TableCell>
+                      <TableCell align="left">Rp. {fCurrency(total_amount*((tax/100)+1))}</TableCell>
                       <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />

@@ -178,7 +178,7 @@ class InvoiceController extends Controller
       try {
 
         if(isset($type)){
-            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order')->find($id);  
+            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status')->find($id);  
         } else {
             $query = Invoice::with('party')->find($id);
         }

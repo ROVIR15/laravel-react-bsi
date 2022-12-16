@@ -41,4 +41,8 @@ class Invoice extends Model
     public function sum(){
         return $this->hasMany('App\Models\Invoice\InvoiceItem', 'invoice_id')->select('id', 'invoice_id', DB::raw('sum(qty) as total_qty, sum(amount*qty) as total_amount'))->groupBy('invoice_id');
     }
+
+    public function status(){
+        return $this->hasMany('App\Models\Invoice\InvoiceStatus', 'invoice_id', 'id')->with('type')->orderBy('created_at', 'desc');
+    }
 }

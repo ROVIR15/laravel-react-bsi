@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 
 import {
   Box,
@@ -7,11 +7,15 @@ import {
   CardHeader,
   CardContent,
   Divider,
+  FormControl,
   Grid,
+  InputLabel,
   InputAdornment,
+  MenuItem,
   Tab,
   Typography,
   Paper,
+  Select,
   Stack,
   TextField
 } from '@mui/material';
@@ -55,6 +59,8 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 function Invoice() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [status, setStatus] = useState(null);
 
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. Buana Sandang Indonesia',
@@ -108,6 +114,7 @@ function Invoice() {
             address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
             postal_code: _data.postal_code
           });
+          setStatus(res.data?.status[0]?.invoice_status_type_id)
           changeData(res.data);
         }
       });
@@ -225,6 +232,35 @@ function Invoice() {
     setValueTab(newValue);
   };
 
+  /**
+   * Handle Change Invoice Status
+   */
+
+  const handleChangeStatus = (event) => {
+    setStatus(event.target.value);
+  };
+
+  const handleSubmitCompletionStatus = () => {
+    if (!status) {
+      alert('Stop');
+      return undefined;
+    }
+    try {
+      API.insertInvoiceStatus(
+        {
+          invoice_id: id,
+          invoice_status_type_id: status
+        },
+        function (res) {
+          if (!res.success) throw new Error('Failed');
+          alert('done');
+        }
+      );
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -321,6 +357,7 @@ function Invoice() {
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                       <Tab label="Description" value="1" />
                       <Tab label="Finance" value="2" />
+                      <Tab label="Invoice Status" value="3" />
                     </TabList>
                   </Box>
 
@@ -351,6 +388,22 @@ function Invoice() {
                         error={Boolean(touched.tax && errors.tax)}
                         helperText={touched.tax && errors.tax}
                       />
+                    </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="3">
+                    <Stack direction="row" spacing={4} alignItems="center">
+                      <FormControl fullWidth>
+                        <InputLabel>Update Invoice Status</InputLabel>
+                        <Select value={status} label="Status" onChange={handleChangeStatus}>
+                          <MenuItem value={4}>None</MenuItem>
+                          <MenuItem value={1}>Paid</MenuItem>
+                          <MenuItem value={2}>Unpaid</MenuItem>
+                          <MenuItem value={3}>Partial</MenuItem>
+                        </Select>
+                      </FormControl>
+
+                      <Button onClick={handleSubmitCompletionStatus}> Update </Button>
                     </Stack>
                   </TabPanel>
                 </TabContext>
