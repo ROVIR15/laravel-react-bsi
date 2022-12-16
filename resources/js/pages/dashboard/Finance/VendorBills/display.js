@@ -107,7 +107,6 @@ function Invoice({ placeHolder }) {
             }
           });
 
-          console.log(_data);
           setInvoice(_data);
         }
       });          

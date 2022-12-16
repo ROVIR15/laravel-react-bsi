@@ -15,7 +15,6 @@ export default function ValidateRowModelControlGrid({
   handleAddRow,
   ...rest
 }) {
-	console.log(rows, columns)
 	return (
     <Box
       sx={{

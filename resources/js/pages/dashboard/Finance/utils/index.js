@@ -20,8 +20,6 @@ export const orderItemToInvoiceItem = (payload) => {
     };
   });
 
-  console.log(temp);
-
   return temp;
 };
 

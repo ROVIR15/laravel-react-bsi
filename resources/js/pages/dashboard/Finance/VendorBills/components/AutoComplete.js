@@ -43,7 +43,6 @@ export default function Asynchronous({
     }
   }, [value]);
 
-  console.log(options);
 
   return (
     <Autocomplete
