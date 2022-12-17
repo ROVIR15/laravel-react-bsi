@@ -2244,6 +2244,14 @@ const main = {
         cb(err.response);
       });
     },
+    uploadShipmentReceiptProof(_formData, cb){
+      if(!_formData) return undefined;
+      axios.post(uri + '/upload-shipment-receipt', _formData).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     getMonitoringCutting(param, cb){
       if(!cb) return;
       const paramUri = '/monitoring-cutting' + `${param}`

@@ -19,7 +19,8 @@ class Shipment extends Model
         'shipment_type_id',
         'delivery_date',
         'est_delivery_date',
-        'order_id'
+        'order_id',
+        'imageUrl'
     ];
 
     public function items(){
