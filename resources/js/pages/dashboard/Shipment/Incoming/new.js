@@ -206,7 +206,6 @@ function OutboundDelivery() {
     { field: 'satuan', headerName: 'Satuan', editable: false },
     { field: 'qty_order', headerName: 'Qty Order', editable: false },
     { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
-    // { field: 'qty_received', headerName: 'Qty Received', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -222,16 +221,9 @@ function OutboundDelivery() {
   const deleteData = useCallback(
     (id) => () => {
       const rowToDeleteIndex = id;
-      let a = [
-        ...items.slice(0, rowToDeleteIndex),
-        ...items.slice(rowToDeleteIndex + 1),
-      ];
-
-      a = a.map(function(x, index){
-        return {...x, id: index}
-      });
-
-      setItems(a);
+      setItems((prevItems) => {
+        return [...prevItems.slice(0, rowToDeleteIndex), ...prevItems.slice(rowToDeleteIndex + 1)]
+      })
     })
 
   const handleEditRowsModelChange = React.useCallback(
@@ -325,6 +317,7 @@ function OutboundDelivery() {
                   />
                   <TextField
                     fullWidth
+                    disabled
                     autoComplete="est_delivery_date"
                     type="date"
                     label="Estimated Delivery Date"
@@ -354,6 +347,7 @@ function OutboundDelivery() {
                         setOpen={setOpen}
                         loading={loading}
                         changeData={changeData}
+                        setFieldValue={setFieldValue}
                       />
                     </Grid>
 

@@ -12,7 +12,7 @@ function sleep(delay = 0) {
   });
 }
 
-export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
+export default function Asynchronous({ label, loading, options, open, setOpen, setFieldValue, choosen, changeData }) {
     const [value, setValue] = React.useState(null);
 
     React.useEffect(() => {
@@ -24,6 +24,8 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
           changeData([]);
         } else {
           changeData(res.data);
+          console.log(res.data.delivery_date)
+          setFieldValue('est_delivery_date', res.data.delivery_date)
         }
       })
     }, [value])
