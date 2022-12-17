@@ -31,9 +31,10 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'name', label: 'Buyer', alignRight: false },
+  { id: 'name', label: 'Sender', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
   { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
+  { id: 'remarks', label: 'Keterangan', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -102,19 +103,16 @@ function OutboundDelivery({ placeHolder }) {
     }
   }, [])
 
-  const changeData = (payload) => {
-    if(!payload) return undefined;
-    if(!Array.isArray(payload)) return undefined;
-    let newData = payload.map((item) => {
-      return {
-        id: item.id,
-        delivery_date: item.delivery_date,
-        buyer_name: item.buyer.name,
-        receiver_name: item.ship.name,
-        po_number: item.sales.po_number
-      }
-    });
-    setGoodsReceipt(newData);
+  function dateDiff (delivDate, estDelivDate){
+    let a = new Date(delivDate);
+    let b = new Date(estDelivDate);
+
+    if(a < b) return 'On time'
+    if(a > b) {
+      let dateDiff = Math.round((a - b) / (1000 * 60 * 60 * 24));
+      return `Late delivery -${dateDiff} days`
+    }
+    else return 'On time'
   }
 
   const handleRequestSort = (event, property) => {
@@ -165,10 +163,15 @@ function OutboundDelivery({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteGoodsReceipt(id, function(res){
-      if(res.success) setGoodsReceipt([]);
-      else alert('error');
-    });
+    try {
+      API.deleteShipment(id, function(res){
+        if(!res) return undefined;
+        if(!res.success) throw new Error('failed to delte data');
+        else alert('success');
+      })
+    } catch (error) {
+      alert(error);
+    }
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
@@ -230,6 +233,7 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{order?.purchase_order?.party?.name}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="left">{est_delivery_date}</TableCell>
+                      <TableCell align="left">{dateDiff(delivery_date, est_delivery_date)}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
