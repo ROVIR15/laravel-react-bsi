@@ -188,10 +188,6 @@ function OutboundDelivery() {
         alert(error);
       }
       setSubmitting(false);
-      handleReset();
-      setSelectedValueSO({});
-      setItems([]);
-      setFile(null);
     }
   });
 
