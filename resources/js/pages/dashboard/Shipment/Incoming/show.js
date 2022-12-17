@@ -404,6 +404,7 @@ function OutboundDelivery() {
                     />
                     <TextField
                       fullWidth
+                      disabled
                       autoComplete="est_delivery_date"
                       type="date"
                       label="Estimated Delivery Date"
