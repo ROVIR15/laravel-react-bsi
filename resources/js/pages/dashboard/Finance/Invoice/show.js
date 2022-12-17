@@ -253,7 +253,7 @@ function Invoice() {
         },
         function (res) {
           if (!res.success) throw new Error('Failed');
-          alert('done');
+          else alert('done');
         }
       );
     } catch (error) {
