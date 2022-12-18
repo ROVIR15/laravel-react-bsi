@@ -33,7 +33,9 @@ import {
   FacilityTargetLayout,
   FacilityLayout,
   FactoryLayout,
-  MPLayout
+  MPLayout,
+  PaymentLayout,
+  FinanceAccountLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -78,6 +80,8 @@ import AddFactory from '../pages/dashboard/Factory/add';
 import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
 import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
 import AddMP from '../pages/dashboard/ManufacturePlanning/add';
+import AddFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/new';
+import AddPayment from '../pages/dashboard/Finance/Payment/new';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -111,11 +115,11 @@ import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/s
 import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
 import DisplayFacility from '../pages/dashboard/Facility/display';
 import DisplayFactory from '../pages/dashboard/Factory/display';
-
 import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
 import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
-
 import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
+import DisplayFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/display';
+import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -148,6 +152,8 @@ import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
 import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
 
 import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
+import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
+import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -585,6 +591,24 @@ export default function TestRouter() {
             { path: ':id', element: <ShowVInv /> },
             { path: 'display', element: <DisplayVInv /> },
             { path: 'document/:id', element: <DocumentVINV/>}
+          ]
+        },
+        {
+          path: 'finance/payment',
+          element: <PaymentLayout/>,
+          children: [
+            { path: 'add', element: <AddPayment /> },
+            { path: ':id', element: <ShowPayment /> },
+            { path: 'display', element: <DisplayPayment /> }
+          ]
+        },
+        {
+          path: 'finance/account',
+          element: <FinanceAccountLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceAccount /> },
+            { path: ':id', element: <ShowFinanceAccount /> },
+            { path: 'display', element: <DisplayFinanceAccount /> }
           ]
         },
         // Finance

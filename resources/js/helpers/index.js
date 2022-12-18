@@ -1526,6 +1526,49 @@ const main = {
         cb(err.response);
       });
     },
+    //Contact Mechanism
+    insertContactMechanism(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/contact-mechanism', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getContactMechanism(params=null, cb){
+      axios.get( uri + '/contact-mechanism' + `&${params}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAContactMechanism(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/contact-mechanism' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteContactMechanism(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/contact-mechanism' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateContactMechanism(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/contact-mechanism' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     // Party
     getRoleType(param, cb){
       if(!cb) return;
@@ -2252,6 +2295,14 @@ const main = {
         cb(err.response);
       });
     },
+    uploadPaymentImage(_formData, cb){
+      if(!_formData) return undefined;
+      axios.post(uri + '/upload-payment-receipt', _formData).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     getMonitoringCutting(param, cb){
       if(!cb) return;
       const paramUri = '/monitoring-cutting' + `${param}`
@@ -2492,6 +2543,106 @@ const main = {
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
+      })
+    },
+    // Finance account
+    insertFinanceAccount(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/financial-account', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getFinanceAccount(params=null, cb){
+      axios.get( uri + '/financial-account' + `${params}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAFinanceAccount(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/financial-account' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deleteFinanceAccount(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/financial-account' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateAFinanceAccount(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/financial-account/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getFinanceAccountType(cb){
+      axios.get( uri + '/finance-account-type').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    // Payment 
+    insertPayment(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/payment', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getPayment(params=null, cb){
+      axios.get( uri + '/payment' + `${params}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAPayment(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/payment' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deletePayment(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/payment' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateAPayment(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/payment/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getPaymentMethodType(cb){
+      axios.get( uri + '/payment-method-type').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
       })
     }
   }

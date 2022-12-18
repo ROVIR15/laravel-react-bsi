@@ -241,7 +241,15 @@ const sidebarConfig = [
       {
         title: 'Invoice',
         path: '/dashboard/finance/invoice'
-      },      
+      },
+      {
+        title: 'Finance Account',
+        path: '/dashboard/finance/account'
+      },
+      {
+        title: 'Payment',
+        path: '/dashboard/finance/payment'
+      }
     ]
   },
   {

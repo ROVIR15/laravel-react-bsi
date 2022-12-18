@@ -34,3 +34,5 @@ export { default as FacilityLayout } from './Facility';
 export { default as FacilityTargetLayout } from './LineTarget';
 export { default as MPLayout } from './ManufacturePlanning';
 export { default as FactoryLayout } from './Factory';
+export { default as PaymentLayout } from './Finance/Payment'
+export { default as FinanceAccountLayout } from './Finance/FinanceAccount'

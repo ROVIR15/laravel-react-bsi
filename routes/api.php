@@ -143,7 +143,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Invoice
     Route::resource('billing-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('billing-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('financial-account', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-transaction', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -213,3 +212,10 @@ Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store',
 Route::resource('invoice-status', 'InvoiceStatusController')->only(['store']);
 Route::resource('production-log', 'ProductionLogController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::post('upload-shipment-receipt', 'UploadController@upload_shipment_receipt');
+Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt');
+Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
+Route::resource('payment', 'PaymentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');
