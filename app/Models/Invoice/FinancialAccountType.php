@@ -4,10 +4,10 @@ namespace App\Models\Invoice;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaymentMethodType extends Model
+class FinancialAccountType extends Model
 {
     //
-    protected $table = 'payment_method_type';
+    protected $table = 'financial_account_type';
 
     protected $primaryKey = 'id';
 
@@ -15,7 +15,8 @@ class PaymentMethodType extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id',
         'name',
-        'description',
+        'description'
     ];
 }

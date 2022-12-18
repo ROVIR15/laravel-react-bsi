@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\Payment;
+use App\Models\Invoice\Payment;
+use App\Models\Invoice\PaymentMethodType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\Payment as PaymentOneCollection;
-use App\Http\Resources\Study\PaymentCollection;
+use App\Http\Resources\Invoice\Payment as PaymentOneCollection;
+use App\Http\Resources\Invoice\PaymentMethodType as PaymentMethodTypeOneCollection;
+use App\Http\Resources\Invoice\PaymentCollection;
 
 class PaymentController extends Controller
 {
@@ -19,9 +21,27 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Payment::all();
+      $query = Payment::with('type', 'sales_invoice')->get();
 
       return new PaymentCollection($query);
+    }
+
+    /**
+     * Get payment method type
+     * 
+     */
+    public function getPaymentMethodType(){
+      try {
+        $query = PaymentMethodType::all();
+
+        return new PaymentMethodTypeOneCollection($query);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -45,9 +65,14 @@ class PaymentController extends Controller
       $param = $request->all()['payload'];
       try {
         Payment::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+          'payment_method_type_id' => $param['payment_method_type_id'],
+          'invoice_id' => $param['invoice_id'],
+          'effective_date' => $param['effective_date'],
+          'ref_num' => $param['ref_num'],
+          'amount' => $param['amount'],
+          'comment' => $param['comment']
         ]);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -68,8 +93,8 @@ class PaymentController extends Controller
     public function show($id)
     {
       try {
-        $query = Payment::find($id);
-        return new PaymentCollection($query);
+        $query = Payment::with('sales_invoice', 'type')->find($id);
+        return new PaymentOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
