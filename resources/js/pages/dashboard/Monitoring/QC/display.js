@@ -154,7 +154,7 @@ function DisplayQuote({ placeHolder }) {
   //   }).catch(function(error){
   //     alert('error')
   //   });
-  // }
+  }
 
   const handleDateChanges = (event) => {
     const { name, value} = event.target;
