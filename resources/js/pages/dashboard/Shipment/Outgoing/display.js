@@ -27,7 +27,8 @@ const TABLE_HEAD = [
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
-  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false }
+  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
+  { id: 'remarks', label: 'Keterangan', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -153,6 +154,19 @@ function OutboundDelivery({ placeHolder }) {
 
   const isDataNotFound = filteredData.length === 0;
 
+  function dateDiff (delivDate, estDelivDate){
+    let a = new Date(delivDate);
+    let b = new Date(estDelivDate);
+
+    if(a < b) return 'On time'
+    if(a > b) {
+      let dateDiff = Math.round((a - b) / (1000 * 60 * 60 * 24));
+      return `Late delivery -${dateDiff} days`
+    }
+    else return 'On time'
+  }
+
+
   return (
     <Card>
       <ListToolbar
@@ -201,7 +215,9 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
-                      <TableCell align="left">{est_delivery_date}</TableCell>
+                      <TableCell align="left">{order?.sales_order?.est_delivery_date}</TableCell>
+                      <TableCell align="left">{order?.sales_order?.est_delivery_date}</TableCell>
+                      <TableCell align="left">{dateDiff(delivery_date, order?.sales_order?.est_delivery_date)}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
