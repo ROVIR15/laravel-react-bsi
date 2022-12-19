@@ -215,9 +215,8 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
-                      <TableCell align="left">{order?.sales_order?.est_delivery_date}</TableCell>
-                      <TableCell align="left">{order?.sales_order?.est_delivery_date}</TableCell>
-                      <TableCell align="left">{dateDiff(delivery_date, order?.sales_order?.est_delivery_date)}</TableCell>
+                      <TableCell align="left">{order?.sales_order?.delivery_date}</TableCell>
+                      <TableCell align="left">{dateDiff(delivery_date, order?.sales_order?.delivery_date)}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
