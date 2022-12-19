@@ -149,12 +149,12 @@ function DisplayQuote({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteQuote(id, function(res){
-      if(res.success) setQuoteData([]);
-    }).catch(function(error){
-      alert('error')
-    });
-  }
+  //   API.deleteQuote(id, function(res){
+  //     if(res.success) setQuoteData([]);
+  //   }).catch(function(error){
+  //     alert('error')
+  //   });
+  // }
 
   const handleDateChanges = (event) => {
     const { name, value} = event.target;
