@@ -96,9 +96,16 @@ function SalesOrder() {
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
-      API.updateSalesOrder(id, values, function (res) {
-        alert('success');
-      });
+
+      try {
+        API.updatePurchaseOrder(id, values, function (res) {
+          if(!res) return undefined;
+          if(!res.success) throw new Error('failed');
+          else alert('update success');
+        });          
+      } catch (error) {
+        alert(error)
+      }
       setSubmitting(false);
     }
   });
@@ -116,7 +123,7 @@ function SalesOrder() {
 
     setValues({
       id: load.id,
-      quote_id: load.quote_id,
+      quote_id: load?.order?.quote_id,
       order_id: load.order_id,
       po_number: load.po_number,
       bought_from: load.bought_from.id,

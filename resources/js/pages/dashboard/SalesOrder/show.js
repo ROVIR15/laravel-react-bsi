@@ -124,9 +124,15 @@ function SalesOrder() {
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {
-      API.updateSalesOrder(id, values, function (res) {
-        alert('success');
-      });
+      try {
+        API.updateSalesOrder(id, values, function (res) {
+          if(!res) return undefined;
+          if(!res.success) throw new Error('failed');
+          else alert('update success');
+        });          
+      } catch (error) {
+        alert(error)
+      }
       setSubmitting(false);
     }
   });
