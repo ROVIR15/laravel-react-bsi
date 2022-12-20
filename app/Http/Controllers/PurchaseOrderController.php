@@ -5,6 +5,7 @@
   use DB;
 
   use Illuminate\Http\Request;
+  use App\Models\Order\Quote;
   use App\Models\Order\Order;
   use App\Models\Order\OrderItem;
   use App\Models\Order\PurchaseOrder;
@@ -209,8 +210,8 @@
     {
       $purchaseOrderData = $request->all()['payload'];
       try {
-        $purchaseOrder = PurchaseOrder::find($id)->update($purchaseOrderData);
-
+        PurchaseOrder::find($id)->update($purchaseOrderData);
+        
         return response()->json([
           'success' => true
         ], 200);

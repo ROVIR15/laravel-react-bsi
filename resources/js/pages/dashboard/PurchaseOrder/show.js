@@ -387,7 +387,7 @@ function SalesOrder() {
                         {...getFieldProps('po_number')}
                         error={Boolean(touched.po_number && errors.po_number)}
                         helperText={touched.po_number && errors.po_number}
-                        disabled={true}
+                        disabled={false}
                       />
                     </Stack>
                   </CardContent>
