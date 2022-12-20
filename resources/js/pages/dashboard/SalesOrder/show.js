@@ -154,6 +154,7 @@ function SalesOrder() {
 
     setValues({
       id: load.id,
+      quote_id: load?.order?.quote_id,
       order_id: load.order_id,
       po_number: load.po_number,
       ship_to: load.ship_to,
