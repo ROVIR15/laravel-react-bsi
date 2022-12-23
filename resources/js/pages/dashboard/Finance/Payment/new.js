@@ -16,9 +16,12 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   TextField,
-  Typography
+  Typography,
+  styled,
+  IconButton
 } from '@mui/material';
 import { isArray, isUndefined } from 'lodash';
 import ColumnBox from '../../../../components/ColumnBox';
@@ -27,6 +30,25 @@ import DialogBox from './components/DialogBox';
 //API
 import API from '../../../../helpers';
 import { fCurrency } from '../../../../utils/formatNumber';
+import BasicTable from './components/BasicTable';
+//Icons
+import plusSquare from '@iconify/icons-eva/plus-square-fill';
+import { Icon } from '@iconify/react';
+
+const GridData = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center'
+}));
+
+const UploadPaper = styled(Button)(({ theme }) => ({
+  outline: 'none',
+  padding: '40px 8px',
+  borderRadius: '8px',
+  backgroundColor: 'rgb(244, 246, 248)',
+  border: '1px dashed rgba(145, 158, 171, 0.32)',
+  height: '100%'
+}));
 
 function PaymentAccountNew() {
   const [cat, setCat] = useState([]);
@@ -42,20 +64,21 @@ function PaymentAccountNew() {
     }
   });
 
+  const [selected, setSelected] = useState([]);
+
   const GoodsSchema = Yup.object().shape({
-    reff_num: Yup.string().required('account name is required'),
-    invoice_id: Yup.number().required('account number is required'),
+    ref_num: Yup.string().required('account name is required'),
+    invoice_id: Yup.array().required('account number is required'),
     type: Yup.number().required('Line is required'),
     effective_date: Yup.date().required('Line is required'),
-    amount: Yup.number().required('Line is required'),
-    comment: Yup.string().required('Line is required')
+    amount: Yup.number().required('Line is required')
   });
 
   const formik = useFormik({
     initialValues: {
       type: 0,
       invoice_id: 0,
-      reff_num: '',
+      ref_num: '',
       effective_date: '',
       amount: '0.0',
       comment: ''
@@ -63,15 +86,28 @@ function PaymentAccountNew() {
     validationSchema: GoodsSchema,
     onSubmit: (values) => {
       try {
-        API.insertPayment(
-          {
-            payment_method_type_id: values.type,
-            invoice_id: values.invoice_id,
-            ref_num: values.reff_num,
-            effective_date: values.effective_date,
-            amount: values.amount,
-            comment: values.comment
-          },
+        const { invoice_id, type, ...item } = values;
+
+        let load = invoice_id.map((i) => ({ ...item, invoice_id: i.id, amount: i.amount, payment_method_type_id: type, imageUrl: file }));
+        // API.insertPayment(
+        //   {
+        //     payment_method_type_id: values.type,
+        //     invoice_id: values.invoice_id,
+        //     ref_num: values.ref_num,
+        //     effective_date: values.effective_date,
+        //     amount: values.amount,
+        //     comment: values.comment
+        //   },
+        //   function (res) {
+        //     if (!res.success) alert('failed');
+        //     else alert('success');
+        //     handleReset();
+        //     setSelectedValueSH(null);
+        //   }
+        // );
+
+        API.insertManyPayment(
+          load,
           function (res) {
             if (!res.success) alert('failed');
             else alert('success');
@@ -114,7 +150,7 @@ function PaymentAccountNew() {
                 serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
                 billed_to: sales_invoice?.party?.name,
                 status: sales_invoice?.status[0]?.type?.name,
-                total_amount: sales_invoice?.sum[0]?.total_amount*(1 + (sales_invoice?.tax/100))
+                total_amount: sales_invoice?.sum[0]?.total_amount * (1 + sales_invoice?.tax / 100)
               };
             });
             setOptionsInvoice(_data);
@@ -130,14 +166,19 @@ function PaymentAccountNew() {
     };
   }, [loadingSH]);
 
-  const handleCloseDialog = (data) => {
-    if (!data) {
-      setOpenSH(false);
-    } else {
-      setSelectedValueSH(data);
-      setFieldValue('invoice_id', data.id);
-      setOpenSH(false);
-    }
+  const billedAmount = selected.reduce((initial, next) => initial + next?.total_amount, 0);
+
+  const handleCloseDialog = () => {
+    // if (!data) {
+    //   setOpenSH(false);
+    // } else {
+    // setSelectedValueSH(data);
+    const a = selected.map((e) => ({ id: e.id, amount: e.total_amount }));
+    setFieldValue('invoice_id', a);
+    console.log(billedAmount);
+    setFieldValue('amount', billedAmount);
+    setOpenSH(false);
+    // }
   };
 
   useEffect(() => {
@@ -164,13 +205,77 @@ function PaymentAccountNew() {
     };
   }, [loading]);
 
+  const [file, setFile] = useState(null);
+
+  function ShowImageWhenItsUploaded() {
+    if (file) {
+      return (
+        <Paper sx={{ padding: 2, height: '100%' }}>
+          <img src={file} alt="Image" sx={{height: '50%', width: '50%', margin: 'auto'}}/>
+          <Button component="label" htmlFor="upload-file">
+            <input
+              accept="image/*"
+              multiple
+              id="upload-file"
+              type="file"
+              onChange={handleOnFileChange}
+              hidden
+            />
+            <Typography variant="h5">Change File</Typography>
+          </Button>
+        </Paper>
+      );
+    } else {
+      return (
+        <Paper sx={{ padding: 2, height: '100%' }}>
+          <label htmlFor="upload-file">
+            <input
+              accept="image/*"
+              multiple
+              id="upload-file"
+              type="file"
+              onChange={handleOnFileChange}
+              style={{ display: 'none' }}
+            />
+            <UploadPaper component="span" fullWidth>
+              <Typography variant="h5">Drop or Select File</Typography>
+            </UploadPaper>
+          </label>
+        </Paper>
+      );
+    }
+  }
+
+  /**
+   * Handle Upload File
+   */
+
+   const handleOnFileChange = (event) => {
+    setFile(event.target.files[0]);
+
+    // Create an object of formData
+    const formData = new FormData();
+
+    // Update the formData object
+    formData.append('file', event.target.files[0], event.target.files[0].name);
+
+    API.uploadPaymentImage(formData, function (res) {
+      if (res.success) {
+        setFile(res.path);
+        alert(JSON.stringify(res));
+      } else {
+        alert('error');
+      }
+    });
+  };
+
   return (
     <Page>
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={5}>
+              {/* <Grid item xs={5}>
                 <Grid container direction="row">
                   <Grid item xs={12}>
                     <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
@@ -189,6 +294,8 @@ function PaymentAccountNew() {
                           <DialogBox
                             options={optionsInvoice}
                             loading={loadingSH}
+                            selected={selected}
+                            setSelected={setSelected}
                             // error={Boolean(touched.facility_id && errors.facility_id)}
                             // helperText={touched.facility_id && errors.facility_id}
                             // selectedValue={values.facility_id}
@@ -208,16 +315,16 @@ function PaymentAccountNew() {
                             <Typography variant="h6"> Invoice Amount </Typography>
                           </SpaceBetweenBox>
                         </ColumnBox>
-                        <Typography variant="h3" sx={{ color: '#636b6f'}}>
-                          Rp. {fCurrency(selectedValueSH?.total_amount)}
+                        <Typography variant="h3" sx={{ color: '#636b6f' }}>
+                          Rp. {fCurrency(billedAmount)}
                         </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Grid> */}
 
-              <Grid item xs={7}>
+              <Grid item xs={12}>
                 <Card>
                   <CardHeader title="Payment Information" />
                   <CardContent>
@@ -225,12 +332,12 @@ function PaymentAccountNew() {
                       <Grid item xs={12}>
                         <TextField
                           fullWidth
-                          name="reff_num"
+                          name="ref_num"
                           type="number"
                           label="Reff Number"
-                          {...getFieldProps('reff_num')}
-                          error={Boolean(touched.reff_num && errors.reff_num)}
-                          helperText={touched.reff_num && errors.reff_num}
+                          {...getFieldProps('ref_num')}
+                          error={Boolean(touched.ref_num && errors.ref_num)}
+                          helperText={touched.ref_num && errors.ref_num}
                         />
                       </Grid>
 
@@ -284,6 +391,42 @@ function PaymentAccountNew() {
               </Grid>
 
               <Grid item xs={12}>
+                <DialogBox
+                  options={optionsInvoice}
+                  loading={loadingSH}
+                  selected={selected}
+                  setSelected={setSelected}
+                  // error={Boolean(touched.facility_id && errors.facility_id)}
+                  // helperText={touched.facility_id && errors.facility_id}
+                  // selectedValue={values.facility_id}
+                  open={openSH}
+                  onClose={(value) => handleCloseDialog(value)}
+                />
+
+                <Card>
+                  <CardContent sx={{ py: '24px', paddingTop: '10px', paddingBottom: '4px' }}>
+                    <GridData>
+                      <Typography variant="h6">Invoice List</Typography>
+                      <IconButton
+                        onClick={() => setOpenSH(true)}
+                        sx={{
+                          height: '36px',
+                          width: '36px',
+                          backgroundColor: 'rgb(255, 255, 255)',
+                          color: 'rgb(54, 179, 126)'
+                        }}
+                      >
+                        <Icon icon={plusSquare} />
+                      </IconButton>
+                    </GridData>
+                  </CardContent>
+                  <CardContent>
+                    <BasicTable payload={selected} total={fCurrency(billedAmount)} />
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <TextField
@@ -298,6 +441,15 @@ function PaymentAccountNew() {
                       helperText={touched.comment && errors.comment}
                     />
                   </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Card>
+                  <CardHeader
+                    title="Upload Proof"
+                  />
+                  <ShowImageWhenItsUploaded />
                 </Card>
               </Grid>
 

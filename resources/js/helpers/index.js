@@ -2606,6 +2606,16 @@ const main = {
         cb(err);
       });
     },
+    insertManyPayment(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/insert-payment', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
     getPayment(params=null, cb){
       axios.get( uri + '/payment' + `${params}`).then(function(res){
         cb(res.data);

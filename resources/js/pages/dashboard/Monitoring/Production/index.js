@@ -13,6 +13,8 @@ import TableOrder from './components/TableOrder';
 import TableProblemLog from './components/TableProblemLog';
 import TableWorkDetail from './components/TableWorkDetail';
 import API from '../../../../helpers';
+import { fPercent } from '../../../../utils/formatNumber';
+
 
 const CHART_DATA = [
   {
@@ -42,6 +44,7 @@ function Dashboard() {
   const [workDetail, setWorkDetail] = useState([]);
   const [orderData, setOrderData] = useState([]);
   const [log, setLog] = useState([]);
+  const [target, setTarget] = useState(0);
 
   const [graphData, setGraphData] = useState(CHART_DATA);
   const [date, setDate] = useState([
@@ -135,6 +138,8 @@ function Dashboard() {
       });
 
       setDate(date);
+      setTarget(bom.get_target_output.work_center.prod_capacity);
+
       let a = { ...graphData[0], data: output };
       let b = { ...graphData[1], data: data_of_target };
       setGraphData([a, b]);
@@ -266,6 +271,11 @@ function Dashboard() {
   const handleClose = () => setIsModalOpen(false);
   const handleOpen = () => setIsModalOpen(true);
 
+  const average = graphData[0]?.data?.reduce((initial, next) => initial + (next/graphData[0]?.data?.length), 0);
+  const _p = (average/target).toFixed(3) * 100;
+  const average_ystrdy = graphData[0]?.data?.slice(0, graphData[0]?.data.length-1).reduce((initial, next) => initial + (next/graphData[0]?.data?.slice(0, graphData[0]?.data.length-1).length), 0)
+  const _p2 = ((average-average_ystrdy)/average_ystrdy)*100
+
   return (
     <Layout>
       <Modal open={isModalOpen} handleClose={handleClose} facility_id={lineSelected?.id} />
@@ -310,6 +320,14 @@ function Dashboard() {
                   </Button>
                 ))}
           </Box>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant="body2">{`Rata-rata            = ${average}`}</Typography>
+          <Typography variant="body2">{`Rata-rate (%) = ${fPercent(_p)}`}</Typography>
+          <Typography variant="body2">{`Kenaikan dari hari sebelumnya = ${average-average_ystrdy}`}</Typography>
+          <Typography variant="body2">{`Kenaikan (%) = ${fPercent(_p2)}`}</Typography>
+
         </Grid>
 
         {/* Graph */}

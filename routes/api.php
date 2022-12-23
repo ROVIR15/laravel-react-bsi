@@ -218,4 +218,5 @@ Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index
 Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
 Route::resource('payment', 'PaymentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::post('insert-payment', 'PaymentController@insertManyPayment');
 Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');

@@ -284,7 +284,7 @@ function PaymentAccountNew() {
                         <ColumnBox>
                           <SpaceBetweenBox>
                             <Typography variant="h6"> Invoice </Typography>
-                            <Button onClick={() => setOpenSH(true)}>Select</Button>
+                            <Button disabled onClick={() => setOpenSH(true)}>Select</Button>
                           </SpaceBetweenBox>
                           <div>
                             <Typography variant="subtitle1">
@@ -292,7 +292,7 @@ function PaymentAccountNew() {
                             </Typography>
                             <Typography variant="body2">{selectedValueSH?.billed_to}</Typography>
                           </div>
-                          <DialogBox
+                          {/* <DialogBox
                             options={optionsInvoice}
                             loading={loadingSH}
                             // error={Boolean(touched.facility_id && errors.facility_id)}
@@ -300,7 +300,7 @@ function PaymentAccountNew() {
                             // selectedValue={values.facility_id}
                             open={openSH}
                             onClose={(value) => handleCloseDialog(value)}
-                          />
+                          /> */}
                         </ColumnBox>
                       </CardContent>
                     </Card>

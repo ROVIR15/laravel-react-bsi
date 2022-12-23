@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { filter, isArray } from 'lodash';
 import {
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { 
-  ListHead, 
-  ListToolbar, 
-  MoreMenu 
-} from '../../../../components/Table';
+import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 //
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
@@ -34,7 +30,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Sender', alignRight: false },
   { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
   { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
-  { id: 'remarks', label: 'Keterangan', alignRight: false },
+  { id: 'remarks', label: 'Keterangan', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -56,7 +52,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -64,56 +60,61 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => {
+      let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`;
+      return _p.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function OutboundDelivery({ placeHolder }) {
-
   const [goodsReceipt, setGoodsReceipt] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
   const [rowsPerPage, setRowsPerPage] = useState(15);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
+    handleUpdateData();
+  }, [filterMonthYear]);
+
+  function handleUpdateData() {
+    let params = '?shipment_type=1';
+    params = params + `&monthYear=${filterMonthYear}`;
+
+    try {
+      API.getShipment(params, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setGoodsReceipt([]);
+        } else {
+          setGoodsReceipt(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
     }
+  }
 
-    if(isEmpty(goodsReceipt)) {
-
-      try {
-        API.getShipment('?shipment_type=1', (res) => {
-          if(!res) return
-          if(!res.data) {
-            setGoodsReceipt([]);
-          } else {
-            setGoodsReceipt(res.data);
-          }
-        });
-      } catch (error) {
-        alert(error)
-      }
-
-    }
-  }, [])
-
-  function dateDiff (delivDate, estDelivDate){
+  function dateDiff(delivDate, estDelivDate) {
     let a = new Date(delivDate);
     let b = new Date(estDelivDate);
 
-    if(a < b) return 'On time'
-    if(a > b) {
+    if (a < b) return 'On time';
+    if (a > b) {
       let dateDiff = Math.round((a - b) / (1000 * 60 * 60 * 24));
-      return `Late delivery -${dateDiff} days`
-    }
-    else return 'On time'
+      return `Late delivery -${dateDiff} days`;
+    } else return 'On time';
   }
+
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -128,24 +129,6 @@ function OutboundDelivery({ placeHolder }) {
       return;
     }
     setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -163,22 +146,22 @@ function OutboundDelivery({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    try {
-      API.deleteShipment(id, function(res){
-        if(!res) return undefined;
-        if(!res.success) throw new Error('failed to delte data');
-        else alert('success');
-      })
-    } catch (error) {
-      alert(error);
-    }
-  }
+    // try {
+    //   API.deleteShipment(id, function(res){
+    //     if(!res) return undefined;
+    //     if(!res.success) throw new Error('failed to delte data');
+    //     else alert('success');
+    //   })
+    // } catch (error) {
+    //   alert(error);
+    // }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
 
   const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -186,6 +169,9 @@ function OutboundDelivery({ placeHolder }) {
         numSelected={selected.length}
         filterName={filterName}
         onFilterName={handleFilterByName}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         placeHolder={placeHolder}
       />
       <Scrollbar>
@@ -205,14 +191,8 @@ function OutboundDelivery({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const {
-                    id,
-                    serial_number,
-                    delivery_date,
-                    est_delivery_date,
-                    order,
-                    status
-                  } = row;
+                  const { id, serial_number, delivery_date, est_delivery_date, order, status } =
+                    row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -223,7 +203,6 @@ function OutboundDelivery({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">
                         <b>{status[0]?.status_type?.name}</b>
@@ -233,7 +212,9 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{order?.purchase_order?.party?.name}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="left">{est_delivery_date}</TableCell>
-                      <TableCell align="left">{dateDiff(delivery_date, est_delivery_date)}</TableCell>
+                      <TableCell align="left">
+                        {dateDiff(delivery_date, est_delivery_date)}
+                      </TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -268,7 +249,7 @@ function OutboundDelivery({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default OutboundDelivery;

@@ -84,6 +84,21 @@ class PaymentController extends Controller
       ], 200);
     }
 
+    public function insertManyPayment(Request $request)
+    {
+      $param = $request->all()['payload'];
+
+      try {
+        Payment::insert($param);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
+    }
+
     /**
      * Display the specified resource.
      *
