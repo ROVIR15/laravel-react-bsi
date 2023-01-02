@@ -24,7 +24,7 @@ class Shipment extends Model
     ];
 
     public function items(){
-        return $this->hasMany('App\Models\Shipment\ShipmentItem', 'id')->with('order_item');
+        return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
     }
 
     public function order(){
