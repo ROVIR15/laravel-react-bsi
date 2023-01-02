@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Box,
@@ -13,26 +13,30 @@ import {
   Typography,
   Paper,
   Stack,
-  TextField
+  TextField,
+  styled,
+  IconButton
 } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { LoadingButton } from '@mui/lab';
-import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { FormikProvider, Form, useFormik } from 'formik';
 
 import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
+import DialogBoxShipment from './components/DialogBox';
 
 import AutoComplete from './components/AutoComplete';
 import API from '../../../../helpers';
 
 //Icons
+import plusSquare from '@iconify/icons-eva/plus-square-fill';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../../helpers/data';
 
 import { orderItemToInvoiceItem } from '../utils';
+import { isEmpty } from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -48,6 +52,12 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
   marginBottom: '8px'
 }));
 
+const GridData = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center'
+}));
+
 function Invoice() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. Buana Sandang Indonesia',
@@ -59,8 +69,9 @@ function Invoice() {
 
   const formik = useFormik({
     initialValues: {
-      order_id: 0,
-      sales_order_id: 0,
+      order_id: [],
+      sales_order_id: [],
+      shipment_id: [],
       sold_to: 0,
       invoice_date: '',
       description: '',
@@ -126,6 +137,7 @@ function Invoice() {
       active = false;
     };
   }, [loading]);
+
   const handleClose = (name, value) => {
     setOpenDialogBox(false);
     setOptions([]);
@@ -235,32 +247,82 @@ function Invoice() {
     getFieldProps
   } = formik;
 
+  // DialogBox for Payment
+  const [optionsShipment, setOptionsShipment] = useState([]);
+  const [openSH, setOpenSH] = useState(false);
+  const loadingSH = openSH && options.length === 0;
+
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+
+    (() => {
+      try {
+        API.getShipmentForInvoicing(`?shipment_type=2`, (res) => {
+          if (!res) return;
+          if (!res.data) {
+            setOptionsShipment([]);
+          } else {
+            let _done = res.data
+            setOptionsShipment(_done);
+          }
+        });
+      } catch (error) {
+        alert(error);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loadingSH]);
+
+  useEffect(() => {
+    if(isEmpty(selected)) return;
+    else {
+
+      const _conv = selected.reduce(function(initial, next) {
+        const _sss = orderItemToInvoiceItem(next.items);
+
+        return {
+          sales_order_id: [...initial.sales_order_id, next.order.sales_order.id],
+          order_id: [...initial.order_id, next.order.id],
+          shipment_id: [...initial.shipment_id, next.id],
+          items: initial.items.concat(_sss)
+        }
+      }, {
+        sales_order_id: [],
+        order_id: [],
+        shipment_id: [],
+        items: []
+      })
+      setFieldValue('sales_order_id', _conv.sales_order_id);
+      setFieldValue('order_id', _conv.order_id);    
+      setFieldValue('shipment_id', _conv.shipment_id);
+      setItems(_conv.items);
+    }
+  }, [selected])
+
+  console.log(errors)
+
   return (
     <FormikProvider value={formik}>
+      <DialogBoxShipment
+        options={optionsShipment}
+        loading={loadingSH}
+        selected={selected}
+        setSelected={setSelected}
+        // error={Boolean(touched.facility_id && errors.facility_id)}
+        // helperText={touched.facility_id && errors.facility_id}
+        // selectedValue={values.facility_id}
+        open={openSH}
+        onClose={() => setOpenSH(false)}
+      />
+
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={3} direction="row">
-          <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
-              <CardHeader title="Invoice Info" />
-
-              <CardContent>
-                <AutoComplete
-                  fullWidth
-                  autoComplete="shipment_id"
-                  type="text"
-                  label="Shipment ID"
-                  error={Boolean(touched.shipment_id && errors.shipment_id)}
-                  helperText={touched.shipment_id && errors.shipment_id}
-                  options={optionsAutoComplete}
-                  setOpen={setOpenAutoComplete}
-                  loading={loadingAutoComplete}
-                  changeData={changeData}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={6}>
+          <Grid item xs={12} lg={4}>
             <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Date" />
               <CardContent>
@@ -277,7 +339,7 @@ function Invoice() {
             </Card>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item lg={8} xs={12}>
             <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
               <CardHeader title="Invoice Information" />
               <CardContent>
@@ -328,12 +390,29 @@ function Invoice() {
           {/* Data Grid for Invoice Item */}
           <Grid item xs={12}>
             <Card>
-              <DataGrid rows={items} columns={columns} />
+              <CardContent sx={{ paddingBottom: 0 }}>
+                <GridData>
+                  <Typography variant="h6">Shipment</Typography>
+                  <IconButton
+                    onClick={() => setOpenSH(true)}
+                    sx={{
+                      height: '36px',
+                      width: '36px',
+                      backgroundColor: 'rgb(255, 255, 255)',
+                      color: 'rgb(54, 179, 126)'
+                    }}
+                  >
+                    <Icon icon={plusSquare} />
+                  </IconButton>
+                </GridData>
+              </CardContent>
+              <CardContent>
+                <DataGrid rows={items} columns={columns} />
+              </CardContent>
             </Card>
           </Grid>
 
           {/* Tab Panel */}
-
           <Grid item xs={12}>
             <Card>
               <CardContent>

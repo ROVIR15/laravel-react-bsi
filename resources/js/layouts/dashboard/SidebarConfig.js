@@ -247,6 +247,10 @@ const sidebarConfig = [
         path: '/dashboard/finance/account'
       },
       {
+        title: 'Finance Transaction',
+        path: '/dashboard/finance/transaction'
+      },
+      {
         title: 'Payment',
         path: '/dashboard/finance/payment'
       }

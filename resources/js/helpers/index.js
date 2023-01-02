@@ -1980,6 +1980,13 @@ const main = {
         cb(err.response)
       })
     },
+    getShipmentForInvoicing(params='', cb){
+      axios.get( uri + '/shipment-invoicing' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      });
+    },
     getAShipment(id, cb){
       if(!id) console.error('ID not found')
       axios.get( uri + '/shipment' + `/${id}`).then( function(res){
@@ -2545,6 +2552,59 @@ const main = {
         cb(err.response);
       })
     },
+    // Financial Transaction
+    insertFinanceTransaction(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/financial-transaction', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getFinanceTransaction(params=null, cb){
+      axios.get( uri + '/financial-transaction' + `${params}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAFinanceTransaction(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/financial-transaction' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deleteFinanceTransaction(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/financial-transaction' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateAFinanceTransaction(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/financial-transaction/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertFinanceTransactions(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/financial-transactions', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
     // Finance account
     insertFinanceAccount(_data, cb){
       if(!_data) {
@@ -2615,6 +2675,13 @@ const main = {
       }).catch(function(err){
         cb(err);
       });
+    },
+    getPaymentCollection(params=null, cb){
+      axios.get( uri + '/payment-collection' + `${params}`).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
     },
     getPayment(params=null, cb){
       axios.get( uri + '/payment' + `${params}`).then(function(res){

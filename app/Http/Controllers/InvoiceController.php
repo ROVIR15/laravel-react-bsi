@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice\Invoice;
+use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Invoice\InvoiceItem;
 use App\Models\Invoice\InvoiceHasType;
 use App\Http\Controllers\Controller;
@@ -118,11 +119,23 @@ class InvoiceController extends Controller
         //Goods Receipt Creation
         $invoice = Invoice::create([
             'invoice_date' => $param['invoice_date'],
-            'order_id' => $param['order_id'],
             'sold_to' => $param['sold_to'],
             'tax' => $param['tax'],
             'description' => $param['description']
         ]);
+
+        //Record Invoice and Shipment
+        $hh = [];
+        foreach ($param['shipment_id'] as $key) {
+          # code...
+          array_push($hh, [
+            'invoice_id' => $invoice['id'],
+            'shipment_id' => $key
+          ]);
+        }
+
+        InvoiceHasShipment::insert($hh);
+        
         //Create purchase order item
         if(!isset($invoice)) throw new Error('Invoice failed to Store');
         if(!isset($param['items'])) {

@@ -35,7 +35,8 @@ import {
   FactoryLayout,
   MPLayout,
   PaymentLayout,
-  FinanceAccountLayout
+  FinanceAccountLayout,
+  FinanceAccountTransactionLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -81,6 +82,7 @@ import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
 import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
 import AddMP from '../pages/dashboard/ManufacturePlanning/add';
 import AddFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/new';
+import AddFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/new';
 import AddPayment from '../pages/dashboard/Finance/Payment/new';
 
 // Display Pages
@@ -119,6 +121,7 @@ import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/displa
 import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
 import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
 import DisplayFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/display';
+import DisplayFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/display';
 import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
 
 // Show Pages
@@ -153,6 +156,7 @@ import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
 
 import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
+// import ShowFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/show';
 import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 
 //Document
@@ -609,6 +613,15 @@ export default function TestRouter() {
             { path: 'add', element: <AddFinanceAccount /> },
             { path: ':id', element: <ShowFinanceAccount /> },
             { path: 'display', element: <DisplayFinanceAccount /> }
+          ]
+        },
+        {
+          path: 'finance/transaction',
+          element: <FinanceAccountTransactionLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceAccountTransaction /> },
+            // { path: ':id', element: <ShowFinanceAccountTransaction /> },
+            { path: 'display', element: <DisplayFinanceAccountTransaction /> }
           ]
         },
         // Finance
