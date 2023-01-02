@@ -72,7 +72,7 @@ class ShipmentController extends Controller
         ]);
       }
 
-      return response()->json(['data' => $query, 'has_invoice' => $_shipmentHasInvoice]);
+      return response()->json(['data' => $query]);
     }
 
     public function shipmentInvoicing(Request $request){
