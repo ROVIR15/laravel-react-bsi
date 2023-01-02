@@ -215,8 +215,13 @@ Route::post('upload-shipment-receipt', 'UploadController@upload_shipment_receipt
 Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt');
 Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
+Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
+
 Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
 Route::resource('payment', 'PaymentController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::post('insert-payment', 'PaymentController@insertManyPayment');
 Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');
+Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
+Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
+Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
