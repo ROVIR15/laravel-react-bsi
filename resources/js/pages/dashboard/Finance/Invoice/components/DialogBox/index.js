@@ -71,7 +71,7 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      let datum = _b?.ref_num;
+      let datum = `${_b?.serial_number} ${_b?.order?.sales_order?.po_number}`
       return datum.toLowerCase().indexOf(query.toLowerCase()) !== -1;
     });
   }
