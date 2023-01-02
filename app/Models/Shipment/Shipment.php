@@ -40,4 +40,8 @@ class Shipment extends Model
         ->with('status_type')
         ->orderBy('created_at', 'desc');
     }
+
+    public function hasInvoice(){
+        return $this->belongsTo('App\Modes\Invoice\InvoiceHasShipment', 'id');
+    }
 }
