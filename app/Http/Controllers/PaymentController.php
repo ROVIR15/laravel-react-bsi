@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+
 use Illuminate\Http\Request;
 use App\Models\Invoice\Payment;
 use App\Models\Invoice\PaymentMethodType;
@@ -24,6 +26,23 @@ class PaymentController extends Controller
       $query = Payment::with('type', 'sales_invoice')->get();
 
       return new PaymentCollection($query);
+    }
+
+    public function getPaymentGroupByRefNum(Request $request)
+    {
+      try {
+        $query = Payment::groupBy('ref_num')->select('id', 'invoice_id', 'effective_date', 'ref_num', DB::raw('sum(amount) as total_amount'))->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
     }
 
     /**
@@ -64,7 +83,7 @@ class PaymentController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Payment::create([
+        $payment = Payment::create([
           'payment_method_type_id' => $param['payment_method_type_id'],
           'invoice_id' => $param['invoice_id'],
           'effective_date' => $param['effective_date'],
@@ -72,6 +91,17 @@ class PaymentController extends Controller
           'amount' => $param['amount'],
           'comment' => $param['comment']
         ]);
+
+        $hh = [];
+        foreach ($param['invoice_id'] as $key) {
+          # code...
+          array_push($hh, [
+            'payment_id' => $payment['id'],
+            'invoice_id' => $key
+          ]);
+        }
+
+        PaymentHasInvoice::insert($hh);
 
       } catch (Exception $th) {
         return response()->json([
@@ -97,6 +127,10 @@ class PaymentController extends Controller
           'errors' => $th->getMessage()
         ]);
       }
+
+      return response()->json([
+        'success' => true
+      ]);
     }
 
     /**

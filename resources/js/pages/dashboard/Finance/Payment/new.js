@@ -89,25 +89,15 @@ function PaymentAccountNew() {
         const { invoice_id, type, ...item } = values;
 
         let load = invoice_id.map((i) => ({ ...item, invoice_id: i.id, amount: i.amount, payment_method_type_id: type, imageUrl: file }));
-        // API.insertPayment(
-        //   {
-        //     payment_method_type_id: values.type,
-        //     invoice_id: values.invoice_id,
-        //     ref_num: values.ref_num,
-        //     effective_date: values.effective_date,
-        //     amount: values.amount,
-        //     comment: values.comment
-        //   },
-        //   function (res) {
-        //     if (!res.success) alert('failed');
-        //     else alert('success');
-        //     handleReset();
-        //     setSelectedValueSH(null);
-        //   }
-        // );
-
-        API.insertManyPayment(
-          load,
+        API.insertPayment(
+          {
+            payment_method_type_id: values.type,
+            invoice_id: values.invoice_id,
+            ref_num: values.ref_num,
+            effective_date: values.effective_date,
+            amount: values.amount,
+            comment: values.comment
+          },
           function (res) {
             if (!res.success) alert('failed');
             else alert('success');
@@ -115,6 +105,16 @@ function PaymentAccountNew() {
             setSelectedValueSH(null);
           }
         );
+
+        // API.insertManyPayment(
+        //   load,
+        //   function (res) {
+        //     if (!res.success) alert('failed');
+        //     else alert('success');
+        //     handleReset();
+        //     setSelectedValueSH(null);
+        //   }
+        // );
       } catch (error) {
         alert('error');
       }

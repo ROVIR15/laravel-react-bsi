@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 
 use Illuminate\Http\Request;
+use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Shipment\Shipment;
 use App\Models\Shipment\ShipmentView;
 use App\Models\Shipment\ShipmentItem;
@@ -71,7 +72,36 @@ class ShipmentController extends Controller
         ]);
       }
 
-      return response()->json(['data' => $query, 'type' => $type]);
+      return response()->json(['data' => $query, 'has_invoice' => $_shipmentHasInvoice]);
+    }
+
+    public function shipmentInvoicing(Request $request){
+      $type = $request->query('shipment_type');
+
+      try {
+        $_shipmentHasInvoice = InvoiceHasShipment::select('shipment_id')->get();
+        if(isset($type)){
+          $query = Shipment::with('order', 'type', 'status', 'items')
+          ->where('shipment_type_id', $type)
+          ->whereNotIn('id', $_shipmentHasInvoice)
+          ->orderBy('order_id', 'asc')
+          ->get();
+        } else {
+          $query = Shipment::with('order', 'type', 'status', 'items')
+          ->get();
+        }  
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'succees' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
+
     }
 
     /**
