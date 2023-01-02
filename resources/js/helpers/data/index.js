@@ -294,16 +294,7 @@ export function optionProductFeature(array, filter){
       product_id, 
       color, 
       size, 
-      product: {
-        goods: {
-            name, 
-            satuan, 
-            value, 
-            brand, 
-            created_at, 
-            updated_at
-        }
-      },
+      product,
       product_category: {
         category: {
           sub,
@@ -314,17 +305,17 @@ export function optionProductFeature(array, filter){
     return {
         id,
         product_id,
-        name,
+        name: product?.goods?.name,
         color,
         size,
-        satuan,
-        value,
-        brand,
+        satuan: product?.goods?.satuan,
+        value: product?.goods?.value,
+        brand: product?.goods?.brand,
         category_id: category?.id,
         category: category?.name,
         sub_category: sub?.name,
-        created_at,
-        updated_at,
+        created_at: product?.goods?.created_at,
+        updated_at: product?.goods?.updated_at,
     }
   })
   
