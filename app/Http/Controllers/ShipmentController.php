@@ -38,7 +38,7 @@ class ShipmentController extends Controller
           $year = date_format($monthYear, 'Y');
     
           if(isset($type)){
-            $query = Shipment::with('order', 'type', 'status')
+            $query = Shipment::with('order', 'type', 'status', 'sum')
             ->whereHas('type', function($query) use ($type){
               $query->where('id', $type);
             })
@@ -46,19 +46,19 @@ class ShipmentController extends Controller
             ->whereMonth('delivery_date', '=', $month)
             ->get();
           } else {
-            $query = Shipment::with('order', 'type', 'status')
+            $query = Shipment::with('order', 'type', 'status', 'sum')
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
             ->get();
           }  
         } else {
           if(isset($type)){
-            $query = Shipment::with('order', 'type', 'status')
+            $query = Shipment::with('order', 'type', 'status', 'sum')
             ->where('shipment_type_id', $type)
             ->orderBy('order_id', 'asc')
             ->get();
           } else {
-            $query = Shipment::with('order', 'type', 'status')
+            $query = Shipment::with('order', 'type', 'status', 'sum')
             ->get();
           }  
         }
@@ -68,7 +68,7 @@ class ShipmentController extends Controller
 
         return response()->json([
           'success' => false,
-          'error' => $th->getMessage
+          'error' => $th->getMessage()
         ]);
       }
 

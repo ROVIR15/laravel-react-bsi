@@ -4,6 +4,8 @@ namespace App\Models\Shipment;
 
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
+
 class Shipment extends Model
 {
     protected $table = 'shipment';
@@ -25,6 +27,10 @@ class Shipment extends Model
 
     public function items(){
         return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
+    }
+
+    public function sum(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem')->select('id', 'shipment_id', DB::raw('sum(qty_shipped) as total_qty'))->groupBy('shipment_id');
     }
 
     public function order(){
