@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice\Invoice;
+use App\Models\Invoice\PaymentHasInvoice;
 use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Invoice\InvoiceItem;
 use App\Models\Invoice\InvoiceHasType;
@@ -93,6 +94,35 @@ class InvoiceController extends Controller
             'error' => $th->getMessage()
           ]);
         }
+    }
+
+    public function paymentInvoice(Request $request){
+      $type = $request->query('invoice_type');
+
+      try {
+        $_invoiceList = PaymentHasInvoice::select('invoice_id')->get();
+        if(isset($type)){
+          $query = InvoiceHasType::with('sales_invoice')
+          ->where('invoice_type_id', $type)
+          ->whereNotIn('invoice_id', $_invoiceList)
+          ->get();
+        } else {
+          $query = Invoice::
+          whereNotIn('id', $_invoiceList)
+          ->get();
+        }  
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'succees' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
+
     }
 
         /**

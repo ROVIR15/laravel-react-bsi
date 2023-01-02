@@ -138,7 +138,7 @@ function PaymentAccountNew() {
 
     (() => {
       try {
-        API.getSalesInvoice('?invoice_type=1', (res) => {
+        API.getInvoiceHasPayment('?invoice_type=1', (res) => {
           if (!res) return;
           if (!res.data) {
             setOptionsInvoice([]);

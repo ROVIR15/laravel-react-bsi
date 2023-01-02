@@ -216,6 +216,7 @@ Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt')
 Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
 Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
+Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
 
 Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');

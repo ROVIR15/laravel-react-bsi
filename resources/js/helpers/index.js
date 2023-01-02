@@ -2192,6 +2192,14 @@ const main = {
         cb(err.response);
       });
     },
+    // get invoice based on payment
+    getInvoiceHasPayment(params=null, cb){
+      axios.get( uri + '/invoice-payment' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
     // Sales Invoice
     insertSalesInvoice(_data, cb){
       if(!_data) {

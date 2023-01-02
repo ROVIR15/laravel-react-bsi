@@ -60,7 +60,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.serial_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -175,6 +175,10 @@ function Invoice({ placeHolder }) {
   const filteredData = applySortFilter(invoice, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
+
+  console.log(invoice.reduce(function(initial, next){
+    return initial.concat(next.id)
+  }, []));
 
   return (
     <Card>
