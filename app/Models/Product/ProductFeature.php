@@ -22,7 +22,7 @@ class ProductFeature extends Model
     ];
 
     public function product(){
-        return $this->belongsTo('App\Models\Product\Product')->with('goods');
+        return $this->belongsTo('App\Models\Product\Product')->with('goods', 'service');
     }
 
     public function product_category(){
