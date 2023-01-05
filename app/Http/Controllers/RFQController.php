@@ -64,6 +64,7 @@ class RFQController extends Controller
           foreach($param['quote_items'] as $key){
             array_push($rfqItemsCreation, [
               'quote_id' => $rfqCreation['id'],
+              'product_id' => $key['product_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']

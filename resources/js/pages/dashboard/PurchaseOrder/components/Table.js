@@ -27,8 +27,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Style', alignRight: false },
     { id: 'category', label: 'Kategori', alignRight: false },
     { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
     { id: 'satuan', label: 'Satuan', alignRight: false },
     { id: 'brand', label: 'Brand', alignRight: false },
   ];
@@ -231,11 +229,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">
+                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
+                      </TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
                       <TableCell align="left">{satuan}</TableCell>
                       <TableCell align="left">{brand}</TableCell>
                     </TableRow>

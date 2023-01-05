@@ -89,7 +89,7 @@
     public function show($id)
     {
       try {
-        $orderItem = OrderItem::with('product_feature')->where('order_id', $id)->get();
+        $orderItem = OrderItem::with('product_feature', 'check_shipment')->where('order_id', $id)->get();
         return new OrderItemCollection($orderItem);
       } catch (Exception $th) {
         return response()->json([

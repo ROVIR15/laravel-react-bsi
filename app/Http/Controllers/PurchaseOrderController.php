@@ -92,6 +92,21 @@
       return new POViewCollection($query);
     }
 
+    public function getPurchaseOrderList()
+    {
+      try {
+        $query = PurchaseOrder::with('completion_status', 'status', 'sum')->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return new POViewCollection($query);
+    }
+
         /**
      * Show the form for creating a new resource.
      *
@@ -140,8 +155,8 @@
 
         foreach($param['order_items'] as $key){
           array_push($purchaseItemsCreation, [
-            
             'order_id' => $order->id,
+            'product_id' => $key['product_id'],
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],

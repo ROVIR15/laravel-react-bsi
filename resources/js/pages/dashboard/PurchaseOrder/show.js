@@ -96,15 +96,14 @@ function SalesOrder() {
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
-
       try {
         API.updatePurchaseOrder(id, values, function (res) {
-          if(!res) return undefined;
-          if(!res.success) throw new Error('failed');
+          if (!res) return undefined;
+          if (!res.success) throw new Error('failed');
           else alert('update success');
-        });          
+        });
       } catch (error) {
-        alert(error)
+        alert(error);
       }
       setSubmitting(false);
     }
@@ -130,7 +129,7 @@ function SalesOrder() {
       ship_to: load.ship_to.id,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
-      delivery_date: load.delivery_date,
+      delivery_date: load.delivery_date
     });
 
     setDescription(load.order.description);
@@ -141,23 +140,22 @@ function SalesOrder() {
     setSelectedValueSO(_bought_from);
     setSelectedValueSH(_ship_to);
 
-    const load2 = await axios
-      .get(process.env.MIX_API_URL + '/order-item' + `/${load.order_id}`)
-      .then(function ({ data: { data } }) {
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
-
-    var c = load2.map((key) => {
+    var c = load.order_item.map((key) => {
       const { product_feature } = key;
       return {
         ...product_feature,
         product_feature_id: product_feature.id,
         id: key.id,
-        name: product_feature.product.goods.name,
+        name: product_feature?.product?.goods
+          ? product_feature?.product?.goods?.name
+          : product_feature?.product?.service?.name,
+        item_name: `${
+          product_feature?.product?.goods
+            ? product_feature?.product?.goods?.name
+            : product_feature?.product?.service?.name
+        } ${product_feature?.size} - ${product_feature?.color}`,
         shipment_estimated: new Date(key.shipment_estimated),
+        total_shipped: key.shipment_item[0]?.total_qty_received,
         description: key.description,
         ...key
       };
@@ -272,9 +270,7 @@ function SalesOrder() {
     () => [
       { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
       { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
-      { field: 'name', headerName: 'Name', editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', editable: false },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
       { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
@@ -294,6 +290,15 @@ function SalesOrder() {
       }
     ],
     [deleteData]
+  );
+
+  const columnShipment = useMemo(
+    () => [
+      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
+      { field: 'qty', headerName: 'Quantity', editable: true },
+      { field: 'total_shipped', headerName: 'Qty Terkirim', editable: true },
+    ]
   );
 
   /**
@@ -333,39 +338,39 @@ function SalesOrder() {
   /**
    * description
    */
-  const [ description, setDescription ] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleUpdateDesc = () => {
     try {
-      if(isEmpty(description)) throw new Error('description is zero')
-      API.updateOrder(values.order_id, { description }, function(res){
-        if(!res) return;
-        if(res.success) alert('success');
+      if (isEmpty(description)) throw new Error('description is zero');
+      API.updateOrder(values.order_id, { description }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
         else throw new Error('error occured failed store data');
-      })
+      });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
-  }
+  };
 
   /**
    * Tax
    */
 
-  const [ tax, setTax ] = useState('');
+  const [tax, setTax] = useState('');
 
   const handleUpdateTax = () => {
     try {
-      if(isEmpty(tax)) throw new Error('tax is required');
-      API.updateOrder(values.order_id, { tax }, function(res){
-        if(!res) return;
-        if(res.success) alert('success');
+      if (isEmpty(tax)) throw new Error('tax is required');
+      API.updateOrder(values.order_id, { tax }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
         else throw new Error('error occured failed store data');
-      })
+      });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
-  }
+  };
 
   return (
     <Page>
@@ -450,7 +455,8 @@ function SalesOrder() {
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Overview" value="1" />
                           <Tab label="Description" value="2" />
-                          <Tab label="Finance" value="3" />
+                          <Tab label="Shipment Tracking" value="3" />
+                          <Tab label="Finance" value="4" />
                         </TabList>
                       </Box>
 
@@ -534,10 +540,16 @@ function SalesOrder() {
                             type="text"
                           />
                         </Stack>
-                        <Button onClick={handleUpdateDesc} variant="outlined">Save</Button>
+                        <Button onClick={handleUpdateDesc} variant="outlined">
+                          Save
+                        </Button>
                       </TabPanel>
 
                       <TabPanel value="3">
+                        <DataGrid columns={columnShipment} rows={items} />
+                      </TabPanel>
+
+                      <TabPanel value="4">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
                           <TextField
@@ -550,7 +562,9 @@ function SalesOrder() {
                             }}
                           />
                         </Stack>
-                        <Button onClick={handleUpdateTax} variant="outlined">Save</Button>
+                        <Button onClick={handleUpdateTax} variant="outlined">
+                          Save
+                        </Button>
                       </TabPanel>
                     </TabContext>
                   </CardContent>

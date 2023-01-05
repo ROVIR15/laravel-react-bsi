@@ -174,23 +174,22 @@ function SalesOrder() {
 
     setStatus(load.completion_status[0]?.status?.id);
 
-    const load2 = await axios
-      .get(process.env.MIX_API_URL + '/order-item' + `/${load.order_id}`)
-      .then(function ({ data: { data } }) {
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
-
-    var c = load2.map((key) => {
+    var c = load.order_item.map((key) => {
       const { product_feature } = key;
       return {
         ...product_feature,
         product_feature_id: product_feature.id,
         id: key.id,
-        name: product_feature.product.goods.name,
+        name: product_feature?.product?.goods
+          ? product_feature?.product?.goods?.name
+          : product_feature?.product?.service?.name,
+        item_name: `${
+          product_feature?.product?.goods
+            ? product_feature?.product?.goods?.name
+            : product_feature?.product?.service?.name
+        } ${product_feature?.size} - ${product_feature?.color}`,
         shipment_estimated: new Date(key.shipment_estimated),
+        total_shipped: key.shipment_item[0]?.total_qty_received,
         ...key
       };
     });
@@ -361,6 +360,15 @@ function SalesOrder() {
     [deleteData]
   );
 
+  const columnShipment = useMemo(
+    () => [
+      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
+      { field: 'qty', headerName: 'Quantity', editable: true },
+      { field: 'total_shipped', headerName: 'Qty Terkirim', editable: true },
+    ]
+  );
+
   const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0, bb: 0 });
   const handlePopulate = () => {
     const { y, z, aa, bb } = populateState;
@@ -518,7 +526,8 @@ function SalesOrder() {
                           <Tab label="Overview" value="1" />
                           <Tab label="Status" value="2" />
                           <Tab label="Description" value="3" />
-                          <Tab label="Tax" value="4" />
+                          <Tab label="Shipment Transaction" value="4" />
+                          <Tab label="Tax" value="5" />
                         </TabList>
                       </Box>
 
@@ -632,6 +641,10 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="4">
+                        <DataGrid columns={columnShipment} rows={items} />
+                      </TabPanel>
+
+                      <TabPanel value="5">
                         <Stack direction="row" spacing={4} alignItems="center">
                           <Typography variant="body1">Tax</Typography>
                           <TextField

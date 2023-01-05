@@ -94,6 +94,22 @@
       return new SOViewCollection($query);
     }
 
+    public function getSalesOrderList()
+    {
+      try {
+        $query = SalesOrder::with('completion_status', 'status', 'sum')->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return new SOViewCollection($query);
+    }
+
             /**
      * Show the form for creating a new resource.
      *
@@ -138,6 +154,7 @@
         foreach($param['order_items'] as $key){
           array_push($salesItemsCreation, [
             'order_id' => $order['id'],
+            'product_id' => $key['product_id'],
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],

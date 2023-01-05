@@ -171,6 +171,7 @@ function SalesOrder() {
         name: name,
         size: size,
         color: color,
+        item_name: `${name} ${size} - ${color}`,
         qty: key.qty,
         delivery_date: null,
         unit_price: key.unit_price,
@@ -279,9 +280,7 @@ function SalesOrder() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', width: 350, editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', width: 150, editable: false },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', type: 'number', editable: true },
       { field: 'unit_price', type: 'number', headerName: 'Unit Price', editable: true },
       { field: 'shipment_estimated', type: 'date', headerName: 'Delivery Date', editable: true },
