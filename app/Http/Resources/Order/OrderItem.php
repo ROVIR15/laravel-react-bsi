@@ -22,6 +22,7 @@
         'cm_price' => $this->cm_price,
         'shipment_estimated' => $this->shipment_estimated,
         'product_feature' => $this->product_feature,
+        'shipment_item' => $this->check_shipment,
         'description' => $this->description
       ];
     }
