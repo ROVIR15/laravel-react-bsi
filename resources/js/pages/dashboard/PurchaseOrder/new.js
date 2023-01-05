@@ -372,7 +372,7 @@ function SalesOrder() {
                       <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                         <ColumnBox>
                           <SpaceBetweenBox>
-                            <Typography variant="h6"> Pembeli </Typography>
+                            <Typography variant="h6"> Supplier </Typography>
                             <Button disabled>Select</Button>
                           </SpaceBetweenBox>
                           {selectedValueSO?.name ? (
