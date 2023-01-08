@@ -52,17 +52,22 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const {line, sales_order_id, date} = values
-      let data = items.map(({id, brand, name, size, color, numbering, ...x}) => ({ ...x, line, facility_id: line+6, sales_order_id, date}));
-      API.insertMonitoringSewing(data, function(res){
-        if(res.success) {
+      let data = items.map(({id, brand, name, size, color, numbering, qty_left, ...x}) => ({ ...x, line, facility_id: line+6, sales_order_id, date}));
+      try {
+        API.insertMonitoringSewing(data, function(res){
+          console.log(res)
+          if(!res) return;
+          if(!res.success) throw new Error('failed to save');
           setItems([]);
           handleReset();
-          selectedValueSO({});
-          alert(JSON.stringify(res));
-        } else {
-          alert(error);
-        }
-      })
+          setSelectedValueSO({
+            po_number: '',
+            sold_to: '',
+          });
+        })          
+      } catch (error) {
+        alert(error);
+      }
       setSubmitting(false);
     }
   });
@@ -83,11 +88,9 @@ function WorkCenter() {
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
     { field: 'name', headerName: 'Name', width: 350, editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
     { field: 'po_number', headerName: 'PO', editable: true },
-    { field: 'qty_loading', headerName: 'Qty Loading', type: 'number', editable: true },
-    { field: 'output', headerName: 'Output Sewing', type: 'number', editable: true },
+    { field: 'qty_loading', type: 'number', headerName: 'Qty Loading', type: 'number', editable: true },
+    { field: 'output', type: 'number', headerName: 'Output Sewing', type: 'number', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -200,8 +203,8 @@ const [id, setId] = React.useState(0);
       <Modal 
         open={openM}
         onAddItems={handleAddItems}
-        so_id={selectedValueSO.id}
-        order_id={selectedValueSO.order_id}
+        so_id={selectedValueSO?.id}
+        order_id={selectedValueSO?.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

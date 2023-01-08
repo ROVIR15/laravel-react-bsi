@@ -3,6 +3,7 @@
 namespace App\Models\Monitoring;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Cutting extends Model
 {
@@ -38,7 +39,7 @@ class Cutting extends Model
         return $this->belongsTo('App\Models\Order\SalesOrder')->with('product_feature');
     }
 
-    public function qc(){
-        return $this->hasMany('App\Models\Monitoring\Qc', 'ms_id', 'id')->selectRaw('sum(output) as output_qc, ms_id')->groupBy('ms_id');
+    public function sewing(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
     }
 }

@@ -302,12 +302,16 @@ export function optionProductFeature(array, filter){
         }
       }
     } = x;
+
+    let item_name = `${product?.goods ? product?.goods?.name : product?.service?.name} ${size} - ${color}`
+    
     return {
         id,
         product_id,
         name: product?.goods ? product?.goods?.name : product?.service?.name,
         color,
         size,
+        item_name,
         satuan: product?.goods ? product?.goods?.satuan : product?.service?.satuan,
         value: product?.goods ? product?.goods?.value : product?.service?.value,
         brand: product?.goods ? product?.goods?.brand : product?.service?.brand,
@@ -754,41 +758,29 @@ export function optionSupermarket(array){
       order_item_id,
       sales_order_id,
       po_number,
-      qty,
-      numbering,
       product_feature: {
-        color,
-        size,
-        product: { 
-          goods: {
-              name
-          }
-        },
+        product,
         ...product_feature
       },
+      output,
       sewing
     } = x;
-    
     let res = {
       id,
-      supermarket_id: id, 
       date,
       order_id,
-      order_item_id,
+      order_item_id: sewing[0]?.order_item_id,
       sales_order_id,
       product_feature_id: product_feature.id,
       po_number,
-      color,
-      size,
-      name,
-      numbering,
-      qty_loading: qty
+      name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
+      numbering: '',
+      qty_loading: parseInt(output) - parseInt(sewing[0]?.total_output)
     }
-    if (!isEmpty(sewing)) return { ...res, qty_loading: res.qty_loading - sewing[0].output_sewing}
     return res;
   })
 
-  return arranged;
+  return arranged
 }
 
 export function calculateLayer(fabric_length, actual_spread_length){

@@ -12,7 +12,7 @@ import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
 import API from '../../../../helpers';
 
 import Table from './Table';
-import { _miniFunc } from '../../../../helpers/data';
+import { _miniFunc, optionSupermarket } from '../../../../helpers/data';
 import { IconButton, Stack } from '@mui/material';
 import closeCircle from '@iconify/icons-eva/close-outline';
 
@@ -46,26 +46,16 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
       return !array.length;
     }
 
-    if(order_id) {
-      API.getASalesOrderItem(order_id, (res) => {
-        if(!res) return
-        if(!res.data.length) {
-            setValue([]);
-        } else {
-          let ras = _miniFunc(res.data, so_id);
-          setValue(ras)
-        }
-      });
-      // API.getMonitoringSupermarket(`?sales-order=${order_id}`, (res) => {
-		  // if(!res) return
-		  // if(!res.data.length) {
-      //     setValue([]);
-      //   } else {
-      //     let ras = optionSupermarket(res.data);
-      //     setValue(ras)
-      //   }
-      // });
-    }
+    API.getMonitoringCutting(`?sales-order=${order_id}`, (res) => {
+		if(!res) return
+		if(!res.data) {
+        setValue([]);
+      } else {
+        let ras = optionSupermarket(res.data);
+        ras = ras.filter(item => item.qty_loading > 0);
+        setValue(ras)
+      }
+    });
   }, [order_id])
 
   return (

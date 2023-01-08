@@ -17,6 +17,7 @@ class MonitoringCuttingController extends Controller
     public function index(Request $request)
     {
       $param = $request->has('sales-order');
+      $order_id = $request->query('sales-order');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
       $query = [];
@@ -30,10 +31,12 @@ class MonitoringCuttingController extends Controller
       try {
         if($param){
           $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, sum(output) as output')
-                  ->groupBy('date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')
-                  ->with('sales_order', 'product_feature', 'qc')
-                  ->where('sales_order_id', $request->query('sales-order'))
-                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->groupBy('po_number', 'sales_order_id', 'order_item_id')
+                  ->with('sales_order', 'product_feature')
+                  ->with(['sewing' => function ($query) use ($order_id){
+                    return $query->where('order_id', 68);
+                  }])
+                  ->where('order_id', $request->query('sales-order'))
                   ->orderBy('date', 'desc')
                   ->get();
         } else {

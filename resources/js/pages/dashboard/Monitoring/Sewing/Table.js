@@ -26,6 +26,7 @@ const TABLE_HEAD = [
     // { id: 'id', label: 'ID', alignRight: false, width: 20 },
     // { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
+    { id: 'qty_loading', label: 'Qty Tersisa', alignRight: false },
     // { id: 'size', label: 'Size', alignRight: false },
     // { id: 'color', label: 'Color', alignRight: false },
   ];
@@ -58,7 +59,7 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      let b = `${_b?.name} ${_b?.color} ${_b?.size}`
+      let b = `${_b?.name}`
       return b.toLowerCase().indexOf(query.toLowerCase()) !== -1
     });
   }
@@ -168,8 +169,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     id,
                     order_id,
                     name,
-                    size,
-                    color,
+                    qty_loading
 		    // qty_loading,
 		    // numbering
                   } = row;
@@ -191,8 +191,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       </TableCell>
                       {/* <TableCell align="left">{id}</TableCell> */}
                       {/* <TableCell align="left">{order_id}</TableCell> */}
-                      <TableCell align="left">{`${name} ${color} - ${size}`}</TableCell>
-                      {/* <TableCell align="left">{size}</TableCell> */}
+                      <TableCell align="left">{`${name}`}</TableCell>
+                      <TableCell align="right">{qty_loading}</TableCell>
                       {/* <TableCell align="left">{color}</TableCell> */}
 		      {/* <TableCell align="left">{numbering}</TableCell>
 		      <TableCell align="left">{qty_loading}</TableCell> */}
