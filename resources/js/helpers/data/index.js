@@ -465,7 +465,7 @@ export function outputSewingArrangedData(array){
   return arranged;
 } 
 
-export function optionQC(array){
+export function optionSewing(array){
   if(isEmpty(array)) return 
   let arranged = array.map((x) => {
     const {
