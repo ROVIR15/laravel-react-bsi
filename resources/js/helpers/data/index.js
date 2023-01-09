@@ -556,42 +556,26 @@ export function optionFG(array){
       order_id,
       order_item_id,
       sales_order_id,
-      output, 
       po_number,
       product_feature: {
-        color,
-        size,
-        product: { 
-          goods: {
-              name, 
-              brand, 
-              created_at, 
-              updated_at
-          }
-        },
+        product,
         ...product_feature
       },
+      output,
       fg
     } = x;
-    
     let res = {
-      id, 
+      id,
       date,
       order_id,
-      order_item_id,
+      order_item_id: order_item_id,
       sales_order_id,
       product_feature_id: product_feature.id,
       po_number,
-      color,
-      size,
-      name,
-      brand,
-      po_number,
-      qty_loading: output
+      name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
+      qty_loading: parseInt(output) - parseInt(fg[0]?.total_output ? fg[0]?.total_output : 0)
     }
-
-    if (!isEmpty(fg)) return { ...res, qty_loading: output - fg[0].output_fg}
-    else return res;
+    return res;
   })
 
   return arranged;

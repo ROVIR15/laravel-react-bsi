@@ -56,7 +56,9 @@ export default function BasicModal({
             setValue(ras);
           }
         });
-      } catch (error) {}
+      } catch (error) {
+        alert(error)
+      }
       // API.getASalesOrderItem(order_id, (res) => {
       //   if(!res) return
       //   if(!res.data.length) {

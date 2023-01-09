@@ -89,7 +89,7 @@ function WorkCenter() {
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
     { field: 'date', headerName: 'Tanggal', editable: true },
     { field: 'po_number', headerName: 'PO', editable: true },
-    { field: 'name', headerName: 'Name', editable: false, width: 450},
+    { field: 'name', headerName: 'Name', editable: false, width: 550},
     { field: 'qty_loading', headerName: 'Qty Loading', type: 'number', editable: true },
     { field: 'output', headerName: 'Output QC', type: 'number', editable: true },
     { field: 'reject', headerName: 'Reject QC', type: 'number', editable: true },

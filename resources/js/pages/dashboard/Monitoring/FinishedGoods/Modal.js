@@ -20,7 +20,7 @@ const checkedIcon = <Icon icon={CheckSquareOutline} />;
 // Components
 import API from '../../../../helpers';
 
-import Table from './Table';
+import Table from '../components/Table';
 import { optionFG, _miniFuncFG } from '../../../../helpers/data';
 
 const style = {
@@ -37,21 +37,24 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
   const [openX, setOpenX] = React.useState(false);
 
   React.useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+
     if(order_id) {
-      API.getASalesOrderItem(order_id, (res) => {
-        if(!res) return
-        if(!res.data.length) {
-          setValue([]);
-        } else {
-          let ras = _miniFuncFG(res.data, so_id);
-          setValue(ras)
-        }
-      });
+        try {
+        API.getMonitoringQC(`?sales-order=${order_id}`, (res) => {
+		    if(!res) return
+		    if(!res.data) {
+            setValue(BUYERLIST);
+          } else {
+            let ras = optionFG(res.data)
+            ras = ras.filter(item => item.qty_loading > 0)
+            setValue(ras);
+          }
+        });
+      } catch (error) {
+        alert(error)
+      }
     }
+    
     // if(isEmpty(value) && order_id) {
     //   API.getMonitoringQC(`?sales-order=${order_id}`, (res) => {
 		//   if(!res) return

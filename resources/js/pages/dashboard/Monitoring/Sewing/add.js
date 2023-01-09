@@ -87,7 +87,7 @@ function WorkCenter() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', width: 350, editable: false},
+    { field: 'name', headerName: 'Name', width: 550, editable: false},
     { field: 'po_number', headerName: 'PO', editable: true },
     { field: 'qty_loading', type: 'number', headerName: 'Qty Loading', type: 'number', editable: true },
     { field: 'output', type: 'number', headerName: 'Output Sewing', type: 'number', editable: true },

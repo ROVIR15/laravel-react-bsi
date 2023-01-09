@@ -2,6 +2,7 @@
 
 namespace App\Models\Monitoring;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Qc extends Model
@@ -46,7 +47,7 @@ class Qc extends Model
     }
 
     public function fg(){
-        return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'qc_id', 'id')->selectRaw('sum(output) as output_fg, qc_id')->groupBy('qc_id');
+        return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
     }
 
     public function detail(){
