@@ -45,7 +45,7 @@ class Sewing extends Model
     }
 
     public function qc(){
-        return $this->hasMany('App\Models\Monitoring\QC', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
+        return $this->hasMany('App\Models\Monitoring\Qc', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
     }
 
     public function target(){
