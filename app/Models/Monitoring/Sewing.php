@@ -2,6 +2,7 @@
 
 namespace App\Models\Monitoring;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Sewing extends Model
@@ -44,7 +45,7 @@ class Sewing extends Model
     }
 
     public function qc(){
-        return $this->hasMany('App\Models\Monitoring\Qc', 'ms_id', 'id')->selectRaw('sum(output) as output_qc, ms_id')->groupBy('ms_id');
+        return $this->hasMany('App\Models\Monitoring\QC', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
     }
 
     public function target(){

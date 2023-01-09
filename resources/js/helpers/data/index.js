@@ -474,46 +474,30 @@ export function optionSewing(array){
       order_id,
       order_item_id,
       sales_order_id,
-      output, 
       po_number,
       product_feature: {
-        color,
-        size,
-        product: { 
-          goods: {
-              name, 
-              brand, 
-              created_at, 
-              updated_at
-          }
-        },
+        product,
         ...product_feature
       },
+      output,
       qc
     } = x;
-
     let res = {
-      id, 
+      id,
       date,
       order_id,
-      order_item_id,
+      order_item_id: order_item_id,
       sales_order_id,
       product_feature_id: product_feature.id,
       po_number,
-      color,
-      size,
-      name,
-      brand,
-      po_number,
-      qty_loading: output
+      name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
+      qty_loading: parseInt(output) - parseInt(qc[0]?.total_output ? qc[0]?.total_output : 0)
     }
-
-    if (!isEmpty(qc)) return { ...res, qty_loading: output - qc[0].output_qc}
-    else return res;
+    return res;
   })
 
-  return arranged;
-} 
+  return arranged
+}
 
 export function outputQCArrangedData(array){
   if(isEmpty(array)) return 

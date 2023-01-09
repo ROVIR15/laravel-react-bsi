@@ -54,16 +54,21 @@ function WorkCenter() {
     onSubmit: (values) => {
       const {line, recorder} = values
       let data = items.map(({id, date, brand, name, size, color, ...x}) => ({ ...x, ms_id: id, line, date: values.date, recorder}));
-      API.insertMonitoringQC(data, function(res){
-        if(res.success) {
+      try {
+        API.insertMonitoringQC(data, function(res){
+          console.log(res)
+          if(!res) return;
+          if(!res.success) throw new Error('failed to save');
           setItems([]);
           handleReset();
-          selectedValueSO({});
-          alert(JSON.stringify(res));
-        } else {
-          alert(error);
-        }
-      })
+          setSelectedValueSO({
+            po_number: '',
+            sold_to: '',
+          });
+        })          
+      } catch (error) {
+        alert(error);
+      }
       setSubmitting(false);
     }
   });
@@ -84,9 +89,7 @@ function WorkCenter() {
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
     { field: 'date', headerName: 'Tanggal', editable: true },
     { field: 'po_number', headerName: 'PO', editable: true },
-    { field: 'name', headerName: 'Name', editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'name', headerName: 'Name', editable: false, width: 450},
     { field: 'qty_loading', headerName: 'Qty Loading', type: 'number', editable: true },
     { field: 'output', headerName: 'Output QC', type: 'number', editable: true },
     { field: 'reject', headerName: 'Reject QC', type: 'number', editable: true },
@@ -224,9 +227,9 @@ const [id, setId] = React.useState(0);
       <Container>
       <Modal 
         open={openM}
-        so_id={selectedValueSO.id}
+        so_id={selectedValueSO?.id}
         onAddItems={handleAddItems}
-        order_id={selectedValueSO.order_id}
+        order_id={selectedValueSO?.order_id}
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}

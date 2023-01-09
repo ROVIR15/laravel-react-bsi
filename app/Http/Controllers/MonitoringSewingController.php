@@ -18,6 +18,7 @@ class MonitoringSewingController extends Controller
     public function index(Request $request)
     {
       $param = $request->has('sales-order');
+      $order_id = $request->query('sales-order');
       $fromDate = $request->query('fromDate');
       $thruDate = $request->query('thruDate');
       $query = [];
@@ -31,11 +32,12 @@ class MonitoringSewingController extends Controller
       try {
         if($param){
           $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
-                  ->groupBy('line', 'date', 'po_number', 'sales_order_id', 'product_feature_id', 'order_id')
-                  ->with('sales_order', 'product_feature', 'qc')
-                  ->where('sales_order_id', $request->query('sales-order'))
-                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
-                  ->orderBy('date', 'desc')
+                  ->with('sales_order', 'product_feature')
+                  ->with(['qc' => function ($query) use ($order_id){
+                    return $query->where('order_id', $order_id);
+                  }])
+                  ->where('order_id', $request->query('sales-order'))
+                  ->groupBy('order_item_id')
                   ->get();
         } else {
           $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')

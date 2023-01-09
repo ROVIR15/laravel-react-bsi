@@ -34,7 +34,7 @@ class MonitoringCuttingController extends Controller
                   ->groupBy('po_number', 'sales_order_id', 'order_item_id')
                   ->with('sales_order', 'product_feature')
                   ->with(['sewing' => function ($query) use ($order_id){
-                    return $query->where('order_id', 68);
+                    return $query->where('order_id', $order_id);
                   }])
                   ->where('order_id', $request->query('sales-order'))
                   ->orderBy('date', 'desc')
