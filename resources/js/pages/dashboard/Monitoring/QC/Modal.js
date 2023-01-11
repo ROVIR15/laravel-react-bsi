@@ -52,7 +52,7 @@ export default function BasicModal({
             setValue([]);
           } else {
             let ras = optionSewing(res.data);
-            // ras = ras.filter(item => item.qty_loading > 0);
+            ras = ras.filter(item => item.qty_loading > 0);
             setValue(ras);
           }
         });
