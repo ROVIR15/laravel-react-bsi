@@ -718,6 +718,13 @@ export function optionNumbering(array){
 
 export function optionSupermarket(array){
   if(isEmpty(array)) return 
+
+  function check(param1, param2){
+    if(isEmpty(param2)) return param1;
+    if(param1 === param2) return param1;
+    else return param2;
+  }
+
   let arranged = array.map((x) => {
     const {
       id, 
@@ -738,7 +745,7 @@ export function optionSupermarket(array){
       id,
       date,
       order_id,
-      order_item_id: sewing[0]?.order_item_id,
+      order_item_id: check(order_item_id, sewing[0]?.order_item_id),
       sales_order_id,
       product_feature_id: product_feature.id,
       po_number,
