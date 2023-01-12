@@ -733,6 +733,7 @@ export function optionSupermarket(array){
       output,
       sewing
     } = x;
+
     let res = {
       id,
       date,
@@ -743,7 +744,7 @@ export function optionSupermarket(array){
       po_number,
       name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
       numbering: '',
-      qty_loading: parseInt(output) - parseInt(sewing[0]?.total_output)
+      qty_loading: parseInt(output) - parseInt(sewing[0]?.total_output ? sewing[0]?.total_output : 0)
     }
     return res;
   })
