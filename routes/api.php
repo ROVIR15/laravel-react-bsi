@@ -61,10 +61,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('goods-option', 'GoodsOptionController')->only(['index']);
 
     //BOM
-    Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
     Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update']);
+    Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store', 'update']);
     Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
     // Manufacture
@@ -146,7 +146,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('financial-account-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('financial-transaction', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('invoice-term', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('invoice-term', 'InvoiceTermController')->only(['store', 'update']);
+    Route::get('invoice-term-invoice/{id}', 'InvoiceTermController@getInvoiceTermOfInvoice');
     Route::resource('payment', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('payment-application', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
@@ -205,6 +206,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 });
 
+Route::get('bom-listv1', 'BOMController@bomList');
+Route::get('purchase-order-list', 'PurchaseOrderController@getPurchaseOrderList');
+Route::get('sales-order-list', 'SalesOrderController@getSalesOrderList');
+
+Route::get('reconcile-v1', 'ReconcileController@getAllOrderItem');
+
 Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');
 Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
 Route::get('bom-items-v1', 'BOMController@getBOMMaterials');
@@ -226,3 +233,7 @@ Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');
 Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
 Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
 Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
+
+Route::resource('reconcile', 'ReconcileController')->only(['index', 'store', 'show']);
+
+Route::get('invoice-report', 'InvoiceController@generateReport');
