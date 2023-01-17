@@ -155,9 +155,11 @@ class GraphSewingController extends Controller
       $year = date_format($monthYear, 'Y');
 
       try {
-        $mp = ManufacturePlanning::with(['test_sum_based_on_mpi' => function($query) use ($facility){
-          $query->with(['ckckck' => function($query2) use ($facility){
-            $query2->where('facility_id', $facility);
+        $mp = ManufacturePlanning::with(['test_sum_based_on_mpi' => function($query) use ($facility, $month, $year){
+          $query->with(['ckckck' => function($query2) use ($facility, $month, $year){
+            $query2->where('facility_id', $facility)
+            ->whereYear('date', '=', $year)
+            ->whereMonth('date', '=', $month);    
           }])
           ->where('facility_id', $facility);
         }])
