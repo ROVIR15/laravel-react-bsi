@@ -42,7 +42,7 @@ class MonitoringCuttingController extends Controller
         } else {
           $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, sum(output) as output')
                   ->groupBy('date', 'po_number', 'sales_order_id')
-                  ->with('sales_order', 'product_feature', 'qc')
+                  ->with('sales_order', 'product_feature')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'desc')
                   ->get();
