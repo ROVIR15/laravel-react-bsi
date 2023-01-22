@@ -61,7 +61,7 @@ export default function BasicTable({ payload }) {
               <tr>
                 <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">#</th>
                 <th className="wk_width_8 wk_semi_bold wk_primary_color wk_gray_bg">Item Name</th>
-                <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
+                <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_right">Qty</th>
               </tr>
             </thead>
             <tbody>
@@ -69,7 +69,7 @@ export default function BasicTable({ payload }) {
                 <tr>
                   <td className="wk_width_1">{index+1}</td>
                   <td className="wk_width_8">{`${row.name} ${row.color} - ${row.size}`}</td>
-                  <td className="wk_width_2">{row.deliv_qty}</td>
+                  <td className="wk_width_2 wk_text_right">{row.deliv_qty}</td>
                 </tr>
               ))}
             </tbody>
@@ -77,7 +77,7 @@ export default function BasicTable({ payload }) {
         </div>
       </div>
       <div className="wk_invoice_footer wk_mb30 wk_m0_md">
-        <div className="wk_left_footer" style={{width: '45%'}}></div>
+        <div className="wk_left_footer" style={{width: '58%'}}></div>
         <div className="wk_right_footer">
           <table>
             <tbody>
