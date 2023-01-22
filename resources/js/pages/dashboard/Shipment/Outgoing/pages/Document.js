@@ -292,7 +292,7 @@ function FirstPage() {
                     /> */}
                   <div style={{ height: '50px' }} />
                   <p className="wk_m0 wk_ternary_color">{data?.bought_from?.name}</p>
-                  <p className="wk_m0 wk_f16 wk_primary_color">Supplier</p>
+                  <p className="wk_m0 wk_f16 wk_primary_color">Buyer</p>
                 </div>
               </Stack>
               <div style={{height: 10}}/>
