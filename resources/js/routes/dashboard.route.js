@@ -162,6 +162,7 @@ import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
+import DocumentShipment from '../pages/dashboard/Shipment/Outgoing/pages/Document';
 import DocumentQuotation from '../pages/dashboard/Quotation/pages/Document';
 import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
 import DocumentPO from '../pages/dashboard/PurchaseOrder/pages/Document';
