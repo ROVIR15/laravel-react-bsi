@@ -74,21 +74,34 @@ export default function BasicTable({ payload, terms, tax }) {
 
   return (
     <TableContainer component={Paper} sx={{ marginLeft: 'auto' }}>
-      <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
+      <Table
+        className="wk_table wk_style1 wk_border"
+        sx={{ minWidth: 120 }}
+        size="small"
+        aria-label="simple table"
+      >
         <TableHead>
           <TableRow>
-            <TableCell align="left">#</TableCell>
-            <TableCell>Product Name</TableCell>
-            <TableCell align="right">Qty Ordered</TableCell>
-            <TableCell align="right">Unit Price</TableCell>
-            <TableCell align="right">Total</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg" align="left">
+              #
+            </TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg">Product Name</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg" align="right">
+              Qty Ordered
+            </TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg" align="right">
+              Unit Price
+            </TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg" align="right">
+              Total
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {payload.map((row, index) => (
             <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell align="left">{index + 1}</TableCell>
-              <TableCell component="th" scope="row">
+              <TableCell align="left">
                 {`${row.name}`}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
@@ -138,7 +151,7 @@ export default function BasicTable({ payload, terms, tax }) {
           <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <NoBorderCell align="right" colSpan={4}>
               <BoxStyle />
-              <Typography variant="h6"> Total </Typography>
+              <Typography variant="h6"> Grand Total </Typography>
             </NoBorderCell>
             <NoBorderCell align="right">
               <BoxStyle />
@@ -148,12 +161,15 @@ export default function BasicTable({ payload, terms, tax }) {
         </TableBody>
       </Table>
 
-      <Box>
+      <Box marginTop={2}>
         <Typography variant="h6"> Terbilang </Typography>
         <Typography variant="body2" style={{ fontStyle: 'italic' }}>{`${terbilang2(
           total()
         )} Rupiah`}</Typography>
       </Box>
+
+      <div style={{height: '4px'}}/>
+
     </TableContainer>
   );
 }

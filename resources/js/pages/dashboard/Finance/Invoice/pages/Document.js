@@ -129,7 +129,7 @@ function FirstPage() {
       return {
         id: rest.id,
         order_item_id: order_item.id,
-        name: `${order_item.product_feature?.product?.goods?.name} - ${order_item.product_feature.color} - ${order_item.product_feature.size}`,
+        name: `${order_item.product_feature?.product?.goods?.name} ${order_item.product_feature.color} - ${order_item.product_feature.size}`,
         qty: rest.qty,
         amount: rest.amount,
         total: total(rest.qty, rest.amount)
@@ -228,15 +228,9 @@ function FirstPage() {
         </div>
 
         <div>
-          <Button disabled>
-            Submit
-          </Button>
-          <Button disabled>
-            Review
-          </Button>
-          <Button disabled>
-            Tandai Approve
-          </Button>
+          <Button disabled>Submit</Button>
+          <Button disabled>Review</Button>
+          <Button disabled>Tandai Approve</Button>
         </div>
       </SpaceBetween>
 
@@ -261,7 +255,7 @@ function FirstPage() {
                     sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
                   />
                 </Grid>
-                <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+                <Grid item={6} sx={{ width: '50%', marginBottom: '1em', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
                   <Box sx={{ textAlign: 'right' }}>
                     <IDontKnow>INVOICE</IDontKnow>
                     <Typography variant="h6">{invInfo.invoice_id}</Typography>
@@ -334,7 +328,12 @@ function FirstPage() {
                 </Grid>
               </Grid>
               <GridItemX>
-                <Table payload={items} terms={terms} subTotal={invInfo.total_price} tax={invInfo.tax} />
+                <Table
+                  payload={items}
+                  terms={terms}
+                  subTotal={invInfo.total_price}
+                  tax={invInfo.tax}
+                />
               </GridItemX>
 
               <Grid item xs={12}>
@@ -343,6 +342,34 @@ function FirstPage() {
                   return <Typography variant="body2">{`${item}`}</Typography>;
                 })}
               </Grid>
+
+              <Grid item xs={12}>
+                <Stack direction="row" spacing={2} justifyContent="space-around" style={{margin: '12px 0'}}>
+                  <div className="wk_sign wk_text_center">
+                    {/* <img
+                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
+                      alt="Sign"
+                      style={{ margin: 'auto' }}
+                    /> */}
+                    <div style={{ height: '50px' }} />
+                    <p className="wk_m0 wk_ternary_color">Titin</p>
+                    <p className="wk_m0 wk_f16 wk_primary_color">Finance Person</p>
+                  </div>
+
+                  <div className="wk_sign wk_text_center">
+                    {/* <img
+                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
+                      alt="Sign"
+                      style={{ margin: 'auto' }}
+                    /> */}
+                    <div style={{ height: '50px' }} />
+                    <p className="wk_m0 wk_ternary_color">Alex Faisol Tas'an Wartono</p>
+                    <p className="wk_m0 wk_f16 wk_primary_color">Direktur</p>
+                  </div>
+                </Stack>
+              </Grid>
+
+              <div style={{height: '10px'}}/>
             </Stack>
           </div>
         </PaperStyled>
