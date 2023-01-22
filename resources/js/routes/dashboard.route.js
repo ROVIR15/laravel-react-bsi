@@ -668,7 +668,8 @@ export default function TestRouter() {
           children: [
             { path: 'add', element: <AddOutgoingShipment /> },
             { path: ':id', element: <ShowOutgoingShipment /> },
-            { path: 'display', element: <DisplayOutgoingShipment /> }
+            { path: 'display', element: <DisplayOutgoingShipment /> },
+            { path: 'document/:id', element: <DocumentShipment /> }
           ]
         },
         {
