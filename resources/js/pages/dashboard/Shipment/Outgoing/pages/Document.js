@@ -269,8 +269,8 @@ function FirstPage() {
                       style={{ margin: 'auto' }}
                     /> */}
                   <div style={{ height: '50px' }} />
-                  <p className="wk_m0 wk_ternary_color"></p>
-                  <p className="wk_m0 wk_f16 wk_primary_color">PPIC</p>
+                  <p className="wk_m0 wk_ternary_color">Titin</p>
+                  <p className="wk_m0 wk_f16 wk_primary_color">Finance Person</p>
                 </div>
 
                 <div className="wk_sign wk_text_center">
