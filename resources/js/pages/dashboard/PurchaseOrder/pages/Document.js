@@ -28,6 +28,7 @@ import useAuth from '../../../../context';
 import { getPages } from '../../../../utils/getPathname';
 
 import Dialog from '../../../../components/DialogBox/dialog';
+import moment from 'moment';
 
 const RootStyle = styled(Page)(({ theme }) => ({}));
 
@@ -58,7 +59,6 @@ const BOXColumn = styled(Box)(({ theme }) => ({
 const PaperStyled = styled(Paper)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     width: '85%',
-    margin: 'auto',
     backgroundColor: 'rgb(255, 255, 255)',
     color: 'rgb(33, 43, 54)',
     transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
@@ -109,6 +109,7 @@ function FirstPage() {
     title: '',
     message: ''
   });
+  moment.locale('id');
 
   const [data, setData] = useState({
     id: '',
@@ -116,6 +117,7 @@ function FirstPage() {
     party: {
       name: ''
     },
+    tax: 0,
     issue_date: '',
     quote_items: []
   });
@@ -270,7 +272,8 @@ function FirstPage() {
           quote_items: quoteItem,
           description: res.data?.order?.description,
           party: res.data.bought_from,
-          ship_to: res.data.ship_to
+          ship_to: res.data.ship_to,
+          tax: res.data.order?.tax
         });
       }
     });
@@ -354,8 +357,8 @@ function FirstPage() {
       </SpaceBetween>
       <RootStyle>
         <PaperStyled sx={{ width: '210mm', height: '279mm', margin: 'auto' }}>
-          {/* Header Info */}
-          <Stack ref={pdfRef} direction="column" spacing={4}>
+          <div ref={pdfRef}>
+            {/* Header Info */}
             <Grid
               container
               sx={{
@@ -372,87 +375,125 @@ function FirstPage() {
                   sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
                 />
               </Grid>
-              <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
+              <Grid item={6} sx={{ width: '50%', marginBottom: '1em', display: 'flex', justifyContent: 'end', alignItems: 'center', }}>
                 <Box sx={{ textAlign: 'right' }}>
                   <IDontKnow>Purchase Order</IDontKnow>
                   <Typography variant="h6">{data.po_number}-A</Typography>
                 </Box>
               </Grid>
             </Grid>
-            <Grid container direction="row" spacing={1}>
-              <Grid item xs={4}>
-                <Stack>
-                  <Box>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      PO Number
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {data.id}
-                    </Typography>
-                  </Box>
+            <Stack direction="column" spacing={4}>
+              <Grid container direction="row" spacing={1}>
+                <Grid item xs={12}>
+                  <Divider style={{ marginTop: '1rem' }} />
+                  <Stack direction="row" justifyContent="space-between" style={{padding: '8px'}}>
+                    <Box>
+                      <Typography variant="overline" display="block" >
+                        PO Number
+                      </Typography>
+                      <Typography variant="h6"  component="div">
+                        {data.id}
+                      </Typography>
+                    </Box>
 
-                  <BOXColumn>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Created Date
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {data.issue_date}
-                    </Typography>
-                  </BOXColumn>
+                    <Box>
+                      <Typography variant="overline" display="block" >
+                        Created Date
+                      </Typography>
+                      <Typography variant="h6"  component="div">
+                        {moment(data.issue_date).format('LL')}
+                      </Typography>
+                    </Box>
 
-                  <BOXColumn>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Delivery Date
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {data.delivery_date}
-                    </Typography>
-                  </BOXColumn>
+                    <Box>
+                      <Typography variant="overline" display="block" >
+                        Delivery Date
+                      </Typography>
+                      <Typography variant="h6"  component="div">
+                        {moment(data.delivery_date).format('LL')}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <Divider />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Grid container direction="row" justifyContent="space-evenly" spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Supplier
+                      </Typography>
+                      <Typography variant="h6" component="div">
+                        {data.party.name}
+                      </Typography>
+                      <Typography variant="body2">{`${data.party.address?.street} \n ${data.party?.address?.postal_code}`}</Typography>
+                      <Typography variant="body2">{`${data.party.address?.city}, ${data.party.address?.province}, ${data.party.address?.country}`}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="overline" display="block" gutterBottom>
+                        Ship To
+                      </Typography>
+                      <Typography variant="h6" component="div">
+                        {data.ship_to?.name}
+                      </Typography>
+                      <Typography variant="body2">{`${data.ship_to?.address?.street} \n ${data.ship_to?.address?.postal_code}`}</Typography>
+                      <Typography variant="body2">{`${data.ship_to?.address?.city}, ${data.ship_to?.address?.province}, ${data.ship_to?.address?.country}`}</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Table payload={data.quote_items} tax={data?.tax} />
+              </Grid>
+
+              <Grid item xs={12} style={{ marginTop: 'unset' }}>
+                <Typography variant="h5">Catatan</Typography>
+                {data?.description?.split('\n').map((item) => {
+                  return <Typography variant="body2">{`${item}`}</Typography>;
+                })}
+              </Grid>
+
+              <Grid item xs={12}>
+                <Stack direction="row" spacing={2} justifyContent="space-around">
+                  <div className="wk_sign wk_text_center">
+                    {/* <img
+                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
+                      alt="Sign"
+                      style={{ margin: 'auto' }}
+                    /> */}
+                    <div style={{height: '50px'}}/>
+                    <p className="wk_m0 wk_ternary_color">Meti Romadhona</p>
+                    <p className="wk_m0 wk_f16 wk_primary_color">Merchandiser</p>
+                  </div>
+
+                  <div className="wk_sign wk_text_center">
+                    {/* <img
+                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
+                      alt="Sign"
+                      style={{ margin: 'auto' }}
+                    /> */}
+                    <div style={{height: '50px'}}/>
+                    <p className="wk_m0 wk_ternary_color">Dwiyanto</p>
+                    <p className="wk_m0 wk_f16 wk_primary_color">Purchasing</p>
+                  </div>
+
+                  <div className="wk_sign wk_text_center">
+                    {/* <img
+                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
+                      alt="Sign"
+                      style={{ margin: 'auto' }}
+                    /> */}
+                    <div style={{height: '50px'}}/>
+                    <p className="wk_m0 wk_ternary_color">{data?.party?.name}</p>
+                    <p className="wk_m0 wk_f16 wk_primary_color">Supplier</p>
+                  </div>
                 </Stack>
               </Grid>
+            </Stack>
 
-              <Grid item xs={4}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Supplier
-                    </Typography>
-                    <Typography variant="h6" component="div">
-                      {data.party.name}
-                    </Typography>
-                    <Typography variant="body2">{data.party.address?.street}</Typography>
-                    <Typography variant="body2">{`${data.party.address?.city}, ${data.party.address?.province}, ${data.party.address?.country}`}</Typography>
-                  </div>
-                </Box>
-              </Grid>
-
-              <Grid item xs={4}>
-                <Box>
-                  <div>
-                    <Typography variant="overline" display="block" gutterBottom>
-                      Ship To
-                    </Typography>
-                    <Typography variant="h6" component="div">
-                      {data.ship_to?.name}
-                    </Typography>
-                    <Typography variant="body2">{data.ship_to?.address?.street}</Typography>
-                    <Typography variant="body2">{`${data.ship_to?.address?.city}, ${data.ship_to?.address?.province}, ${data.ship_to?.address?.country}`}</Typography>
-                  </div>
-                </Box>
-              </Grid>
-            </Grid>
-
-            <GridItemX>
-              <Table payload={data.quote_items} />
-            </GridItemX>
-
-            <Grid item xs={12}>
-              <Typography variant="h5">Catatan</Typography>
-              {data?.description?.split('\n').map((item) => {
-                return <Typography variant="body2">{`${item}`}</Typography>;
-              })}
-            </Grid>
-          </Stack>
+            <div style={{height: '8px'}}></div>
+          </div>
         </PaperStyled>
       </RootStyle>
     </MHidden>

@@ -14,8 +14,14 @@ import { AuthProvider } from './context'
 
 // Notistack
 import { SnackbarProvider } from 'notistack'
+import moment from 'moment';
+
+import './styles.css'
 
 function MainApp(){
+
+  moment.locale("id");
+
   return (
     <HelmetProvider>
         <BrowserRouter>
