@@ -35,4 +35,9 @@ class PartyRoles extends Model
     {
       return $this->belongsTo('App\Models\Party\Party')->with('person', 'organization','address');
     }
+
+    public function invoice()
+    {
+      return $this->hasMany('App\Models\Invoice\Invoice', 'sold_to', 'party_id');
+    }
 }

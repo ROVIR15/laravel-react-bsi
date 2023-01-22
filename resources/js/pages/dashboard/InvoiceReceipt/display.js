@@ -139,7 +139,7 @@ function DisplayInquiry({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteInquiry(id, function(res){
+    API.deleteSalesInvoice(id, function(res){
       if(res.success) setInquiryData([]);
     }).catch(function(error){
       alert('error')

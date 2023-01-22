@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Party\PartyRoles;
 use App\Models\Invoice\Invoice;
+use App\Models\Invoice\InvoiceTerm;
 use App\Models\Invoice\PaymentHasInvoice;
 use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Invoice\InvoiceItem;
@@ -11,6 +13,8 @@ use App\Models\Invoice\InvoiceHasType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
 use App\Http\Resources\Study\InvoiceCollection;
+
+use DB;
 
 class InvoiceController extends Controller
 {
@@ -34,7 +38,7 @@ class InvoiceController extends Controller
                 $month = date_format($monthYear, 'm');
                 $year = date_format($monthYear, 'Y');
                 if(isset($type)) {
-                  $query = InvoiceHasType::with('sales_invoice')
+                  $query = InvoiceHasType::with('sales_invoice', 'terms')
                   ->where('invoice_type_id', $type)
                   ->whereYear('invoice_date', '=', $year)
                   ->whereMonth('invoice_date', '=', $month)
@@ -44,7 +48,7 @@ class InvoiceController extends Controller
                 }
               } else {
                 if(isset($type)){
-                  $query = InvoiceHasType::with('sales_invoice')
+                  $query = InvoiceHasType::with('sales_invoice', 'terms')
                   ->where('invoice_type_id', $type)
                   ->get();
                 } else {
@@ -62,7 +66,7 @@ class InvoiceController extends Controller
                 $month = date_format($monthYear, 'm');
                 $year = date_format($monthYear, 'Y');
                 if(isset($type)) {
-                  $query = InvoiceHasType::with('purchase_invoice')
+                  $query = InvoiceHasType::with('purchase_invoice', 'terms')
                   ->where('invoice_type_id', $type)
                   ->whereYear('invoice_date', '=', $year)
                   ->whereMonth('invoice_date', '=', $month)
@@ -72,7 +76,7 @@ class InvoiceController extends Controller
                 }
               } else {
                 if(isset($type)){
-                  $query = InvoiceHasType::with('purchase_invoice')
+                  $query = InvoiceHasType::with('purchase_invoice', 'terms')
                   ->where('invoice_type_id', $type)
                   ->get();
                 } else {
@@ -144,11 +148,13 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
-
       try {
         //Goods Receipt Creation
         $invoice = Invoice::create([
             'invoice_date' => $param['invoice_date'],
+            'order_id' => $param['order_id'][0],
+            'shipment_id' => $param['shipment_id'][0],
+            'due_date' => $param['due_date'],
             'sold_to' => $param['sold_to'],
             'tax' => $param['tax'],
             'description' => $param['description']
@@ -161,6 +167,17 @@ class InvoiceController extends Controller
           array_push($hh, [
             'invoice_id' => $invoice['id'],
             'shipment_id' => $key
+          ]);
+        }
+
+        $terms = [];
+        foreach ($param['terms'] as $key) {
+          # code...
+          array_push($terms, [
+            'invoice_id' => $invoice['id'],
+            'term_description' => $key['term_description'],
+            'term_value' => $key['term_value'],
+            'value_type' => $key['value_type']
           ]);
         }
 
@@ -185,6 +202,8 @@ class InvoiceController extends Controller
         }
 
         InvoiceItem::insert($IRItems);
+
+        InvoiceTerm::insert($terms);
 
         InvoiceHasType::create([
           'invoice_id' => $invoice->id,
@@ -221,12 +240,12 @@ class InvoiceController extends Controller
       try {
 
         if(isset($type)){
-            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status')->find($id);  
+            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status', 'terms')->find($id);  
         } else {
             $query = Invoice::with('party')->find($id);
         }
 
-    } catch (Exception $th) {
+      } catch (Exception $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
@@ -293,5 +312,92 @@ class InvoiceController extends Controller
           'errors' => $th->getMessage()
         ], 500);
       }
+    }
+
+    public function generateReport(Request $request)
+    {
+
+      $paramParty = $request->query('party');
+      $monthYear = $request->query('monthYear');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try {
+        $party = Invoice::select('sold_to')
+                 ->with('party')
+                 ->groupBy('sold_to')
+                 ->where('sold_to', $paramParty)
+                 ->get();
+
+        $date = Invoice::select('sold_to', DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY) as invoice_date'))
+                 ->groupBy('invoice_date')
+                 ->orderBy('invoice_date', 'asc')
+                 ->where('sold_to', $paramParty)
+                 ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
+                 ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
+                 ->get();
+
+        $_party = [];
+        $_date = [];
+
+        foreach ($party as $key) {
+          array_push($_party, $key['sold_to']);
+        }
+
+        foreach ($date as $key) {
+          array_push($_date, $key['invoice_date']);
+        }
+
+
+        $ss = Invoice::select(
+                'id',
+                'order_id',
+                'sold_to',
+                'invoice_date',
+                'due_date',
+                DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY) as due_dates')
+              )
+              ->with('sum', 'terms', 'party', 'sales_order')
+              ->where('sold_to', $paramParty)
+              ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
+              ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
+              ->get();
+              
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ], 500);
+      }
+      return response()->json([
+        'success' => true,
+        'buyer' => $party,
+        'date' => $_date,
+        'data' => $ss
+      ], 200);
+    }
+
+    public function getInvoicedParty()
+    {
+      try {
+        $query = Invoice::select('sold_to')->with('party')->groupBy('sold_to')->get();
+        
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json(['data' => $query]);
     }
 }

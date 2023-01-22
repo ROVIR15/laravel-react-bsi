@@ -78,7 +78,7 @@ function Invoice() {
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 1 };
+      let _data = { ...values, items, type: 1, terms: rowsInvoiceTerm };
       try {
         API.insertSalesInvoice(_data, (res) => {
           if (!res) return undefined;
@@ -159,30 +159,91 @@ function Invoice() {
 
   const [items, setItems] = React.useState([]);
 
-  const columns = React.useMemo(
-    () => [
-      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', editable: false },
-      { field: 'qty', headerName: 'Quantity', type: 'number', editable: false, flex: 1 },
-      { field: 'amount', type: 'number', headerName: 'Unit Price', editable: false, flex: 1 },
-      { field: 'total', type: 'number', headerName: 'Total', editable: false, flex: 1 },
+  const columns = React.useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'name', headerName: 'Name', editable: false },
+    { field: 'size', headerName: 'Size', editable: false },
+    { field: 'color', headerName: 'Color', editable: false },
+    { field: 'qty', headerName: 'Quantity', type: 'number', editable: false, flex: 1 },
+    { field: 'amount', type: 'number', headerName: 'Unit Price', editable: false, flex: 1 },
+    { field: 'total', type: 'number', headerName: 'Total', editable: false, flex: 1 },
+    {
+      field: 'actions',
+      type: 'actions',
+      width: 100,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Icon icon={trash2Outline} width={24} height={24} />}
+          label="Delete"
+          onClick={deleteData(params.id)}
+          showInMenu
+        />
+      ]
+    }
+  ]);
+
+  const [rowsInvoiceTerm, setRowsInvoiceTerm] = useState([]);
+  const columnsInvoiceTerm = React.useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'term_description', headerName: 'Term Description', editable: true, width: 350 },
+    { field: 'term_value', headerName: 'Value', editable: true, type: 'number' },
+    {
+      field: 'value_type',
+      headerName: 'Type',
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['Percentage', 'Number']
+    }
+  ]);
+
+  const handleAddInvoiceTerm = () => {
+    setRowsInvoiceTerm([
+      ...rowsInvoiceTerm,
       {
-        field: 'actions',
-        type: 'actions',
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
-            onClick={deleteData(params.id)}
-            showInMenu
-          />
-        ]
+        id: rowsInvoiceTerm.length + 1,
+        invoice_id: null,
+        invoice_item_id: null,
+        term_description: 'contoh. Potongan',
+        term_value: 0
       }
-    ],
-    [deleteData]
+    ]);
+  };
+
+  /**
+   * Handling Data Grid for a Component BOM
+   */
+
+  //Data Grid Component of BOM
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
+
+  const handleEditRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        setRowsInvoiceTerm((prevItems) => {
+          const itemToUpdateIndex = parseInt(editedIds[0]);
+
+          return prevItems.map((row, index) => {
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+            } else {
+              return row;
+            }
+          });
+        });
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+
+      setEditRowsModel(model);
+    },
+    [editRowData]
   );
 
   const deleteData = React.useCallback((id) => () => {
@@ -264,7 +325,7 @@ function Invoice() {
           if (!res.data) {
             setOptionsShipment([]);
           } else {
-            let _done = res.data
+            let _done = res.data;
             setOptionsShipment(_done);
           }
         });
@@ -279,32 +340,32 @@ function Invoice() {
   }, [loadingSH]);
 
   useEffect(() => {
-    if(isEmpty(selected)) return;
+    if (isEmpty(selected)) return;
     else {
+      const _conv = selected.reduce(
+        function (initial, next) {
+          const _sss = orderItemToInvoiceItem(next.items);
 
-      const _conv = selected.reduce(function(initial, next) {
-        const _sss = orderItemToInvoiceItem(next.items);
-
-        return {
-          sales_order_id: [...initial.sales_order_id, next.order.sales_order.id],
-          order_id: [...initial.order_id, next.order.id],
-          shipment_id: [...initial.shipment_id, next.id],
-          items: initial.items.concat(_sss)
+          return {
+            sales_order_id: [...initial.sales_order_id, next.order.sales_order.id],
+            order_id: [...initial.order_id, next.order.id],
+            shipment_id: [...initial.shipment_id, next.id],
+            items: initial.items.concat(_sss)
+          };
+        },
+        {
+          sales_order_id: [],
+          order_id: [],
+          shipment_id: [],
+          items: []
         }
-      }, {
-        sales_order_id: [],
-        order_id: [],
-        shipment_id: [],
-        items: []
-      })
+      );
       setFieldValue('sales_order_id', _conv.sales_order_id);
-      setFieldValue('order_id', _conv.order_id);    
+      setFieldValue('order_id', _conv.order_id);
       setFieldValue('shipment_id', _conv.shipment_id);
       setItems(_conv.items);
     }
-  }, [selected])
-
-  console.log(errors)
+  }, [selected]);
 
   return (
     <FormikProvider value={formik}>
@@ -321,26 +382,42 @@ function Invoice() {
       />
 
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3} direction="row">
+        <Grid container spacing={1} direction="row">
           <Grid item xs={12} lg={4}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card >
               <CardHeader title="Invoice Date" />
               <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="invoice_date"
-                  type="date"
-                  placeholder="invoice_date"
-                  {...getFieldProps('invoice_date')}
-                  error={Boolean(touched.invoice_date && errors.invoice_date)}
-                  helperText={touched.invoice_date && errors.invoice_date}
-                />
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    fullWidth
+                    autoComplete="invoice_date"
+                    type="date"
+                    placeholder="invoice_date"
+                    {...getFieldProps('invoice_date')}
+                    error={Boolean(touched.invoice_date && errors.invoice_date)}
+                    helperText={touched.invoice_date && errors.invoice_date}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="due_date"
+                    type="number"
+                    placeholder="due_date"
+                    {...getFieldProps('due_date')}
+                    error={Boolean(touched.due_date && errors.due_date)}
+                    helperText={touched.due_date && errors.due_date}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">Hari</InputAdornment>
+                      )
+                    }}
+                  />
+                </Stack>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item lg={8} xs={12}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card >
               <CardHeader title="Invoice Information" />
               <CardContent>
                 <Paper>
@@ -421,6 +498,7 @@ function Invoice() {
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                       <Tab label="Description" value="1" />
                       <Tab label="Finance" value="2" />
+                      <Tab label="Terms" value="3" />
                     </TabList>
                   </Box>
 
@@ -452,6 +530,15 @@ function Invoice() {
                         helperText={touched.tax && errors.tax}
                       />
                     </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="3">
+                    <DataGrid
+                      columns={columnsInvoiceTerm}
+                      rows={rowsInvoiceTerm}
+                      handleAddRow={handleAddInvoiceTerm}
+                      onEditRowsModelChange={handleEditRowsModelChange}
+                    />
                   </TabPanel>
                 </TabContext>
               </CardContent>

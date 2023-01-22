@@ -12,7 +12,7 @@ export const BuyerSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   npwp: Yup.string().required('NPWP is required'),
   role_type_id: Yup.number().required('Kategori is required'),
-  address: Yup.string().required('Address is required'),
+  // address: Yup.string().required('Address is required'),
   city: Yup.string().required('city is required'),
   province: Yup.string().required('province is required'),
   country: Yup.string().required('country is required'),

@@ -175,7 +175,6 @@ function PaymentAccountNew() {
     // setSelectedValueSH(data);
     const a = selected.map((e) => ({ id: e.id, amount: e.total_amount }));
     setFieldValue('invoice_id', a);
-    console.log(billedAmount);
     setFieldValue('amount', billedAmount);
     setOpenSH(false);
     // }

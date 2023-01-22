@@ -26,4 +26,8 @@ class InvoiceHasType extends Model
         return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('purchase_order', 'party', 'sum', 'status');
     }
 
+    public function terms(){
+        return $this->hasMany('App\Models\Invoice\InvoiceTerm', 'invoice_id', 'id');
+    }
+
 }

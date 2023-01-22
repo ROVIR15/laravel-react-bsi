@@ -19,7 +19,9 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
+import moment from 'moment';
 
+moment.locale('id')
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -176,10 +178,6 @@ function Invoice({ placeHolder }) {
 
   const isDataNotFound = filteredData.length === 0;  
 
-  console.log(invoice.reduce(function(initial, next){
-    return initial.concat(next.id)
-  }, []));
-
   return (
     <Card>
       <ListToolbar
@@ -227,7 +225,7 @@ function Invoice({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{isUndefined(status) ? 'None' : status}</TableCell>
-                      <TableCell align="left">{invoice_date}</TableCell>
+                      <TableCell align="left">{moment(invoice_date).format('ll')}</TableCell>
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>
                       <TableCell align="left">{fNumber(total_qty)}</TableCell>

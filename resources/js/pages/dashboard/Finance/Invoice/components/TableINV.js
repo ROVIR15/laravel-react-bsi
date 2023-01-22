@@ -11,7 +11,11 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 
+import { terbilang } from '../../../../../helpers/data/terbilang.min';
+
 import { fCurrency } from '../../../../../utils/formatNumber';
+import { number } from 'yup';
+import { isEqual, isNaN } from 'lodash';
 
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 12
@@ -21,12 +25,15 @@ const NoBorderCell = styled(TableCell)(({ theme }) => ({
   border: 'unset'
 }));
 
-function createData(
-  name,
-  qty,
-  unit_price
-) {
-  return { name, qty, unit_price};
+function createData(name, qty, unit_price) {
+  return { name, qty, unit_price };
+}
+
+function valueType(param, param2) {
+  let type = param.toLowerCase();
+  if (type === 'percentage') return `${param2} %`;
+  if (type === 'number') return `Rp. ${fCurrency(param2)}`;
+  else return null;
 }
 
 const rows = [
@@ -36,26 +43,38 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, tax }) {
-
+export default function BasicTable({ payload, terms, tax }) {
   const total = () => {
-    return  (subTotal() * (1 + (tax/100))).toFixed(2);
-  }
+    let sub_total = subTotal();
+    let sub_total2 = terms.reduce(function (initial, next) {
+      let type = next.value_type.toLowerCase();
+      if (type === 'percentage') return initial * (1 + next.term_value / 100);
+      if (type === 'number') return initial + next.term_value;
+      else return number;
+    }, sub_total);
+    return (sub_total2 * (1 + tax / 100)).toFixed(0);
+  };
 
   const subTotal = () => {
     return payload.reduce((initial, next) => {
-      return initial + (next.qty * next.amount)
-    }, 0)
-  }
+      return initial + next.qty * next.amount;
+    }, 0);
+  };
 
   const total_price = (qty, amount) => {
-    let total = qty * amount
-    return total
-  }
+    let total = qty * amount;
+    return total;
+  };
+
+  const terbilang2 = () => {
+    let value = parseInt(total());
+    if (isNaN(value) || isEqual(value, 0)) return '-';
+    else return terbilang(value);
+  };
 
   return (
-    <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
-      <Table sx={{ minWidth: 120 }} size='small' aria-label="simple table">
+    <TableContainer component={Paper} sx={{ marginLeft: 'auto' }}>
+      <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell align="left">#</TableCell>
@@ -67,61 +86,74 @@ export default function BasicTable({ payload, tax }) {
         </TableHead>
         <TableBody>
           {payload.map((row, index) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell align="left">{index+1}</TableCell>
+            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell align="left">{index + 1}</TableCell>
               <TableCell component="th" scope="row">
                 {`${row.name}`}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
               <TableCell align="right">Rp. {fCurrency(row.amount)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(total_price(row.qty, row.amount))}
-              </TableCell>
+              <TableCell align="right">Rp. {fCurrency(total_price(row.qty, row.amount))}</TableCell>
             </TableRow>
           ))}
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Subtotal </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Taxes </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {`${tax}%`} </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="h6"> Total </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1">Rp. {fCurrency(total())} </Typography>
-              </NoBorderCell>
-            </TableRow>
+          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <NoBorderCell align="right" colSpan={4}>
+              <BoxStyle />
+              <Typography variant="body1"> Subtotal </Typography>
+            </NoBorderCell>
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
+            </NoBorderCell>
+          </TableRow>
+          {terms.map(function (item) {
+            return (
+              <TableRow
+                key="item.terms_description"
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <NoBorderCell align="right" colSpan={4}>
+                  <BoxStyle />
+                  <Typography variant="body1"> {item.term_description} </Typography>
+                </NoBorderCell>
+                <NoBorderCell align="right">
+                  <BoxStyle />
+                  <Typography variant="body1">
+                    {valueType(item.value_type, item.term_value)}
+                  </Typography>
+                </NoBorderCell>
+              </TableRow>
+            );
+          })}
+          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <NoBorderCell align="right" colSpan={4}>
+              <BoxStyle />
+              <Typography variant="body1"> Taxes </Typography>
+            </NoBorderCell>
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1"> {`${tax}%`} </Typography>
+            </NoBorderCell>
+          </TableRow>
+          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <NoBorderCell align="right" colSpan={4}>
+              <BoxStyle />
+              <Typography variant="h6"> Total </Typography>
+            </NoBorderCell>
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1">Rp. {fCurrency(total())} </Typography>
+            </NoBorderCell>
+          </TableRow>
         </TableBody>
       </Table>
+
+      <Box>
+        <Typography variant="h6"> Terbilang </Typography>
+        <Typography variant="body2" style={{ fontStyle: 'italic' }}>{`${terbilang2(
+          total()
+        )} Rupiah`}</Typography>
+      </Box>
     </TableContainer>
   );
 }

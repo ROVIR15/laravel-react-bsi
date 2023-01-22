@@ -756,6 +756,13 @@ const main = {
         cb(err.response)
       })
     },
+    getSalesOrderList(cb){
+      axios.get( uri + '/sales-order-list').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
     getASalesOrder(id, cb){
       if(!id) console.error('ID not found')
       axios.get( uri + '/sales-order' + `/${id}`).then( function(res){
@@ -873,6 +880,13 @@ const main = {
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
+      })
+    },
+    getBOMList(cb){
+      axios.get( uri + '/bom-listv1').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
       })
     },
     getBOM(params='', cb){
@@ -1554,7 +1568,7 @@ const main = {
     },
     deleteContactMechanism(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/contact-mechanism' + id).then(function(res){
+      axios.delete( uri + '/contact-mechanism/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1563,7 +1577,34 @@ const main = {
     updateContactMechanism(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/contact-mechanism' + id, { payload: _data}).then(function(res){
+      axios.put( uri + '/contact-mechanism/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateContactMechanismPostalAddress(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/update-postal-address/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateContactMechanismEmail(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/update-email/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateContactMechanismTelecommunicationNumber(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/update-telecommunication-number/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1682,6 +1723,13 @@ const main = {
       }).catch(function(err){
         cb(err.response)
       })
+    },
+    getPurchaseOrderList(cb){
+      axios.get( uri + '/purchase-order-list').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })      
     },
     getAPurchaseOrder(id, cb){
       if(!id) console.error('ID not found')
@@ -2200,7 +2248,49 @@ const main = {
         cb(err.response)
       })
     },
+    // Invoice Term
+    getInvoiceTermByInvoice(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/invoice-term-invoice' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    insertInvoiceTerm(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/invoice-term', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateInvoiceTerm(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/invoice-term/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     // Sales Invoice
+    getReport(params=null, cb){
+      axios.get( uri + '/invoice-report' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getInvoicedParty(cb){
+      axios.get( uri + '/invoice-party').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
     insertSalesInvoice(_data, cb){
       if(!_data) {
           console.error('data not found');
@@ -2729,6 +2819,40 @@ const main = {
       }).catch(function(err){
         cb(err.response)
       })
+    },
+    getReconcile(cb){
+      axios.get( uri + '/reconcile').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAReconcile(id, cb){
+      axios.get( uri + '/reconcile/' + id ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    insertReconcile(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/reconcile', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    insertReconcilePurchaseOrder(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+      axios.post( uri + '/reconcile-post-po', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
     }
   }
 export default main;

@@ -17,6 +17,8 @@ class Invoice extends Model
     protected $fillable = [
         'invoice_date',
         'order_id',
+        'shipment_id',
+        'due_date',
         'sold_to',
         'tax',
         'description'
@@ -44,5 +46,9 @@ class Invoice extends Model
 
     public function status(){
         return $this->hasMany('App\Models\Invoice\InvoiceStatus', 'invoice_id', 'id')->with('type')->orderBy('created_at', 'desc');
+    }
+
+    public function terms(){
+        return $this->hasMany('App\Models\Invoice\InvoiceTerm', 'invoice_id');
     }
 }

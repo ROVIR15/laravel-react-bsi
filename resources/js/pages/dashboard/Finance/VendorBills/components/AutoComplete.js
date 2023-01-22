@@ -34,7 +34,6 @@ export default function Asynchronous({
         if (!res.data) {
           throw new Error('no Data');
         } else {
-          // console.log(res.data);
           changeData(res.data);
         }
       });

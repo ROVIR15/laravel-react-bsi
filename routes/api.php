@@ -33,7 +33,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');    
 
     //Party
-    Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::resource('labor', 'LaborController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
@@ -119,6 +118,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
+    Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
 
     //Inventory
     Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -127,7 +127,22 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
 
+    //Finance
+    Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
+    Route::resource('payment', 'PaymentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('insert-payment', 'PaymentController@insertManyPayment');
+    Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');
+    Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
+    Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
+    Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
+
     //Accounting
+    Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('invoice-status', 'InvoiceStatusController')->only(['store']);
+    Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
+    Route::get('invoice-report', 'InvoiceController@generateReport');
+    Route::get('invoice-party', 'InvoiceController@getInvoicedParty');
     Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     
@@ -203,6 +218,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('new-api-test', 'GraphSewingController@testingAPI1');
     Route::get('new-api-test-2', 'GraphSewingController@testingAPI2');
     Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');    
+    Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
 
 });
 
@@ -213,27 +229,19 @@ Route::get('sales-order-list', 'SalesOrderController@getSalesOrderList');
 Route::get('reconcile-v1', 'ReconcileController@getAllOrderItem');
 
 Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');
-Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
 Route::get('bom-items-v1', 'BOMController@getBOMMaterials');
-Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::resource('invoice-status', 'InvoiceStatusController')->only(['store']);
 Route::resource('production-log', 'ProductionLogController')->only(['index', 'show', 'store', 'update', 'destroy']);
 Route::post('upload-shipment-receipt', 'UploadController@upload_shipment_receipt');
 Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt');
-Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
-Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
-Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
 
-Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
-Route::resource('payment', 'PaymentController')->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::post('insert-payment', 'PaymentController@insertManyPayment');
-Route::get('payment-method-type', 'PaymentController@getPaymentMethodType');
-Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
-Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
-Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
 
 Route::resource('reconcile', 'ReconcileController')->only(['index', 'store', 'show']);
 
-Route::get('invoice-report', 'InvoiceController@generateReport');
+Route::post('reconcile-post-po', 'ReconcileController@insertReconcilePurchaseOrder');
+
+Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::put('update-postal-address/{id}', 'ContactMechanismController@update_postal_address');
+Route::put('update-email/{id}', 'ContactMechanismController@update_email');
+Route::put('update-telecommunication-number/{id}', 'ContactMechanismController@update_telecommunication_number');
+Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);

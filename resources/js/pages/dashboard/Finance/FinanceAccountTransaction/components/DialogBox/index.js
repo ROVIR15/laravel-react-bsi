@@ -122,7 +122,6 @@ function SimpleDialog(props) {
 
   const opts = !options ? [] : options;
 
-  console.log(options);
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
@@ -139,7 +138,6 @@ function SimpleDialog(props) {
       if (isEditCondition(pathname.split('/'), id)) {
         try {
           let dateNow = new Date();
-          console.log('here');
           // API.insertPurchaseOrderItem([item], function (res) {
           //   if (res.success) alert('success');
           //   else alert('failed');
@@ -149,7 +147,6 @@ function SimpleDialog(props) {
           alert(e);
         }
       } else {
-        console.log('added here');
         newSelected = newSelected.concat(selected, item);
       }
     } else if (selectedIndex === 0) {

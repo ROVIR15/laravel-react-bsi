@@ -12,7 +12,15 @@ import Typography from '@mui/material/Typography';
 import Scrollbar from '../../../../../../components/Scrollbar';
 import { isEditCondition } from '../../../../../../helpers/data';
 import { Icon } from '@iconify/react';
-import { Checkbox, FormControlLabel, FormGroup, IconButton, Stack } from '@mui/material';
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Radio,
+  RadioGroup,
+  Stack
+} from '@mui/material';
 
 import searchFill from '@iconify/icons-eva/search-fill';
 import closeCircle from '@iconify/icons-eva/close-outline';
@@ -71,7 +79,7 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      let datum = `${_b?.serial_number} ${_b?.order?.sales_order?.po_number}`
+      let datum = `${_b?.serial_number} ${_b?.order?.sales_order?.po_number}`;
       return datum.toLowerCase().indexOf(query.toLowerCase()) !== -1;
     });
   }
@@ -131,34 +139,7 @@ function SimpleDialog(props) {
   };
 
   const handleAddPayments = (e, item) => {
-    const selectedIndex = selected.map((e) => e.id).indexOf(item.id);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      if (isEditCondition(pathname.split('/'), id)) {
-        try {
-          let dateNow = new Date();
-          // API.insertPurchaseOrderItem([item], function (res) {
-          //   if (res.success) alert('success');
-          //   else alert('failed');
-          // });
-          // update();
-        } catch (e) {
-          alert(e);
-        }
-      } else {
-        newSelected = newSelected.concat(selected, item);
-      }
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
+    setSelected([item]);
   };
 
   const filteredData = applySortFilter(opts, getComparator(order, orderBy), filterName);
@@ -200,41 +181,43 @@ function SimpleDialog(props) {
             maxHeight: 640
           }}
         >
-          {!opts
-            ? 'loading'
-            : filteredData.map((item) => {
-                const _checked = selected.map((e, index) => e.id).indexOf(item.id) !== -1;
-                return (
-                  <_ListItemStyled
-                    control={
-                      <Checkbox
-                        checked={_checked}
-                        onChange={(event) => handleAddPayments(event, item)}
-                      />
-                    }
-                    label={
-                      <>
-                        <Typography variant="subtitle2">
-                          {item.id} - {item.serial_number}
-                        </Typography>
-                        <Typography component="span" variant="body1">
-                          {item?.order?.sales_order?.po_number}
-                        </Typography>
-                      </>
-                    }
-                  />
-                );
+          <RadioGroup>
+            {!opts
+              ? 'loading'
+              : filteredData.map((item) => {
+                  const _checked = selected.map((e, index) => e.id).indexOf(item.id) !== -1;
+                  return (
+                    <_ListItemStyled
+                      control={
+                        <Radio
+                          checked={_checked}
+                          onChange={(event) => handleAddPayments(event, item)}
+                        />
+                      }
+                      label={
+                        <>
+                          <Typography variant="subtitle2">
+                            {item.id} - {item.serial_number}
+                          </Typography>
+                          <Typography component="span" variant="body1">
+                            {item?.order?.sales_order?.po_number}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  );
 
-                // <ListItemStyled
-                //   button
-                //   onClick={() => handleListItemClick(item)}
-                //   selected={selectedValue === item.id}
-                //   key={item.id}
-                // >
-                //   <Typography variant="subtitle2">{item.effective_date} - {item.ref_num}</Typography>
-                //   <Typography component="span" variant="body1">Rp. {fCurrency(item.total_amount)}</Typography>
-                // </ListItemStyled>
-              })}
+                  // <ListItemStyled
+                  //   button
+                  //   onClick={() => handleListItemClick(item)}
+                  //   selected={selectedValue === item.id}
+                  //   key={item.id}
+                  // >
+                  //   <Typography variant="subtitle2">{item.effective_date} - {item.ref_num}</Typography>
+                  //   <Typography component="span" variant="body1">Rp. {fCurrency(item.total_amount)}</Typography>
+                  // </ListItemStyled>
+                })}
+          </RadioGroup>
         </Scrollbar>
       </List>
     </DialogStyled>

@@ -89,6 +89,7 @@ function FirstPage() {
     total_price: 0
   });
   const [items, setItems] = useState([]);
+  const [terms, setTerms] = useState([]);
 
   const [selectedValueSO, setSelectedValueSO] = React.useState({
     name: '',
@@ -144,6 +145,7 @@ function FirstPage() {
 
     setInvInfo({
       invoice_date: payload.invoice_date,
+      due_date: payload.due_date,
       invoice_id: generateInvSerialNumber(payload, 1),
       total_price: 0,
       description: payload.description,
@@ -151,6 +153,8 @@ function FirstPage() {
     });
 
     setItems(temp);
+
+    setTerms(payload.terms);
   };
 
   const handleDownload = React.useCallback(() => {
@@ -322,7 +326,7 @@ function FirstPage() {
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {moment(invInfo.invoice_date, 'YYYY-MM-DD')
-                          .add('days', 21)
+                          .add('days', invInfo.due_date)
                           .format('DD MMMM YYYY')}
                       </Typography>
                     </div>
@@ -330,7 +334,7 @@ function FirstPage() {
                 </Grid>
               </Grid>
               <GridItemX>
-                <Table payload={items} subTotal={invInfo.total_price} tax={invInfo.tax} />
+                <Table payload={items} terms={terms} subTotal={invInfo.total_price} tax={invInfo.tax} />
               </GridItemX>
 
               <Grid item xs={12}>
