@@ -27,7 +27,7 @@ class InvoiceHasType extends Model
     }
 
     public function terms(){
-        return $this->hasMany('App\Models\Invoice\InvoiceTerm', 'invoice_id', 'id');
+        return $this->hasMany('App\Models\Invoice\InvoiceTerm', 'invoice_id', 'invoice_id');
     }
 
 }
