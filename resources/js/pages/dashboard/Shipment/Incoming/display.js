@@ -19,7 +19,6 @@ import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
 import { outboundShipmentArrangedData } from '../../../../helpers/data';
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -28,8 +27,8 @@ const TABLE_HEAD = [
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Sender', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
-  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
+  { id: 'delivery_date', label: 'Arrival Date', alignRight: false },
+  { id: 'est_delivery_date', label: 'Estimated Arrival Date', alignRight: false },
   { id: 'remarks', label: 'Keterangan', alignRight: false }
 ];
 
@@ -81,6 +80,8 @@ function OutboundDelivery({ placeHolder }) {
   useEffect(() => {
     handleUpdateData();
   }, [filterMonthYear]);
+
+  moment.locale('id')
 
   function handleUpdateData() {
     let params = '?shipment_type=1';
@@ -210,8 +211,8 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{order?.purchase_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.purchase_order?.party?.name}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
-                      <TableCell align="left">{est_delivery_date}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(est_delivery_date).format('ll')}</TableCell>
                       <TableCell align="left">
                         {dateDiff(delivery_date, est_delivery_date)}
                       </TableCell>

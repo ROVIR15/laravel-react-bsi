@@ -19,13 +19,8 @@ const NoBorderCell = styled(TableCell)(({ theme }) => ({
   border: 'unset'
 }));
 
-function createData(
-  name,
-  qty_order,
-  qty_on_receipt,
-  qty_received
-) {
-  return { name, qty_order, qty_on_receipt, qty_received};
+function createData(name, qty_order, qty_on_receipt, qty_received) {
+  return { name, qty_order, qty_on_receipt, qty_received };
 }
 
 const rows = [
@@ -35,94 +30,67 @@ const rows = [
   createData('Product D', 200, 190, 10)
 ];
 
-export default function BasicTable({payload}) {
-
+export default function BasicTable({ payload }) {
   const total_delivery = () => {
-    var total = 0;
-    payload.map(function({qty_on_receipt}){ total = total + qty_on_receipt});
+    var total = payload.reduce((initial, { deliv_qty }) => initial + deliv_qty, 0);
     return total;
-  } 
+  };
 
   const rejected = () => {
     var total = 0;
-    payload.map(function({qty_on_receipt, qty_received}){ total = total + (qty_on_receipt - qty_received)});
+    payload.map(function ({ qty_on_receipt, qty_received }) {
+      total = total + (qty_on_receipt - qty_received);
+    });
     return total;
-  }
+  };
 
   const total_received = () => {
     var total = 0;
-    payload.map(function({qty_received}){ total = total + qty_received});
+    payload.map(function ({ qty_received }) {
+      total = total + qty_received;
+    });
     return total;
-  }
+  };
 
   return (
-    <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
-      <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left">#</TableCell>
-            <TableCell>Product Name</TableCell>
-            <TableCell align="right">Qty Ordered</TableCell>
-            <TableCell align="right">Qty Delivered</TableCell>
-            <TableCell align="right">Qty Received</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {payload.map((row, index) => (
-            <TableRow
-              key={row.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell align="left">{index+1}</TableCell>
-              <TableCell component="th" scope="row">
-                {`${row.product.name} ${row.product.color} - ${row.product.size}`}
-              </TableCell>
-              <TableCell align="right">{row.qty_order}</TableCell>
-              <TableCell align="right">{row.qty_on_receipt}</TableCell>
-              <TableCell align="right">{row.qty_received}</TableCell>
-            </TableRow>
-          ))}
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Total Delivery </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {total_delivery() } </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Subtotal Received </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {total_received()} </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="h6"> Rejected </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {rejected()} </Typography>
-              </NoBorderCell>
-            </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div className="wk_table wk_style1">
+      <div className="wk_border">
+        <div className="wk_table_responsive">
+          <table>
+            <thead>
+              <tr>
+                <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">#</th>
+                <th className="wk_width_8 wk_semi_bold wk_primary_color wk_gray_bg">Item Name</th>
+                <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payload.map((row, index) => (
+                <tr>
+                  <td className="wk_width_1">{index+1}</td>
+                  <td className="wk_width_8">{`${row.name} ${row.color} - ${row.size}`}</td>
+                  <td className="wk_width_2">{row.deliv_qty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="wk_invoice_footer wk_mb30 wk_m0_md">
+        <div className="wk_left_footer" style={{width: '45%'}}></div>
+        <div className="wk_right_footer">
+          <table>
+            <tbody>
+              <tr>
+                <td className="wk_width_3 wk_primary_color wk_border_none wk_bold">Grand Total</td>
+                <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_bold">
+                  {total_delivery()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }

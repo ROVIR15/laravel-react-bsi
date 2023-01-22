@@ -183,7 +183,7 @@ function OutboundDelivery() {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed');
           else alert('success');
-        });          
+        });
       } catch (error) {
         alert(error);
       }
@@ -206,12 +206,13 @@ function OutboundDelivery() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', headerName: 'ID', width: 50, editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', width: 400, editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
+      { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
+      { field: 'name', headerName: 'Name', width: 350, editable: false },
       { field: 'color', headerName: 'Color', editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
+      { field: 'satuan', headerName: 'Satuan', editable: false },
       { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
+      { field: 'description', width: 400, headerName: 'Description', editable: true },
       {
         field: 'actions',
         type: 'actions',
@@ -361,7 +362,6 @@ function OutboundDelivery() {
 
     API.uploadShipmentReceiptProof(formData, function (res) {
       if (res.success) {
-        console.log(res.path)
         setFile(res.path);
         alert(JSON.stringify(res));
       } else {
@@ -386,33 +386,35 @@ function OutboundDelivery() {
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={1} direction="row">
               <Grid item xs={4}>
-                <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <Card>
                   <CardHeader title="Delivery Date" />
                   <CardContent>
-                    <TextField
-                      fullWidth
-                      autoComplete="delivery_date"
-                      type="date"
-                      label="Delivery Date"
-                      {...getFieldProps('delivery_date')}
-                      error={Boolean(touched.delivery_date && errors.delivery_date)}
-                      helperText={touched.delivery_date && errors.delivery_date}
-                    />
-                    <TextField
-                      fullWidth
-                      disabled
-                      autoComplete="est_delivery_date"
-                      type="date"
-                      label="Estimated Delivery Date"
-                      {...getFieldProps('est_delivery_date')}
-                      error={Boolean(touched.est_delivery_date && errors.est_delivery_date)}
-                      helperText={touched.est_delivery_date && errors.est_delivery_date}
-                    />
+                    <Stack direction="column" spacing={2}>
+                      <TextField
+                        fullWidth
+                        autoComplete="delivery_date"
+                        type="date"
+                        label="Delivery Date"
+                        {...getFieldProps('delivery_date')}
+                        error={Boolean(touched.delivery_date && errors.delivery_date)}
+                        helperText={touched.delivery_date && errors.delivery_date}
+                      />
+                      <TextField
+                        fullWidth
+                        disabled
+                        autoComplete="est_delivery_date"
+                        type="date"
+                        label="Estimated Delivery Date"
+                        {...getFieldProps('est_delivery_date')}
+                        error={Boolean(touched.est_delivery_date && errors.est_delivery_date)}
+                        helperText={touched.est_delivery_date && errors.est_delivery_date}
+                      />
+                    </Stack>
                   </CardContent>
                 </Card>
               </Grid>
               <Grid item xs={8}>
-                <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+                <Card>
                   <CardHeader title="Delivery Information" />
                   <CardContent>
                     <Grid container direction="row" spacing={2}>
@@ -456,7 +458,7 @@ function OutboundDelivery() {
                 </Card>
               </Grid>
             </Grid>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <Card sx={{ mt: 2, mb: 2 }}>
               <CardContent>
                 <Box sx={{ width: '100%', typography: 'body1' }}>
                   <TabContext value={valueTab}>

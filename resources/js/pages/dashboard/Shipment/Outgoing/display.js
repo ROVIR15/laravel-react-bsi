@@ -15,6 +15,8 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
+moment.locale('id')
+
 // api
 import API from '../../../../helpers';
 
@@ -26,8 +28,8 @@ const TABLE_HEAD = [
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
-  { id: 'est_delivery_date', label: 'Estimated Delivery Date', alignRight: false },
+  { id: 'delivery_date', label: 'Arrival Date', alignRight: false },
+  { id: 'est_delivery_date', label: 'Estimated Arrival Date', alignRight: false },
   { id: 'remarks', label: 'Keterangan', alignRight: false }
 ];
 
@@ -193,7 +195,7 @@ function OutboundDelivery({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, serial_number, delivery_date, est_delivery_date, order, status } =
+                  const { id, serial_number, delivery_date, est_delivery_date, sum, order, status } =
                     row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -212,8 +214,8 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
-                      <TableCell align="left">{order?.sales_order?.delivery_date}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(order?.sales_order?.delivery_date).format('ll')}</TableCell>
                       <TableCell align="left">
                         {dateDiff(delivery_date, order?.sales_order?.delivery_date)}
                       </TableCell>

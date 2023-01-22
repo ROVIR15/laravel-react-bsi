@@ -88,6 +88,7 @@ class ShipmentController extends Controller
           ->get();
         } else {
           $query = Shipment::with('order', 'type', 'status', 'items')
+          ->whereNotIn('id', $_shipmentHasInvoice)
           ->get();
         }  
       } catch (\Throwable $th) {
@@ -141,7 +142,8 @@ class ShipmentController extends Controller
           array_push($shipmentItemP, [
             'shipment_id' => $shipment->id,
             'order_item_id' => $item['order_item_id'],
-            'qty_shipped' => $item['deliv_qty']
+            'qty_shipped' => $item['deliv_qty'],
+            'description' => $item['description']
           ]);
         }
 

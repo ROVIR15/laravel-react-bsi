@@ -48,7 +48,7 @@
     }
 
     public function party(){
-        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id');
+        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id')->with('address');
     }
 
     public function ship(){
