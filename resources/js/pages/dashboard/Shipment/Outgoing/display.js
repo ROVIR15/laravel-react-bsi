@@ -220,7 +220,7 @@ function OutboundDelivery({ placeHolder }) {
                         {dateDiff(delivery_date, order?.sales_order?.delivery_date)}
                       </TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} document={true} />
                       </TableCell>
                     </TableRow>
                   );
