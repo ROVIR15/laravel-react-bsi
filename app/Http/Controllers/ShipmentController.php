@@ -143,7 +143,7 @@ class ShipmentController extends Controller
             'shipment_id' => $shipment->id,
             'order_item_id' => $item['order_item_id'],
             'qty_shipped' => $item['deliv_qty'],
-            'description' => $item['description']
+            'description' => $item['description'] || ''
           ]);
         }
 
