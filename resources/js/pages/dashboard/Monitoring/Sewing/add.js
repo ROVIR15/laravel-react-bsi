@@ -55,7 +55,6 @@ function WorkCenter() {
       let data = items.map(({id, brand, name, size, color, numbering, qty_left, ...x}) => ({ ...x, line, facility_id: line+6, sales_order_id, date}));
       try {
         API.insertMonitoringSewing(data, function(res){
-          console.log(res)
           if(!res) return;
           if(!res.success) throw new Error('failed to save');
           setItems([]);

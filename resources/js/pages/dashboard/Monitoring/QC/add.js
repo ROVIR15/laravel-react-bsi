@@ -56,7 +56,6 @@ function WorkCenter() {
       let data = items.map(({id, date, brand, name, size, color, ...x}) => ({ ...x, ms_id: id, line, date: values.date, recorder}));
       try {
         API.insertMonitoringQC(data, function(res){
-          console.log(res)
           if(!res) return;
           if(!res.success) throw new Error('failed to save');
           setItems([]);

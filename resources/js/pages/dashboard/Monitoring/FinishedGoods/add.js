@@ -69,7 +69,6 @@ function WorkCenter() {
       }));
       try {
         API.insertMonitoringFG(data, function (res) {
-          console.log(res);
           if (!res) return;
           if (!res.success) throw new Error('failed to save');
           setItems([]);

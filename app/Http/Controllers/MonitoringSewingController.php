@@ -31,7 +31,7 @@ class MonitoringSewingController extends Controller
 
       try {
         if($param){
-          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, facility_id, sum(qty_loading) as qty_loading, sum(output) as output')
                   ->with('sales_order', 'product_feature')
                   ->with(['qc' => function ($query) use ($order_id){
                     return $query->where('order_id', $order_id);
@@ -40,7 +40,7 @@ class MonitoringSewingController extends Controller
                   ->groupBy('order_item_id')
                   ->get();
         } else {
-          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, facility_id, sum(qty_loading) as qty_loading, sum(output) as output')
                   ->groupBy('line', 'date', 'po_number', 'sales_order_id')
                   ->with('sales_order', 'product_feature', 'qc')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])

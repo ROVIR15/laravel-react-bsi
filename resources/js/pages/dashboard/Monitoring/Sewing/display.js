@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEqual, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -13,7 +13,8 @@ import {
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from '../components/ListToolbar';
 //
 import moment from 'moment';
 // api
@@ -60,13 +61,29 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(
-      array,
-      (_b) => _b.sales_order?.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
+  if (query[1] !== 0)
+
+    if(query[2] === 0) {
+      return filter(
+        array,
+        (_b) =>
+          _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b?.sales_order?.id === query[1]
+      );  
+    } else {
+      return filter(
+        array,
+        (_b) =>
+          _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b?.sales_order?.id === query[1] && _b?.facility_id === query[2]
+      );  
+    }
+  else {
+    if(query[2] === 0) return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b?.facility_id === query[2])
   }
-  return stabilizedThis.map((el) => el[0]);
+
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayQuote({ placeHolder }) {
@@ -82,9 +99,37 @@ function DisplayQuote({ placeHolder }) {
     fromDate: moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
   });
 
+  //----------------filter by sales order----------------------//
+  const [filterBySalesOrder, setFilterBySalesOrder] = useState(0);
+  const [salesOrderList, setSalesOrderList] = useState([]);
+
+  const handleSalesOrderFilter = (event) => {
+    setFilterBySalesOrder(event.target.value);
+  };
+  //------------------------------------------------------------//
+  
+  //----------------filter by facility----------------------//
+  const [filterByFacility, setFilterByFacility] = useState(0);
+  const [facilityList, setFacilityList] = useState([]);
+
+  const handleFacilityFilter = (event) => {
+    console.log('this event is triggered')
+    setFilterByFacility(event.target.value);
+  };
+  //------------------------------------------------------------//
+
   useEffect(() => {
     handleUpdateData();
   }, []);
+
+  useEffect(() => {
+    if(isEqual(filterBySalesOrder, 0)) return;
+
+    let _usedLine = filteredData.filter((item) => ( !isNull(item.facility_id))).map((obj) => ({ facility_id: obj.facility_id, line: obj.line}));
+    let _uniqUsedLine = uniqBy(_usedLine, 'facility_id');
+
+    setFacilityList(_uniqUsedLine);
+  }, [filterBySalesOrder])
 
   const handleUpdateData = () => {
     let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
@@ -94,6 +139,19 @@ function DisplayQuote({ placeHolder }) {
         if (!res.data) {
           setQuoteData([]);
         } else {
+          let _filteredSalesOrder = res.data
+            .filter((item) => !isNull(item.sales_order))
+            .map((obj) => obj.sales_order);
+          let _salesOrder = uniqBy(_filteredSalesOrder, 'id');
+
+          let _filteredFacilityLine = res.data
+            .filter((item) => !isNull(item.sales_order))
+            .map((obj) => ({facility_id: obj.facility_id, line: obj.line}));
+          let _facility = uniqBy(_filteredFacilityLine, 'facility_id');
+
+          setFacilityList(_facility)
+
+          setSalesOrderList(_salesOrder);
           setQuoteData(res.data);
         }
       });
@@ -178,7 +236,11 @@ function DisplayQuote({ placeHolder }) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [
+    filterName,
+    filterBySalesOrder,
+    filterByFacility
+  ]);
 
   const isDataNotFound = filteredData.length === 0;
 
@@ -193,11 +255,20 @@ function DisplayQuote({ placeHolder }) {
         onGo={handleUpdateData}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        filterSalesOrderActive={true}
+        onFilterSalesOrder={handleSalesOrderFilter}
+        optionsSalesOrder={salesOrderList}
+        selectedSalesOrder={filterBySalesOrder}
+        filterFacilityActive={true}
+        onFilterFacility={handleFacilityFilter}
+        optionsFacility={facilityList}
+        selectedFacility={filterByFacility}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -230,12 +301,6 @@ function DisplayQuote({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
                       <TableCell align="left">{sales_order?.po_number}</TableCell>

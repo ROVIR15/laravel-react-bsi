@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,12 +8,13 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from '../components/ListToolbar';
 //
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
@@ -30,8 +31,7 @@ const TABLE_HEAD = [
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
   { id: 'size', label: 'Size', alignRight: false },
   { id: 'color', label: 'Color', alignRight: false },
-  { id: 'size', label: 'Size', alignRight: false },
-  { id: 'output', label: 'Output', alignRight: false },
+  { id: 'output', label: 'Output', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -53,52 +53,71 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.sales_order?.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+        _b?.sales_order?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayQuote({ placeHolder }) {
-
   const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+    thruDate: moment(new Date()).format('YYYY-MM-DD'),
+    fromDate: moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
   });
+
+  //----------------filter by sales order----------------------//
+  const [filterBySalesOrder, setFilterBySalesOrder] = useState(0);
+  const [salesOrderList, setSalesOrderList] = useState([]);
+
+  const handleSalesOrderFilter = (event) => {
+    setFilterBySalesOrder(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, []);
 
   const handleUpdateData = () => {
     let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
     try {
       API.getMonitoringQC(params, (res) => {
-        if(!res.data) {
+        if (!res.data) {
           setQuoteData([]);
-        }
-        else {
+        } else {
+          let _filteredSalesOrder = res.data
+            .filter((item) => !isNull(item.sales_order))
+            .map((obj) => obj.sales_order);
+          let _salesOrder = uniqBy(_filteredSalesOrder, 'id');
+
+          setSalesOrderList(_salesOrder)
           setQuoteData(res.data);
         }
-      });      
+      });
     } catch (error) {
       alert('error');
     }
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -149,43 +168,44 @@ function DisplayQuote({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-  //   API.deleteQuote(id, function(res){
-  //     if(res.success) setQuoteData([]);
-  //   }).catch(function(error){
-  //     alert('error')
-  //   });
-  }
+    //   API.deleteQuote(id, function(res){
+    //     if(res.success) setQuoteData([]);
+    //   }).catch(function(error){
+    //     alert('error')
+    //   });
+  };
 
   const handleDateChanges = (event) => {
-    const { name, value} = event.target;
+    const { name, value } = event.target;
     setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
+      if (name === 'fromDate') {
+        if (value > prevValue.thruDate) {
           alert('from date cannot be more than to date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
+      } else if (name === 'thruDate') {
+        if (value < prevValue.fromDate) {
           alert('to date cannot be less than fron date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
+      } else {
+        return { ...prevValue, [name]: value };
       }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
-  }
+    });
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [
+    filterName,
+    filterBySalesOrder
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -198,6 +218,10 @@ function DisplayQuote({ placeHolder }) {
         onGo={handleUpdateData}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        filterSalesOrderActive={true}
+        onFilterSalesOrder={handleSalesOrderFilter}
+        optionsSalesOrder={salesOrderList}
+        selectedSalesOrder={filterBySalesOrder}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -224,7 +248,11 @@ function DisplayQuote({ placeHolder }) {
                     line,
                     qty_loading,
                     output,
-                    product_feature: { product: { goods }, color, size }
+                    product_feature: {
+                      product: { goods },
+                      color,
+                      size
+                    }
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -278,7 +306,7 @@ function DisplayQuote({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayQuote;

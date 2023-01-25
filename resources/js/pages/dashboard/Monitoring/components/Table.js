@@ -164,7 +164,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  console.log(row)
                   const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
                   const {
                     id,
