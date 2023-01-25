@@ -31,7 +31,7 @@
         // $query = Order::all();
         // return new OrderCollection($query);
         $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to')
-                ->with('sum', 'monitoring_sewing', 'monitoring_qc', 'monitoring_fg', 'monitoring_cutting', 'completion_status', 'party')
+                ->with('sum', 'status', 'monitoring_sewing', 'monitoring_qc', 'monitoring_fg', 'monitoring_cutting', 'completion_status', 'party')
                 ->whereHas('completion_status', function($query2){
                     $query2->where('completion_status_id', 2);
                 })

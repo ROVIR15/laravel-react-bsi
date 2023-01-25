@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEqual, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,12 +8,14 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
+
 //
 import moment from 'moment';
 // api
@@ -24,6 +26,7 @@ import { fPercent } from '../../../utils/formatNumber';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'party_id', label: 'Buyer', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'qty', label: 'Order Qty', alignRight: false },
   { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
@@ -31,7 +34,7 @@ const TABLE_HEAD = [
   { id: 'output_qc', label: 'Output QC', alignRight: false },
   { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
   { id: 'percentage', label: 'Percentage', alignRight: false },
-  { id: 'difference', label: 'Selisih', alignRight: false },
+  { id: 'difference', label: 'Selisih', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -40,16 +43,16 @@ function completionOfOrder(order_qty, final_garment) {
   final_garment = final_garment ? parseInt(final_garment) : 0;
   order_qty = order_qty ? parseInt(order_qty) : 0;
 
-  if(final_garment === 0) {
+  if (final_garment === 0) {
     return {
       percentage: 0,
       difference: final_garment - order_qty
-    }
+    };
   } else {
     return {
-      percentage: parseFloat(final_garment/order_qty)*100,
+      percentage: parseFloat(final_garment / order_qty) * 100,
       difference: final_garment - order_qty
-    }
+    };
   }
 }
 
@@ -70,21 +73,38 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    if(isEqual(query[2], 0)){
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+      );  
+    } else {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1] && _b.order_id === query[2]
+      );  
+    }
+  else {
+    if(isEqual(query[2], 0)){
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    } else {
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b?.order_id === query[2]);
+    }   
+  } 
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function Display({ placeHolder }) {
-
   const [quoteData, setQuoteData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -93,29 +113,59 @@ function Display({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filterDate, setFilterDate] = useState({
-    'thruDate': moment(new Date()).format('YYYY-MM-DD'),
-    'fromDate': moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+    thruDate: moment(new Date()).format('YYYY-MM-DD'),
+    fromDate: moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
   });
+
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
+  //----------------filter by sales order----------------------//
+  const [filterByOrder, setFilterByOrder] = useState(0);
+  const [orderList, setOrderList] = useState([]);
+
+  const handleOrderFilter = (event) => {
+    setFilterByOrder(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if(isEqual(filterBuyer, 0)) return;
+    let _orderList = filteredData.filter((item) => !isNull(item?.po_number)).map((obj) => ({order_id: obj.order_id, po_number: obj.po_number}));
+    let _uniqOrderList = uniqBy(_orderList, 'order_id');
+    setOrderList(_uniqOrderList)
+
+  }, [filterBuyer])
 
   const handleUpdateData = () => {
     // let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
-    try { 
+    try {
       API.getOrder((res) => {
-        if(!res?.data) {
+        if (!res?.data) {
           setQuoteData([]);
         } else {
+          let _buyerList = res.data.filter((item) => !isNull(item?.party)).map((obj) => obj?.party);
+          let _uniqBuyerList = uniqBy(_buyerList, 'id');
+
+          setOptionsBuyer(_uniqBuyerList);
           setQuoteData(res.data);
         }
       });
     } catch (error) {
-      alert('error')
+      alert('error');
     }
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -166,39 +216,36 @@ function Display({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-
-  }
+  };
 
   const handleDateChanges = (event) => {
-    const { name, value} = event.target;
+    const { name, value } = event.target;
     setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
+      if (name === 'fromDate') {
+        if (value > prevValue.thruDate) {
           alert('from date cannot be more than to date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
+      } else if (name === 'thruDate') {
+        if (value < prevValue.fromDate) {
           alert('to date cannot be less than fron date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
+      } else {
+        return { ...prevValue, [name]: value };
       }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
-  }
+    });
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [filterName, filterBuyer, filterByOrder]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -210,6 +257,14 @@ function Display({ placeHolder }) {
         onGo={handleUpdateData}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
+        filterOrderActive={true}
+        selectedOrder={filterByOrder}
+        onFilterOrder={handleOrderFilter}
+        optionsOrder={orderList}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -230,15 +285,19 @@ function Display({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
+                    party,
                     order_id,
                     sum,
                     po_number,
                     monitoring_cutting,
                     monitoring_sewing,
                     monitoring_qc,
-                    monitoring_fg,
+                    monitoring_fg
                   } = row;
-                  let { percentage, difference } = completionOfOrder(sum[0]?.total_qty, monitoring_fg[0]?.output);
+                  let { percentage, difference } = completionOfOrder(
+                    sum[0]?.total_qty,
+                    monitoring_fg[0]?.output
+                  );
 
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -251,6 +310,7 @@ function Display({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{sum[0]?.total_qty}</TableCell>
                       <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
@@ -260,7 +320,12 @@ function Display({ placeHolder }) {
                       <TableCell align="left">{fPercent(percentage)}</TableCell>
                       <TableCell align="left">{difference}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={order_id} deleteActive={false} name="Show" handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={order_id}
+                          deleteActive={false}
+                          name="Show"
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -293,7 +358,7 @@ function Display({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default Display;
