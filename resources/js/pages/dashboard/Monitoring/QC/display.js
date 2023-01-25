@@ -67,7 +67,7 @@ function applySortFilter(array, comparator, query) {
         _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
         _b?.sales_order?.id === query[1]
     );
-  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    else return filter(array, (_b) => _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
 
   // return stabilizedThis.map((el) => el[0]);
 }

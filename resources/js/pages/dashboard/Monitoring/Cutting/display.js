@@ -68,7 +68,7 @@ function applySortFilter(array, comparator, query) {
       (_b) =>
         _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b?.sales_order?.id === query[1]
     );
-  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  else return filter(array, (_b) => _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
 }
 
 function DisplayQuote({ placeHolder }) {
@@ -112,7 +112,7 @@ function DisplayQuote({ placeHolder }) {
           let _salesOrder = uniqBy(_filteredSalesOrder, 'id');
           
           setSalesOrderList(_salesOrder)
-          setQuoteData(res.data);``
+          setQuoteData(res.data);
         }
       });      
     } catch (error) {

@@ -62,25 +62,30 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query[1] !== 0)
-
-    if(query[2] === 0) {
+    if (query[2] === 0) {
       return filter(
         array,
         (_b) =>
           _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
           _b?.sales_order?.id === query[1]
-      );  
+      );
     } else {
       return filter(
         array,
         (_b) =>
           _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
-          _b?.sales_order?.id === query[1] && _b?.facility_id === query[2]
-      );  
+          _b?.sales_order?.id === query[1] &&
+          _b?.facility_id === query[2]
+      );
     }
   else {
-    if(query[2] === 0) return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-    else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b?.facility_id === query[2])
+    if (query[2] === 0)
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    else
+      return filter(
+        array,
+        (_b) => _b.sales_order?.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      );
   }
 
   // return stabilizedThis.map((el) => el[0]);
@@ -107,13 +112,12 @@ function DisplayQuote({ placeHolder }) {
     setFilterBySalesOrder(event.target.value);
   };
   //------------------------------------------------------------//
-  
+
   //----------------filter by facility----------------------//
   const [filterByFacility, setFilterByFacility] = useState(0);
   const [facilityList, setFacilityList] = useState([]);
 
   const handleFacilityFilter = (event) => {
-    console.log('this event is triggered')
     setFilterByFacility(event.target.value);
   };
   //------------------------------------------------------------//
@@ -123,13 +127,18 @@ function DisplayQuote({ placeHolder }) {
   }, []);
 
   useEffect(() => {
-    if(isEqual(filterBySalesOrder, 0)) return;
+    //check first is that order_id was found on recent data list;
+    let isFound = filteredData.filter((item) => item.facility_id === filterByFacility).length > 0;
 
-    let _usedLine = filteredData.filter((item) => ( !isNull(item.facility_id))).map((obj) => ({ facility_id: obj.facility_id, line: obj.line}));
+    if (!isFound) setFilterByFacility(0);
+    // if (isEqual(filterBySalesOrder, 0)) return;
+    let _usedLine = filteredData
+      .filter((item) => !isNull(item.facility_id))
+      .map((obj) => ({ facility_id: obj.facility_id, line: obj.line }));
     let _uniqUsedLine = uniqBy(_usedLine, 'facility_id');
 
     setFacilityList(_uniqUsedLine);
-  }, [filterBySalesOrder])
+  }, [filterBySalesOrder]);
 
   const handleUpdateData = () => {
     let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
@@ -146,10 +155,10 @@ function DisplayQuote({ placeHolder }) {
 
           let _filteredFacilityLine = res.data
             .filter((item) => !isNull(item.sales_order))
-            .map((obj) => ({facility_id: obj.facility_id, line: obj.line}));
+            .map((obj) => ({ facility_id: obj.facility_id, line: obj.line }));
           let _facility = uniqBy(_filteredFacilityLine, 'facility_id');
 
-          setFacilityList(_facility)
+          setFacilityList(_facility);
 
           setSalesOrderList(_salesOrder);
           setQuoteData(res.data);
