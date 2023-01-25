@@ -29,34 +29,31 @@ export default function Report() {
   const [date, setDate] = useState([]);
   const [row, setRow] = useState([]);
   const [buyer, setBuyer] = useState([]);
-  const [monthYear, setMonthYear] = useState(null)
-  const [selectedBuyer, setSelectedBuyer] = useState(null)
+  const [monthYear, setMonthYear] = useState(null);
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [totalVal, setTotalVal] = useState({});
 
   useEffect(() => {
-
     try {
       API.getInvoicedParty((res) => {
-        if(!res) return;
-        if(isEmpty(res.data)) throw new Error('failed to load data');
+        if (!res) return;
+        if (isEmpty(res.data)) throw new Error('failed to load data');
         else {
-          const _data = res.data.reduce(function(initial, next){
-            return [...initial, {id: next?.party?.id, name: next?.party?.name}]
-          }, [])
+          const _data = res.data.reduce(function (initial, next) {
+            return [...initial, { id: next?.party?.id, name: next?.party?.name }];
+          }, []);
 
           setBuyer(_data);
         }
-      })
+      });
     } catch (error) {
       alert(error);
     }
-
   }, []);
 
   const handleGetReport = () => {
-
     try {
-      if(isEmpty(monthYear) && isEmpty(selectedBuyer)) throw new Error('cannot be empty');
+      if (isEmpty(monthYear) && isEmpty(selectedBuyer)) throw new Error('cannot be empty');
       API.getReport(`?monthYear=${monthYear}&party=${selectedBuyer}`, function (res) {
         if (!res) return;
         if (!res.success) throw new Error('failed to load report');
@@ -71,7 +68,7 @@ export default function Report() {
     } catch (error) {
       alert(error);
     }
-  }
+  };
 
   const processing_data = (data, date) => {
     let wkwkw = data.map(function (item) {
@@ -81,19 +78,20 @@ export default function Report() {
         invoice_date,
         due_dates,
         sum,
-        party,
-        sales_order: { sales_order }
+        party
       } = item;
       let a = {
         invoice_id: id,
         sold_to,
         party_name: party?.name,
-        po_number: sales_order.po_number
+        po_number: ''
       };
       a = date.reduce(function (initial, next) {
         if (due_dates === next) return { ...initial, [next]: sum[0]?.total_amount };
         else return { ...initial, [next]: 0 };
       }, a);
+
+      console.log(a);
       return a;
     });
 
@@ -119,50 +117,65 @@ export default function Report() {
 
   const handleSelectBuyer = (event) => {
     setSelectedBuyer(event.target.value);
-  }
+  };
 
   const handleMonthYear = (event) => {
     setMonthYear(event.target.value);
-  }
+  };
 
   return (
-    <>
-      <Stack direction="row" spacing={2}>
-        <TextField type="month" label="Bulan" onChange={handleMonthYear}/>
-        <FormControl fullWidth>
-          <InputLabel>Buyer</InputLabel>
-          <Select
-            onChange={handleSelectBuyer} 
-          >
-            {isEmpty(buyer)
-              ? null
-              : buyer?.map(function (x) {
-                  return (
-                    <MenuItem
-                      value={x.id}
-                      // selected={x.id === values.id}
-                    >{`${x.name}`}</MenuItem>
-                  );
-                })}
-          </Select>
-        </FormControl>
+    <Stack direction="column" spacing={2}>
+      <Paper style={{padding: 2}}>
+        <Stack direction="row" spacing={2}>
+          <TextField type="month" label="Bulan" onChange={handleMonthYear} />
+          <FormControl fullWidth>
+            <InputLabel>Buyer</InputLabel>
+            <Select onChange={handleSelectBuyer}>
+              {isEmpty(buyer)
+                ? null
+                : buyer?.map(function (x) {
+                    return (
+                      <MenuItem
+                        value={x.id}
+                        // selected={x.id === values.id}
+                      >{`${x.name}`}</MenuItem>
+                    );
+                  })}
+            </Select>
+          </FormControl>
 
-        <Button variant='outlined' onClick={handleGetReport}>Search</Button>
-      </Stack>
+          <Button variant="outlined" onClick={handleGetReport}>
+            Search
+          </Button>
+        </Stack>
+      </Paper>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+        <Table
+          className="wk_table wk_style1 wk_border"
+          sx={{ minWidth: 650, margin: 2 }}
+          size="small"
+          aria-label="a dense table"
+        >
           <TableHead>
             <TableRow>
               <TableCell colSpan={2} />
-              <TableCell align="center" colSpan={date?.length}>
+              <TableCell
+                className="wk_primary_color wk_gray_bg"
+                align="center"
+                colSpan={date?.length}
+              >
                 Month
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Party ID</TableCell>
-              <TableCell align="right">Invoice ID</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Party ID</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg" align="left">
+                Invoice ID
+              </TableCell>
               {date.map((_d) => (
-                <TableCell align="right">{_d}</TableCell>
+                <TableCell className="wk_primary_color wk_gray_bg" align="right">
+                  {_d}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -170,30 +183,36 @@ export default function Report() {
             {row.map((_row) => (
               <TableRow
                 key={row.sold_to}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                sx={{
+                  '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
+                }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" align="left">
                   {_row.party_name}
                 </TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" align="left">
                   {_row.po_number}
                 </TableCell>
                 {date.map((_d) => (
-                  <TableCell align="right">{fCurrency(_row[_d])}</TableCell>
+                  <TableCell component="th" align="right">
+                    {fCurrency(_row[_d])}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}
             <TableRow>
-              <TableCell colSpan={2} align="right">
+              <TableCell component="th" colSpan={2} align="right">
                 Total
               </TableCell>
               {date.map((_row) => (
-                <TableCell align="right">{fCurrency(sum(totalVal[_row]))}</TableCell>
+                <TableCell component="th" align="right">
+                  {fCurrency(sum(totalVal[_row]))}
+                </TableCell>
               ))}
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Stack>
   );
 }

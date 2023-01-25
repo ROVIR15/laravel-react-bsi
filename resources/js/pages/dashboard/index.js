@@ -37,3 +37,4 @@ export { default as FactoryLayout } from './Factory';
 export { default as PaymentLayout } from './Finance/Payment';
 export { default as FinanceAccountLayout } from './Finance/FinanceAccount';
 export { default as FinanceAccountTransactionLayout } from './Finance/FinanceAccountTransaction';
+export { default as OrderPLAnalysisLayout } from './OrderPLAnalysis';

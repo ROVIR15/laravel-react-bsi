@@ -124,7 +124,8 @@ export function _orderItem(array){
         },
         ...product_feature 
       },
-      qty
+      qty,
+      description
     } = x;
     return {
       id: id,
@@ -134,7 +135,8 @@ export function _orderItem(array){
       name,
       satuan,
       qty_order: qty,
-      deliv_qty: 0
+      deliv_qty: 0,
+      description
     }
   })
   
@@ -894,14 +896,16 @@ export function _shipmentItem(array){
   if(!isArray(array)) return undefined;
   if(isEmpty(array)) return undefined;
   return array.map((x) => {
-    const { id, order_item, qty_shipped  } = x;
+    const { id, order_item, qty_shipped, description } = x;
     return { 
       id,
       name: order_item?.product_feature?.product?.goods?.name,
       size: order_item?.product_feature?.size,
       color: order_item?.product_feature?.color,
+      satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
-      deliv_qty: qty_shipped
+      deliv_qty: qty_shipped,
+      description: description
     }
   })
 }
@@ -993,4 +997,19 @@ export function BomServiceList(array){
 
     return {id, bom_id, unit_price, name: service.name}
   });
+}
+
+export function _getAddressInfoOfParty(array) {
+  if (isEmpty(array)) return [];
+  return array.reduce((initial, next) => [...initial, next?.info_address], []);
+}
+
+export function _getEmailInfoOfParty(array) {
+  if (isEmpty(array)) return [];
+  return array.reduce((initial, next) => [...initial, next?.info_email], []);
+}
+
+export function _getPhoneNumberInfoOfParty(array) {
+  if (isEmpty(array)) return [];
+  return array.reduce((initial, next) => [...initial, next?.info_number], []);
 }

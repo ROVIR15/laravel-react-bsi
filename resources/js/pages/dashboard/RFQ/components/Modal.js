@@ -44,7 +44,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
       return undefined
     }
 
-      API.getProductFeature(async (res) => {
+      API.getService(async (res) => {
         if(!res) return
         if(!res.data) {
           setOptions([]);
@@ -53,6 +53,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
           setOptions(data);
         }
       })
+
     return () => {
       active = false;
     };

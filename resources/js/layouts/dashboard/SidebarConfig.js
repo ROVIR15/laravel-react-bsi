@@ -8,6 +8,7 @@ import archiveFill from '@iconify/icons-eva/archive-fill';
 import settingsOutline from '@iconify/icons-eva/settings-2-outline';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import carFill from '@iconify/icons-eva/car-fill';
+import bookOpenFill from '@iconify/icons-eva/book-open-fill';
 //Inactive
 import shoppingCart from '@iconify/icons-eva/shopping-cart-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
@@ -44,10 +45,6 @@ const sidebarConfig = [
       {
         title: 'Sales Order',
         path: '/dashboard/order/sales-order',
-      },
-      {
-        title: 'Outbound Delivery',
-        path: '/dashboard/inventory/outbound-delivery'
       }
     ]
   },
@@ -253,6 +250,21 @@ const sidebarConfig = [
       {
         title: 'Payment',
         path: '/dashboard/finance/payment'
+      }
+    ]
+  },
+  {
+    title: "Report and Analysis",
+    name: 'report',
+    icon: getIcon(bookOpenFill),
+    children: [
+      {
+        title: 'Invoice Report',
+        path: '/dashboard/finance/invoice/report',
+      },
+      {
+        title: 'Order P/L Analysis',
+        path: '/dashboard/order-pl-analysis'
       }
     ]
   },

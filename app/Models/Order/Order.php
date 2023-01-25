@@ -49,4 +49,8 @@
     public function avg_value(){
       return $this->hasMany('App\Models\Order\OrderItem')->select('id', 'order_id', DB::raw('avg(unit_price) as unit_price'))->groupBy('order_id');
     }
+
+    public function info(){
+      return $this->hasMany('App\Models\Order\OrderItem')->select('id', 'order_id', DB::raw('avg(unit_price) as unit_price, sum(unit_price*qty) as total_amount, sum(qty) as total_qty'))->groupBy('order_id');
+    }
   }

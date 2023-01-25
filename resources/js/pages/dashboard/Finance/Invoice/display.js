@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isUndefined } from 'lodash';
+import { filter, isArray, isUndefined, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Table,
@@ -7,21 +7,22 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 
-import { fNumber, fCurrency } from '../../../../utils/formatNumber'
+import { fNumber, fCurrency } from '../../../../utils/formatNumber';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from '../components/ListToolbar';
 //
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
 import moment from 'moment';
 
-moment.locale('id')
+moment.locale('id');
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -54,60 +55,94 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.serial_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party_id === query[1]
+    );
+  else return filter(array, (_b) => _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function Invoice({ placeHolder }) {
-
   const [invoice, setInvoice] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+
+  //----------------filter by month and year------------------//
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
+  //----------------------------------------------------------//
+
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
-      try {
-        API.getSalesInvoice('?invoice_type=1', (res) => {
-          if(!res) return
-          if(!res.data) {
-            setInvoice([]);
-          } else {
-            const _data = res.data.map(function(item){
-              const { sales_invoice } = item
-              return {
-                id: sales_invoice?.id,
-                invoice_date: sales_invoice?.invoice_date,
-                tax: sales_invoice?.tax,
-                billed_to: sales_invoice?.party?.name,
-                serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
-                total_qty: sales_invoice?.sum[0]?.total_qty,
-                total_amount: sales_invoice?.sum[0]?.total_amount,
-                status: sales_invoice?.status[0]?.type?.name
-              }
+    try {
+      API.getSalesInvoice(`?invoice_type=1&monthYear=${filterMonthYear}`, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setInvoice([]);
+        } else {
+          const _data = res.data.map(function (item) {
+            const { sales_invoice } = item;
+            return {
+              id: sales_invoice?.id,
+              invoice_date: sales_invoice?.invoice_date,
+              tax: sales_invoice?.tax,
+              party_id: sales_invoice?.party?.id,
+              billed_to: sales_invoice?.party?.name,
+              serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
+              total_qty: sales_invoice?.sum[0]?.total_qty,
+              total_amount: sales_invoice?.sum[0]?.total_amount,
+              status: sales_invoice?.status[0]?.type?.name
+            };
+          });
+
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.sales_invoice?.party);
+            })
+            .map(function (obj) {
+              return obj.sales_invoice?.party;
             });
-            setInvoice(_data);
-          }
-        });          
-      } catch (error) {
-        alert(error)
-      }
-  }
+
+          let _buyer = uniqBy(buyer, 'id');
+
+          setOptionsBuyer(_buyer);
+
+          setInvoice(_data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -159,24 +194,23 @@ function Invoice({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteSalesInvoice(id, function(res){
-        if(res.success) alert('success');
-        else throw new Error('failed to delete data')
-      });  
-    } catch(error) {
-      alert(error)
+      API.deleteSalesInvoice(id, function (res) {
+        if (res.success) alert('success');
+        else throw new Error('failed to delete data');
+      });
+    } catch (error) {
+      alert(error);
     }
 
-    setInvoice([])
+    setInvoice([]);
     handleUpdateData();
-
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;
 
-  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), [filterName, filterBuyer]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -184,7 +218,14 @@ function Invoice({ placeHolder }) {
         numSelected={selected.length}
         filterName={filterName}
         onFilterName={handleFilterByName}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -229,7 +270,9 @@ function Invoice({ placeHolder }) {
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>
                       <TableCell align="left">{fNumber(total_qty)}</TableCell>
-                      <TableCell align="left">Rp. {fCurrency(total_amount*((tax/100)+1))}</TableCell>
+                      <TableCell align="left">
+                        Rp. {fCurrency(total_amount * (tax / 100 + 1))}
+                      </TableCell>
                       <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
@@ -265,7 +308,7 @@ function Invoice({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default Invoice;

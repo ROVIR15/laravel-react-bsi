@@ -18,6 +18,7 @@ class POView extends JsonResource
         'id' => $this->id,
         'order_id' => $this->order_id,
         'po_number' => $this->po_number,
+        'party' => $this->party,
         'bought_from' => $this->party->name,
         'issue_date' => $this->issue_date,
         'delivery_date' => $this->delivery_date,

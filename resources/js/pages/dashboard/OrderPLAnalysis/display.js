@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty, isUndefined } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -18,15 +18,14 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
-import { outboundShipmentArrangedData } from '../../../helpers/data';
+import { serviceList2 } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'buyer_name', label: 'Buyer', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
+  { id: 'name', label: 'Factory Name', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -56,14 +55,14 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.facility?.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-function OutboundDelivery({ placeHolder }) {
+function DisplayBuyer({ placeHolder }) {
 
-  const [goodsReceipt, setGoodsReceipt] = useState([]);
+  const [goodsData, setGoodsData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -72,44 +71,21 @@ function OutboundDelivery({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
+
+    try {
+      API.getReconcile((res) => {
+        if(!res) return;
+        if(isEmpty(res.data)) throw new Error('failed to load data');
+        else {
+          let _data = res.data.reduce((initial, next) => ([...initial, { id: next?.id, costing_name: next?.costing2?.name,  sales_order: next?.order?.sales_order?.po_number}]),[])
+          setGoodsData(_data);
+        }
+      })
+    } catch (error) {
+      alert(error)
     }
 
-    if(isEmpty(goodsReceipt)) {
-
-      try {
-        API.getShipment((res) => {
-          if(!res) return
-          if(!res.data) {
-            setGoodsReceipt([]);
-          } else {
-            let response = outboundShipmentArrangedData(res.data);
-            setGoodsReceipt([]);
-          }
-        });
-      } catch (error) {
-        alert(error)
-      }
-
-    }
   }, [])
-
-  const changeData = (payload) => {
-    if(!payload) return undefined;
-    if(!Array.isArray(payload)) return undefined;
-    let newData = payload.map((item) => {
-      return {
-        id: item.id,
-        delivery_date: item.delivery_date,
-        buyer_name: item.buyer.name,
-        receiver_name: item.ship.name,
-        po_number: item.sales.po_number
-      }
-    });
-    setGoodsReceipt(newData);
-  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -119,7 +95,7 @@ function OutboundDelivery({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = goodsReceipt.map((n) => n.name);
+      const newSelecteds = goodsData.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -127,21 +103,6 @@ function OutboundDelivery({ placeHolder }) {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -158,16 +119,12 @@ function OutboundDelivery({ placeHolder }) {
   };
 
   const handleDeleteData = (event, id) => {
-    event.preventDefault();
-    API.deleteGoodsReceipt(id, function(res){
-      if(res.success) setGoodsReceipt([]);
-      else alert('error');
-    });
+
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsData.length) : 0;
 
-  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), filterName);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -183,10 +140,11 @@ function OutboundDelivery({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={goodsReceipt.length}
+              rowCount={goodsData.length}
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
@@ -194,36 +152,23 @@ function OutboundDelivery({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const {
-                    id,
-                    po_number,
-                    ship,
-                    party,
-                    delivery_date
-                  } = row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
+                .map((row, index) => {
+                  const { id, costing_name, sales_order} = row;
+                  console.log(row)
+                  const isItemSelected = selected.indexOf(id) !== -1;
                   return (
                     <TableRow
                       hover
                       key={id}
                       tabIndex={-1}
-                      role="checkbox"
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{ship.name}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
+                      <TableCell align="left">{costing_name}</TableCell>
+                      <TableCell align="left">{sales_order}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} deleteActive={false}/>
                       </TableCell>
                     </TableRow>
                   );
@@ -249,7 +194,7 @@ function OutboundDelivery({ placeHolder }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={goodsReceipt.length}
+        count={goodsData.length ? goodsData.length : 0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -259,4 +204,4 @@ function OutboundDelivery({ placeHolder }) {
   )
 }
 
-export default OutboundDelivery;
+export default DisplayBuyer

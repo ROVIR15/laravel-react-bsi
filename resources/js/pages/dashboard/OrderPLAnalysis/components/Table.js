@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -17,19 +17,16 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 
 // api
 import API from '../../../../helpers';
-import { useLocation, useParams } from 'react-router-dom';
-import { isEditCondition } from '../../../../helpers/data';
 
+import { useParams } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
-    { id: 'category', label: 'Kategori', alignRight: false },
-    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'satuan', label: 'Satuan', alignRight: false },
-    { id: 'brand', label: 'Brand', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'po_number', label: 'Style', alignRight: false },
+  { id: 'qty', label: 'Size', alignRight: false },
+  { id: 'amount', label: 'Color', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -50,43 +47,27 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
-  if (isArray(query) && query[1] > 0) {
-    return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-        && _b.category_id === query[1]
-      )
-    });
-  } else {
-    return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-      )
-    });
+  if (query) {
+    return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
+  return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
-
+function TableD({ list, type, placeHolder, selected, setSelected }) {
+  const { id } = useParams();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-//   const [selected, setSelected] = useState([]);
+  //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [filterCategory, setFilterCategory] = useState(0);
-
-  const { pathname } = useLocation();
-  const { id } = useParams();
-  let paramsId = id;
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -96,7 +77,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = list.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -104,23 +85,25 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id}
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
+    const selectedIndex = selected.map((e) => e.id).indexOf(name.id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      if(isEditCondition(pathname.split('/'), id)) {
+      newSelected = newSelected.concat(selected, name);
+
+      if(type === 1){
         try {
-          API.insertQuoteItem([name], function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
-          update();
-        } catch(e) {
-          alert(e);
-        }
-      } else {
-        newSelected = newSelected.concat(selected, name);
+          API.insertReconcilePurchaseOrder([{ reconcile_id: id, order_id: name.order_id, purchase_order_id: name.id }], function (res) {
+            if (!res) return;
+            if (!res.success) throw new Error('failed to store');
+            else {
+              alert('done');
+            }
+          });
+        } catch (error) {
+          alert(error);
+        }  
       }
+
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -131,7 +114,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         selected.slice(selectedIndex + 1)
       );
     }
-    setSelected(newSelected);
+    setSelected(newSelected, type);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -147,10 +130,6 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     setFilterName(event.target.value);
   };
 
-  const handleFilterCategoryAndSub = (event) => {
-    setFilterCategory(event.target.value)
-  }
-
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
@@ -159,17 +138,17 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     // }).catch(function(error){
     //   alert('error')
     // });
-  }
+  };
 
   const handleDeleteSelected = () => {
-    setSelected([])
-  }
+    setSelected([]);
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const filteredData = applySortFilter(list, getComparator(order, orderBy), [filterName, filterCategory]);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <div>
@@ -178,14 +157,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
-        onDeletedSelected={handleDeleteSelected}
-        filterCategory={filterCategory}
-        onFilterCategoryAndSub={handleFilterCategoryAndSub}
-        categoryFilterActive={true}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
+          <Table>
             <ListHead
               order={order}
               orderBy={orderBy}
@@ -199,18 +174,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
-                  const {
-                    id,
-                    name,
-                    size,
-                    color,
-                    category,
-                    sub_category,
-                    satuan,
-                    brand
-                  } = row;
+                  const isItemSelected = selected.map((e) => e.id).indexOf(row.id) !== -1;
+                  const { id, po_number, qty, amount } = row;
                   return (
                     <TableRow
                       hover
@@ -222,19 +187,14 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
-                          disabled={disabled}
                           checked={isItemSelected}
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">
-                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
-                      </TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
-                      <TableCell align="left">{brand}</TableCell>
+                      <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{qty}</TableCell>
+                      <TableCell align="left">{amount}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -257,7 +217,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[10]}
+        rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}
@@ -266,7 +226,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </div>
-  )
+  );
 }
 
 export default TableD;

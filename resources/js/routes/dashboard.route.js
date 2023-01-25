@@ -36,7 +36,8 @@ import {
   MPLayout,
   PaymentLayout,
   FinanceAccountLayout,
-  FinanceAccountTransactionLayout
+  FinanceAccountTransactionLayout,
+  OrderPLAnalysisLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -71,7 +72,6 @@ import AddSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/n
 import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/new';
 import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
-import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
 import AddVInv from '../pages/dashboard/Finance/VendorBills/new';
 import AddMachine from '../pages/dashboard/Machine/add';
@@ -107,7 +107,6 @@ import DisplayLabor from '../pages/dashboard/Labor/display';
 
 import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
 import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
-import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
 import DisplayVInv from '../pages/dashboard/Finance/VendorBills/display';
@@ -123,6 +122,8 @@ import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
 import DisplayFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/display';
 import DisplayFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/display';
 import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
+
+import DisplayOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -143,7 +144,6 @@ import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStud
 import ShowSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/show';
 import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
-import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
 import ShowVInv from '../pages/dashboard/Finance/VendorBills/show';
 import ShowMachine from '../pages/dashboard/Machine/show';
@@ -170,10 +170,12 @@ import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document';
 
+//Report
+import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
+
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
 import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
-import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
 
 //Monitoring
 import Ininih from '../pages/dashboard/Monitoring';
@@ -210,6 +212,11 @@ import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/displ
 
 import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
 
+import AddOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/new';
+import ShowOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/show';
+
+import TestVendor from '../pages/dashboard/Vendor/test';
+
 import { 
   IncomingLayout,
   OutgoingLayout,
@@ -223,6 +230,11 @@ export default function TestRouter() {
     { path: '/', children: [
         { path: 'register', element: <Register /> },        
         { path: 'login', element: <Login /> },
+      ]
+    },
+    {
+      path: '/downloads', children: [
+        { path: 'purchase-order/:id', element: <TestVendor />}
       ]
     },
     {
@@ -362,7 +374,7 @@ export default function TestRouter() {
           children: [
             { path: ':id', element: <ShowVendor />},
             { path: 'add', element: <AddVendor />},
-            { path: 'display', element: <DisplayVendor />},
+            { path: 'display', element: <DisplayVendor />}
           ]
         },
         { 
@@ -410,16 +422,6 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGR />},
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
-            { path: 'document/:id', element: <DocumentGR/>}
-          ]
-        },
-        { 
-          path: 'inventory/outbound-delivery', 
-          element: <OutboundDeliveryLayout />,
-          children: [
-            { path: ':id', element: <ShowOD />},
-            { path: 'add', element: <AddOD />},
-            { path: 'display', element: <DisplayOD />},
             { path: 'document/:id', element: <DocumentGR/>}
           ]
         },
@@ -585,7 +587,8 @@ export default function TestRouter() {
             { path: 'add', element: <AddInv /> },
             { path: ':id', element: <ShowInv /> },
             { path: 'display', element: <DisplayInv /> },
-            { path: 'document/:id', element: <DocumentINV/>}
+            { path: 'document/:id', element: <DocumentINV/>},
+            { path: 'report', element: <ReportINV/>}
           ]
         },
         { 
@@ -632,7 +635,16 @@ export default function TestRouter() {
           children: [
             { path: 'add', element: <AddFactory /> },
             { path: ':id', element: <ShowFactory /> },
-            { path: 'display', element: <DisplayFactory /> }
+            { path: 'display', element: <DisplayFactory /> },
+          ]
+        },
+        {
+          path: 'order-pl-analysis',
+          element: <OrderPLAnalysisLayout />,
+          children: [
+            { path: 'add', element: <AddOrderPLAnalysis /> },
+            { path: ':id', element: <ShowOrderPLAnalysis /> },
+            { path: 'display', element: <DisplayOrderPLAnalysis /> },
           ]
         },
         { 
@@ -660,7 +672,7 @@ export default function TestRouter() {
           children: [
             { path: 'add', element: <AddIncomingShipment /> },
             { path: ':id', element: <ShowIncomingShipment /> },
-            { path: 'display', element: <DisplayIncomingShipment /> }
+            { path: 'display', element: <DisplayIncomingShipment /> },
           ]
         },
         {

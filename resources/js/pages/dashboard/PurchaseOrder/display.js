@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,16 +8,17 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import ChipStatusProduction from '../../../components/ChipStatusProduction';
 import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
 
-import {useLocation} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 //
 import BUYERLIST from '../../../_mocks_/buyer';
@@ -27,21 +28,22 @@ import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 import useAuth from '../../../context';
 import moment from 'moment';
+moment.locale('id');
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'po_number', label: 'Ref. Quote', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
-    { id: 'completion_status', label: 'Progress', alignRight: false },
-    { id: 'bought_from', label: 'Supplier', alignRight: false },
-    { id: 'total_qty', label: 'Qty', alignRight: false },
-    { id: 'total_money', label: 'Total', alignRight: false },
-    { id: 'issue_date', label: 'Issue Date', alignRight: false },
-    { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
-    { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'po_number', label: 'Ref. Quote', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'completion_status', label: 'Progress', alignRight: false },
+  { id: 'bought_from', label: 'Supplier', alignRight: false },
+  { id: 'total_qty', label: 'Qty', alignRight: false },
+  { id: 'total_money', label: 'Total', alignRight: false },
+  { id: 'issue_date', label: 'Issue Date', alignRight: false },
+  { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -62,21 +64,24 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function PurchaseOrder({ placeHolder }) {
-
   const [purchaseOrderData, setpurchaseOrderData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -90,13 +95,11 @@ function PurchaseOrder({ placeHolder }) {
 
   const { user } = useAuth();
 
-  useEffect(() => {
-
-  }, [])
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    handleUpdateData()
-  }, [filterMonthYear])
+    handleUpdateData();
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
     const { role } = user;
@@ -105,41 +108,51 @@ function PurchaseOrder({ placeHolder }) {
     setLoading(true);
 
     role.map((item) => {
-      if(item.approve && item.submit && item.review) {
-        params=null
-        return
+      if (item.approve && item.submit && item.review) {
+        params = null;
+        return;
       }
-      if(item.approve) {
-        params='?level=approve'
-        return
-      } 
+      if (item.approve) {
+        params = '?level=approve';
+        return;
+      }
       if (item.submit) {
-        params='?level=submit'
-        return
+        params = '?level=submit';
+        return;
       }
       if (item.review) {
-        params='?level=review'
-        return
+        params = '?level=review';
+        return;
       }
     });
 
     params = params + `&monthYear=${filterMonthYear}`;
 
     try {
-      API.getPurchaseOrder(params,(res) => {
-		  if(!res) return
-		  if(!res.data) {
+      API.getPurchaseOrder(params, (res) => {
+        if (!res) return;
+        if (!res.data) {
           setpurchaseOrderData([]);
         } else {
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.party);
+            })
+            .map(function (obj) {
+              return obj.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
           setpurchaseOrderData(res.data);
         }
-      });      
+      });
     } catch (error) {
-      alert('error')
+      alert('error');
     }
 
     setLoading(false);
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -159,7 +172,7 @@ function PurchaseOrder({ placeHolder }) {
   const handleMonthYearChanges = (event) => {
     const { value } = event.target;
     setFilterMonthYear(value);
-  }
+  };
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -180,30 +193,27 @@ function PurchaseOrder({ placeHolder }) {
   };
 
   const handleDateChanges = (event) => {
-    const { name, value} = event.target;
+    const { name, value } = event.target;
     setFilterDate((prevValue) => {
-      if(name === 'fromDate') {
-        if(value > prevValue.thruDate) {
+      if (name === 'fromDate') {
+        if (value > prevValue.thruDate) {
           alert('from date cannot be more than to date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
-      } 
-      else if(name === 'thruDate') {
-        if(value < prevValue.fromDate) {
+      } else if (name === 'thruDate') {
+        if (value < prevValue.fromDate) {
           alert('to date cannot be less than fron date');
           return prevValue;
         } else {
-          return ({...prevValue, [name]: value});
+          return { ...prevValue, [name]: value };
         }
+      } else {
+        return { ...prevValue, [name]: value };
       }
-      else {
-        return ({...prevValue, [name]: value});
-      }
-    })
-  }
-
+    });
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -222,21 +232,33 @@ function PurchaseOrder({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deletePurchaseOrder(id, function(res){
-        if(res.success) setpurchaseOrderData([]);
-      })  
+      API.deletePurchaseOrder(id, function (res) {
+        if (res.success) setpurchaseOrderData([]);
+      });
     } catch (error) {
       alert(error);
     }
 
     handleUpdateData();
-  }
+  };
+
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrderData.length) : 0;
 
-  const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -249,6 +271,10 @@ function PurchaseOrder({ placeHolder }) {
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
         onGo={handleUpdateData}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -289,18 +315,26 @@ function PurchaseOrder({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index+1}</TableCell>
+                      <TableCell align="left">{index + 1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
-                      <TableCell align="left">{ChipStatusProduction(completion_status[0]?.status?.name)}</TableCell>
+                      <TableCell align="left">
+                        {ChipStatusProduction(completion_status[0]?.status?.name)}
+                      </TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
-                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
-                      <TableCell align="left">{issue_date}</TableCell>
-                      <TableCell align="left">{valid_thru}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
+                      <TableCell align="left">
+                        Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}
+                      </TableCell>
+                      <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={id}
+                          document={true}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -315,10 +349,13 @@ function PurchaseOrder({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    {loading ? 
-                      (<Typography variant="body2" align="center">Please Wait</Typography>):
-                      (<SearchNotFound searchQuery={filterName} />)
-                    }
+                    {loading ? (
+                      <Typography variant="body2" align="center">
+                        Please Wait
+                      </Typography>
+                    ) : (
+                      <SearchNotFound searchQuery={filterName} />
+                    )}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -336,7 +373,7 @@ function PurchaseOrder({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default PurchaseOrder;

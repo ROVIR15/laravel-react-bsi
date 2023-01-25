@@ -80,6 +80,8 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
+  console.log(query);
   if (query[1] !== 0)
     if(isEqual(query[2], 0)){
       return filter(
@@ -95,13 +97,10 @@ function applySortFilter(array, comparator, query) {
       );  
     }
   else {
-    if(isEqual(query[2], 0)){
-      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-    } else {
-      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b?.order_id === query[2]);
-    }   
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   } 
-  // return stabilizedThis.map((el) => el[0]);
+
+  return stabilizedThis.map((el) => el[0]);
 }
 
 function Display({ placeHolder }) {
@@ -140,7 +139,9 @@ function Display({ placeHolder }) {
   }, []);
 
   useEffect(() => {
-    if(isEqual(filterBuyer, 0)) return;
+    //check first is that order_id was found on recent data list;
+    let isFound = filteredData.filter((item) => (item.order_id === filterByOrder)).length > 0;
+    if(!isFound) setFilterByOrder(0);
     let _orderList = filteredData.filter((item) => !isNull(item?.po_number)).map((obj) => ({order_id: obj.order_id, po_number: obj.po_number}));
     let _uniqOrderList = uniqBy(_orderList, 'order_id');
     setOrderList(_uniqOrderList)
@@ -299,15 +300,14 @@ function Display({ placeHolder }) {
                     monitoring_fg[0]?.output
                   );
 
-                  const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
                       hover
                       key={id}
                       tabIndex={-1}
                       role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
+                      // selected={isItemSelected}
+                      // aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{party?.name}</TableCell>

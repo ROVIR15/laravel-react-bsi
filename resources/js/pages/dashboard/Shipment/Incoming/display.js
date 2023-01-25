@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Table,
@@ -13,7 +13,8 @@ import {
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from './components/ListToolbar'
 //
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
@@ -58,13 +59,14 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => {
-      let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`;
-      return _p.toLowerCase().indexOf(query.toLowerCase()) !== -1;
-    });
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.order?.purchase_order?.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+
 }
 
 function OutboundDelivery({ placeHolder }) {
@@ -81,7 +83,7 @@ function OutboundDelivery({ placeHolder }) {
     handleUpdateData();
   }, [filterMonthYear]);
 
-  moment.locale('id')
+  moment.locale('id');
 
   function handleUpdateData() {
     let params = '?shipment_type=1';
@@ -93,6 +95,18 @@ function OutboundDelivery({ placeHolder }) {
         if (!res.data) {
           setGoodsReceipt([]);
         } else {
+          let buyer = res?.data
+          .filter(function (item, index, arr) {
+            return !isNull(item?.order?.purchase_order?.party);
+          })
+          .map(function (obj) {
+            return obj.order?.purchase_order?.party;
+          });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
+
+
           setGoodsReceipt(res.data);
         }
       });
@@ -158,9 +172,20 @@ function OutboundDelivery({ placeHolder }) {
     // }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
 
-  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
+  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer
+  ]);
 
   const isDataNotFound = filteredData.length === 0;
 
@@ -174,6 +199,10 @@ function OutboundDelivery({ placeHolder }) {
         filterMonthYear={filterMonthYear}
         onFilterMonthYear={handleMonthYearChanges}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>

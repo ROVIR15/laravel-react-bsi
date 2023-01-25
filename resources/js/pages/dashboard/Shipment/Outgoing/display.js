@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Table,
@@ -13,9 +13,9 @@ import {
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
-
-moment.locale('id')
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from './components/ListToolbar'
+moment.locale('id');
 
 // api
 import API from '../../../../helpers';
@@ -59,13 +59,15 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => {
-      let _p = `${_b.serial_number} ${_b.order?.sales_order?.po_number} ${_b.order?.sales_order?.party?.name}`;
-      return _p.toLowerCase().indexOf(query.toLowerCase()) !== -1;
-    });
-  }
-  return stabilizedThis.map((el) => el[0]);
+
+  console.log(query)
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.order?.sales_order?.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
 }
 
 function OutboundDelivery({ placeHolder }) {
@@ -93,6 +95,17 @@ function OutboundDelivery({ placeHolder }) {
         if (!res.data) {
           setGoodsReceipt([]);
         } else {
+          let buyer = res?.data
+          .filter(function (item, index, arr) {
+            return !isNull(item?.order?.sales_order?.party);
+          })
+          .map(function (obj) {
+            return obj.order?.sales_order?.party;
+          });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
+
           setGoodsReceipt(res.data);
         }
       });
@@ -150,9 +163,18 @@ function OutboundDelivery({ placeHolder }) {
     handleUpdateData();
   };
 
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
 
-  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), [filterName, filterBuyer]);
 
   const isDataNotFound = filteredData.length === 0;
 
@@ -177,6 +199,10 @@ function OutboundDelivery({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -195,8 +221,15 @@ function OutboundDelivery({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, serial_number, delivery_date, est_delivery_date, sum, order, status } =
-                    row;
+                  const {
+                    id,
+                    serial_number,
+                    delivery_date,
+                    est_delivery_date,
+                    sum,
+                    order,
+                    status
+                  } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -215,12 +248,18 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>
                       <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
-                      <TableCell align="left">{moment(order?.sales_order?.delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">
+                        {moment(order?.sales_order?.delivery_date).format('ll')}
+                      </TableCell>
                       <TableCell align="left">
                         {dateDiff(delivery_date, order?.sales_order?.delivery_date)}
                       </TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} document={true} />
+                        <MoreMenu
+                          id={id}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                          document={true}
+                        />
                       </TableCell>
                     </TableRow>
                   );

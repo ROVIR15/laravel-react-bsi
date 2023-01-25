@@ -81,6 +81,30 @@
       return new BOMCollection($query);
     }
 
+    public function bomList()
+    {
+      try {
+        $query = BOM::with('party')->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json(['data' => $query]);
+    }
+
+    public function bomBuyer()
+    {
+      try {
+        $query = BOM::with('');
+      } catch (\Throwable $th) {
+        //throw $th;
+      }
+    }
+
     /**
      * Show the form for creating a new resource.
      *

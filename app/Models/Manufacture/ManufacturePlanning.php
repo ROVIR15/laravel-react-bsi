@@ -29,6 +29,6 @@ class ManufacturePlanning extends Model
     }
 
     public function test_sum_based_on_mpi() {
-        return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems')->with('ckckck', 'sales_order');
+        return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems')->with('sales_order');
     }
 }

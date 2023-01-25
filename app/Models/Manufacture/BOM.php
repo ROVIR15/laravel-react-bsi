@@ -61,5 +61,9 @@ class BOM extends Model
             $query->select('id', 'prod_capacity');
         }]);
     }
+
+    public function info(){
+        return $this->hasMany('App\Models\Manufacture\BOMItem', 'bom_id');
+    }
     
 }

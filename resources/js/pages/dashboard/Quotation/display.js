@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -9,20 +9,21 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
-  Typography,
+  Typography
 } from '@mui/material';
 //components
 import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
 // api
 import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
 
 import useAuth from '../../../context';
+import ListToolbar from './components/ListToolbar';
 import moment from 'moment';
-
+moment.locale('id')
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -56,21 +57,25 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayQuote({ placeHolder }) {
-
   const [quoteData, setQuoteData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,8 +96,8 @@ function DisplayQuote({ placeHolder }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    handleUpdateData()
-  }, [filterMonthYear])
+    handleUpdateData();
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
     const { role } = user;
@@ -101,17 +106,17 @@ function DisplayQuote({ placeHolder }) {
     setLoading(true);
 
     role.map((item) => {
-      if(item.approve) {
-        params='level=approve'
-        return
-      } 
+      if (item.approve) {
+        params = 'level=approve';
+        return;
+      }
       if (item.submit) {
-        params='level=submit'
-        return
+        params = 'level=submit';
+        return;
       }
       if (item.review) {
-        params='level=review'
-        return
+        params = 'level=review';
+        return;
       }
     });
 
@@ -119,19 +124,30 @@ function DisplayQuote({ placeHolder }) {
 
     try {
       API.getQuoteBySO(params, (res) => {
-		    if(!res) return
-		    if(!res.data) {
+        if (!res) return;
+        if (!res.data) {
           setQuoteData([]);
         } else {
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.party);
+            })
+            .map(function (obj) {
+              return obj.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
+
           setQuoteData(res.data);
         }
       });
     } catch (error) {
-     alert('error'); 
+      alert('error');
     }
 
     setLoading(false);
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -149,7 +165,7 @@ function DisplayQuote({ placeHolder }) {
   //       } else {
   //         return ({...prevValue, [name]: value});
   //       }
-  //     } 
+  //     }
   //     else if(name === 'thruDate') {
   //       if(value < prevValue.fromDate) {
   //         alert('to date cannot be less than fron date');
@@ -167,7 +183,7 @@ function DisplayQuote({ placeHolder }) {
   const handleMonthYearChanges = (event) => {
     const { value } = event.target;
     setFilterMonthYear(value);
-  }
+  };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -195,21 +211,32 @@ function DisplayQuote({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteQuote(id, function(res){
-        if(res.success) setQuoteData([]);
+      API.deleteQuote(id, function (res) {
+        if (res.success) setQuoteData([]);
         handleUpdateData();
-      })
+      });
     } catch {
-      alert('error')
+      alert('error');
     }
+  };
 
-  }
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -221,6 +248,10 @@ function DisplayQuote({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -259,17 +290,23 @@ function DisplayQuote({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index+1}</TableCell>
+                      <TableCell align="left">{index + 1}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
-                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
-                      <TableCell align="left">{issue_date}</TableCell>
-                      <TableCell align="left">{valid_thru}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
+                      <TableCell align="left">
+                        Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}
+                      </TableCell>
+                      <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={id}
+                          document={true}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -284,10 +321,13 @@ function DisplayQuote({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    {loading ? 
-                      (<Typography variant="body2" align="center">Please Wait</Typography>):
-                      (<SearchNotFound searchQuery={filterName} />)
-                    }
+                    {loading ? (
+                      <Typography variant="body2" align="center">
+                        Please Wait
+                      </Typography>
+                    ) : (
+                      <SearchNotFound searchQuery={filterName} />
+                    )}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -305,7 +345,7 @@ function DisplayQuote({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayQuote;

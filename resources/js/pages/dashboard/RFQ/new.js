@@ -246,9 +246,7 @@ function RFQ() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Purchase Re Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', width: 350, editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', width: 150, editable: false },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
       {

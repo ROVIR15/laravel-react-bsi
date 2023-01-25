@@ -40,8 +40,11 @@ class InvoiceController extends Controller
                 if(isset($type)) {
                   $query = InvoiceHasType::with('sales_invoice', 'terms')
                   ->where('invoice_type_id', $type)
-                  ->whereYear('invoice_date', '=', $year)
-                  ->whereMonth('invoice_date', '=', $month)
+                  ->whereHas('sales_invoice', function($query) use ($year, $month){
+                    $query
+                    ->whereYear('invoice_date', '=', $year)
+                    ->whereMonth('invoice_date', '=', $month);  
+                  })
                   ->get();
                 } else {
                   $query = Invoice::all();

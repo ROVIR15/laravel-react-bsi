@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,13 +8,15 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
+
 // api
 import API from '../../../helpers';
 import { fCurrency } from '../../../utils/formatNumber';
@@ -25,14 +27,14 @@ import moment from 'moment';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'po_number', label: 'PO Number', alignRight: false },  
+  { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'vendor_name', label: 'Nama Supplier', alignRight: false },
   { id: 'total_qty', label: 'Qty', alignRight: false },
-  { id: 'total_money', label: 'Total', alignRight: false },  
+  { id: 'total_money', label: 'Total', alignRight: false },
   { id: 'issue_date', label: 'Issue Date', alignRight: false },
   { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -54,21 +56,25 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayRFQ({ placeHolder }) {
-
   const [quoteData, setQuoteData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -81,58 +87,76 @@ function DisplayRFQ({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const { user } = useAuth();
 
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    handleUpdateData()
-  }, [filterMonthYear])
-
+    handleUpdateData();
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
     const { role } = user;
     let params;
-    
+
     setLoading(true);
 
     role.map((item) => {
-      if(item.approve && item.submit && item.review) {
-        params=null
-        return
+      if (item.approve && item.submit && item.review) {
+        params = null;
+        return;
       }
-      if(item.approve) {
-        params='level=approve'
-        return
-      } 
+      if (item.approve) {
+        params = 'level=approve';
+        return;
+      }
       if (item.submit) {
-        params='level=submit'
-        return
+        params = 'level=submit';
+        return;
       }
       if (item.review) {
-        params='level=review'
-        return
+        params = 'level=review';
+        return;
       }
     });
 
     params = params + `&monthYear=${filterMonthYear}`;
 
-    try{
+    try {
       API.getRFQ(params, (res) => {
-		    if(!res) return
-		    if(!res.data) {
+        if (!res) return;
+        if (!res.data) {
           setQuoteData([]);
         } else {
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.party);
+            })
+            .map(function (obj) {
+              return obj.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
+
           setQuoteData(res.data);
         }
       });
-    } catch(error) {
-      alert('error')
+    } catch (error) {
+      alert('error');
     }
 
     setLoading(false);
-
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -152,8 +176,7 @@ function DisplayRFQ({ placeHolder }) {
   const handleMonthYearChanges = (event) => {
     const { value } = event.target;
     setFilterMonthYear(value);
-  }
-
+  };
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -190,22 +213,25 @@ function DisplayRFQ({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteQuote(id, function(res){
-        if(res.success) setQuoteData([]);
+      API.deleteQuote(id, function (res) {
+        if (res.success) setQuoteData([]);
         handleUpdateData();
-      })
+      });
     } catch {
-      alert('error')
+      alert('error');
     }
 
     handleUpdateData();
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -217,6 +243,10 @@ function DisplayRFQ({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -230,6 +260,10 @@ function DisplayRFQ({ placeHolder }) {
               numSelected={selected.length}
               onRequestSort={handleRequestSort}
               onSelectAllClick={handleSelectAllClick}
+              buyerFilterActive={true}
+              filterBuyer={filterBuyer}
+              onFilterBuyer={handleBuyerFilter}
+              listOfBuyer={optionsBuyer}
             />
             <TableBody>
               {filteredData
@@ -257,17 +291,21 @@ function DisplayRFQ({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">
-                        {ChipStatus(status[0]?.status_type)}
-                      </TableCell>
+                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
                       <TableCell align="left">{party.name}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
-                      <TableCell align="left">Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}</TableCell>
+                      <TableCell align="left">
+                        Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}
+                      </TableCell>
                       <TableCell align="left">{issue_date}</TableCell>
                       <TableCell align="left">{valid_thru}</TableCell>
                       <TableCell align="left">{delivery_date}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} document={true} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={id}
+                          document={true}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -282,10 +320,13 @@ function DisplayRFQ({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    {loading ? 
-                      (<Typography variant="body2" align="center">Please Wait</Typography>):
-                      (<SearchNotFound searchQuery={filterName} />)
-                    }
+                    {loading ? (
+                      <Typography variant="body2" align="center">
+                        Please Wait
+                      </Typography>
+                    ) : (
+                      <SearchNotFound searchQuery={filterName} />
+                    )}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -303,7 +344,7 @@ function DisplayRFQ({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayRFQ;

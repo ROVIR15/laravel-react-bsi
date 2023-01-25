@@ -191,12 +191,13 @@ function RFQ() {
 
   const deleteData = useCallback(
     (id) => () => {
-      API.deleteQuoteItem(id, function(res){
-        if(res.success) alert('success');
-        else alert('failed')
-      })
+      // API.deleteQuoteItem(id, function(res){
+      //   if(res.success) alert('success');
+      //   else alert('failed')
+      // })
 
-      handleUpdateAllRows();
+      // handleUpdateAllRows();
+      alert('this feature no longer active')
     }
   );
 
@@ -237,6 +238,7 @@ function RFQ() {
           'name' : name,
           'size' : size,
           'color' : color,
+          'item_name': `${name} ${size} - ${color}`,
           'qty' : key.qty,
           'unit_price' : key.unit_price
         }
@@ -248,9 +250,7 @@ function RFQ() {
   const columns = useMemo(() => [
     { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
     { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', width: 350, editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', width: 150, editable: false },
+    { field: 'item_name', headerName: 'Name', width: 350, editable: false},
     { field: 'qty', headerName: 'Quantity', editable: true },
     { field: 'unit_price', headerName: 'Unit Price', editable: true },
     { field: 'actions', type: 'actions', width: 100, 
@@ -279,6 +279,7 @@ function RFQ() {
           'name' : name,
           'size' : size,
           'color' : color,
+          'item_name': `${name} ${size} - ${color}`,
           'qty' : key.qty,
           'unit_price' : key.unit_price
         }

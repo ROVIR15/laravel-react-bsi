@@ -17,6 +17,7 @@ class SOView extends JsonResource
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
+            'party' => $this->party,
             'sold_to' => $this->party->name,
             'ship_to' => $this->ship->name,
             'po_number' => $this->po_number,
