@@ -47,7 +47,7 @@ export default function BasicTable({ payload, tax }) {
       sub = sub + item.qty * item.unit_price;
     });
     if(tax < 1) return fCurrency(Math.floor(sub));
-    else return fCurrency(Math.floor(sub) * (tax/100));
+    else return fCurrency(Math.floor(sub) * (1+(tax/100)));
   };
   return (
     <>
