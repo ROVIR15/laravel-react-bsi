@@ -28,4 +28,8 @@
     public function purchase_order() {
       return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('order_item', 'purchase_order');
     }    
+
+    public function user_info(){
+      return $this->belongsTo('App\User', 'user_id');
+    }
   }

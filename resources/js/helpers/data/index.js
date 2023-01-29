@@ -838,8 +838,8 @@ export function bomDocumentArranged(data){
         total_work_days: prevValue + Math.floor((qty/nextValue.work_center_info.prod_capacity) + nextValue.work_center_info.layout_produksi),
         total_labors: prevValue + nextValue.work_center_info.labor_alloc,
         total_overhead_cost:prevValue + nextValue.work_center_info.overhead_cost,
-        total_cost_of_wc: (prevValue) + Math.floor((Math.round(qty/nextValue.work_center_info?.prod_capacity)+nextValue.work_center_info?.layout_produksi) * nextValue.work_center_info?.cost_per_hour),
-        cm_cost: (prevValue + nextValue.work_center_info.overhead_cost+(nextValue.work_center_info.cost_per_hour))/(nextValue.work_center_info.prod_capacity*0.75),
+        total_cost_of_wc: (prevValue) + Math.floor((Math.round(qty/nextValue.work_center_info?.prod_capacity*0.85)+nextValue.work_center_info?.layout_produksi) * nextValue.work_center_info?.cost_per_hour),
+        cm_cost: (prevValue + nextValue.work_center_info.overhead_cost+(nextValue.work_center_info.cost_per_hour))/(nextValue.work_center_info.prod_capacity*0.85),
         operations_numbers: operations.length
       }
     }, 0);

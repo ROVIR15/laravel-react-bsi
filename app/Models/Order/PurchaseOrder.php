@@ -53,7 +53,7 @@
     }
 
     public function status(){
-        return $this->hasManyThrough('App\Models\Order\OrderStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->orderBy('created_at', 'desc');
+        return $this->hasManyThrough('App\Models\Order\OrderStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->orderBy('created_at', 'desc')->with('user_info');
     }
 
     public function completion_status(){

@@ -40,14 +40,14 @@ export default function BasicTable({ payload, qty }) {
   const sumSubTotal = () => {
     var sub = 0;
     sub = payload.reduce((prev, next) => {
-      return prev + Math.floor((Math.round(qty/(next.work_center_info?.prod_capacity*0.75)) + next.work_center_info?.layout_produksi) * next.work_center_info?.cost_per_hour);
+      return prev + Math.floor((Math.round(qty/(next.work_center_info?.prod_capacity*0.85)) + next.work_center_info?.layout_produksi) * next.work_center_info?.cost_per_hour);
     }, 0)
     return fCurrency(Math.floor(sub));
   }
 
   const total = () => {
     let res = payload.reduce((prev, next) => {
-      return prev + Math.floor((next.work_center_info?.overhead_cost + next.work_center_info?.cost_per_hour)/(next.work_center_info?.prod_capacity*0.75));
+      return prev + Math.floor((next.work_center_info?.overhead_cost + next.work_center_info?.cost_per_hour)/(next.work_center_info?.prod_capacity*0.85));
     }, 0)
     return fCurrency(Math.floor(res/payload.length));
   }
@@ -80,11 +80,11 @@ export default function BasicTable({ payload, qty }) {
               <TableCell component="th" scope="row">
                 {row.work_center_info?.labor_alloc}
               </TableCell>
-              <TableCell align="right">{row.work_center_info?.prod_capacity * 0.75}</TableCell>
+              <TableCell align="right">{row.work_center_info?.prod_capacity * 0.85}</TableCell>
               <TableCell align="right">{qty}</TableCell>
-              <TableCell align="right">{Math.round((qty/(row.work_center_info?.prod_capacity * 0.75)))+row.work_center_info?.layout_produksi}</TableCell>
+              <TableCell align="right">{Math.round((qty/(row.work_center_info?.prod_capacity * 0.85)))+row.work_center_info?.layout_produksi}</TableCell>
               <TableCell align="right">Rp. {fCurrency(row.work_center_info?.cost_per_hour)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(Math.round((qty/(row.work_center_info?.prod_capacity*0.75))+row.work_center_info?.layout_produksi) * row.work_center_info?.cost_per_hour)}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(Math.round((qty/(row.work_center_info?.prod_capacity*0.85))+row.work_center_info?.layout_produksi) * row.work_center_info?.cost_per_hour)}</TableCell>
             </TableRow>
           ))}
           

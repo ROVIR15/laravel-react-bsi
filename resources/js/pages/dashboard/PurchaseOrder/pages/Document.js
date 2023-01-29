@@ -29,6 +29,8 @@ import { getPages } from '../../../../utils/getPathname';
 
 import Dialog from '../../../../components/DialogBox/dialog';
 import moment from 'moment';
+import { isEmpty, isEqual, uniqBy } from 'lodash';
+import QRCode from 'react-qr-code';
 
 const RootStyle = styled(Page)(({ theme }) => ({}));
 
@@ -99,8 +101,13 @@ function FirstPage() {
   const { pathname } = useLocation();
 
   const [submit, setSubmit] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [review, setReview] = useState(false);
-  const [approve, setApprove] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(false);
+  const [approve, setApprove] = useState(true);
+
+  const [valueSubmit, setValueSubmit] = useState(false);
+  const [valueReview, setValueReview] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [comment, setComment] = useState(false);
@@ -243,44 +250,73 @@ function FirstPage() {
   }, [pdfRef]);
 
   useEffect(async () => {
-    API.getAPurchaseOrder(id, function (res) {
-      if (!res) return;
-      else {
-        const quoteItem = res.data.order_item.map(function (key, index) {
-          const { id, product_id, name, size, color } = productItemArrangedData(
-            key.product_feature
-          );
-          return {
-            id: key.id,
-            product_id: product_id,
-            product_feature_id: id,
-            name: name,
-            size: size,
-            color: color,
-            qty: key.qty,
-            unit_price: key.unit_price,
-            description: key.description
-          };
-        });
+    try {
+      API.getAPurchaseOrder(id, async function (res) {
+        if (!res) return;
+        if (isEmpty(res.data)) throw new Error('failed to load data');
+        else {
+          const quoteItem = res.data.order_item.map(function (key, index) {
+            const { id, product_id, name, size, color } = productItemArrangedData(
+              key.product_feature
+            );
+            return {
+              id: key.id,
+              product_id: product_id,
+              product_feature_id: id,
+              name: name,
+              size: size,
+              color: color,
+              qty: key.qty,
+              unit_price: key.unit_price,
+              description: key.description
+            };
+          });
 
-        setData({
-          ...data,
-          id: res.data.id,
-          order_id: res.data.order_id,
-          po_number: res.data.po_number,
-          issue_date: res.data.issue_date,
-          quote_items: quoteItem,
-          description: res.data?.order?.description,
-          party: res.data.bought_from,
-          ship_to: res.data.ship_to,
-          tax: res.data.order?.tax
-        });
-      }
-    });
+          let _statusOrderData = uniqBy(res.data.status, 'status_type');
+
+          let _isReviewed = _statusOrderData.filter(
+            (item) => item.status_type.toLowerCase() === 'review'
+          );
+          let _isSubmitted = _statusOrderData.filter(
+            (item) => item.status_type.toLowerCase() === 'submit'
+          );
+          
+          if(_isSubmitted.length > 0) {
+            // let salt = _isSubmitted?.id + _isSubmitted?.order_id + _isSubmitted?.user_id;
+            let { user_info, ...rest } = _isSubmitted[0];
+            setValueSubmit({id: rest.id, name: user_info?.name, email: user_info?.email, status: 'Signed by submitter'});
+            setIsSubmitted(true);
+          }
+
+          if(_isReviewed.length > 0) {
+            // let salt = _isReviewed?.id + _isReviewed?.order_id + _isReviewed?.user_id;
+            let { user_info, ...rest } = _isReviewed[0];
+            setValueReview({id: rest.id, name: user_info?.name, email: user_info?.email, status: 'Signed by reviewer'});
+            setIsReviewed(true);
+          }
+
+          setData({
+            ...data,
+            id: res.data.id,
+            order_id: res.data.order_id,
+            po_number: res.data.po_number,
+            issue_date: res.data.issue_date,
+            delivery_date: res.data.delivery_date,
+            quote_items: quoteItem,
+            description: res.data?.order?.description,
+            party: res.data.bought_from,
+            ship_to: res.data.ship_to,
+            tax: res.data.order?.tax
+          });
+        }
+      });
+    } catch (error) {
+      alert(error)
+    }
   }, [id]);
 
   function handleSubmission(key, description) {
-    let payload = { user_id: id, status_type: '', order_id: data.order_id };
+    let payload = { user_id: user.id, status_type: '', order_id: data.order_id };
     switch (key) {
       case 'submit':
         payload = { ...payload, status_type: 'Submit', description: '' };
@@ -344,10 +380,10 @@ function FirstPage() {
         </div>
 
         <div>
-          <Button onClick={() => handleDialog('submit')} disabled={!submit}>
+          <Button onClick={() => handleDialog('submit')} disabled={!submit || isSubmitted}>
             Submit
           </Button>
-          <Button onClick={() => handleDialog('review')} disabled={!review}>
+          <Button onClick={() => handleDialog('review')} disabled={!review || isReviewed}>
             Review
           </Button>
           <Button onClick={() => handleDialog('approve')} disabled={!approve}>
@@ -375,7 +411,16 @@ function FirstPage() {
                   sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
                 />
               </Grid>
-              <Grid item={6} sx={{ width: '50%', marginBottom: '1em', display: 'flex', justifyContent: 'end', alignItems: 'center', }}>
+              <Grid
+                item={6}
+                sx={{
+                  width: '50%',
+                  marginBottom: '1em',
+                  display: 'flex',
+                  justifyContent: 'end',
+                  alignItems: 'center'
+                }}
+              >
                 <Box sx={{ textAlign: 'right' }}>
                   <IDontKnow>Purchase Order</IDontKnow>
                   <Typography variant="h6">{data.po_number}-A</Typography>
@@ -386,30 +431,30 @@ function FirstPage() {
               <Grid container direction="row" spacing={1}>
                 <Grid item xs={12}>
                   <Divider style={{ marginTop: '1rem' }} />
-                  <Stack direction="row" justifyContent="space-between" style={{padding: '8px'}}>
+                  <Stack direction="row" justifyContent="space-between" style={{ padding: '8px' }}>
                     <Box>
-                      <Typography variant="overline" display="block" >
+                      <Typography variant="overline" display="block">
                         PO Number
                       </Typography>
-                      <Typography variant="h6"  component="div">
+                      <Typography variant="h6" component="div">
                         {data.id}
                       </Typography>
                     </Box>
 
                     <Box>
-                      <Typography variant="overline" display="block" >
+                      <Typography variant="overline" display="block">
                         Created Date
                       </Typography>
-                      <Typography variant="h6"  component="div">
+                      <Typography variant="h6" component="div">
                         {moment(data.issue_date).format('LL')}
                       </Typography>
                     </Box>
 
                     <Box>
-                      <Typography variant="overline" display="block" >
+                      <Typography variant="overline" display="block">
                         Delivery Date
                       </Typography>
-                      <Typography variant="h6"  component="div">
+                      <Typography variant="h6" component="div">
                         {moment(data.delivery_date).format('LL')}
                       </Typography>
                     </Box>
@@ -462,8 +507,22 @@ function FirstPage() {
                       alt="Sign"
                       style={{ margin: 'auto' }}
                     /> */}
-                    <div style={{height: '50px'}}/>
-                    <p className="wk_m0 wk_ternary_color">Meti Romadhona</p>
+
+                    {isEmpty(valueSubmit) ? (
+                      <div style={{ height: '75px' }} />
+                    ) : (
+                      <QRCode
+                        size={256}
+                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
+                        value={JSON.stringify(valueSubmit)}
+                        viewBox={`0 0 256 256`}
+                      />
+                    )}
+
+                    {/* <div style={{ height: '50px' }} /> */}
+                    <p className="wk_m0 wk_ternary_color">
+                      {isEmpty(valueSubmit) ? 'Not Signed Yet' : valueSubmit?.name}
+                    </p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Merchandiser</p>
                   </div>
 
@@ -473,8 +532,20 @@ function FirstPage() {
                       alt="Sign"
                       style={{ margin: 'auto' }}
                     /> */}
-                    <div style={{height: '50px'}}/>
-                    <p className="wk_m0 wk_ternary_color">Dwiyanto</p>
+                    
+                    {isEmpty(valueReview) ? (
+                      <div style={{ height: '75px' }} />
+                    ) : (
+                      <QRCode
+                        size={256}
+                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
+                        value={JSON.stringify(valueReview)}
+                        viewBox={`0 0 256 256`}
+                      />
+                    )}
+                    <p className="wk_m0 wk_ternary_color">
+                      {isEmpty(valueReview) ? 'Not Signed Yet' : valueSubmit?.name}
+                    </p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Purchasing</p>
                   </div>
 
@@ -484,7 +555,7 @@ function FirstPage() {
                       alt="Sign"
                       style={{ margin: 'auto' }}
                     /> */}
-                    <div style={{height: '50px'}}/>
+                    <div style={{ height: '75px' }} />
                     <p className="wk_m0 wk_ternary_color">{data?.party?.name}</p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Supplier</p>
                   </div>
@@ -492,7 +563,7 @@ function FirstPage() {
               </Grid>
             </Stack>
 
-            <div style={{height: '8px'}}></div>
+            <div style={{ height: '8px' }}></div>
           </div>
         </PaperStyled>
       </RootStyle>
