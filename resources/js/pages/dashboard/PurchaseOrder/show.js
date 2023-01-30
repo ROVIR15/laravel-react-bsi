@@ -190,9 +190,15 @@ function SalesOrder() {
       return filter.map((x) => x.id !== id);
     });
 
-    API.deleteSalesOrderItem(id, (res) => {
-      alert('success');
-    });
+    try {
+      API.deleteSalesOrderItem(id, (res) => {
+        if(!res) return;
+        if(!res.success) throw new Error('Failed to delete order item')
+        else alert('succesfully delete');
+      });
+    } catch (error) {
+      alert(error);
+    }
 
     handleUpdateAllRows();
   });

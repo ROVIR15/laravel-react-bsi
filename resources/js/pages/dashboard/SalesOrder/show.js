@@ -255,9 +255,15 @@ function SalesOrder() {
       return [...items.slice(0, rowToDeleteIndex), ...items.slice(rowToDeleteIndex + 1)];
     });
 
-    API.deleteSalesOrderItem(id, (res) => {
-      alert('success');
-    });
+    try {
+      API.deleteSalesOrderItem(id, (res) => {
+        if(!res) return;
+        if(!res.success) throw new Error('Failed to delete order item')
+        else alert('succesfully delete');
+      });
+    } catch (error) {
+      alert(error);
+    }
 
     handleUpdateAllRows();
   });
@@ -324,8 +330,17 @@ function SalesOrder() {
         ...product_feature,
         product_feature_id: product_feature.id,
         id: key.id,
+        name: product_feature?.product?.goods
+          ? product_feature?.product?.goods?.name
+          : product_feature?.product?.service?.name,
+        item_name: `${
+          product_feature?.product?.goods
+            ? product_feature?.product?.goods?.name
+            : product_feature?.product?.service?.name
+        } ${product_feature?.size} - ${product_feature?.color}`,
         shipment_estimated: new Date(key.shipment_estimated),
-        name: product_feature?.product?.goods?.name,
+        total_shipped: key.shipment_item[0]?.total_qty_received,
+        description: key.description,
         ...key
       };
     });
