@@ -259,7 +259,17 @@ function SalesOrder() {
         ...product_feature,
         product_feature_id: product_feature.id,
         id: key.id,
-        delivery_date: new Date(key.delivery_date),
+        name: product_feature?.product?.goods
+          ? product_feature?.product?.goods?.name
+          : product_feature?.product?.service?.name,
+        item_name: `${
+          product_feature?.product?.goods
+            ? product_feature?.product?.goods?.name
+            : product_feature?.product?.service?.name
+        } ${product_feature?.size} - ${product_feature?.color}`,
+        shipment_estimated: new Date(key.shipment_estimated),
+        total_shipped: key.shipment_item[0]?.total_qty_received,
+        description: key.description,
         ...key
       };
     });
