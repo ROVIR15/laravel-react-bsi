@@ -1,8 +1,6 @@
 import React from 'react';
 import { Navigate, useRoutes, Routes, Route } from 'react-router-dom';
 
-import Capacity from '../components/experiment/capacity';
-
 // Layout
 import DashboardLayout from '../layouts/dashboard';
 import {
@@ -219,15 +217,16 @@ import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
 import AddOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/new';
 import ShowOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/show';
 
-// import TestVendor from '../pages/dashboard/Vendor/test';
-
 import { 
   IncomingLayout,
   OutgoingLayout,
   StatusLayout
 } from '../pages/dashboard/Shipment'
 import { Typography } from '@mui/material';
-import ValuationTable from '../components/experiment/Valuation';
+
+// import ValuationTable from '../components/experiment/Valuation';
+// import TestVendor from '../pages/dashboard/Vendor/test';
+// import Capacity from '../components/experiment/capacity';
 
 export default function TestRouter() {
 
@@ -604,7 +603,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowVInv /> },
             { path: 'display', element: <DisplayVInv /> },
             { path: 'document/:id', element: <DocumentVINV/>},
-            { path: 'report', element: <ReportVB/>}
+            // { path: 'report', element: <ReportVB/>}
           ]
         },
         {
@@ -728,14 +727,14 @@ export default function TestRouter() {
             { path: 'display/:id', element: <UserTest /> }
           ]
         },
-        {
-          path: 'capacity',
-          element: <Capacity />
-        },
-        {
-          path: 'goods-valuation',
-          element: <ValuationTable />
-        },
+        // {
+        //   path: 'capacity',
+        //   element: <Capacity />
+        // },
+        // {
+        //   path: 'goods-valuation',
+        //   element: <ValuationTable />
+        // },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     }
