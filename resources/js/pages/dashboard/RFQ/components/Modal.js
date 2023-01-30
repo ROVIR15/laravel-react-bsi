@@ -12,17 +12,17 @@ import API from '../../../../helpers';
 import Table from './Table';
 
 // Helpers
-import { optionProductFeature, productItemArrangedData } from '../../../../helpers/data'
+import { optionProductFeature, productItemArrangedData } from '../../../../helpers/data';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  p: 4,
+  p: 4
 };
 
-const StyledCard = styled(Card)(({theme}) => ({
+const StyledCard = styled(Card)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -31,33 +31,33 @@ const StyledCard = styled(Card)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     maxWidth: '320px'
   }
-}))
+}));
 
-export default function BasicModal({ payload, open, handleClose, items, setItems, update}) {  
-  const [options, setOptions] = React.useState([])
+export default function BasicModal({ payload, open, handleClose, items, setItems, update }) {
+  const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
 
   React.useEffect(() => {
     let active = true;
 
-    if(!loading) {
-      return undefined
+    if (!loading) {
+      return undefined;
     }
 
-      API.getService(async (res) => {
-        if(!res) return
-        if(!res.data) {
-          setOptions([]);
-        } else {
-          let data =  await optionProductFeature(res.data);
-          setOptions(data);
-        }
-      })
+    API.getProductFeature(async (res) => {
+      if (!res) return;
+      if (!res.data) {
+        setOptions([]);
+      } else {
+        let data = await optionProductFeature(res.data);
+        setOptions(data);
+      }
+    });
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
   return (
     <div>
@@ -69,14 +69,14 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         <StyledCard sx={style}>
           <Stack direction="row" justifyContent="space-between">
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Product 
+              Select Product
             </Typography>
             <IconButton onClick={handleClose} color="error">
-              <Icon icon={closeCircle}/>
+              <Icon icon={closeCircle} />
             </IconButton>
           </Stack>
-          
-          <Table list={options} selected={items} setSelected={setItems}/>
+
+          <Table list={options} selected={items} setSelected={setItems} />
         </StyledCard>
       </Modal>
     </div>
