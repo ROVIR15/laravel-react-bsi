@@ -1,5 +1,8 @@
 import React from 'react';
 import { Navigate, useRoutes, Routes, Route } from 'react-router-dom';
+
+import Capacity from '../components/experiment/capacity';
+
 // Layout
 import DashboardLayout from '../layouts/dashboard';
 import {
@@ -172,6 +175,7 @@ import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document'
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
+import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
@@ -215,7 +219,7 @@ import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
 import AddOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/new';
 import ShowOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/show';
 
-import TestVendor from '../pages/dashboard/Vendor/test';
+// import TestVendor from '../pages/dashboard/Vendor/test';
 
 import { 
   IncomingLayout,
@@ -223,6 +227,7 @@ import {
   StatusLayout
 } from '../pages/dashboard/Shipment'
 import { Typography } from '@mui/material';
+import ValuationTable from '../components/experiment/Valuation';
 
 export default function TestRouter() {
 
@@ -232,11 +237,11 @@ export default function TestRouter() {
         { path: 'login', element: <Login /> },
       ]
     },
-    {
-      path: '/downloads', children: [
-        { path: 'purchase-order/:id', element: <TestVendor />}
-      ]
-    },
+    // {
+    //   path: '/downloads', children: [
+    //     { path: 'purchase-order/:id', element: <TestVendor />}
+    //   ]
+    // },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -598,7 +603,8 @@ export default function TestRouter() {
             { path: 'add', element: <AddVInv /> },
             { path: ':id', element: <ShowVInv /> },
             { path: 'display', element: <DisplayVInv /> },
-            { path: 'document/:id', element: <DocumentVINV/>}
+            { path: 'document/:id', element: <DocumentVINV/>},
+            { path: 'report', element: <ReportVB/>}
           ]
         },
         {
@@ -721,6 +727,14 @@ export default function TestRouter() {
             { path: 'display', element: <DisplayUser /> },
             { path: 'display/:id', element: <UserTest /> }
           ]
+        },
+        {
+          path: 'capacity',
+          element: <Capacity />
+        },
+        {
+          path: 'goods-valuation',
+          element: <ValuationTable />
         },
         { path: '*', element: <Navigate to="/404" /> }
       ]
