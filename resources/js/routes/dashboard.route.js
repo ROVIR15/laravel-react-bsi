@@ -173,7 +173,7 @@ import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document'
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
-import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
+// import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
