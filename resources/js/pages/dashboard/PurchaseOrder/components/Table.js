@@ -74,7 +74,7 @@ function applySortFilter(array, comparator, query) {
   }
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
+function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -110,12 +110,20 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {
         try {
-          let dateNow = new Date();
-          // API.insertGoodsReceiptItem([name], function(res){
-          //   if(res.success) alert('success');
-          //   else alert('failed')
-          // })
-          // update();
+          const { id } = name;
+          let payload = {
+            product_feature_id: id,
+            order_id,
+            qty: 0,
+            unit_price: 0,
+            cm_price: 0,
+            shipment_estimated: '2022-09-03'
+          };
+          API.insertPurchaseOrderItem([payload], function (res) {
+            if (res.success) alert('success');
+            else throw new Error('failed to update order item')
+          });
+          update();
         } catch(e) {
           alert(e);
         }

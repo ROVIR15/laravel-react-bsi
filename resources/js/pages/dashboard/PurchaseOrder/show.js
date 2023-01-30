@@ -381,6 +381,7 @@ function SalesOrder() {
           handleClose={handleCloseModal}
           items={items}
           setItems={setItems}
+          order_id={values.order_id}
           update={handleUpdateAllRows}
         />
         <FormikProvider value={formik}>
