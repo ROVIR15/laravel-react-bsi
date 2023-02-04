@@ -544,7 +544,7 @@ function FirstPage() {
                       />
                     )}
                     <p className="wk_m0 wk_ternary_color">
-                      {isEmpty(valueReview) ? 'Not Signed Yet' : valueSubmit?.name}
+                      {isEmpty(valueReview) ? 'Not Signed Yet' : valueReview?.name}
                     </p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Purchasing</p>
                   </div>
