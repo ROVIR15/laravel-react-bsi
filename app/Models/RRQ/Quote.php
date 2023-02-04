@@ -15,6 +15,7 @@ class Quote extends Model
 
     protected $fillable = [
         'id',
+        'currency_id',
         'quote_type',
         'request_id',
         'party_id',
@@ -22,7 +23,8 @@ class Quote extends Model
         'po_number',
         'delivery_date',
         'issue_date',
-        'valid_thru'
+        'valid_thru',
+        'tax'
     ];
 
     public function quote_item(){

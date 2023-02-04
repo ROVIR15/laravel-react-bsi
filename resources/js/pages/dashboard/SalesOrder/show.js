@@ -8,6 +8,8 @@ import {
   Container,
   Divider,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -15,6 +17,8 @@ import {
   TextField,
   Typography,
   Paper,
+  Radio,
+  RadioGroup,
   Select,
   Stack,
   Button,
@@ -126,12 +130,12 @@ function SalesOrder() {
     onSubmit: (values) => {
       try {
         API.updateSalesOrder(id, values, function (res) {
-          if(!res) return undefined;
-          if(!res.success) throw new Error('failed');
+          if (!res) return undefined;
+          if (!res.success) throw new Error('failed');
           else alert('update success');
-        });          
+        });
       } catch (error) {
-        alert(error)
+        alert(error);
       }
       setSubmitting(false);
     }
@@ -161,11 +165,19 @@ function SalesOrder() {
       sold_to: load.sold_to,
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
-      delivery_date: load.delivery_date
+      delivery_date: load.delivery_date,
+      currency_id: load.order.currency_id
     });
 
-    setTax(load.order.tax)
-    setDescription(load.order.description)
+    setTax(load.order.tax);
+
+    let ras;
+    if(load.order?.currency_id === 1) ras='usd';
+    else ras='idr';
+
+    setCurrency(ras);
+
+    setDescription(load.order.description);
 
     let _party = _partyAddress(load.party);
     let _ship = _partyAddress(load.ship);
@@ -257,8 +269,8 @@ function SalesOrder() {
 
     try {
       API.deleteSalesOrderItem(id, (res) => {
-        if(!res) return;
-        if(!res.success) throw new Error('Failed to delete order item')
+        if (!res) return;
+        if (!res.success) throw new Error('Failed to delete order item');
         else alert('succesfully delete');
       });
     } catch (error) {
@@ -375,14 +387,12 @@ function SalesOrder() {
     [deleteData]
   );
 
-  const columnShipment = useMemo(
-    () => [
-      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
-      { field: 'qty', headerName: 'Quantity', editable: true },
-      { field: 'total_shipped', headerName: 'Qty Terkirim', editable: true },
-    ]
-  );
+  const columnShipment = useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'item_name', headerName: 'Name', width: 350, editable: false },
+    { field: 'qty', headerName: 'Quantity', editable: true },
+    { field: 'total_shipped', headerName: 'Qty Terkirim', editable: true }
+  ]);
 
   const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0, bb: 0 });
   const handlePopulate = () => {
@@ -431,18 +441,29 @@ function SalesOrder() {
    */
 
   const [tax, setTax] = useState('');
+  const [currency, setCurrency] = useState('');
 
   const handleUpdateTax = () => {
     try {
       if (isEmpty(tax)) throw new Error('tax is required');
-      API.updateOrder(values.order_id, { tax }, function (res) {
-        if (!res) return;
-        if (res.success) alert('success');
-        else throw new Error('error occured failed store data');
-      });
+
+      try {
+        API.updateOrder(values.order_id, { tax, currency_id: value.currency_id }, function (res) {
+          if (!res) return;
+          if (res.success) alert('success');
+          else throw new Error('error occured failed store data');
+        });
+      } catch (error) {
+        alert(error);
+      }
     } catch (error) {
       alert(error);
     }
+  };
+
+  // Radio
+  const handleRadioChange = (event) => {
+    setFieldValue('currency_id', event.target.value);
   };
 
   return (
@@ -535,6 +556,44 @@ function SalesOrder() {
               <Grid item xs={12}>
                 <Card>
                   <CardContent>
+                    <Stack direction="row" spacing={2}>
+                      <TextField
+                        fullWidth
+                        autoComplete="issue_date"
+                        type="date"
+                        placeholder="valid"
+                        label="Diterbitkan"
+                        {...getFieldProps('issue_date')}
+                        error={Boolean(touched.issue_date && errors.issue_date)}
+                        helperText={touched.issue_date && errors.issue_date}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="valid_thru"
+                        type="date"
+                        label="Valid to"
+                        placeholder="valid"
+                        {...getFieldProps('valid_thru')}
+                        error={Boolean(touched.valid_thru && errors.valid_thru)}
+                        helperText={touched.valid_thru && errors.valid_thru}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="delivery_date"
+                        type="date"
+                        label="Tanggal Pengiriman"
+                        {...getFieldProps('delivery_date')}
+                        error={Boolean(touched.delivery_date && errors.delivery_date)}
+                        helperText={touched.delivery_date && errors.delivery_date}
+                      />
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
                     <TabContext value={valueTab}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
@@ -542,44 +601,12 @@ function SalesOrder() {
                           <Tab label="Status" value="2" />
                           <Tab label="Description" value="3" />
                           <Tab label="Shipment Transaction" value="4" />
-                          <Tab label="Tax" value="5" />
+                          <Tab label="Finance" value="5" />
                         </TabList>
                       </Box>
 
                       <TabPanel value="1">
                         <Stack direction="column" spacing={2}>
-                          <Stack direction="row" spacing={2}>
-                            <TextField
-                              fullWidth
-                              autoComplete="issue_date"
-                              type="date"
-                              placeholder="valid"
-                              label="Diterbitkan"
-                              {...getFieldProps('issue_date')}
-                              error={Boolean(touched.issue_date && errors.issue_date)}
-                              helperText={touched.issue_date && errors.issue_date}
-                            />
-                            <TextField
-                              fullWidth
-                              autoComplete="valid_thru"
-                              type="date"
-                              label="Valid to"
-                              placeholder="valid"
-                              {...getFieldProps('valid_thru')}
-                              error={Boolean(touched.valid_thru && errors.valid_thru)}
-                              helperText={touched.valid_thru && errors.valid_thru}
-                            />
-                            <TextField
-                              fullWidth
-                              autoComplete="delivery_date"
-                              type="date"
-                              label="Tanggal Pengiriman"
-                              {...getFieldProps('delivery_date')}
-                              error={Boolean(touched.delivery_date && errors.delivery_date)}
-                              helperText={touched.delivery_date && errors.delivery_date}
-                            />
-                          </Stack>
-
                           <Stack direction="row" spacing={4}>
                             <TextField
                               type="number"
@@ -627,11 +654,11 @@ function SalesOrder() {
                           <FormControl fullWidth>
                             <InputLabel>Selet Status</InputLabel>
                             <Select value={status} label="Status" onChange={handleChangeStatus}>
-                              <MenuItem value={5} >Draft</MenuItem>
-                              <MenuItem value={1} >Completed</MenuItem>
-                              <MenuItem value={2} >Running</MenuItem>
-                              <MenuItem value={3} >Waiting</MenuItem>
-                              <MenuItem value={4} >On Shipment</MenuItem>
+                              <MenuItem value={5}>Draft</MenuItem>
+                              <MenuItem value={1}>Completed</MenuItem>
+                              <MenuItem value={2}>Running</MenuItem>
+                              <MenuItem value={3}>Waiting</MenuItem>
+                              <MenuItem value={4}>On Shipment</MenuItem>
                             </Select>
                           </FormControl>
 
@@ -660,21 +687,40 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="5">
-                        <Stack direction="row" spacing={4} alignItems="center">
-                          <Typography variant="body1">Tax</Typography>
-                          <TextField
-                            autoComplete="tax"
-                            type="number"
-                            value={tax}
-                            onChange={(event) => setTax(event.target.value)}
-                            InputProps={{
-                              endAdornment: <InputAdornment position="end">%</InputAdornment>
-                            }}
-                          />
+                        <Stack direction="column" spacing={2}>
+                          <Stack direction="row" spacing={4} alignItems="center">
+                            <Typography variant="body1">Tax</Typography>
+                            <TextField
+                              autoComplete="tax"
+                              type="number"
+                              value={tax}
+                              onChange={(event) => setTax(event.target.value)}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="end">%</InputAdornment>
+                              }}
+                            />
+                          </Stack>
+
+                          <FormControl>
+                            <FormLabel id="demo-row-radio-buttons-group-label">
+                              Select Currency
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              aria-labelledby="demo-row-radio-buttons-group-label"
+                              name="row-radio-buttons-group"
+                              onChange={handleRadioChange}
+                              value={values.currency_id}
+                            >
+                              <FormControlLabel value={1} control={<Radio />} label="USD" />
+                              <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
+                            </RadioGroup>
+                          </FormControl>
+
+                          <Button onClick={handleUpdateTax} variant="outlined" sx={{width: '25ch'}}>
+                            Save
+                          </Button>
                         </Stack>
-                        <Button onClick={handleUpdateTax} variant="outlined">
-                          Save
-                        </Button>
                       </TabPanel>
                     </TabContext>
                   </CardContent>

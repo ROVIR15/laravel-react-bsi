@@ -295,6 +295,10 @@ function FirstPage() {
             setIsReviewed(true);
           }
 
+          let currency;
+          if(res.data.order?.currency_id === 1) currency = 'usd';
+          else currency='idr'  
+
           setData({
             ...data,
             id: res.data.id,
@@ -306,7 +310,8 @@ function FirstPage() {
             description: res.data?.order?.description,
             party: res.data.bought_from,
             ship_to: res.data.ship_to,
-            tax: res.data.order?.tax
+            tax: res.data.order?.tax,
+            currency
           });
         }
       });
@@ -489,7 +494,7 @@ function FirstPage() {
               </Grid>
 
               <Grid item xs={12}>
-                <Table payload={data.quote_items} tax={data?.tax} />
+                <Table payload={data.quote_items} tax={data?.tax} currency={data?.currency} />
               </Grid>
 
               <Grid item xs={12} style={{ marginTop: 'unset' }}>

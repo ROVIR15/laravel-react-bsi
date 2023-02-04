@@ -15,6 +15,7 @@
 
     protected $fillable = [
         'id',
+        'currency_id',
         'sales_order_id',
         'purchase_order_id',
         'quote_id',

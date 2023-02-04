@@ -7,11 +7,16 @@ import {
   CardContent,
   Container,
   Divider,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
   InputAdornment,
   Tab,
   TextField,
   Typography,
   Paper,
+  Radio,
+  RadioGroup,
   Stack,
   Button,
   Grid
@@ -103,7 +108,8 @@ function SalesOrder() {
       valid_thru: '',
       delivery_date: '',
       description: '',
-      tax: 0
+      tax: 0,
+      currency_id: 2
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
@@ -185,7 +191,9 @@ function SalesOrder() {
       ship_to: data.ship_to,
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
-      delivery_date: data.delivery_date
+      delivery_date: data.delivery_date,
+      tax: data.tax,
+      currency_id: data.currency_id
     });
 
     let _party = _partyAddress(data.party);
@@ -338,6 +346,11 @@ function SalesOrder() {
     else return;
   };
 
+  // Radio
+  const handleRadioChange = (event) => {
+    setFieldValue('currency_id', event.target.value);
+  };
+
   return (
     <Page>
       <Container>
@@ -407,6 +420,45 @@ function SalesOrder() {
                 </Card>
               </Grid>
 
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Stack direction="row" spacing={2}>
+                      <TextField
+                        fullWidth
+                        autoComplete="issue_date"
+                        type="date"
+                        placeholder="valid"
+                        label="PO Date"
+                        {...getFieldProps('issue_date')}
+                        error={Boolean(touched.issue_date && errors.issue_date)}
+                        helperText={touched.issue_date && errors.issue_date}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="valid_thru"
+                        type="date"
+                        label="Valid to"
+                        placeholder="valid"
+                        {...getFieldProps('valid_thru')}
+                        error={Boolean(touched.valid_thru && errors.valid_thru)}
+                        helperText={touched.valid_thru && errors.valid_thru}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="delivery_date"
+                        type="date"
+                        label="Tanggal Pengiriman"
+                        {...getFieldProps('delivery_date')}
+                        error={Boolean(touched.delivery_date && errors.delivery_date)}
+                        helperText={touched.delivery_date && errors.delivery_date}
+                      />
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+
               {/* ddd */}
               <Grid item xs={12}>
                 <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
@@ -421,66 +473,6 @@ function SalesOrder() {
                       </Box>
 
                       <TabPanel value="1">
-                        <Stack direction="column" spacing={2}>
-                          <Stack direction="row" spacing={2}>
-                            <TextField
-                              fullWidth
-                              autoComplete="issue_date"
-                              type="date"
-                              placeholder="valid"
-                              label="Diterbitkan"
-                              {...getFieldProps('issue_date')}
-                              error={Boolean(touched.issue_date && errors.issue_date)}
-                              helperText={touched.issue_date && errors.issue_date}
-                            />
-                            <TextField
-                              fullWidth
-                              autoComplete="valid_thru"
-                              type="date"
-                              label="Valid to"
-                              placeholder="valid"
-                              {...getFieldProps('valid_thru')}
-                              error={Boolean(touched.valid_thru && errors.valid_thru)}
-                              helperText={touched.valid_thru && errors.valid_thru}
-                            />
-                            <TextField
-                              fullWidth
-                              autoComplete="delivery_date"
-                              type="date"
-                              label="Tanggal Pengiriman"
-                              {...getFieldProps('delivery_date')}
-                              error={Boolean(touched.delivery_date && errors.delivery_date)}
-                              helperText={touched.delivery_date && errors.delivery_date}
-                            />
-                          </Stack>
-
-                          {/* Populate */}
-                          <Stack direction="row">
-                            <TextField
-                              type="number"
-                              label="Qty"
-                              name="z"
-                              value={populateState.z}
-                              onChange={handleChangePopulate}
-                            />
-                            <TextField
-                              type="number"
-                              label="Harga Barang"
-                              name="aa"
-                              value={populateState.aa}
-                              onChange={handleChangePopulate}
-                            />
-                            <TextField
-                              type="date"
-                              label="Tanggal Kirim"
-                              name="y"
-                              value={populateState.y}
-                              onChange={handleChangePopulate}
-                            />
-                            <Button onClick={handlePopulate}>Populate</Button>
-                          </Stack>
-                        </Stack>
-
                         <DataGrid
                           columns={columns}
                           rows={items}
@@ -505,18 +497,36 @@ function SalesOrder() {
                       </TabPanel>
 
                       <TabPanel value="3">
-                        <Stack direction="row" spacing={4} alignItems="center">
-                          <Typography variant="body1">Tax</Typography>
-                          <TextField
-                            autoComplete="tax"
-                            type="number"
-                            InputProps={{
-                              endAdornment: <InputAdornment position="end">%</InputAdornment>
-                            }}
-                            {...getFieldProps('tax')}
-                            error={Boolean(touched.tax && errors.tax)}
-                            helperText={touched.tax && errors.tax}
-                          />
+                        <Stack direction="column" spacing={4}>
+                          <FormControl sx={{ width: '25ch' }}>
+                            <FormLabel>Tax</FormLabel>
+                            <TextField
+                              autoComplete="tax"
+                              type="number"
+                              {...getFieldProps('tax')}
+                              error={Boolean(touched.tax && errors.tax)}
+                              helperText={touched.tax && errors.tax}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="end">%</InputAdornment>
+                              }}
+                            />
+                          </FormControl>
+
+                          <FormControl>
+                            <FormLabel id="demo-row-radio-buttons-group-label">
+                              Select Currency
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              aria-labelledby="demo-row-radio-buttons-group-label"
+                              name="row-radio-buttons-group"
+                              onChange={handleRadioChange}
+                              value={values.currency_id}
+                            >
+                              <FormControlLabel value={1} control={<Radio />} label="USD" />
+                              <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
+                            </RadioGroup>
+                          </FormControl>
                         </Stack>
                       </TabPanel>
                     </TabContext>

@@ -171,13 +171,15 @@ class QuoteController extends Controller
         try {
           //code...
           $quoteCreation = Quote::create([
+            'currency_id' => $param['currency_id'],
             'quote_type' => $param['quote_type'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
             'party_id' => $param['sold_to'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
-            'valid_thru' => $param['valid_thru']
+            'valid_thru' => $param['valid_thru'],
+            'tax' => $param['tax']
           ]);
           
           $quoteItemsCreation = [];

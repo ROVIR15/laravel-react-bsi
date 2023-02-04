@@ -56,7 +56,9 @@ class RFQController extends Controller
             'party_id' => $param['bought_from'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
-            'valid_thru' => $param['valid_thru']
+            'valid_thru' => $param['valid_thru'],
+            'tax' => $param['tax'],
+            'currency_id' => $param['currency_id']
           ]);
           
           $rfqItemsCreation = [];

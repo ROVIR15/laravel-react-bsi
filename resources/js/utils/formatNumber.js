@@ -3,8 +3,12 @@ import numeral from 'numeral';
 
 // ----------------------------------------------------------------------
 
-export function fCurrency(number) {
-  return numeral(number).format(Number.isInteger(number) ? 'IDR 0,0' : 'IDR 0,0.00');
+export function fCurrency(number, currency='') {
+  let res = numeral(number).format(Number.isInteger(number) ? 'IDR 0,0' : 'IDR 0,0.00');
+  // console.log(`$ ${res}`)
+  if(currency?.toLowerCase() === 'idr') return `Rp. ${res}`;
+  if(currency?.toLowerCase() === 'usd') return `$ ${res}`;
+  else return res;
 }
 
 export function fPercent(number) {

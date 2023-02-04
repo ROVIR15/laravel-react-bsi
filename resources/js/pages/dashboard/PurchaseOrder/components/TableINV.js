@@ -31,8 +31,7 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, tax }) {
-  console.log(tax)
+export default function BasicTable({ payload, tax, currency }) {
   const sumSubTotal = () => {
     var sub = 0;
     payload.map(function (item) {
@@ -47,7 +46,7 @@ export default function BasicTable({ payload, tax }) {
       sub = sub + item.qty * item.unit_price;
     });
     if(tax < 1) return fCurrency(Math.floor(sub));
-    else return fCurrency(Math.floor(sub) * (1+(tax/100)));
+    else return fCurrency(Math.floor(sub) * (1+(tax/100), currency));
   };
   return (
     <>
@@ -77,9 +76,9 @@ export default function BasicTable({ payload, tax }) {
                       }`}
                     </td>
                     <td className="wk_width_1">{row.qty}</td>
-                    <td className="wk_width_2">Rp. {fCurrency(row.unit_price)}</td>
+                    <td className="wk_width_2">{fCurrency(row.unit_price, currency)}</td>
                     <td className="wk_width_2 wk_text_right">
-                      Rp. {fCurrency(Math.floor(row.qty * row.unit_price))}
+                      {fCurrency(Math.floor(row.qty * row.unit_price), currency)}
                     </td>
                     <td className="wk_width_2 wk_text_left">{row.description}</td>
                   </tr>
@@ -104,7 +103,7 @@ export default function BasicTable({ payload, tax }) {
               <tr>
                 <td className="wk_width_3 wk_primary_color wk_border_none wk_bold">Subtotal</td>
                 <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_bold">
-                  Rp. {fCurrency(sumSubTotal())}
+                  {fCurrency(sumSubTotal(), currency)}
                 </td>
               </tr>
               <tr>
@@ -112,7 +111,7 @@ export default function BasicTable({ payload, tax }) {
                   Tax <span className="wk_ternary_color">{tax}%</span>
                 </td>
                 <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_pt0">
-                  Rp. {sumSubTotal() * (tax/100)}
+                  {sumSubTotal() * (tax/100)}
                 </td>
               </tr>
               <tr className="wk_border_top wk_border_bottom">
@@ -120,7 +119,7 @@ export default function BasicTable({ payload, tax }) {
                   Grand Total{' '}
                 </td>
                 <td className="wk_width_3 wk_border_top_0 wk_bold wk_f16 wk_primary_color wk_text_right">
-                  Rp. {total()}
+                  {total()}
                 </td>
               </tr>
             </tbody>

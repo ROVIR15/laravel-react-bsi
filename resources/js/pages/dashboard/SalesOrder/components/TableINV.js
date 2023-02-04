@@ -35,14 +35,14 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload }) {
+export default function BasicTable({ payload, currency }) {
 
   const sumSubTotal = () => {
     var sub = 0;
     payload.map(function(item){
       sub = sub + (item.qty*item.unit_price)
     })
-    return fCurrency(Math.floor(sub));
+    return fCurrency(Math.floor(sub), currency);
   }
 
   const total = () => {
@@ -50,7 +50,7 @@ export default function BasicTable({ payload }) {
     payload.map(function(item){
       sub = sub + (item.qty*item.unit_price)
     })
-    return fCurrency(Math.floor(sub)*1.11);
+    return fCurrency(Math.floor(sub)*1.11, currency);
   }
   return (
     <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
@@ -83,8 +83,8 @@ export default function BasicTable({ payload }) {
                 {row.size}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">{fCurrency(row.unit_price)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(Math.floor(row.qty * row.unit_price))}</TableCell>
+              <TableCell align="right">{fCurrency(row.unit_price, currency)}</TableCell>
+              <TableCell align="right">{fCurrency(Math.floor(row.qty * row.unit_price), currency)}</TableCell>
             </TableRow>
           ))}
           
@@ -98,7 +98,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> Rp. {sumSubTotal() } </Typography>
+                <Typography variant="body1"> {sumSubTotal() } </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -124,7 +124,7 @@ export default function BasicTable({ payload }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> Rp. {total()} </Typography>
+                <Typography variant="body1"> {total()} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

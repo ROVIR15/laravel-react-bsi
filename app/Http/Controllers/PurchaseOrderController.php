@@ -5,6 +5,7 @@
   use DB;
 
   use Illuminate\Http\Request;
+  use App\Models\Invoice\Invoice;
   use App\Models\Order\Quote;
   use App\Models\Order\Order;
   use App\Models\Order\OrderItem;
@@ -107,6 +108,29 @@
       return new POViewCollection($query);
     }
 
+    public function getPurchaseOrderWhereNotInvoicedYet()
+    {
+      try {
+        $orderIdFromInvoice = Invoice::select('order_id')->distinct('order_id')->get();
+
+        $_order = [];
+        foreach ($orderIdFromInvoice as $item) {
+          if(!is_null($item['order_id'])) array_push($_order, $item['order_id']);
+        }
+        $query = PurchaseOrder::whereNotIn('order_id', $_order)->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
+    }
+
         /**
      * Show the form for creating a new resource.
      *
@@ -130,6 +154,7 @@
       try {
         //Order Creation
         $order = Order::create([
+          'currency_id' => $param['currency_id'],
           'quote_id' => $param['quote_id'],
           'issue_date' => $param['issue_date'],
           'valid_thru' => $param['valid_thru'],

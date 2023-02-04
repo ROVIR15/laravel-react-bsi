@@ -132,7 +132,9 @@
       try {
         //Order Creation
         $order = Order::create([
-          'quote_id' => $param['quote_id']
+          'quote_id' => $param['quote_id'],
+          'currency_id' => $param['currency_id'],
+          'tax' => $param['tax']
         ]);
 
         $salesOrder = SalesOrder::create([

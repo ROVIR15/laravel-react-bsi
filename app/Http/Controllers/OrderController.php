@@ -76,7 +76,6 @@
             $sales_order = new SalesOrder;
             $purchase_order = new PuchaseOrder;
 
-            $order->
             $order->saveOrFail();
 
             if ($orderData['type'] === 'sales_oder') {

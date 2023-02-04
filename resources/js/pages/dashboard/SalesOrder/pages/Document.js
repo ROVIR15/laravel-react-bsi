@@ -231,7 +231,8 @@ function FirstPage() {
       name: ''
     },
     issue_date: '',
-    quote_items: []
+    quote_items: [],
+    currency: 'idr'
   });
 
   useEffect(() => {
@@ -267,6 +268,10 @@ function FirstPage() {
           };
         });
 
+        let currency;
+        if(res.data.order?.currency_id === 1) currency = 'usd';
+        else currency='idr'
+
         setData({
           ...data,
           id: res.data.id,
@@ -274,7 +279,8 @@ function FirstPage() {
           po_number: res.data.po_number,
           issue_date: res.data.issue_date,
           quote_items: quoteItem,
-          party: res.data.party
+          party: res.data.party,
+          currency
         });
       }
     });
@@ -422,7 +428,7 @@ function FirstPage() {
             </Grid>
 
             <GridItemX>
-              <Table payload={data.quote_items} />
+              <Table payload={data.quote_items} currency={data.currency} />
             </GridItemX>
 
             <Divider fullWidth />
