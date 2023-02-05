@@ -12,7 +12,8 @@ import { fCurrency } from '../../../../../utils/formatNumber';
 import { initial, isArray, isEmpty, isUndefined, sum } from 'lodash';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-
+import moment from 'moment';
+moment.locale('id')
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
@@ -35,7 +36,7 @@ export default function Report() {
 
   useEffect(() => {
     try {
-      API.getInvoicedParty((res) => {
+      API.getInvoicedParty('?type=1', (res) => {
         if (!res) return;
         if (isEmpty(res.data)) throw new Error('failed to load data');
         else {
@@ -54,7 +55,7 @@ export default function Report() {
   const handleGetReport = () => {
     try {
       if (isEmpty(monthYear) && isEmpty(selectedBuyer)) throw new Error('cannot be empty');
-      API.getReport(`?monthYear=${monthYear}&party=${selectedBuyer}`, function (res) {
+      API.getReport(`?type=1&monthYear=${monthYear}&party=${selectedBuyer}`, function (res) {
         if (!res) return;
         if (!res.success) throw new Error('failed to load report');
         else {
@@ -84,14 +85,13 @@ export default function Report() {
         invoice_id: id,
         sold_to,
         party_name: party?.name,
-        po_number: ''
+        po_number: item?.sales_order?.sales_order?.po_number
       };
       a = date.reduce(function (initial, next) {
         if (due_dates === next) return { ...initial, [next]: sum[0]?.total_amount };
         else return { ...initial, [next]: 0 };
       }, a);
 
-      console.log(a);
       return a;
     });
 
@@ -174,7 +174,7 @@ export default function Report() {
               </TableCell>
               {date.map((_d) => (
                 <TableCell className="wk_primary_color wk_gray_bg" align="right">
-                  {_d}
+                  {moment(_d).format('ll')}
                 </TableCell>
               ))}
             </TableRow>
