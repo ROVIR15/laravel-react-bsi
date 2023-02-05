@@ -2284,8 +2284,8 @@ const main = {
         cb(err.response)
       })
     },
-    getInvoicedParty(cb){
-      axios.get( uri + '/invoice-party').then(function(res){
+    getInvoicedParty(params=null, cb){
+      axios.get( uri + '/invoice-party' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
