@@ -397,10 +397,11 @@ class InvoiceController extends Controller
       ], 200);
     }
 
-    public function getInvoicedParty()
+    public function getInvoicedParty(Request $request)
     {
+      $type = $request->query('type');
       try {
-        $query = Invoice::select('sold_to')->with('party')->groupBy('sold_to')->get();
+        $query = Invoice::select('sold_to')->with('party')->whereHas('type', function($query) use ($type){ return($query->where('invoice_type_id', $type));})->groupBy('sold_to')->get();
         
       } catch (\Throwable $th) {
         //throw $th;
