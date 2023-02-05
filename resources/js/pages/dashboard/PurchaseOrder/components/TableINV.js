@@ -37,7 +37,7 @@ export default function BasicTable({ payload, tax, currency }) {
     payload.map(function (item) {
       sub = sub + item.qty * item.unit_price;
     });
-    return Math.floor(sub);
+    return fCurrency(Math.floor(sub), currency);
   };
 
   const total = () => {
@@ -45,8 +45,9 @@ export default function BasicTable({ payload, tax, currency }) {
     payload.map(function (item) {
       sub = sub + item.qty * item.unit_price;
     });
-    if(tax < 1) return fCurrency(Math.floor(sub));
-    else return fCurrency(Math.floor(sub) * (1+(tax/100), currency));
+
+    if(tax < 1) return fCurrency(Math.floor(sub), currency);
+    else return fCurrency(Math.floor(sub) * (1+(tax/100)), currency);
   };
   return (
     <>
