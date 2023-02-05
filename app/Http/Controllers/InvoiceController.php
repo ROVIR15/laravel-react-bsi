@@ -322,6 +322,7 @@ class InvoiceController extends Controller
 
       $paramParty = $request->query('party');
       $monthYear = $request->query('monthYear');
+      $type = $request->query('type');
 
       if(empty($monthYear)){
         $monthYear = date('Y-m');
@@ -335,6 +336,9 @@ class InvoiceController extends Controller
         $party = Invoice::select('sold_to')
                  ->with('party')
                  ->groupBy('sold_to')
+                 ->whereHas('type', function($query) use ($type){
+                   return $query->where('invoice_type_id', $type);
+                 })
                  ->where('sold_to', $paramParty)
                  ->get();
 
@@ -342,6 +346,9 @@ class InvoiceController extends Controller
                  ->groupBy('invoice_date')
                  ->orderBy('invoice_date', 'asc')
                  ->where('sold_to', $paramParty)
+                 ->whereHas('type', function($query) use ($type){
+                    return $query->where('invoice_type_id', $type);
+                  })
                  ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
                  ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
                  ->get();
@@ -366,7 +373,10 @@ class InvoiceController extends Controller
                 'due_date',
                 DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY) as due_dates')
               )
-              ->with('sum', 'terms', 'party', 'sales_order')
+              ->with('sum', 'terms', 'party', 'sales_order', 'purchase_order')
+              ->whereHas('type', function($query) use ($type){
+                  return $query->where('invoice_type_id', $type);
+                })
               ->where('sold_to', $paramParty)
               ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
               ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
