@@ -37,7 +37,7 @@ export default function BasicTable({ payload, tax, currency }) {
     payload.map(function (item) {
       sub = sub + item.qty * item.unit_price;
     });
-    return fCurrency(Math.floor(sub), currency);
+    return Math.floor(sub);
   };
 
   const total = () => {
@@ -112,7 +112,7 @@ export default function BasicTable({ payload, tax, currency }) {
                   Tax <span className="wk_ternary_color">{tax}%</span>
                 </td>
                 <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_pt0">
-                  {sumSubTotal() * (tax/100)}
+                  {fCurrency(sumSubTotal() * (tax/100), currency)}
                 </td>
               </tr>
               <tr className="wk_border_top wk_border_bottom">

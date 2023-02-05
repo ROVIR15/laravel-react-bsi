@@ -185,7 +185,7 @@
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
-            'shipment_estimated' => date('Y-m-d', strtotime($key['delivery_date'])),
+            'shipment_estimated' => date('Y-m-d', strtotime($key['shipment_estimated'])),
             'description' => $key['description']
           ]);
         }
