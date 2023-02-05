@@ -327,7 +327,29 @@ function RFQ() {
   // Radio
   const handleRadioChange = (event) => {
     setFieldValue('currency_id', event.target.value);
+    try {
+      API.updateQuote(id, { currency_id: event.target.value }, function(res) {
+        if(!res) return;
+        if(!res.success) throw new Error('failed to update quote');
+        else throw new Error('success');
+      })
+    } catch (error) {
+      alert(error);
+    }
   };
+
+  const handleTaxChange = (event) => {
+    setFieldValue('tax', event.target.value);
+    try {
+      API.updateQuote(id, { tax: values.tax }, function(res) {
+        if(!res) return;
+        if(!res.success) throw new Error('failed to update quote');
+        else throw new Error('success');
+      })
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   return (
     <Page>
@@ -499,7 +521,7 @@ function RFQ() {
                             <TextField
                               autoComplete="tax"
                               type="number"
-                              {...getFieldProps('tax')}
+                              onChange={handleTaxChange}
                               error={Boolean(touched.tax && errors.tax)}
                               helperText={touched.tax && errors.tax}
                               InputProps={{

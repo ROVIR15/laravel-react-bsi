@@ -439,7 +439,7 @@ function FirstPage() {
                   <Stack direction="row" justifyContent="space-between" style={{ padding: '8px' }}>
                     <Box>
                       <Typography variant="overline" display="block">
-                        PO Number
+                        Document Number
                       </Typography>
                       <Typography variant="h6" component="div">
                         {data.id}

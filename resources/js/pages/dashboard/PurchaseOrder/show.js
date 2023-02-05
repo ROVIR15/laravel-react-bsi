@@ -193,7 +193,7 @@ function SalesOrder() {
     };
   }, [loading]);
 
-  const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps, setFieldValue } = formik;
 
   const deleteData = useCallback((id) => () => {
     setItems((prevItems) => {
@@ -387,17 +387,11 @@ function SalesOrder() {
 
   const handleUpdateTax = () => {
     try {
-      if (isEmpty(tax)) throw new Error('tax is required');
-
-      try {
-        API.updateOrder(values.order_id, { tax, currency_id: value.currency_id }, function (res) {
-          if (!res) return;
-          if (res.success) alert('success');
-          else throw new Error('error occured failed store data');
-        });
-      } catch (error) {
-        alert(error);
-      }
+      API.updateOrder(values.order_id, { tax, currency_id: values.currency_id }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      });
     } catch (error) {
       alert(error);
     }
@@ -405,8 +399,11 @@ function SalesOrder() {
 
   // Radio
   const handleRadioChange = (event) => {
+    if(event.target.value === 1) setCurrency('usd');
+    else setCurrency('idr');
     setFieldValue('currency_id', event.target.value);
   };
+
   return (
     <Page>
       <Container>

@@ -172,8 +172,8 @@ function SalesOrder() {
     setTax(load.order.tax);
 
     let ras;
-    if(load.order?.currency_id === 1) ras='usd';
-    else ras='idr';
+    if (load.order?.currency_id === 1) ras = 'usd';
+    else ras = 'idr';
 
     setCurrency(ras);
 
@@ -445,17 +445,11 @@ function SalesOrder() {
 
   const handleUpdateTax = () => {
     try {
-      if (isEmpty(tax)) throw new Error('tax is required');
-
-      try {
-        API.updateOrder(values.order_id, { tax, currency_id: value.currency_id }, function (res) {
-          if (!res) return;
-          if (res.success) alert('success');
-          else throw new Error('error occured failed store data');
-        });
-      } catch (error) {
-        alert(error);
-      }
+      API.updateOrder(values.order_id, { tax, currency_id: values.currency_id }, function (res) {
+        if (!res) return;
+        if (res.success) alert('success');
+        else throw new Error('error occured failed store data');
+      });
     } catch (error) {
       alert(error);
     }
@@ -463,6 +457,8 @@ function SalesOrder() {
 
   // Radio
   const handleRadioChange = (event) => {
+    if (event.target.value === 1) setCurrency('usd');
+    else setCurrency('idr');
     setFieldValue('currency_id', event.target.value);
   };
 
@@ -717,7 +713,11 @@ function SalesOrder() {
                             </RadioGroup>
                           </FormControl>
 
-                          <Button onClick={handleUpdateTax} variant="outlined" sx={{width: '25ch'}}>
+                          <Button
+                            onClick={handleUpdateTax}
+                            variant="outlined"
+                            sx={{ width: '25ch' }}
+                          >
                             Save
                           </Button>
                         </Stack>
