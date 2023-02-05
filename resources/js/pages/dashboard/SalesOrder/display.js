@@ -311,8 +311,13 @@ function DisplaySalesOrder({ placeHolder }) {
                     valid_thru,
                     sum,
                     completion_status,
-                    status
+                    status,
+                    currency_id
                   } = row;
+                  
+                  let currency;
+                  if(currency_id === 2) currency = "idr";
+                  else currency = "usd";
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -333,7 +338,7 @@ function DisplaySalesOrder({ placeHolder }) {
                       <TableCell align="left">{sold_to}</TableCell>
                       <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
                       <TableCell align="left">
-                        Rp. {sum?.length ? fCurrency(sum[0].total_money) : null}
+                        {sum?.length ? fCurrency(sum[0].total_money, currency) : null}
                       </TableCell>
                       <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
                       <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>

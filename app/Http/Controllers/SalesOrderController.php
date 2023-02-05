@@ -64,7 +64,7 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = SalesOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
+          $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
           })
           ->whereYear('created_at', '=', $year)
@@ -74,7 +74,7 @@
 
         case 'review':
           # code...
-          $query = SalesOrder::with('completion_status', 'status', 'sum')->whereHas('status', function($query2){
+          $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function($query2){
             $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
           })
           ->whereYear('created_at', '=', $year)
@@ -84,7 +84,7 @@
         
         default:
           # code...
-          $query = SalesOrder::with('completion_status', 'status', 'sum')
+          $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
           ->get();
