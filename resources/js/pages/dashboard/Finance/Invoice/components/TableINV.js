@@ -45,14 +45,14 @@ const rows = [
 
 export default function BasicTable({ payload, terms, tax }) {
   const total = () => {
-    let sub_total = subTotal();
+    let sub_total = subTotal() * (1 + tax / 100);
     let sub_total2 = terms.reduce(function (initial, next) {
       let type = next.value_type.toLowerCase();
       if (type === 'percentage') return initial * (1 + next.term_value / 100);
       if (type === 'number') return initial + next.term_value;
       else return number;
     }, sub_total);
-    return (sub_total2 * (1 + tax / 100)).toFixed(0);
+    return sub_total2.toFixed(0);
   };
 
   const subTotal = () => {
