@@ -6,6 +6,7 @@ use DB;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice\Payment;
+use App\Models\Invoice\PaymentHasInvoice;
 use App\Models\Invoice\PaymentMethodType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Invoice\Payment as PaymentOneCollection;
