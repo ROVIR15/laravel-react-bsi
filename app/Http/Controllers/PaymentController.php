@@ -98,7 +98,7 @@ class PaymentController extends Controller
           # code...
           array_push($hh, [
             'payment_id' => $payment['id'],
-            'invoice_id' => $key
+            'invoice_id' => $key['id']
           ]);
         }
 
