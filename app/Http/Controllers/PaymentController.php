@@ -89,7 +89,7 @@ class PaymentController extends Controller
           'effective_date' => $param['effective_date'],
           'ref_num' => $param['ref_num'],
           'amount' => $param['amount'],
-          'comment' => $param['comment']
+          // 'comment' => $param['comment']
         ]);
 
         $hh = [];
