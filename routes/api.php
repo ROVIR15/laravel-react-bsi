@@ -163,8 +163,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('invoice-role', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-term', 'InvoiceTermController')->only(['store', 'update']);
     Route::get('invoice-term-invoice/{id}', 'InvoiceTermController@getInvoiceTermOfInvoice');
-    Route::resource('payment', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('payment-application', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('payment', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('payment-application', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Route::resource('sales-invoice', 'SalesInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     // Route::resource('purchase-invoice', 'PurchaseInvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -245,3 +245,10 @@ Route::put('update-postal-address/{id}', 'ContactMechanismController@update_post
 Route::put('update-email/{id}', 'ContactMechanismController@update_email');
 Route::put('update-telecommunication-number/{id}', 'ContactMechanismController@update_telecommunication_number');
 Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+Route::put('update-new-feature-v2/{id}', 'ContactMechanismController@update_flag_contact_mechanism');
+Route::get('purchase-order-v2', 'PurchaseOrderController@getPurchaseOrderWhereNotInvoicedYet');
+Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
+
+Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
+Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
