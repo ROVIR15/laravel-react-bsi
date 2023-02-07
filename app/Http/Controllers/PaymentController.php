@@ -85,11 +85,11 @@ class PaymentController extends Controller
       try {
         $payment = Payment::create([
           'payment_method_type_id' => $param['payment_method_type_id'],
-          'invoice_id' => $param['invoice_id'],
+          // 'invoice_id' => $param['invoice_id'],
           'effective_date' => $param['effective_date'],
           'ref_num' => $param['ref_num'],
           'amount' => $param['amount'],
-          // 'comment' => $param['comment']
+          'comment' => $param['comment']
         ]);
 
         $hh = [];
