@@ -113,8 +113,8 @@
     {
         //
         try {
-            $cutting = Cutting::where('order_id', $id)->get();
             $sales = SalesOrder::where('order_id', $id)->get();
+            $cutting = Cutting::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
             $query = Sewing::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
             $query2 = Qc::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('product_feature_id', 'po_number')->get();
             $query3 = FinishedGoods::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('product_feature_id','po_number')->get();
