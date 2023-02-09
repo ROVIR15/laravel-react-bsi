@@ -10,6 +10,7 @@ import { Stack, Typography } from '@mui/material';
 function Display({ placeHolder }) {
   const {id} = useParams();
   const [sales, setSales] = useState({})
+  const [cutting, setCutting] = useState([])
   const [sewing, setSewing] = useState([])
   const [qc, setQc] = useState([])
   const [fg, setFg] = useState([])
@@ -27,6 +28,7 @@ function Display({ placeHolder }) {
           alert('error')
         } else {
           setSales(res.sales_order);
+          setCutting(res.cutting)
           setSewing(res.sewing)
           setQc(res.qc)
           setFg(res.fg)
@@ -44,6 +46,7 @@ function Display({ placeHolder }) {
       {sales?.po_number}
     </Typography>
     <Stack direction="column" spacing={2}>
+      <Sewing placeHolder={null} items={cutting}/>
       <Sewing placeHolder={null} items={sewing}/>
       <QC placeHolder={null} items={qc}/>
       <FG placeHolder={null} items={fg}/>

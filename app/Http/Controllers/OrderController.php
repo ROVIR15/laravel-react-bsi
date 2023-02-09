@@ -8,6 +8,7 @@
   use App\Models\Order\OrderItem;
   use App\Models\Order\SalesOrder;
   use App\Models\Order\PurchaseOrder;
+  use App\Models\Monitoring\Cutting;
   use App\Models\Monitoring\Sewing;
   use App\Models\Monitoring\Qc;
   use App\Models\Monitoring\FinishedGoods;
@@ -112,6 +113,7 @@
     {
         //
         try {
+            $cutting = Cutting::where('order_id', $id)->get();
             $sales = SalesOrder::where('order_id', $id)->get();
             $query = Sewing::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
             $query2 = Qc::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('product_feature_id', 'po_number')->get();
@@ -120,6 +122,7 @@
             return response()->json([
                 'sales_order' => $sales[0],
                 'sewing' => $query,
+                'cutting' => $cutting,
                 'qc' => $query2,
                 'fg' => $query3
              ]);
