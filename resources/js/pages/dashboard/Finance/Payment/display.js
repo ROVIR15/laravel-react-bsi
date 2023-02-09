@@ -90,8 +90,7 @@ function FinanceAccountDisplay({ placeHolder }) {
               return {
                 id: item?.id,
                 payment_method_type_id: item?.type?.name,
-                invoice_id: `INV. No ${sales_invoice.id}`,
-                // invoice_id: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
+                invoice_id: `INV. No ${sales_invoice?.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice?.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
                 ref_num: item?.ref_num,
                 effective_date: item?.effective_date,
                 amount: item?.amount,
