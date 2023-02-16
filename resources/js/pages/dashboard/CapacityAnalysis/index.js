@@ -15,8 +15,9 @@ import {
   Paper,
   Stack
 } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Icon } from '@iconify/react';
+import ArrowRightIcon from '@iconify/icons-eva/arrow-right-outline';
+import ArrowDownIcon from '@iconify/icons-eva/arrow-down-fill';
 import moment from 'moment';
 import API from '../../../helpers';
 import { fPercent } from '../../../utils/formatNumber';
@@ -98,7 +99,11 @@ function Row(props) {
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            <Box
+              component={Icon}
+              icon={open ? ArrowDownIcon : ArrowRightIcon}
+              sx={{ width: 16, height: 16, ml: 1 }}
+            />
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
