@@ -2853,6 +2853,20 @@ const main = {
       }).catch(function(err){
         cb(err);
       });
+    },
+    getAnalysisCapacity(params=null, cb){
+      axios.get( uri + '/capacity-sewing/' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getReadyMadeGarmentValuation(params=null, cb){
+      axios.get( uri + '/finished-garment-valuation' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
     }
   }
 export default main;

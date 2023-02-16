@@ -15,7 +15,9 @@ import AlertDialog from '../DialogBox/OrderCompletionStatus';
 // ----------------------------------------------------------------------
 
 function getEditPathname(array, param) {
+  console.log(array)
   if(!array.length > 5) return null;
+  if(array.length === 3) return '/' + array[1] + '/' + array[2] + `/${param}`;
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 

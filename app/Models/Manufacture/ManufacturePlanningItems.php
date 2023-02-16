@@ -63,4 +63,12 @@ class ManufacturePlanningItems extends Model
     public function month_archive(){
         return $this->belongsTo('App\Models\Manufacture\ManufacturePlanning', 'manufacture_planning_id', 'id');
     }
+
+    public function find_realisation_of_sewing(){
+        return $this->belongsTo('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id');
+    }
+
+    public function man_plan(){
+        return $this->belongsTo('App\Models\Manufacture\ManufacturePlanning', 'manufacture_planning_id', 'id');
+    }
 }

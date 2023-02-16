@@ -44,7 +44,7 @@ const sidebarConfig = [
       },
       {
         title: 'Sales Order',
-        path: '/dashboard/order/sales-order',
+        path: '/dashboard/order/sales-order'
       }
     ]
   },
@@ -134,18 +134,18 @@ const sidebarConfig = [
     ]
   },
   {
-    title: "Human Resources and Development",
+    title: 'Human Resources and Development',
     name: 'human_resources',
     icon: getIcon(peopleFill),
     children: [
       {
         title: 'Labor',
         path: '/dashboard/hrd/labor'
-      },
+      }
     ]
   },
   {
-    title: "Purchasing",
+    title: 'Purchasing',
     name: 'purchasing',
     icon: getIcon(shoppingBagFill),
     children: [
@@ -168,8 +168,8 @@ const sidebarConfig = [
     ]
   },
   {
-    title: "Shipment",
-    name: "shipment",
+    title: 'Shipment',
+    name: 'shipment',
     icon: getIcon(carFill),
     children: [
       {
@@ -187,7 +187,7 @@ const sidebarConfig = [
     ]
   },
   {
-    title: "Monitoring",
+    title: 'Monitoring',
     name: 'monitoring',
     icon: getIcon(monitorOutline),
     children: [
@@ -233,7 +233,7 @@ const sidebarConfig = [
     children: [
       {
         title: 'Vendor Bills',
-        path: '/dashboard/finance/vendor-bills',
+        path: '/dashboard/finance/vendor-bills'
       },
       {
         title: 'Invoice',
@@ -254,39 +254,47 @@ const sidebarConfig = [
     ]
   },
   {
-    title: "Report and Analysis",
+    title: 'Report and Analysis',
     name: 'report',
     icon: getIcon(bookOpenFill),
     children: [
       {
         title: 'Invoice Report',
-        path: '/dashboard/finance/invoice/report',
+        path: '/dashboard/finance/invoice/report'
       },
       {
         title: 'Order P/L Analysis',
         path: '/dashboard/order-pl-analysis'
+      },
+      {
+        title: 'Factory Capacity',
+        path: '/dashboard/capacity'
+      },
+      {
+        title: 'Good Garment Valuation',
+        path: '/dashboard/goods-valuation'
       }
     ]
   },
   {
     title: 'User Management',
     name: 'user-management',
-    path: '/dashboard/user-management',
+    path: '/dashboard/user-management'
   },
   {
     title: 'Facility',
     name: 'facility',
-    path: '/dashboard/facility',
+    path: '/dashboard/facility'
   },
   {
     title: 'Factory',
     name: 'factory',
-    path: '/dashboard/factory',
+    path: '/dashboard/factory'
   },
   {
     title: 'Line Target',
     name: 'line-target',
-    path: '/dashboard/facility-target',
+    path: '/dashboard/facility-target'
   }
 ];
 

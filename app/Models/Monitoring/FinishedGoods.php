@@ -2,6 +2,7 @@
 
 namespace App\Models\Monitoring;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class FinishedGoods extends Model
@@ -44,5 +45,9 @@ class FinishedGoods extends Model
   
     public function inventory(){
         return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id')->with('facility');
+    }
+
+    public function check_shipment(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem', 'order_item_id', 'order_item_id')->select('id', 'shipment_id', 'order_item_id', DB::raw('sum(qty_shipped) as total_shipped_goods'))->groupBy('order_item_id');
     }
 }

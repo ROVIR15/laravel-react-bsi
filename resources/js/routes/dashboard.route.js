@@ -224,9 +224,9 @@ import {
 } from '../pages/dashboard/Shipment'
 import { Typography } from '@mui/material';
 
-// import ValuationTable from '../components/experiment/Valuation';
+import ValuationTable from '../pages/dashboard/ValuationAnalysis';
 // import TestVendor from '../pages/dashboard/Vendor/test';
-// import Capacity from '../components/experiment/capacity';
+import Capacity from '../pages/dashboard/CapacityAnalysis';
 
 export default function TestRouter() {
 
@@ -727,14 +727,14 @@ export default function TestRouter() {
             { path: 'display/:id', element: <UserTest /> }
           ]
         },
-        // {
-        //   path: 'capacity',
-        //   element: <Capacity />
-        // },
-        // {
-        //   path: 'goods-valuation',
-        //   element: <ValuationTable />
-        // },
+        {
+          path: 'capacity',
+          element: <Capacity />
+        },
+        {
+          path: 'goods-valuation',
+          element: <ValuationTable />
+        },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     }

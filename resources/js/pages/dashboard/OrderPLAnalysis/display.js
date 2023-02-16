@@ -14,11 +14,8 @@ import {
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
-import { serviceList2 } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
@@ -154,7 +151,6 @@ function DisplayBuyer({ placeHolder }) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const { id, costing_name, sales_order} = row;
-                  console.log(row)
                   const isItemSelected = selected.indexOf(id) !== -1;
                   return (
                     <TableRow
