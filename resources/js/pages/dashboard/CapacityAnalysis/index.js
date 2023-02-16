@@ -125,8 +125,7 @@ function Row(props) {
                   <TableRow>
                     <TableCell>Start Date</TableCell>
                     <TableCell>End Date</TableCell>
-                    <TableCell>End Date</TableCell>
-                    <TableCell>Buyer</TableCell>
+                    <TableCell>Sales Order</TableCell>
                     <TableCell align="right">Planned Qty</TableCell>
                     <TableCell align="right">Realisation</TableCell>
                   </TableRow>
