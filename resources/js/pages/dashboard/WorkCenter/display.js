@@ -23,6 +23,7 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
+    { id: 'goods_name', label: 'Product Name', alignRight: false },
     { id: 'name', label: 'Work Center Name', alignRight: false },
     { id: 'work_hours', label: 'Working Days', alignRight: false },
     { id: 'company_name', label: 'Company Name', alignRight: false },
@@ -59,7 +60,10 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => {
+      let _p = `${_b.name} ${_b?.goods?.name}`
+      return _p.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    })
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -72,7 +76,7 @@ function DisplayWorkCenter({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   useEffect(() => {
     function isEmpty(array){
@@ -91,7 +95,7 @@ function DisplayWorkCenter({ placeHolder }) {
         });
       }
 
-  }, [workCenter])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -143,7 +147,7 @@ function DisplayWorkCenter({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteInquiry(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setWorkCenter([]);
     }).catch(function(error){
       alert('error')
     });
@@ -167,6 +171,7 @@ function DisplayWorkCenter({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -187,7 +192,8 @@ function DisplayWorkCenter({ placeHolder }) {
                     prod_capacity,
                     oee_target,
                     cost_per_hour,
-                    description
+                    description,
+                    goods
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -199,13 +205,8 @@ function DisplayWorkCenter({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{goods?.name}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{work_hours}</TableCell>
                       <TableCell align="left">{company_name}</TableCell>
@@ -238,7 +239,7 @@ function DisplayWorkCenter({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={workCenter.length}
         rowsPerPage={rowsPerPage}

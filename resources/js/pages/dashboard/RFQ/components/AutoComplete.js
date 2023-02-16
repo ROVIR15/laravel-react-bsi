@@ -16,7 +16,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
     const [value, setValue] = React.useState(null);
 
     React.useEffect(() => {
-      console.log(value)
+      
       if(!value) return
       let id = value.split(',')[0]
       API.getAInquiry(id, (res) => {

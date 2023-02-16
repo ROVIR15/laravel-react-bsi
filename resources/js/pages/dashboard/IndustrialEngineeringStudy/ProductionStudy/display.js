@@ -139,7 +139,7 @@ function DisplayProductionStudy({ placeHolder }) {
     event.preventDefault();
     alert(id);
     API.deleteProductionStudy(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setProductionStudyData([]);
     }).catch(function(error){
       alert('error')
     });

@@ -1,7 +1,7 @@
 <?php
   
   namespace App\Http\Controllers;
-  use Faker\Generator as Faker;
+  
 
   use App\Models\Order\OrderItem;
   use App\Http\Controllers\Controller;
@@ -41,7 +41,7 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
@@ -50,11 +50,12 @@
   
         foreach($param as $key){
           array_push($salesItemsCreation, [
-            'id' => $faker->unique()->numberBetween(1,8939),
+            
             'order_id' => $key['order_id'],
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
+            'cm_price' => $key['cm_price'],
             'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
           ]);
         }
@@ -88,7 +89,7 @@
     public function show($id)
     {
       try {
-        $orderItem = OrderItem::with('product_feature')->where('order_id', $id)->get();
+        $orderItem = OrderItem::with('product_feature', 'check_shipment')->where('order_id', $id)->get();
         return new OrderItemCollection($orderItem);
       } catch (Exception $th) {
         return response()->json([

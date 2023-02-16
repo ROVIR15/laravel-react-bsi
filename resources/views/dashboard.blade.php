@@ -2,10 +2,13 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width">
 
-        <title>Laravel</title>
+        <title>BSI Information System</title>
 
+        <!-- add icon link -->
+        <link rel = "icon" href = "{{ asset('data_file/bsi_logo.jpeg') }}" 
+        type = "image/x-icon">
         <!-- Script -->
         <script defer src="{{ asset('js/app.js') }}"></script>
 
@@ -15,7 +18,7 @@
         <!-- Styles -->
         <style>
             html, body {
-                background-color: #e6edee;
+                background-color: #ffffff;
                 color: #636b6f;
                 font-family: 'Nunito', sans-serif;
                 font-weight: 200;

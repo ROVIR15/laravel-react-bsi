@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Faker\Generator as Faker;
+
 use Carbon\Carbon;
 
 use Illuminate\Http\Request;
@@ -42,7 +42,7 @@ class QuoteItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $param = $request->all()['payload'];
         $current_date_time = Carbon::now()->toDateTimeString();
@@ -52,13 +52,11 @@ class QuoteItemController extends Controller
   
             foreach($param as $key){
               array_push($quoteItemsCreation, [
-                'id' => $faker->unique()->numberBetween(1,8939),
                 'quote_id' => $key['quote_id'],
                 'request_item_id' => $key['inquiry_item_id'],
                 'product_feature_id' => $key['product_feature_id'],
                 'qty' => $key['qty'],
                 'unit_price' => $key['unit_price'],
-                'created_at' => $current_date_time
               ]);
             }
 
@@ -123,7 +121,13 @@ class QuoteItemController extends Controller
 
         try {
             //code...
-            QuoteItem::where('id', $id)->update($param);
+            if($id) {
+                QuoteItem::where('id', $id)->update($param);
+            }
+
+            if(!$id) {
+                QuoteItem::where('quote_id', $param['quote_id'])->update($param['items']);
+            }
         } catch (Exception $th) {
             //throw $th;
             return response()->json([

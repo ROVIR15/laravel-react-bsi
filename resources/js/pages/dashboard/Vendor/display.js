@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
@@ -18,12 +18,14 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { partyArrangedData } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
+  { id: 'role_type', label: 'Bagian', alignRight: false },
   { id: 'npwp', label: 'Phone Number', alignRight: false },
   { id: 'street', label: 'Address', alignRight: false },
   { id: 'city', label: 'City', alignRight: false },
@@ -51,7 +53,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -59,13 +61,12 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function Vendor({ placeHolder }) {
-
   const [buyerData, setBuyerData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -75,22 +76,22 @@ function Vendor({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
+    function isEmpty(array) {
+      if (!Array.isArray(array)) return true;
       return !array.length;
     }
 
-    if(isEmpty(buyerData)) {
-      API.getBuyers((res) => {
-        if(isEmpty(res)) {
-          console.error('Nothing');
-          setBuyerData(BUYERLIST);
+    if (isEmpty(buyerData)) {
+      API.getVendors((res) => {
+        if (isEmpty(res)) {
+          setBuyerData([]);
         } else {
-          setBuyerData(res);
+          const a = partyArrangedData(res);
+          setBuyerData(a);
         }
       });
     }
-  }, [])
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -141,13 +142,13 @@ function Vendor({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - buyerData.length) : 0;
 
   const filteredData = applySortFilter(buyerData, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -161,6 +162,7 @@ function Vendor({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -173,7 +175,18 @@ function Vendor({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, email, phone_number, street, city, province, country, postal_code } = row;
+                  const {
+                    id,
+                    role_type,
+                    name,
+                    email,
+                    phone_number,
+                    street,
+                    city,
+                    province,
+                    country,
+                    postal_code
+                  } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -184,14 +197,9 @@ function Vendor({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{email}</TableCell>
+                      <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
                       <TableCell align="left">{phone_number}</TableCell>
                       <TableCell align="left">{street}</TableCell>
                       <TableCell align="left">{city}</TableCell>
@@ -232,7 +240,7 @@ function Vendor({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
-export default Vendor
+export default Vendor;

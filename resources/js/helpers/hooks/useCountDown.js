@@ -62,7 +62,6 @@ const useCountdown = (manufacture_operation_id, status) => {
         break;
 
       default:
-        console.log(initialDate);
         setCountDown(initialDate);
         interval = initialDate;
         break;

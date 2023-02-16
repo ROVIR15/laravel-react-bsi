@@ -40,12 +40,12 @@ class AddressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         $query = Address::create([
-          'id' => $faker->unique()->numberBetween(1,2314),
+          
           'party_id' => $param['party_id']
         ]);
       } catch (Exception $th) {

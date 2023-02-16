@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
+use App\Models\Product\Goods;
 use App\Models\Product\ProductInformationView;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\Product as ProductOneCollection;
@@ -22,9 +23,10 @@ class ProductController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ProductInformationView::all();
+      $query = Goods::all();
 
-      return new ProductCollection($query);
+      return response()->json($query);
+      // return new ProductCollection($query);
     }
 
     /**
@@ -43,7 +45,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $productData = $request->all()['payload'];
       try {
@@ -52,7 +54,6 @@ class ProductController extends Controller
           'goods_id' => $productData['goods_id'],
           'name' => $productData['name'],
           'part_id' => $productData['part_id'],
-          'id' => $faker->unique()->numberBetween(982,2147)
         ]);
       } catch (Exception $th) {
         return response()->json([

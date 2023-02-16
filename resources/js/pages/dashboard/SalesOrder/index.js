@@ -4,6 +4,7 @@ import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import { Icon } from '@iconify/react';
+import Display from './display';
 import Layout from '../../../layouts/Layout';
 
 function getPathname(array){
@@ -13,7 +14,17 @@ function getPathname(array){
 
 function SalesOrderLayout() {
   const { pathname } = useLocation();
-
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }  
   return (
     <Layout>
     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -39,7 +50,7 @@ function SalesOrderLayout() {
         </Button>
       </Stack>
     </Stack>
-    <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }

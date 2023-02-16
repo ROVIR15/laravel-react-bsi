@@ -2,9 +2,11 @@
   
   namespace App\Http\Controllers;
   use Carbon\Carbon;
-  use Faker\Generator as Faker;
+  use DB;
 
   use Illuminate\Http\Request;
+  use App\Models\Invoice\Invoice;
+  use App\Models\Order\Quote;
   use App\Models\Order\Order;
   use App\Models\Order\OrderItem;
   use App\Models\Order\PurchaseOrder;
@@ -24,10 +26,109 @@
      */
     public function index(Request $request)
     {
-        $param = $request->all();
-        $query = PurchaseOrder::with('party')->get();
+      $query;
+      $level = $request->query('level');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
+      $monthYear = $request->query('monthYear');
+      $completion_status = $request->query('completion_status');
+
+      if(empty($level)){
+        if(!empty($completion_status) && $completion_status = 2){
+          $query = PurchaseOrder::with('completion_status')->whereHas('completion_status', function($query2){
+            $query2->where('completion_status_id', 2);
+          })->get();
+        } else {
+        $query = PurchaseOrder::with('status', 'sum', 'completion_status')->get();
+        }
 
         return new POViewCollection($query);
+      }
+
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      switch ($level) {
+        case 'approve':
+          # code...
+          $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function($query2){
+            $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
+          break;
+
+        case 'review':
+          # code...
+          $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function($query2){
+            $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
+          })
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
+          break;
+        
+        default:
+          # code...
+          $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')
+          ->whereYear('created_at', '=', $year)
+          ->whereMonth('created_at', '=', $month)
+          ->get();
+
+          break;
+      }
+
+      return new POViewCollection($query);
+    }
+
+    public function getPurchaseOrderList()
+    {
+      try {
+        $query = PurchaseOrder::with('completion_status', 'status', 'sum')->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return new POViewCollection($query);
+    }
+
+    public function getPurchaseOrderWhereNotInvoicedYet()
+    {
+      try {
+        $orderIdFromInvoice = Invoice::select('order_id')->distinct('order_id')->get();
+
+        $_order = [];
+        foreach ($orderIdFromInvoice as $item) {
+          if(!is_null($item['order_id'])) array_push($_order, $item['order_id']);
+        }
+        $query = PurchaseOrder::whereNotIn('order_id', $_order)->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
     }
 
         /**
@@ -46,21 +147,22 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
       try {
         //Order Creation
         $order = Order::create([
-          'id' => $faker->unique()->numberBetween(1, 9999),
+          'currency_id' => $param['currency_id'],
           'quote_id' => $param['quote_id'],
           'issue_date' => $param['issue_date'],
-          'valid_thru' => $param['valid_thru']
+          'valid_thru' => $param['valid_thru'],
+          'tax' => $param['tax'],
+          'description' => $param['description']
         ]);
 
         $purchaseOrder = PurchaseOrder::create([
-          'id' => $faker->unique()->numberBetween(1, 3123),
           'order_id' => $order->id,
           'po_number' => $param['po_number'],
           'bought_from' => $param['sold_to'],
@@ -78,12 +180,13 @@
 
         foreach($param['order_items'] as $key){
           array_push($purchaseItemsCreation, [
-            'id' => $faker->unique()->numberBetween(1,8939),
             'order_id' => $order->id,
+            'product_id' => $key['product_id'],
             'product_feature_id' => $key['product_feature_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
-            'shipment_estimated' => date('Y-m-d', strtotime($key['delivery_date']))
+            'shipment_estimated' => date('Y-m-d', strtotime($key['shipment_estimated'])),
+            'description' => $key['description']
           ]);
         }
 
@@ -114,9 +217,10 @@
     public function show($id)
     {
       try {
-        $purchaseOrderData = PurchaseOrder::with('party', 'ship', 'order_item')->find($id);
+        $purchaseOrderData = PurchaseOrder::with('bought', 'ship', 'order_item', 'order', 'status', 'completion_status')->find($id);
+        // return response()->json($purchaseOrderData);
         return new onePurchaseOrder($purchaseOrderData);
-    } catch (Exception $th) {
+    } catch (Throwable $th) {
         return response()->json([
           'success' => false,
           'errors' => $th->getMessage()
@@ -146,8 +250,8 @@
     {
       $purchaseOrderData = $request->all()['payload'];
       try {
-        $purchaseOrder = PurchaseOrder::find($id)->update($purchaseOrderData);
-
+        PurchaseOrder::find($id)->update($purchaseOrderData);
+        
         return response()->json([
           'success' => true
         ], 200);

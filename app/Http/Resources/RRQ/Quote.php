@@ -18,6 +18,7 @@ class Quote extends JsonResource
     {
         return [
             'id' => $this->id,
+            'currency_id' => $this->currency_id,
             'po_number' => $this->po_number,
             'sold_to' => $this->party->id,
             'ship_to' => $this->ship->id,
@@ -27,7 +28,9 @@ class Quote extends JsonResource
             'issue_date' => $this->issue_date,
             'valid_thru' => $this->valid_thru,
             'delivery_date' => $this->delivery_date,
-            'quote_items' => new QuoteItemCollection($this->quote_item)
+            'quote_items' => new QuoteItemCollection($this->quote_item),
+            'tax' => $this->tax,
+            'status' => $this->status
         ];
     }
 }

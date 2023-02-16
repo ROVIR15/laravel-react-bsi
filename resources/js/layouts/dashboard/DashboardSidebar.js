@@ -59,8 +59,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
   if(user){
     sidebarConfig.map(function(x){
-      user.pages.map(function(page){
-        if(page.page_name === x.name) newSidebar.push(x);
+      user.pages.map(function(item){
+        if(item.page.name === x.name) newSidebar.push(x);
       });
     })  
   }
@@ -72,9 +72,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column' },
       }}
     >
-      <Box sx={{ px: 2.5, py: 3 }}>
-        <Box component={RouterLink} to="/" sx={{ display: 'inline-flex' }}>
-        </Box>
+      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
+        <Logo />
       </Box>
 
       <Box sx={{ mb: 5, mx: 2.5 }}>
@@ -83,7 +82,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Avatar src={state.name} alt={state.name} />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {state.name}
+                {user?.name}
               </Typography>
             </Box>
           </AccountStyle>

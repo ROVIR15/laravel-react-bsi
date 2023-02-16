@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
+import { fCurrency } from '../../../../utils/formatNumber';
 
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 12
@@ -41,7 +42,7 @@ export default function BasicTable({ payload }) {
     payload.map(function(item){
       sub = sub + (item.qty*item.unit_price)
     })
-    return sub;
+    return fCurrency(Math.floor(sub));
   }
 
   const total = () => {
@@ -49,7 +50,7 @@ export default function BasicTable({ payload }) {
     payload.map(function(item){
       sub = sub + (item.qty*item.unit_price)
     })
-    return sub*1.1;
+    return fCurrency(Math.floor(sub)*1.11);
   }
   return (
     <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
@@ -58,6 +59,8 @@ export default function BasicTable({ payload }) {
           <TableRow>
             <TableCell align="left">#</TableCell>
             <TableCell>Product Name</TableCell>
+            <TableCell align="left">Color</TableCell>
+            <TableCell align="left">Size</TableCell>
             <TableCell align="right">Qty Ordered</TableCell>
             <TableCell align="right">Unit Price</TableCell>
             <TableCell align="right">Total</TableCell>
@@ -71,50 +74,57 @@ export default function BasicTable({ payload }) {
             >
               <TableCell align="left">{index+1}</TableCell>
               <TableCell component="th" scope="row">
-                {`${row.product.name} ${row.product.color} - ${row.product.size}`}
+                {row.name} 
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {row.color}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {row.size}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">{row.unit_price}</TableCell>
-              <TableCell align="right">{(row.qty * row.unit_price)}</TableCell>
+              <TableCell align="right">{fCurrency(row.unit_price)}</TableCell>
+              <TableCell align="right">Rp. {fCurrency(Math.floor(row.qty * row.unit_price))}</TableCell>
             </TableRow>
           ))}
+          
             <TableRow
               key="Total"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <NoBorderCell align="right" colSpan={4}>
+              <NoBorderCell align="right" colSpan={6}>
                 <BoxStyle />
                 <Typography variant="body1"> Subtotal </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {sumSubTotal() } </Typography>
+                <Typography variant="body1"> Rp. {sumSubTotal() } </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
               key="Total"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <NoBorderCell align="right" colSpan={4}>
+              <NoBorderCell align="right" colSpan={6}>
                 <BoxStyle />
                 <Typography variant="body1"> Taxes </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {`${10}%`} </Typography>
+                <Typography variant="body1"> {`${11}%`} </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
               key="Total"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <NoBorderCell align="right" colSpan={4}>
+              <NoBorderCell align="right" colSpan={6}>
                 <BoxStyle />
                 <Typography variant="h6"> Total </Typography>
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> {total()} </Typography>
+                <Typography variant="body1"> Rp. {total()} </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

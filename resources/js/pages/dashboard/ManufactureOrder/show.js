@@ -56,10 +56,6 @@ function calculate_stock_left(qty_available, current_keep, qty_to_be_consumed){
   const _currentless = (current_keep - qty_to_be_consumed)*-1
   const _available = qty_available - _currentless
 
-  console.log(_currentless,
-    _available,
-    qty_to_be_consumed)
-
   let _keep, _less;
 
   if (qty_available <= 0) return { qty_keep: 0, qty_less: _currentless*-1, qty_consumed: 0, status: statusOfComponent(current_keep, qty_to_be_consumed)}
@@ -67,20 +63,17 @@ function calculate_stock_left(qty_available, current_keep, qty_to_be_consumed){
   if (_currentless === qty_to_be_consumed ) {
     _keep = parseInt(current_keep) + parseInt(qty_available);
     _less = _keep - qty_to_be_consumed
-    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${_less}`)
     return { qty_keep: _keep, qty_less: _less, qty_consumed: parseInt(qty_available), status: statusOfComponent(_keep, qty_to_be_consumed)}
   }
 
   if (_available > 0 && qty_available > _currentless) {
     _keep = parseInt(current_keep) + parseInt(_currentless);
-    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${0}`)
     return { qty_keep: _keep, qty_less: 0, qty_consumed: parseInt(_currentless), status: statusOfComponent(_keep, qty_to_be_consumed)}
   }
 
   if (_availabe > 0 && qty_available < _currentless) {
     _keep = parseInt(current_keep) + parseInt(_available);
     _less = parseInt(current_keep) - parseInt(qty_to_be_consumed);
-    console.log(`current_less: ${_currentless} \n new qty_keep: ${_keep} \n new qty_less: ${_less}`)
     return { qty_keep: _keep, qty_consumed: parseInt(_currentless), qty_less: _less, status: statusOfComponent(_keep, qty_to_be_consumed)}
   }
 

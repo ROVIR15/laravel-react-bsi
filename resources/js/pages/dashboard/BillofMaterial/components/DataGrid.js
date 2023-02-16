@@ -9,7 +9,7 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-export default function ValidateRowModelControlGrid({ columns, rows, handleReset, handleUpdateAllRows, handleAddRow, ...rest }) {
+export default function ValidateRowModelControlGrid({ columns, rows, handleReset, handleUpdateAllRows, handleAddRow, handleDuplicate, duplicateMaterial, ...rest }) {
   
   return (
     <Box
@@ -45,6 +45,9 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleReset
         <Button size="small" onClick={handleAddRow}>
           Add Data
         </Button>
+				<Button size="small" onClick={handleDuplicate} disabled={!duplicateMaterial}>
+					Duplicate Material
+				</Button>
       </Stack>
       <DataGrid rows={rows ? rows : mrows } columns={columns ? columns : estColumns} {...rest}/>
     </Box>

@@ -11,7 +11,6 @@ import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton, Typogr
 // material labs
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
-import NestedSection from './NestedSection';
 // ----------------------------------------------------------------------
 
 const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props} />)(

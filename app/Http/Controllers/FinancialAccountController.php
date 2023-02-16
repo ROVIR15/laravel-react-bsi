@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\FinancialAccount;
+use App\Models\Invoice\FinancialAccount;
+use App\Models\Invoice\FinancialAccountType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\FinancialAccount as FinancialAccountOneCollection;
-use App\Http\Resources\Study\FinancialAccountCollection;
+use App\Http\Resources\Invoice\FinancialAccount as FinancialAccountOneCollection;
+use App\Http\Resources\Invoice\FinancialAccountCollection;
 
 class FinancialAccountController extends Controller
 {
@@ -19,9 +20,32 @@ class FinancialAccountController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = FinancialAccount::all();
+      $query = FinancialAccount::with('type')->get();
 
       return new FinancialAccountCollection($query);
+    }
+
+    /**
+     * Get Finance Account Type 
+     * 
+     * @return \Illumintate\Http\Response
+     */
+
+    public function getFinanceAccountType(){
+      try {
+        $query = FinancialAccountType::get();
+
+        return response()->json([
+          'data' => $query
+        ]);
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -45,9 +69,11 @@ class FinancialAccountController extends Controller
       $param = $request->all()['payload'];
       try {
         FinancialAccount::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+          'financial_account_type_id' => $param['finance_account_type_id'],
+          'account_name' => $param['account_name'],
+          'account_number' => $param['account_number']
         ]);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -68,8 +94,8 @@ class FinancialAccountController extends Controller
     public function show($id)
     {
       try {
-        $query = FinancialAccount::find($id);
-        return new FinancialAccountCollection($query);
+        $query = FinancialAccount::with('type')->find($id);
+        return new FinancialAccountOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

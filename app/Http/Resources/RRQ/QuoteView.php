@@ -17,6 +17,7 @@ class QuoteView extends JsonResource
     {
         return [
             'id' => $this->id,
+            'currency_id' => $this->currency_id,
             'po_number' => $this->po_number,
             'sold_to' => $this->party->id,
             'ship_to' => $this->ship->id,
@@ -26,6 +27,8 @@ class QuoteView extends JsonResource
             'issue_date' => $this->issue_date,
             'valid_thru' => $this->valid_thru,
             'delivery_date' => $this->delivery_date,
+            'status' => $this->status,
+            'sum' => $this->sum
         ];
     }
 }

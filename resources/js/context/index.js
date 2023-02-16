@@ -1,7 +1,8 @@
 import React, { createContext, useState, useMemo, useEffect, useContext } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
-
+import axios from 'axios';
 import AUTHAPI from '../helpers/api/auth';
+import API from '../helpers';
 
 export const state = {
 	user: {
@@ -24,12 +25,12 @@ export const state = {
 export const AuthContext = createContext(state);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(
-    {"id":3,"name":"Alex","email":"alex@gmail.com","email_verified_at":null,"created_at":"2022-06-23 07:13:36","updated_at":"2022-06-23 07:13:36","pages":[{"id":7,"users_id":3,"page_name":"sales","insert":1,"delete":1,"edit":1},{"id":8,"users_id":3,"page_name":"human_resources","insert":1,"delete":1,"edit":1},{"id":9,"users_id":3,"page_name":"production","insert":1,"delete":1,"edit":1},{"id":10,"users_id":3,"page_name":"inventory","insert":1,"delete":1,"edit":1},{"id":11,"users_id":3,"page_name":"industrial_engineering","insert":1,"delete":1,"edit":1},{"id":12,"users_id":3,"page_name":"material","insert":1,"delete":1,"edit":1}]}
-  );
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [loadingInitial, setLoadingInitial] = useState(true);
+  // const [loadingInitial, setLoadingInitial] = useState(true);
+
+  const loadingInitial = !user || loading;
 
   const navigate = useNavigate();
   const location = useLocation();  
@@ -37,6 +38,17 @@ export const AuthProvider = ({ children }) => {
   // If we change page, reset the error state.
   useEffect(() => {
     if (error) setError(null);
+    const userStorage = JSON.parse(localStorage.getItem('user'));
+    const access_token = localStorage.getItem('_token');
+    if( !userStorage && !access_token ) {
+      // localStorage.clear();
+      navigate('/login');
+    } else {
+      const { id, name, email, pages, role } = userStorage;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      setUser({id, name, email, pages, role, access_token});  
+    }
+
   }, [location.pathname]);
 
   // Check if there is a currently active session
@@ -46,15 +58,16 @@ export const AuthProvider = ({ children }) => {
   //
   // Finally, just signal the component that the initial load
   // is over.
-  useEffect(() => {
+  useEffect(() => {    
     const userStorage = JSON.parse(localStorage.getItem('user'));
-    const access_token = JSON.parse(localStorage.getItem('access_token'));
-    if( !userStorage || !access_token ) {
-      localStorage.clear();
-      navigate('/auth/login');
+    const access_token = localStorage.getItem('_token');
+    if( !userStorage && !access_token ) {
+      // localStorage.clear();
+      navigate('/login');
     } else {
-      const { name, email } = userStorage;
-      setUser({name, email, access_token});  
+      const { id, name, email, pages, role } = userStorage;
+      setUser({id, name, email, pages, role, access_token});  
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     }
 
     // usersApi.getCurrentUser()
@@ -73,21 +86,31 @@ export const AuthProvider = ({ children }) => {
   // loading state is over.
   function login(email, password) {
     setLoading(true);
-    
-    AUTHAPI.login(email, password, function(res){
-      const { success, access_token, user } = res.data;
-      if(success) {
-        setUser({...user, user, access_token})
-        localStorage.setItem('_token', access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-        navigate('/dashboard')
-      }
-      else setError(res.error);
-    });
+
+    try {
+      AUTHAPI.login(email, password, function(res){
+        localStorage.clear();
+        if(!res) {
+          alert('error');
+          return
+        };
+        const { success, access_token, user, ...rest } = res?.data;
+        if(success) {
+          setUser({...user, user, access_token})
+          localStorage.setItem('_token', access_token);
+          localStorage.setItem('user', JSON.stringify(user));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+          navigate('/dashboard');
+        } else {
+          setError(rest.error);
+        }
+      });
+    } catch(error) {
+      setError(error);
+    }
 
     setLoading(false);
-
-    console.log('logged in' )
+    return;
   }
 
   // Sends sign up details to the server. On success we just apply
@@ -113,12 +136,24 @@ export const AuthProvider = ({ children }) => {
 
     AUTHAPI.logout(at, function(res){
       if(res.success){
-        localStorage.clear();
-        navigate('/auth/login');
+        localStorage.removeItem('user');
+        localStorage.removeItem('_token');
+        axios.defaults.headers.common['Authorization'] = `Bearer 333`;
+        navigate('/login');
       };
     });
     // sessionsApi.logout().then(() => setUser(undefined));
 	  console.log('log out');
+  }
+
+  function checkIsItLogin(){
+    try {
+      API.getCheckAuth(function(res){
+        alert(res.status);
+      })
+    } catch(error) {
+      alert(error);
+    }
   }
 
   // Make the provider update only when it should.
@@ -135,6 +170,7 @@ export const AuthProvider = ({ children }) => {
       user,
       loading,
       error,
+      loadingInitial,
       login,
       signUp,
       logout,

@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuoteItem extends Model
 {
-    protected $table = 'quote_item';
+protected $table = 'quote_item';
 
     protected $primaryKey = 'id';
 
     public $incrementing = true;
-    public $timestamp = false;
+    public $timestamp = true;
 
     protected $fillable = [
         'id',
         'quote_id',
         'request_item_id',
+        'product_id',
         'product_feature_id',
         'unit_price',
-        'qty',
-        'created_at'
+        'qty'
     ];
 
     public function product_feature(){

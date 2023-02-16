@@ -10,11 +10,10 @@ class ProductCategory extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
-    protected $fillable = [
-        'id',
-        'name'
-    ];
+    public function sub(){
+        return $this->belongsTo('App\Models\Product\ProductSubCat', 'sub_cat', 'id');
+    }
 }

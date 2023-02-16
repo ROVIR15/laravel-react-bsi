@@ -102,7 +102,7 @@ function Inventory() {
 
     (async () => {
       if (active) {
-        API.getFacility((res) => {
+        API.getFacility('', (res) => {
           if(!res) return
           else setOptions2(res.data);
         })  
@@ -129,7 +129,6 @@ function Inventory() {
     onSubmit: (values) => {
       API.insertInventoryItem(values, function(res){
         if(res.success) {
-          location.reload();
           alert('success');
         }
         else alert('failed');
@@ -224,12 +223,7 @@ function Inventory() {
                 </Paper>
             </CardContent>
             </Card>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>
-              
-              
-              <CardHeader
-                title="Product Feature"
-              />
+            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 }, position: 'unset' }}>              
               <CardContent>
                 <TextField
                   fullWidth

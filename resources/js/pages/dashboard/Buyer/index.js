@@ -12,11 +12,13 @@ import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
+import Display from './display';
 // components
 import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
 import Layout from '../../../layouts/Layout';
 
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
+import useAPIRoles from '../../../context/checkRoles';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -25,6 +27,7 @@ function getPathname(array){
 
 function BuyerList() {
   const { pathname } = useLocation();
+  const { data, check, isNotReady, isAllowedToInsert } = useAPIRoles();
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -33,6 +36,20 @@ function BuyerList() {
       variant: 'success'
     });
   };
+
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }
+
+  console.log('check data roles is ready?', isNotReady);
 
   return (
     <Layout>
@@ -59,15 +76,19 @@ function BuyerList() {
           </Button>
           <Button
             variant="contained"
+            onClick={check}
+          > Check Roles</Button>
+          {/* <Button
+            variant="contained"
             component='div'
             onClick={handleClick}
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Show Snackbar
-          </Button>
+          </Button> */}
         </Stack>
       </Stack>
-      <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }

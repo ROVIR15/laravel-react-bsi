@@ -23,7 +23,6 @@ import API from '../../../helpers';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'bought_from', label: 'Supplier Name', alignRight: false },
   { id: 'issue_date', label: 'Issue Date', alignRight: false }
 ];
@@ -80,7 +79,7 @@ function GoodsReceipt({ placeHolder }) {
       API.getGoodsReceipt((res) => {
 		    if(!res) return
 		    if(!res.data) {
-          setGoodsReceipt(BUYERLIST);
+          setGoodsReceipt([]);
         } else {
           setGoodsReceipt(res.data);
         }
@@ -137,7 +136,7 @@ function GoodsReceipt({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteGoodsReceipt(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setGoodsReceipt([]);
       else alert('error');
     });
   }
@@ -174,9 +173,8 @@ function GoodsReceipt({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    po_number,
-                    bought_from,
-                    issue_date
+                    party,
+                    created_at
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -195,9 +193,8 @@ function GoodsReceipt({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{bought_from}</TableCell>
-                      <TableCell align="left">{issue_date}</TableCell>
+                      <TableCell align="left">{party?.name}</TableCell>
+                      <TableCell align="left">{created_at}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

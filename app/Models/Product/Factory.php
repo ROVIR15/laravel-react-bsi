@@ -10,12 +10,17 @@ class Factory extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     
     public $timestamps = false;
 
     protected $fillable = [
         'id',
-        'factory_type',
+        'name',
+        'description'
     ];
+
+    public function facility(){
+        return $this->hasMany('App\Models\Facility\FactoryHasCategory', 'id', 'facility_id');
+    }
 }

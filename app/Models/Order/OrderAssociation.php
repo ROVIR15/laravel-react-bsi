@@ -8,7 +8,7 @@
   {  
     protected $table = 'order_association';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [

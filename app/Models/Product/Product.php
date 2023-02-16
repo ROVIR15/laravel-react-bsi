@@ -10,19 +10,21 @@ class Product extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
         'service_id',
         'goods_id',
-        'name',
         'part_id',
-        'id'
     ];
 
     public function goods(){
         return $this->belongsTo('App\Models\Product\Goods');
+    }
+
+    public function service(){
+        return $this->belongsTo('App\Models\Product\Service');
     }
 
     public function productCategory(){

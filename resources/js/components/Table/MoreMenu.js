@@ -3,25 +3,38 @@ import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink } from 'react-router-dom';
+import paperFill from '@iconify/icons-eva/paper-plane-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
+import API from '../../helpers';
+import AlertDialog from '../DialogBox/OrderCompletionStatus';
+import useAPIRoles from '../../context/checkRoles';
 // ----------------------------------------------------------------------
 
 function getEditPathname(array, param) {
-  if(!array.length > 5) return null;
+  if (!array.length > 5) return null;
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 
-export default function MoreMenu({ handleDelete, id }) {
+export default function MoreMenu({
+  handleDelete,
+  name = 'Edit',
+  deleteActive,
+  editActive,
+  document = false,
+  id
+}) {
   const ref = useRef(null);
+  const { data, isNotReady, isAllowedToEdit, isAllowedToDelete } = useAPIRoles();
   const [isOpen, setIsOpen] = useState(false);
 
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
 
+  if (isNotReady) return null;
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -38,18 +51,43 @@ export default function MoreMenu({ handleDelete, id }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {document ? (
+          <MenuItem
+            component={RouterLink}
+            to={getEditPathname(pathname.split('/'), `document/${id}`)}
+            sx={{ color: 'text.secondary' }}
+          >
+            <ListItemIcon>
+              <Icon icon={paperFill} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="View Document" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        ) : null}
 
-        <MenuItem component={RouterLink} to={getEditPathname(pathname.split('/'), id)} sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          disabled={!isAllowedToEdit}
+          component={RouterLink}
+          to={getEditPathname(pathname.split('/'), id)}
+          sx={{ color: 'text.secondary' }}
+        >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={name} primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+
+        <MenuItem
+          // disabled={!isAllowedToDelete}
+          sx={{ color: 'text.secondary' }}
+          onClick={handleDelete}
+        >
+          <ListItemIcon>
+            <Icon icon={trash2Outline} width={24} height={24} color="red" />
+          </ListItemIcon>
+          <ListItemText
+            primary="Delete"
+            primaryTypographyProps={{ variant: 'body2', color: 'red' }}
+          />
         </MenuItem>
       </Menu>
     </>

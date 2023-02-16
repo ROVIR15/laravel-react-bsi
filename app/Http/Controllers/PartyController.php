@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Party\Party;
+use App\Models\Party\PartyRoles;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Party\Party as PartyCollection;
 
@@ -19,9 +19,9 @@ class PartyController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = new Party();
+      $query = PartyRoles::with('party', 'role_type', 'relationship')->get();
 
-      return new PartyCollection($query);
+      return response()->json($query);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Product\PartBOM;
@@ -42,12 +42,11 @@ class PartBOMController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         PartBOM::create([
-            'id' => $faker->unique()->numberBetween(1,8391),
             'product_id' => $param['product_id'],
             'qty_used' => $param['qty_used'],
             'description' => $param['description']

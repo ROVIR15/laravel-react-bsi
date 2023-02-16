@@ -22,8 +22,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $data = User::orderBy('id','DESC')->paginate(5);
-        return view('users.index',compact('data'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return response()->json($data);
+        // return ('users.index',compact('data'))
+        //    ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
 
@@ -77,7 +78,8 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        return view('users.show',compact('user'));
+        //return view('users.show',compact('user'));
+        return response()->json($user);
     }
 
 

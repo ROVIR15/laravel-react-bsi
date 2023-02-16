@@ -20,7 +20,10 @@ class BOMItem extends JsonResource
             'bom_id' => $this->bom_id,
             'product_feature_id' => $this->product_feature_id,
             'qty' => $this->qty,
-            'product_feature' => new ProductFeature($this->product_feature)
+            'consumption' => $this->consumption,
+            'allowance' => $this->allowance,
+            'unit_price' => $this->unit_price,
+            'product_feature' => $this->product_feature
         ];
     }
 }

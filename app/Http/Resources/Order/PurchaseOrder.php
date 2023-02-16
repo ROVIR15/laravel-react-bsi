@@ -2,6 +2,7 @@
   
   namespace App\Http\Resources\Order;
   use Illuminate\Http\Resources\Json\JsonResource;
+  use App\Http\Resources\Order\Order;
   use App\Http\Resources\Order\OrderItemCollection;
   use App\Http\Resources\Party\Party;
   
@@ -19,13 +20,14 @@
         'id' => $this->id,
         'order_id' => $this->order_id,
         'po_number' => $this->po_number,
-        'bought_from' => $this->bought_from,
         'issue_date' => $this->issue_date,
-        'party' => new Party($this->party),
-        'ship' => new Party($this->ship),
+        'bought_from' => new Party($this->bought),
+        'ship_to' => new Party($this->ship),
         'delivery_date' => $this->delivery_date,
         'valid_thru' => $this->valid_thru,
-        'order_item' => new OrderItemCollection($this->order_item)
+        'order' => $this->order,
+        'order_item' => new OrderItemCollection($this->order_item),
+        'status' => $this->status,
       ];
     }
   }

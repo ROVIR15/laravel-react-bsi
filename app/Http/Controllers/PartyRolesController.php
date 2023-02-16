@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Party\PartyRoles;
@@ -46,8 +46,9 @@ class PartyRolesController extends Controller
       $param = $request->all()['payload'];
       try {
         $query = PartyRoles::create([
-          'id' => $faker->unique()->numberBetween(1,2314),
+          
           'party_id' => $param['party_id'],
+          'role_type_id' => $param['role_type_id'],
           'relationship_id' => $param['relationship_id']
         ]);
       } catch (Exception $th) {

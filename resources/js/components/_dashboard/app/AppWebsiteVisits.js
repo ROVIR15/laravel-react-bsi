@@ -11,7 +11,7 @@ import { BaseOptionChart } from '../../charts';
 const CHART_DATA = [
   {
     name: 'Team A',
-    type: 'column',
+    type: 'line',
     data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
   },
   {
@@ -28,7 +28,7 @@ const CHART_DATA = [
 
 export default function AppWebsiteVisits() {
   const chartOptions = merge(BaseOptionChart(), {
-    stroke: { width: [0, 2, 3] },
+    stroke: { width: [3, 2, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
     fill: { type: ['solid', 'gradient', 'solid'] },
     labels: [
@@ -61,7 +61,7 @@ export default function AppWebsiteVisits() {
 
   return (
     <Card>
-      <CardHeader title="Website Visits" subheader="(+43%) than last year" />
+      <CardHeader title="Performance" subheader="(+43%) than last year" />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
         <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
       </Box>

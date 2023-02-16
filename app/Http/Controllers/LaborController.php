@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Party\Labor;
@@ -24,7 +24,7 @@ class LaborController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Labor::all();
+      $query = PartyRoles::with('role_type','party')->where('relationship_id', 3)->get();
 
       return response()->json($query);
     }
@@ -45,7 +45,7 @@ class LaborController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
@@ -54,48 +54,21 @@ class LaborController extends Controller
         $parties;
         $type;
 
-        if ($param['type'] === "Person") {
-          $type = Person::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
-          ]);
-
-          $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
-            'name' => $param['name'],
-            'email' => $param['email'],
-            'npwp' => $param['npwp'],
-            'person_party_id' => $type['id']
-          ]);
-        } 
-
-        if ($param['type'] === "Organization") {
-          $type = Organization::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
-          ]);
-
-          $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
-            'name' => $param['name'],
-            'email' => $param['email'],
-            'npwp' => $param['npwp'],
-            'organization_party_id' => $type['id']
-          ]);
-        }
-
-        $_pr = PartyRoles::create([
-          'id' => $faker->unique()->numberBetween(1,2303),
-          'party_id' => $parties->id,
-          'relationship_id' => 3
+        $type = Person::create([
+          'description' => ''
         ]);
 
-        $_addr = Address::create([
-          'id' => $faker->unique()->numberBetween(1,1231),
-          'party_id' => $parties['id'],
-          'street' => $param['address']['street'],
-          'city' => $param['address']['city'],
-          'province' => $param['address']['province'],
-          'country' => $param['address']['country'],
-          'postal_code' => $param['address']['postal_code']
+        $parties = Party::create([
+          'name' => $param['name'],
+          'email' => $param['email'],
+          'npwp' => $param['npwp'],
+          'person_party_id' => $type['id']
+        ]);
+
+        $_pr = PartyRoles::create([
+          'party_id' => $parties->id,
+          'role_type_id' => $param['role_type_id'],
+          'relationship_id' => 3
         ]);
 
         return response()->json([
@@ -119,7 +92,7 @@ class LaborController extends Controller
     public function show($id)
     {
       try {
-        $data = Labor::find($id);
+        $data = Party::whereId($id)->with('person', 'organization', 'party_roles', 'address')->get();
 
         if(!is_array($data) && count($data) === 0) {
             throw new Exception("Not found");
@@ -127,7 +100,7 @@ class LaborController extends Controller
 
         return response()->json([
           "success" => true,
-          "data" => $data
+          "data" => $data[0]
         ]);
 
       } catch (Exception $th) {
@@ -161,49 +134,16 @@ class LaborController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request, Faker $faker)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
         $party = $param['party_info'];
-        $address = $param['address'];
-        $partyType = $param['type']['party'];
+        $roles = $param['roles'];
 
         Party::find($id)->update($party);
-        Address::where('party_id', $id)->update($address);
+        PartyRoles::where('party_id', $id)->update($roles);
 
-        $existingRecord = Party::find($id);
-
-        if ($existingRecord['person_party_id'] === NULL && $partyType === "Person"){
-            // Create new row of Person
-            $_pt = Person::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'person_party_id' => $_pt['id'],
-              'organization_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Organization::where('id', $existingRecord['organization_party_id'])->delete();
-
-        } else if ($existingRecord['organization_party_id'] === NULL && $partyType === "Organization") {
-            // Create new row of Person
-            $_rt = Organization::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'organization_party_id' => $_rt['id'],
-              'person_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Person::where('id', $existingRecord['person_party_id'])->delete();
-        }
         return response()->json([
           'success' => true
         ]);

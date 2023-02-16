@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Party\Person;
@@ -47,12 +47,9 @@ class PersonController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        $person = Person::create([
-          'id' => $faker->unique()->numberBetween(1,2314)
-        ]);
+        $person = Person::create([]);
 
         Party::create([
-          'id' => $faker->unique()->numberBetween(1,89833),
           'person_id' => $param['person_id']
         ]);
       } catch (Exception $th) {

@@ -22,6 +22,7 @@ class SalesOrder extends JsonResource
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
+            'order' => $this->order,
             'sold_to' => $this->sold_to,
             'ship_to' => $this->ship_to,
             'party' => new Party($this->party),
@@ -30,7 +31,9 @@ class SalesOrder extends JsonResource
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
             'valid_thru' => $this->valid_thru,
-            'order_item' => new OrderItemCollection($this->order_item)
+            'order_item' => new OrderItemCollection($this->order_item),
+            'completion_status' => $this->completion_status,
+            'status' => $this->status
         ];
     }
 }

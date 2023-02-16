@@ -110,7 +110,6 @@ function Goods() {
               </LoadingButton>
               <Button
                 size="large"
-                type="submit"
                 color="grey"
                 variant="contained"
                 sx={{ m: 1 }}

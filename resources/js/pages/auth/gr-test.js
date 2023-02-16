@@ -67,7 +67,7 @@ function FirstPage(){
   return (
       <MHidden width="mdDown">
         <RootStyle>
-          <PaperStyled sx={{ width: "210mm", height: "279mm"}}>
+          <PaperStyled sx={{ width: "210mm", minHeight: "279mm"}}>
             {/* Header Info */}
             <Stack direction="column" spacing={2}>
             <Grid container sx={{
@@ -79,7 +79,7 @@ function FirstPage(){
               <Grid item md={6} sx={{width: '50%', marginBottom: '1em'}}>
                 <Box
                   component="img"
-                  src="https://1.bp.blogspot.com/-Jl8W1ycfiDY/Xa_nji0dXaI/AAAAAAAALrw/j4oS4c5mQmkO89tCzn6o9PcrU_0W9V3JgCLcBGAsYHQ/s1600/FB_IMG_1571808912832.jpg"
+                  src="/data_file/bsi_logo.jpeg"
                   sx={{width: '15%', height: '80px', marginLeft: '0.75 em'}}
                 />
               </Grid>

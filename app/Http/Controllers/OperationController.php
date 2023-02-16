@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 use Carbon\Carbon;
 
 use App\Models\Manufacture\Operation;
@@ -43,7 +43,7 @@ class OperationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       $current_date_time = Carbon::now()->toDateTimeString();
@@ -53,7 +53,6 @@ class OperationController extends Controller
 
         foreach($param as $key){
             array_push($operationsCreation, [
-              'id' => $faker->unique()->numberBetween(1,8939),
               'name' => $key['name'],
               'seq' => $key['seq'],
               'work_center_id' => $key['work_center_id'],

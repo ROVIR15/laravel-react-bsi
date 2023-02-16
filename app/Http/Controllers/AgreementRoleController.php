@@ -39,9 +39,27 @@ class AgreementRoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, AgreementRole $agreementRole)
     {
+        $param = $request->all()['payload'];
 
+        try {
+            //code...
+            $agreementRole->create([
+                'agreement_id' => $param['agreemet_id'],
+                'party_id' => $param['party_id'],
+                'status' => $param['status']
+            ]);
+        } catch (Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
     /**

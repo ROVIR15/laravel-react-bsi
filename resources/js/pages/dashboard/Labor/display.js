@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -24,12 +24,8 @@ import API from '../../../helpers';
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
-  { id: 'npwp', label: 'Phone Number', alignRight: false },
-  { id: 'street', label: 'Address', alignRight: false },
-  { id: 'city', label: 'City', alignRight: false },
-  { id: 'province', label: 'Province', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'ZIP Code', alignRight: false }
+  { id: 'role_type', label: 'Bagian', alignRight: false },
+  { id: 'phone_number', label: 'Phone Number', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -59,7 +55,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -80,17 +76,20 @@ function Labor({ placeHolder }) {
       return !array.length;
     }
 
-    if(isEmpty(laborData)) {
-      API.getLabor((res) => {
-        if(isEmpty(res)) {
-          console.error('Nothing');
-          setLaborData(BUYERLIST);
-        } else {
-          setLaborData(res);
-        }
-      });
+    try {
+      if(isEmpty(laborData)) {
+        API.getLabor((res) => {
+          if(isEmpty(res)) {
+            return undefined
+          } else {
+            setLaborData(res);
+          }
+        });
+      }  
+    } catch (e) {
+      alert(e);
     }
-  }, [laborData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -161,6 +160,7 @@ function Labor({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -170,10 +170,10 @@ function Labor({ placeHolder }) {
               onSelectAllClick={handleSelectAllClick}
             />
             <TableBody>
-              {filteredData
+              {isEmpty(laborData) ? null : filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, email, phone_number, street, city, province, country, postal_code } = row;
+                  const { role_type, party: {id, name, email, phone_number }} = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -184,20 +184,10 @@ function Labor({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{email}</TableCell>
-                      <TableCell align="left">{phone_number}</TableCell>
-                      <TableCell align="left">{street}</TableCell>
-                      <TableCell align="left">{city}</TableCell>
-                      <TableCell align="left">{province}</TableCell>
-                      <TableCell align="left">{country}</TableCell>
-                      <TableCell align="left">{postal_code}</TableCell>
+                      <TableCell align="left">{role_type?.name ? role_type.name : ''}</TableCell>
+                      <TableCell align="left">{phone_number? phone_number : '083012983'}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

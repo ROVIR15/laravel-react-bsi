@@ -7,6 +7,7 @@ use App\Http\Resources\Product\ProductFeature;
 use App\Http\Resources\Manufacture\WorkCenterCollection;
 use App\Http\Resources\Manufacture\OperationCollections;
 use App\Http\Resources\Manufacture\BOMItemCollection;
+use App\Http\Resources\Manufacture\BOMServiceCollection;
 
 class BOM extends JsonResource
 {
@@ -20,6 +21,7 @@ class BOM extends JsonResource
     {
         return [
             'id' => $this->id,
+            'party' => $this->party,
             'product_id' => $this->product_id,
             'product_feature_id' => $this->product_feature_id,
             'name' => $this->name,
@@ -27,9 +29,17 @@ class BOM extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'company_name' => $this->company_name,
+            'bom_services' => new BOMServiceCollection($this->bom_services),
             'bom_items' => new BOMItemCollection($this->bom_items),
-            'product_info' => new ProductFeature($this->product_info),
-            'operations' => new OperationCollection($this->operation)
+            'operations' => new OperationCollection($this->operation),
+            'variants' => $this->variants,
+            'product' => $this->product,
+            'status' => $this->status,
+            'tax' => $this->tax,
+            'margin' => $this->margin,
+            'starting_price' => $this->starting_price,
+            'final_price' => $this->final_price,
+            'created_at' => $this->created_at
         ];
     }
 }

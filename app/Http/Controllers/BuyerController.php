@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Exception;
 
@@ -13,6 +13,7 @@ use App\Models\Party\Address;
 use App\Models\Party\Person;
 use App\Models\Party\Organization;
 use App\Models\Party\Party;
+use App\Models\Party\PartyHasContactMechanism;
 use App\Models\Party\PartyRoles;
 use App\Models\Party\Relationship;
 
@@ -29,22 +30,9 @@ class BuyerController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Party::with('party_roles', 'address')->get();
+      $query = PartyRoles::with('party', 'role_type', 'relationship')->where('relationship_id', 1)->get();
 
-      $data = DB::table("party as p")
-      ->leftJoin("address as a", function($join){
-          $join->on("a.party_id", "=", "p.id");
-      })
-      ->join("party_roles as pr", function($join){
-          $join->on("pr.party_id", "=", "p.id");
-      })
-      ->leftJoin("relationship as r", function($join){
-          $join->on("pr.relationship_id", "=", "r.id");
-      })
-      ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-      ->where("r.name", "=", "Buyer")
-      ->get();
-      return response()->json($data);
+      return response()->json($query);
     //   return new BuyerCollection($query);
     }
 
@@ -64,7 +52,7 @@ class BuyerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       
@@ -75,11 +63,12 @@ class BuyerController extends Controller
 
         if ($param['type'] === "Person") {
           $type = Person::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
+            'description' => ''            
           ]);
+          
+          if(!$type['id']) return response()->json(['here' => 'not found id']);
 
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
@@ -89,42 +78,43 @@ class BuyerController extends Controller
 
         if ($param['type'] === "Organization") {
           $type = Organization::create([
-            'id' => $faker->unique()->numberBetween(1,2303)
+            'description' => ''
           ]);
 
+          if(!$type['id']) return response()->json(['here' => 'not found id']);
+
           $parties = Party::create([
-            'id' => $faker->unique()->numberBetween(1,1231),
             'name' => $param['name'],
             'email' => $param['email'],
             'npwp' => $param['npwp'],
-            'organization_party_id' => $type['id']
+            'organization_party_id' => $type->id
           ]);
         }
 
         $_pr = PartyRoles::create([
-          'id' => $faker->unique()->numberBetween(1,2303),
           'party_id' => $parties['id'],
+          'role_type_id' => $param['role_type_id'],
           'relationship_id' => 1
         ]);
 
-        $_addr = Address::create([
-          'id' => $faker->unique()->numberBetween(1,1231),
-          'party_id' => $parties['id'],
-          'street' => $param['address']['street'],
-          'city' => $param['address']['city'],
-          'province' => $param['address']['province'],
-          'country' => $param['address']['country'],
-          'postal_code' => $param['address']['postal_code']
-        ]);
+        // $_addr = Address::create([
+        //   'party_id' => $parties['id'],
+        //   'street' => $param['address']['street'],
+        //   'city' => $param['address']['city'],
+        //   'province' => $param['address']['province'],
+        //   'country' => $param['address']['country'],
+        //   'postal_code' => $param['address']['postal_code']
+        // ]);
 
         return response()->json([
           'success' => true,
+          'party' => $parties['id']
         ], 200);
       } catch (Exception $th) {
 
         return response()->json([
           'success' => false,
-          'error' => $th
+          'errors' => $th->getMessage()
         ]);
       }
     }
@@ -138,29 +128,18 @@ class BuyerController extends Controller
     public function show($id)
     {
       try {
-        $data = DB::table("party as p")
-        ->leftJoin("address as a", function($join){
-            $join->on("a.party_id", "=", "p.id");
-        })
-        ->join("party_roles as pr", function($join){
-            $join->on("pr.party_id", "=", "p.id");
-        })
-        ->leftJoin("relationship as r", function($join){
-            $join->on("pr.relationship_id", "=", "r.id");
-        })
-        ->select("p.id", "p.name", "p.email", "p.npwp", "r.name as type", "a.street", "a.city", "a.province", "a.country", "a.postal_code")
-        ->where("r.name", "=", "Buyer")
-        ->where("p.id", "=", $id)
-        ->get();
+        $data = Party::where('id', $id)->with('party_roles', 'address', 'organization', 'person')->get()[0];
+        $_addr = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
+          return $query->where('contact_mechanism_type_id', 3);
+        })->with('info_address')->get();
 
-        if(!is_array($data) && count($data) === 0) {
-            throw new Exception("Not found");
-        }
+        $_email = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
+          return $query->where('contact_mechanism_type_id', 2);
+        })->with('info_email')->get();
 
-        return response()->json([
-          "success" => true,
-          "data" => $data
-        ]);
+        $_phone_number = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
+          return $query->where('contact_mechanism_type_id', 1);
+        })->with('info_number')->get();
 
       } catch (Exception $th) {
         return response()->json([
@@ -168,6 +147,14 @@ class BuyerController extends Controller
           "error" => $th->getMessage()
         ], 500);
       }
+
+      return response()->json([
+        "success" => true,
+        "data" => $data,
+        "address" => $_addr,
+        "email" => $_email,
+        "phone_number" => $_phone_number
+      ]);
     }
 
     /**
@@ -193,49 +180,18 @@ class BuyerController extends Controller
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request, Faker $faker)
+    public function update($id, Request $request)
     {
       $param = $request->all()['payload'];
       try {
         $party = $param['party_info'];
         $address = $param['address'];
-        $partyType = $param['type']['party'];
+        $roles = $param['roles'];
 
         Party::find($id)->update($party);
         Address::where('party_id', $id)->update($address);
+        PartyRoles::where('party_id', $id)->update($roles);
 
-        $existingRecord = Party::find($id);
-
-        if ($existingRecord['person_party_id'] === NULL && $partyType === "Person"){
-            // Create new row of Person
-            $_pt = Person::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'person_party_id' => $_pt['id'],
-              'organization_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Organization::where('id', $existingRecord['organization_party_id'])->delete();
-
-        } else if ($existingRecord['organization_party_id'] === NULL && $partyType === "Organization") {
-            // Create new row of Person
-            $_rt = Organization::create([
-              'id' => $faker->unique()->numberBetween(1,2303)
-            ]);
-
-            // Update data from party table record
-            Party::find($id)->update([
-              'organization_party_id' => $_rt['id'],
-              'person_party_id' => NULL
-            ]);
-
-            // Drop organization id
-            Person::where('id', $existingRecord['person_party_id'])->delete();
-        }
         return response()->json([
           'success' => true
         ]);

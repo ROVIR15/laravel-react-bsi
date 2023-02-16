@@ -18,15 +18,17 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
+import { machineList } from '../../../helpers/data';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   { id: 'category', label: 'Kategori', alignRight: false },
+  { id: 'sub_category', label: 'Sub Kategori', alignRight: false },
   { id: 'value', label: 'Value', alignRight: false },
+  { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   { id: 'brand', label: 'Brand', alignRight: false },
 ];
 
@@ -56,10 +58,21 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  
+  if (isArray(query) && query[1] > 0) {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+        && _b.category_id === query[1]
+      )
+    });
+  } else {
+    return filter(array, (_b) => {
+      return (
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      )
+    });
   }
-  return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayBuyer({ placeHolder }) {
@@ -70,7 +83,8 @@ function DisplayBuyer({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filterCategory, setFilterCategory] = useState(0);
 
   useEffect(() => {
     function isEmpty(array){
@@ -82,14 +96,14 @@ function DisplayBuyer({ placeHolder }) {
       API.getGoods((res) => {
 		if(!res) return
 		if(!res.success) {
-          console.error('Nothing');
-          setGoodsData(BUYERLIST);
+          setGoodsData([]);
         } else {
-          setGoodsData(res.data);
+          let data = machineList(res.data);
+          setGoodsData(data);
         }
       });
     }
-  }, [goodsData])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -140,15 +154,19 @@ function DisplayBuyer({ placeHolder }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     API.deleteGoods(id, function(res){
-      if(res.success) location.reload();
+      if(res.success) setGoodsData([]);
     }).catch(function(error){
       alert('error')
     });
   }
 
+  const handleFilterCategoryAndSub = (event) => {
+    setFilterCategory(event.target.value)
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsData.length) : 0;
 
-  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), [filterName, filterCategory]);
 
   const isDataNotFound = filteredData.length === 0;  
 
@@ -157,13 +175,17 @@ function DisplayBuyer({ placeHolder }) {
       <ListToolbar
         numSelected={selected.length}
         filterName={filterName}
+        filterCategory={filterCategory}
         onFilterName={handleFilterByName}
+        onFilterCategoryAndSub={handleFilterCategoryAndSub}
         placeHolder={placeHolder}
+        categoryFilterActive={true}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -176,7 +198,7 @@ function DisplayBuyer({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, unit_measurement, gross_weight, category, value, brand} = row;
+                  const { id, name, satuan, category, sub_category, value, brand} = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -187,17 +209,12 @@ function DisplayBuyer({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{unit_measurement}</TableCell>
                       <TableCell align="left">{category}</TableCell>
+                      <TableCell align="left">{sub_category}</TableCell>
                       <TableCell align="left">{value}</TableCell>
+                      <TableCell align="left">{satuan}</TableCell>
                       <TableCell align="left">{brand}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
@@ -224,9 +241,9 @@ function DisplayBuyer({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 20, 25]}
         component="div"
-        count={goodsData.length}
+        count={goodsData.length ? goodsData.length : 0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

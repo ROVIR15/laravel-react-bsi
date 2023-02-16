@@ -3,6 +3,7 @@
 namespace App\Models\RRQ;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Quote extends Model
 {
@@ -14,6 +15,7 @@ class Quote extends Model
 
     protected $fillable = [
         'id',
+        'currency_id',
         'quote_type',
         'request_id',
         'party_id',
@@ -21,11 +23,16 @@ class Quote extends Model
         'po_number',
         'delivery_date',
         'issue_date',
-        'valid_thru'
+        'valid_thru',
+        'tax'
     ];
 
     public function quote_item(){
         return $this->hasMany('App\Models\RRQ\QuoteItem');
+    }
+
+    public function sum(){
+        return $this->hasMany('App\Models\RRQ\QuoteItem')->groupBy('quote_id')->select('quote_id',DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money'));
     }
 
     public function party(){
@@ -34,5 +41,13 @@ class Quote extends Model
 
     public function ship(){
         return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    }
+
+    public function status(){
+        return $this->hasMany('App\Models\RRQ\QuoteStatus')->orderBy('created_at', 'desc');
+    }
+
+    public function confirmation(){
+        return $this->belongsTo('App\Models\RRQ\Quote','quote_id');
     }
 }

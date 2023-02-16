@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Party\Organization;
@@ -47,11 +47,8 @@ class OrganizationController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        $query = Organization::create([
-          'id' => $faker->unique()->numberBetween(1,2314)
-        ]);
+        $query = Organization::create([]);
         Party::create([
-          'id' => $faker->unique()->numberBetween(1,89833),
           'person_id' => $query['person_id']
         ]);
       } catch (Exception $th) {

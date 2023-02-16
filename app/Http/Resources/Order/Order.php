@@ -18,7 +18,11 @@
         'id' => $this->id,
         'sales_order_id' => $this->sales_order_id,
         'purchase_order_id' => $this->purchase_order_id,
-        'created_at' => $this->created_at
+        'quote_id' => $this->quote_id,
+        'tax' => $this->tax,
+        'description' => $this->description,
+        'created_at' => $this->created_at,
+        'updated_at' => $this->updated_at
       ];
     }
   }

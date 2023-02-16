@@ -1,18 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Page from '../../../components/Page';
-import { 
-  Card, 
-  CardHeader, 
-  CardContent, 
-  Container, 
+import {
+  Box,
+  Card,
+  CardHeader,
+  CardContent,
+  Container,
   Divider,
-  Grid,
-  TextField, 
-  Typography, 
-  Paper, 
-  Stack, 
-  Button 
-} from '@mui/material'
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  InputAdornment,
+  Tab,
+  TextField,
+  Typography,
+  Paper,
+  Radio,
+  RadioGroup,
+  Stack,
+  Button,
+  Grid
+} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -33,22 +42,28 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
-const ColumnBox = styled('div')(({theme}) => ({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%"
-}))
+//Helpers
+import {
+  productFeatureArrangedData,
+  productItemArrangedData,
+  _partyAddress
+} from '../../../helpers/data';
 
-const SpaceBetweenBox = styled('div')(({theme}) => ({
-  display: "flex", 
-  flexDirection: "row", 
-  alignItems: "center", 
-  justifyContent: "space-between", 
-  marginBottom: "8px"
-}))
+const ColumnBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%'
+}));
+
+const SpaceBetweenBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '8px'
+}));
 
 function SalesOrder() {
-
   // Option for Quote
   const [options, setOptions] = useState([]);
 
@@ -57,7 +72,7 @@ function SalesOrder() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({});
 
   // Option for Product Items
-  const [optionsP, setOptionsP] = useState([])
+  const [optionsP, setOptionsP] = useState([]);
 
   //AutoComplete
   const [open, setOpen] = useState(false);
@@ -68,7 +83,7 @@ function SalesOrder() {
   const [editRowData, setEditRowData] = React.useState({});
 
   // Sales Order Items storage variable on Data Grid
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
 
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
@@ -91,68 +106,84 @@ function SalesOrder() {
       po_number: '',
       issue_date: '',
       valid_thru: '',
-      delivery_date: ''
+      delivery_date: '',
+      description: '',
+      tax: 0,
+      currency_id: 2
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
       const _data = {
-        ...values, order_items: items
-      }
-      API.insertPurchaseOrder(_data, function(res){
-        if(res.success) alert('success');
-        else alert('failed')
-      })
+        ...values,
+        order_items: items
+      };
+      API.insertPurchaseOrder(_data, function (res) {
+        if (res.success) alert('success');
+        else alert('failed');
+      });
       setSubmitting(false);
     }
-  })
+  });
 
   useEffect(() => {
     let active = true;
 
     (async () => {
-
       API.getQuoteByPO((res) => {
-          if(!res) return
-		    if(!res.data) {
+        if (!res) return;
+        if (!res.data) {
           setOptions([]);
         } else {
           setOptions(res.data);
         }
-      })
+      });
 
       API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
+        if (!res) return;
+        if (!res.data) {
           setOptionsP([]);
         } else {
-          setOptionsP(res.data);
+          const data = productFeatureArrangedData(res.data);
+          setOptionsP(data);
         }
-      })
-
+      });
     })();
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, setFieldValue, setValues, getFieldProps } = formik;
+  const {
+    errors,
+    touched,
+    values,
+    isSubmitting,
+    setSubmitting,
+    handleSubmit,
+    setFieldValue,
+    setValues,
+    getFieldProps
+  } = formik;
 
-  function changeData(data){
-    const orderItem = data.quote_items.map(function(key, index){
+  function changeData(data) {
+    const orderItem = data.quote_items.map(function (key, index) {
+      const { id, product_id, name, size, color } = productItemArrangedData(key.product);
       return {
-        'id': index,
-        'quote_item_id' : key.id,
-        'product_id' : key.product.id,
-        'product_feature_id' : key.product_feature_id,
-        'name' : key.product.name,
-        'size' : key.product.size,
-        'color' : key.product.color,
-        'qty' : key.qty,
-        'shipment_estimated': null,
-        'unit_price' : key.unit_price
-      }
-    })
+        id: index + 1,
+        quote_item_id: key.id,
+        product_id: product_id,
+        product_feature_id: id,
+        name: name,
+        size: size,
+        color: color,
+        item_name: `${name} ${size} - ${color}`,
+        qty: key.qty,
+        delivery_date: null,
+        unit_price: key.unit_price,
+        description: ''
+      };
+    });
     setValues({
       quote_id: data.id,
       po_number: data.po_number,
@@ -161,22 +192,24 @@ function SalesOrder() {
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
       delivery_date: data.delivery_date,
+      tax: data.tax,
+      currency_id: data.currency_id
     });
-    setSelectedValueSO(data.party)
-    setSelectedValueSH(data.ship)
+
+    let _party = _partyAddress(data.party);
+    let _ship = _partyAddress(data.ship);
+
+    setSelectedValueSO(_party);
+    setSelectedValueSH(_ship);
     setItems(orderItem);
   }
 
-  const deleteData = useCallback(
-    (id) => () => {
-      setItems((prevItems) => {
-        const rowToDeleteIndex = id;
-        return [
-          ...items.slice(0, rowToDeleteIndex),
-          ...items.slice(rowToDeleteIndex + 1),
-        ];
-      });
-    })
+  const deleteData = useCallback((id) => () => {
+    setItems((prevItems) => {
+      const rowToDeleteIndex = id;
+      return prevItems.filter((x) => x.id !== id);
+    });
+  });
 
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
@@ -186,213 +219,344 @@ function SalesOrder() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
+        function formatDate(date) {
+          var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+          if (month.length < 2) month = '0' + month;
+          if (day.length < 2) day = '0' + day;
+
+          return [year, month, day].join('-');
+        }
+
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-    
+
           return prevItems.map((row, index) => {
-            if(index === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              if (editedColumnName === 'date') {
+                return {
+                  ...row,
+                  [editedColumnName]: formatDate(editRowData[editedColumnName].value)
+                };
+              } else {
+                return {
+                  ...row,
+                  [editedColumnName]: editRowData[editedColumnName].value
+                };
+              }
             } else {
-              return row
+              return row;
             }
           });
         });
-
       } else {
         setEditRowData(model[editedIds[0]]);
       }
-  
+
       setEditRowsModel(model);
     },
     [editRowData]
   );
 
   const handleUpdateAllRows = () => {
-    API.getARFQ(values.quote_id, function(res){
-      console.log(JSON.stringify(res));
-      if(!res) alert("Something went wrong!");
+    API.getARFQ(values.quote_id, function (res) {
+      if (!res) alert('Something went wrong!');
       var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function(_d){
+      temp = res.data.quote_items.map(function (_d) {
         return {
-          'id': index,
-          'RFQ_item_id' : key.id,
-          'product_id' : key.product.id,
-          'product_feature_id' : key.product_feature_id,
-          'name' : key.product.name,
-          'size' : key.product.size,
-          'color' : key.product.color,
-          'qty' : key.qty,
-          'unit_price' : key.unit_price,
-          'delivery_date': key.delivery_date
-        }
-      })
+          id: index,
+          RFQ_item_id: key.id,
+          product_id: key.product.id,
+          product_feature_id: key.product_feature_id,
+          name: key.product.name,
+          size: key.product.size,
+          color: key.product.color,
+          qty: key.qty,
+          unit_price: key.unit_price,
+          delivery_date: key.delivery_date,
+          description: ''
+        };
+      });
       setItems(temp);
-    })
+    });
   };
 
-  const columns = useMemo(() => [
-    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-    { field: 'product_feature_id', headerName: 'Variant ID', editable: true},
-    { field: 'name', headerName: 'Name', editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
-    { field: 'qty', headerName: 'Quantity', type: 'number', editable: true },
-    { field: 'unit_price', type: 'number', headerName: 'Unit Price', editable: true },
-    { field: 'delivery_date', type: 'date', headerName: 'Delivery Date', editable: true },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-          onClick={deleteData(params.id)}
-          showInMenu
-        />
-      ]
-    }
-  ], [deleteData]);
+  const columns = useMemo(
+    () => [
+      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'item_name', headerName: 'Name', width: 350, editable: false },
+      { field: 'qty', headerName: 'Quantity', type: 'number', editable: true },
+      { field: 'unit_price', type: 'number', headerName: 'Unit Price', editable: true },
+      { field: 'shipment_estimated', type: 'date', headerName: 'Delivery Date', editable: true },
+      { field: 'description', headerName: 'Description', editable: true, width: 300 },
+      {
+        field: 'actions',
+        type: 'actions',
+        width: 100,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<Icon icon={trash2Outline} width={24} height={24} />}
+            label="Delete"
+            onClick={deleteData(params.id)}
+            showInMenu
+          />
+        ]
+      }
+    ],
+    [deleteData]
+  );
+
+  /**
+   * TAB Panel
+   */
+  const [valueTab, setValueTab] = React.useState('1');
+
+  const handleChangeTab = (event, newValue) => {
+    setValueTab(newValue);
+  };
+
+  /**
+   * Populate State
+   */
+
+  const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0 });
+
+  const handlePopulate = () => {
+    const { y, z, aa } = populateState;
+    if (y === '' && z === 0) return;
+    const res = items.map(function (x) {
+      if (y !== '') x = { ...x, shipment_estimated: y };
+      if (z !== 0) x = { ...x, qty: z };
+      if (aa !== 0) x = { ...x, unit_price: aa };
+      return x;
+    });
+
+    setItems(res);
+  };
+
+  const handleChangePopulate = (e) => {
+    const { name, value } = e.target;
+    if (name === 'z') setPopulateState({ ...populateState, z: value });
+    if (name === 'y') setPopulateState({ ...populateState, y: value });
+    if (name === 'aa') setPopulateState({ ...populateState, aa: value });
+    else return;
+  };
+
+  // Radio
+  const handleRadioChange = (event) => {
+    setFieldValue('currency_id', event.target.value);
+  };
 
   return (
     <Page>
       <Container>
-      <Modal 
-        payload={items}
-        open={openM}
-        options={optionsP}
-        handleClose={handleCloseModal}
-        setComponent={setItems}
-      />
+        <Modal open={openM} handleClose={handleCloseModal} items={items} setItems={setItems} />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Purchase Order Information"
-            />
-            <CardContent sx={{paddingBottom: '6px'}}>
-              <AutoComplete
-                fullWidth
-                autoComplete="quote_id"
-                type="text"
-                label="No Quotation"
-                error={Boolean(touched.quote_id && errors.quote_id)}
-                helperText={touched.quote_id && errors.quote_id}
-                options={options}
-                setOpen={setOpen}
-                loading={loading}
-                changeData={changeData}
-              />               
-            </CardContent>
-            <CardContent>
-              <Paper>
-                <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                  <ColumnBox>
-                    <SpaceBetweenBox>
-                      <Typography variant="h6"> Pembeli </Typography>
-                      <Button
-                        disabled
-                      >
-                        Select
-                      </Button>
-                    </SpaceBetweenBox>
-                    <div>
-                      <Typography variant="body1">
-                        {selectedValueSO.name}
-                      </Typography>
-                    </div>
-                  </ColumnBox>
-                  <Divider orientation="vertical" variant="middle" flexItem />
-                  <ColumnBox>
-                    <SpaceBetweenBox>
-                      <Typography variant="h6"> Penerima </Typography>
-                      <Button
-                        disabled
-                      >
-                        Select
-                      </Button>
-                    </SpaceBetweenBox>
-                    <div>
-                      <Typography variant="body1">
-                        {selectedValueSH.name}
-                      </Typography>
-                    </div>
-                  </ColumnBox>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Card>
+                  <CardHeader title="Choose Quotation" />
+                  <CardContent sx={{ paddingBottom: '6px' }}>
+                    <AutoComplete
+                      fullWidth
+                      autoComplete="quote_id"
+                      type="text"
+                      label="No Quotation"
+                      error={Boolean(touched.quote_id && errors.quote_id)}
+                      helperText={touched.quote_id && errors.quote_id}
+                      options={options}
+                      setOpen={setOpen}
+                      loading={loading}
+                      changeData={changeData}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
 
-                </Stack>
-              </Paper>
-            </CardContent>            
-          </Card>
+              <Grid item xs={8}>
+                <Card>
+                  <CardContent>
+                    <Paper>
+                      <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                        <ColumnBox>
+                          <SpaceBetweenBox>
+                            <Typography variant="h6"> Supplier </Typography>
+                            <Button disabled>Select</Button>
+                          </SpaceBetweenBox>
+                          {selectedValueSO?.name ? (
+                            <div>
+                              <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                              <Typography component="span" variant="caption">
+                                {selectedValueSO?.street}
+                              </Typography>
+                              <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
+                            </div>
+                          ) : null}
+                        </ColumnBox>
+                        <Divider orientation="vertical" variant="middle" flexItem />
+                        <ColumnBox>
+                          <SpaceBetweenBox>
+                            <Typography variant="h6"> Penerima </Typography>
+                            <Button disabled>Select</Button>
+                          </SpaceBetweenBox>
+                          {selectedValueSH?.name ? (
+                            <div>
+                              <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                              <Typography component="span" variant="caption">
+                                {selectedValueSH?.street}
+                              </Typography>
+                              <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
+                            </div>
+                          ) : null}
+                        </ColumnBox>
+                      </Stack>
+                    </Paper>
+                  </CardContent>
+                </Card>
+              </Grid>
 
-          <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-            <CardHeader
-              title="Item Overview"
-            />
-            <CardContent>
-              <div style={{display: 'flex'}}>
-              <TextField
-                fullWidth
-                autoComplete="issue_date"
-                type="date"
-                placeholder='valid'
-                label="Diterbitkan"
-                {...getFieldProps('issue_date')}
-                error={Boolean(touched.issue_date && errors.issue_date)}
-                helperText={touched.issue_date && errors.issue_date}
-              />
-              <TextField
-                fullWidth
-                autoComplete="valid_thru"
-                type="date"
-                label="Valid to"
-                placeholder='valid'
-                {...getFieldProps('valid_thru')}
-                error={Boolean(touched.valid_thru && errors.valid_thru)}
-                helperText={touched.valid_thru && errors.valid_thru}
-              />
-              <TextField
-                fullWidth
-                autoComplete="delivery_date"
-                type="date"
-                label='Tanggal Pengiriman'
-                {...getFieldProps('delivery_date')}
-                error={Boolean(touched.delivery_date && errors.delivery_date)}
-                helperText={touched.delivery_date && errors.delivery_date}
-              />
-              </div>
-            <DataGrid 
-              columns={columns} 
-              rows={items}
-              onEditRowsModelChange={handleEditRowsModelChange}
-              handleUpdateAllRows={handleUpdateAllRows}
-              handleAddRow={handleOpenModal}
-            />
-            </CardContent>
-          </Card>
-          <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-            <LoadingButton
-              size="large"
-              type="submit"
-              variant="contained"
-              loading={isSubmitting}
-              sx={{ m: 1 }}
-            >
-              Save
-            </LoadingButton>
-            <Button
-              size="large"
-              type="submit"
-              color="grey"
-              variant="contained"
-              sx={{ m: 1 }}
-            >
-              Cancel
-            </Button>
-          </Card>
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Stack direction="row" spacing={2}>
+                      <TextField
+                        fullWidth
+                        autoComplete="issue_date"
+                        type="date"
+                        placeholder="valid"
+                        label="PO Date"
+                        {...getFieldProps('issue_date')}
+                        error={Boolean(touched.issue_date && errors.issue_date)}
+                        helperText={touched.issue_date && errors.issue_date}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="valid_thru"
+                        type="date"
+                        label="Valid to"
+                        placeholder="valid"
+                        {...getFieldProps('valid_thru')}
+                        error={Boolean(touched.valid_thru && errors.valid_thru)}
+                        helperText={touched.valid_thru && errors.valid_thru}
+                      />
+                      <TextField
+                        fullWidth
+                        autoComplete="delivery_date"
+                        type="date"
+                        label="Tanggal Pengiriman"
+                        {...getFieldProps('delivery_date')}
+                        error={Boolean(touched.delivery_date && errors.delivery_date)}
+                        helperText={touched.delivery_date && errors.delivery_date}
+                      />
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+
+              {/* ddd */}
+              <Grid item xs={12}>
+                <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+                  <CardContent>
+                    <TabContext value={valueTab}>
+                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                          <Tab label="Overview" value="1" />
+                          <Tab label="Description" value="2" />
+                          <Tab label="Finance" value="3" />
+                        </TabList>
+                      </Box>
+
+                      <TabPanel value="1">
+                        <DataGrid
+                          columns={columns}
+                          rows={items}
+                          onEditRowsModelChange={handleEditRowsModelChange}
+                          handleUpdateAllRows={handleUpdateAllRows}
+                          handleAddRow={handleOpenModal}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value="2">
+                        <Stack direction="row" alignItems="center">
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={6}
+                            type="text"
+                            {...getFieldProps('description')}
+                            error={Boolean(touched.description && errors.description)}
+                            helperText={touched.description && errors.description}
+                          />
+                        </Stack>
+                      </TabPanel>
+
+                      <TabPanel value="3">
+                        <Stack direction="column" spacing={4}>
+                          <FormControl sx={{ width: '25ch' }}>
+                            <FormLabel>Tax</FormLabel>
+                            <TextField
+                              autoComplete="tax"
+                              type="number"
+                              {...getFieldProps('tax')}
+                              error={Boolean(touched.tax && errors.tax)}
+                              helperText={touched.tax && errors.tax}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="end">%</InputAdornment>
+                              }}
+                            />
+                          </FormControl>
+
+                          <FormControl>
+                            <FormLabel id="demo-row-radio-buttons-group-label">
+                              Select Currency
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              aria-labelledby="demo-row-radio-buttons-group-label"
+                              name="row-radio-buttons-group"
+                              onChange={handleRadioChange}
+                              value={values.currency_id}
+                            >
+                              <FormControlLabel value={1} control={<Radio />} label="USD" />
+                              <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
+                            </RadioGroup>
+                          </FormControl>
+                        </Stack>
+                      </TabPanel>
+                    </TabContext>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/*  */}
+              <Grid item xs={12}>
+                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+                  <LoadingButton
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button size="large" type="submit" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Card>
+              </Grid>
+            </Grid>
           </Form>
         </FormikProvider>
       </Container>
     </Page>
-  )
+  );
 }
 
-export default SalesOrder
+export default SalesOrder;

@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
   
-  use Faker\Generator as Faker;
+  
 
   use App\Models\Order\OrderRole;
   use App\Http\Controllers\Controller;
@@ -42,12 +42,11 @@
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-   public function store(Request $request, Faker $faker)
+   public function store(Request $request)
    {
       $orderRole = $request->all()['payload'];
       try {
         OrderRole::create([
-          'id' => $faker->unique()->numberBetween(9,9482),
           'order_id' => $orderRole['order_id']
         ]);
       } catch (Exception $th) {

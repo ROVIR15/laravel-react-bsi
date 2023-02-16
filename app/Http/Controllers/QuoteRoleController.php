@@ -41,7 +41,24 @@ class QuoteRoleController extends Controller
      */
     public function store(Request $request)
     {
-
+        $param = $request->all()['payload'];
+        
+        try {
+            $newAgreementRole = [
+                'agreement_id' => $_aggrement->id,
+                'party_id' => $param['party_id'],
+                'status' => 'Created'
+            ];
+            $_agreementRole = $agreementRole->create($newAgreementRole);    
+        } catch (Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
     /**

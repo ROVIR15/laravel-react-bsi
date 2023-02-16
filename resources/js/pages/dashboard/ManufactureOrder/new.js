@@ -93,7 +93,7 @@ function Labor() {
 
     (async () => {
       if (active) {
-        API.getBOM((res) => {
+        API.getBOM('', (res) => {
           if(!res) return
           else setOptions(res.data);
         })  

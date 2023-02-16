@@ -16,7 +16,7 @@ class OrderStatus extends JsonResource
     {
       return [
         'status_type' => $this->status_type,
-        'created_at' => $this->created_at,
+        'user_id' => $this->user_id,
         'order_id' => $this->order_id,
         'updated_at' => $this->updated_at
       ];

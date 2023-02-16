@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, useRoutes, Routes, Route } from 'react-router-dom';
+
 // Layout
 import DashboardLayout from '../layouts/dashboard';
 import {
@@ -20,11 +21,32 @@ import {
   InvoiceReceipt,
   ProcessLayout,
   PSLayout,
+  SSLayout,
   ORLayout,
   LaborLayout,
   MOLayout,
-  InvLayout
+  InvLayout,
+  VendorBillsLayout,
+  MachineLayout,
+  ServiceLayout,
+  UserManagementLayout,
+  OrderProgressLayout,
+  FacilityTargetLayout,
+  FacilityLayout,
+  FactoryLayout,
+  MPLayout,
+  PaymentLayout,
+  FinanceAccountLayout,
+  FinanceAccountTransactionLayout,
+  OrderPLAnalysisLayout,
+  FinancialOrderBudgetLayout
 } from '../pages/dashboard';
+
+import UserRoles from '../pages/dashboard/UserManagement/role';
+import UserPage from '../pages/dashboard/UserManagement/pages';
+import UserRegister from '../pages/dashboard/UserManagement/register';
+import UserTest from '../pages/dashboard/UserManagement/test';
+import DisplayUser from '../pages/dashboard/UserManagement/display';
 
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -39,6 +61,7 @@ import AddRouting from '../pages/dashboard/Routing/new';
 import AddWorkCenter from '../pages/dashboard/WorkCenter/new';
 import AddInventory from '../pages/dashboard/Inventory/new';
 import AddGoods from '../pages/dashboard/Goods/add';
+import AddService from '../pages/dashboard/Service/add';
 import AddVendor from '../pages/dashboard/Vendor/new';
 import AddPurchaseRequisition from '../pages/dashboard/PurchaseRequisition/new';
 import AddRFQ from '../pages/dashboard/RFQ/new';
@@ -47,15 +70,28 @@ import AddGR from '../pages/dashboard/GoodsReceipt/new';
 import AddIR from '../pages/dashboard/InvoiceReceipt/new';
 import AddProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/add';
 import AddPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/new';
+import AddSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/new';
 import AddOR from '../pages/dashboard/IndustrialEngineeringStudy/ObservationResult/new';
 import AddLabor from '../pages/dashboard/Labor/new';
 import AddMO from '../pages/dashboard/ManufactureOrder/new';
-import AddOD from '../pages/dashboard/OutboundDelivery/new';
 import AddInv from '../pages/dashboard/Finance/Invoice/new';
+import AddVInv from '../pages/dashboard/Finance/VendorBills/new';
+import AddMachine from '../pages/dashboard/Machine/add';
+import AddLineTarget from '../pages/dashboard/LineTarget/add';
+import AddFacility from '../pages/dashboard/Facility/add';
+import AddFactory from '../pages/dashboard/Factory/add';
+import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
+import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
+import AddMP from '../pages/dashboard/ManufacturePlanning/add';
+import AddFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/new';
+import AddFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/new';
+import AddPayment from '../pages/dashboard/Finance/Payment/new';
+import AddFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
 import DisplayGoods from '../pages/dashboard/Goods/display';
+import DisplayService from '../pages/dashboard/Service/display';
 import DisplayInquiry from '../pages/dashboard/Inquiry/display';
 import DisplayQuote from '../pages/dashboard/Quotation/display';
 import DisplaySalesOrder from '../pages/dashboard/SalesOrder/display';
@@ -69,17 +105,34 @@ import DisplayGR from '../pages/dashboard/GoodsReceipt/display';
 import DisplayIR from '../pages/dashboard/InvoiceReceipt/display';
 import DisplayProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/display';
 import DisplayPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/display';
+import DisplaySS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/display';
 import DisplayLabor from '../pages/dashboard/Labor/display';
 
 import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
 import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
-import DisplayOD from '../pages/dashboard/OutboundDelivery/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
+import DisplayVInv from '../pages/dashboard/Finance/VendorBills/display';
+import DisplayMachine from '../pages/dashboard/Machine/display';
+import DisplayOutputPerSalesOrder from '../pages/dashboard/OrderProgress/display';
+import DisplayOutputPerSalesOrderDetail from '../pages/dashboard/OrderProgress/show';
+import DisplayLineTarget from '../pages/dashboard/LineTarget/display';
+import DisplayFacility from '../pages/dashboard/Facility/display';
+import DisplayFactory from '../pages/dashboard/Factory/display';
+import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
+import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
+import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
+import DisplayFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/display';
+import DisplayFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/display';
+import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
+
+import DisplayOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/display';
+import DisplayFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
 import ShowGoods from '../pages/dashboard/Goods/show';
+import ShowService from '../pages/dashboard/Service/show';
 import ShowInquiry from '../pages/dashboard/Inquiry/show';
 import ShowQuote from '../pages/dashboard/Quotation/show';
 import ShowSalesOrder from '../pages/dashboard/SalesOrder/show';
@@ -92,39 +145,118 @@ import ShowPO from '../pages/dashboard/PurchaseOrder/show';
 import ShowGR from '../pages/dashboard/GoodsReceipt/show';
 import ShowProcess from '../pages/dashboard/IndustrialEngineeringStudy/Process/show';
 import ShowPS from '../pages/dashboard/IndustrialEngineeringStudy/ProductionStudy/show';
+import ShowSS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStudy/show';
 import ShowLabor from '../pages/dashboard/Labor/show';
 import ShowMO from '../pages/dashboard/ManufactureOrder/show';
-import ShowOD from '../pages/dashboard/OutboundDelivery/show';
 import ShowInv from '../pages/dashboard/Finance/Invoice/show';
+import ShowVInv from '../pages/dashboard/Finance/VendorBills/show';
+import ShowMachine from '../pages/dashboard/Machine/show';
+import ShowLineTarget from '../pages/dashboard/LineTarget/show';
+import ShowFacility from '../pages/dashboard/Facility/show';
+import ShowFactory from '../pages/dashboard/Factory/show';
+
+import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
+import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
+
+import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
+import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
+// import ShowFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/show';
+import ShowPayment from '../pages/dashboard/Finance/Payment/show';
+import ShowFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
+import DocumentShipment from '../pages/dashboard/Shipment/Outgoing/pages/Document';
+import DocumentQuotation from '../pages/dashboard/Quotation/pages/Document';
 import DocumentRFQ from '../pages/dashboard/RFQ/pages/Document';
+import DocumentPO from '../pages/dashboard/PurchaseOrder/pages/Document';
+import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
+import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document';
+
+//Report
+import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
+import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
+import ReportFinancialOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/report';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
 import FinishMOW from '../pages/dashboard/ManufactureOrder/finish';
-import OutboundDeliveryLayout from '../pages/dashboard/OutboundDelivery';
+
+//Monitoring
+import Ininih from '../pages/dashboard/Monitoring';
+
+import MonitoringFinishedGoodsLayout from '../pages/dashboard/Monitoring/FinishedGoods'; //
+import MonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/add'; //layout
+import DisplayMonitoringFinishedGoods from '../pages/dashboard/Monitoring/FinishedGoods/display';
+
+import MonitoringSewingLayout from '../pages/dashboard/Monitoring/Sewing'; //
+import MonitoringSewing from '../pages/dashboard/Monitoring/Sewing/add'; //layout
+import DisplayMS from '../pages/dashboard/Monitoring/Sewing/display';
+
+import MonitoringQCLayout from '../pages/dashboard/Monitoring/QC'; //
+import MonitoringQC from '../pages/dashboard/Monitoring/QC/add'; //layout
+import DisplayMQC from '../pages/dashboard/Monitoring/QC/display';
+
+import CuttingLayout from '../pages/dashboard/Monitoring/cutting-layout';
+
+import MonitoringSpreadLayout from '../pages/dashboard/Monitoring/Spreading'; //
+import MonitoringSpread from '../pages/dashboard/Monitoring/Spreading/add'; //
+import DisplayMSpread from '../pages/dashboard/Monitoring/Spreading/display'; //
+
+import MonitoringCuttingLayout from '../pages/dashboard/Monitoring/Cutting'; //
+import MonitoringCutting from '../pages/dashboard/Monitoring/Cutting/add'; //
+import DisplayMCutting from '../pages/dashboard/Monitoring/Cutting/display'; //
+
+import MonitoringNumberingLayout from '../pages/dashboard/Monitoring/Numbering'; //
+import MonitoringNumbering from '../pages/dashboard/Monitoring/Numbering/add'; //
+import DisplayMNumbering from '../pages/dashboard/Monitoring/Numbering/display'; //
+
+import MonitoringSupermarketLayout from '../pages/dashboard/Monitoring/Supermarket'; //
+import MonitoringSupermarket from '../pages/dashboard/Monitoring/Supermarket/add'; //
+import DisplayMSupermarket from '../pages/dashboard/Monitoring/Supermarket/display'; //
+
+import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
+
+import AddOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/new';
+import ShowOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/show';
+
+import CurrencyExchange from '../pages/dashboard/Finance/CurrencyExchange';
+
+import { 
+  IncomingLayout,
+  OutgoingLayout,
+  StatusLayout
+} from '../pages/dashboard/Shipment'
+import { Typography } from '@mui/material';
+
+import ValuationTable from '../components/experiment/Valuation';
+// import TestVendor from '../pages/dashboard/Vendor/test';
+import Capacity from '../components/experiment/capacity';
+import Layout from '../layouts/Layout';
 
 export default function TestRouter() {
 
-  const access_token = localStorage.getItem('_token');
-
   return useRoutes([
-    { path: '/auth', children: [
+    { path: '/', children: [
         { path: 'register', element: <Register /> },        
         { path: 'login', element: <Login /> },
       ]
     },
+    // {
+    //   path: '/downloads', children: [
+    //     { path: 'purchase-order/:id', element: <TestVendor />}
+    //   ]
+    // },
     {
       path: '/dashboard',
-      element: (access_token ? <DashboardLayout /> : <Navigate replace to="/auth/login" />),
+      element: <DashboardLayout />,
       children: [
         { 
           path: 'order/buyer',
           element: <BuyerLayout />,
+          redirect: 'order/buyer/display',
           children: [
             { path: ':id', element: <ShowBuyer/>},
             { path: 'add', element: <AddBuyer/>},
@@ -147,6 +279,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowQuote/>},
             { path: 'add', element: <AddQuotation />},
             { path: 'display', element: <DisplayQuote />},
+            { path: 'document/:id', element: <DocumentQuotation/>}
           ]
         },
         { 
@@ -156,7 +289,8 @@ export default function TestRouter() {
             { path: ':id', element: <ShowSalesOrder />},
             { path: 'add', element: <AddSalesOrder />},
             { path: 'display', element: <DisplaySalesOrder />},
-            { path: 'edit', element: <p>edit</p>}
+            { path: 'edit', element: <p>edit</p>},
+            { path: 'document/:id', element: <DocumentSO/>}
           ]
         },
         { 
@@ -166,6 +300,16 @@ export default function TestRouter() {
             { path: ':id', element: <ShowGoods />},
             { path: 'add', element: <AddGoods />},
             { path: 'display', element: <DisplayGoods />},
+            { path: 'edit', element: <p>edit</p>}
+          ]
+        },
+        { 
+          path: 'material/service', 
+          element: <ServiceLayout/>, 
+          children: [
+            { path: ':id', element: <ShowService />},
+            { path: 'add', element: <AddService />},
+            { path: 'display', element: <DisplayService />},
             { path: 'edit', element: <p>edit</p>}
           ]
         },
@@ -228,7 +372,25 @@ export default function TestRouter() {
           ]
         },
         { 
+          path: 'production/manufacture-planning', 
+          element: <MPLayout />,
+          children: [
+            { path: ':id', element: <ShowMP />},
+            { path: 'add', element: <AddMP />},
+            { path: 'display', element: <DisplayMP />},
+          ]
+        },
+        { 
           path: 'purchasing/vendor', 
+          element: <VendorLayout />,
+          children: [
+            { path: ':id', element: <ShowVendor />},
+            { path: 'add', element: <AddVendor />},
+            { path: 'display', element: <DisplayVendor />}
+          ]
+        },
+        { 
+          path: 'inventory/vendor', 
           element: <VendorLayout />,
           children: [
             { path: ':id', element: <ShowVendor />},
@@ -262,6 +424,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowPO />},
             { path: 'add', element: <AddPurchaseOrder />},
             { path: 'display', element: <DisplayPO />},
+            { path: 'document/:id', element: <DocumentPO/>}
           ]
         },
         { 
@@ -275,22 +438,21 @@ export default function TestRouter() {
           ]
         },
         { 
-          path: 'inventory/outbound-delivery', 
-          element: <OutboundDeliveryLayout />,
-          children: [
-            { path: ':id', element: <ShowOD />},
-            { path: 'add', element: <AddOD />},
-            { path: 'display', element: <DisplayOD />},
-            { path: 'document/:id', element: <DocumentGR/>}
-          ]
-        },
-        { 
           path: 'material/invoice-receipt', 
           element: <InvoiceReceipt />,
           children: [
             { path: ':id', element: <ShowGR />},
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
+          ]
+        },
+        {
+          path: 'material/machine',
+          element: <MachineLayout />,
+          children: [
+            { path: ':id', element: <ShowMachine />},
+            { path: 'add', element: <AddMachine />},
+            { path: 'display', element: <DisplayMachine />},
           ]
         },
         //Industrial Engineering Study Route
@@ -313,10 +475,94 @@ export default function TestRouter() {
           ]
         },
         { 
+          path: 'ie-study/sampling-study', 
+          element: <SSLayout />,
+          children: [
+            { path: 'add', element: <AddSS />},
+            { path: ':id', element: <ShowSS />},
+            { path: 'display', element: <DisplaySS />}
+          ]
+        },
+        { 
           path: 'ie-study/result', 
           element: <ORLayout />,
           children: [
             { path: ':id/add', element: <AddOR />}
+          ]
+        },
+        // Monitoring
+        { 
+          path: 'monitoring/', 
+          children: [
+            { path: 'main', element: <Ininih /> },
+            { path: 'cutting', 
+              element: <CuttingLayout/>,
+              children: [
+                { path: 'insert', element: <MonitoringSewing /> },
+                { path: 'display', element: <DisplayMS/>},
+                { path: 'spreading', 
+                  element: <MonitoringSpreadLayout/>,
+                  children: [
+                    { path: 'insert', element: <MonitoringSpread />},
+                    { path: 'display', element: <DisplayMSpread />},
+                  ]
+                },
+                { path: 'cutting', 
+                  element: <MonitoringCuttingLayout/>,
+                  children: [
+                    { path: 'insert', element: <MonitoringCutting />},
+                    { path: 'display', element: <DisplayMCutting />},
+                  ]
+                },
+                { path: 'numbering', 
+                  element: <MonitoringNumberingLayout/>,
+                  children: [
+                    { path: 'insert', element: <MonitoringNumbering />},
+                    { path: 'display', element: <DisplayMNumbering />},
+                  ]
+                }
+              ]
+            },
+            { path: 'supermarket', 
+              element: <MonitoringSupermarketLayout/>,
+              children: [
+                { path: 'insert', element: <MonitoringSupermarket /> },
+                { path: 'display', element: <DisplayMSupermarket />}
+              ]
+            },
+            { path: 'sewing', 
+              element: <MonitoringSewingLayout/>,
+              children: [
+                { path: 'insert', element: <MonitoringSewing /> },
+                { path: 'display', element: <DisplayMS/>}
+              ]
+            },
+            { path: 'qc', 
+              element: <MonitoringQCLayout/>,
+              children: [
+                { path: 'insert', element: <MonitoringQC /> },
+                { path: 'display', element: <DisplayMQC/>}
+              ]
+            },
+            { path: 'finished-goods', 
+              element: <MonitoringFinishedGoodsLayout/>,
+              children: [
+                { path: 'insert', element: <MonitoringFinishedGoods />},
+                { path: 'display', element: <DisplayMonitoringFinishedGoods />}
+              ]
+            },
+            { 
+              path: 'order', 
+              element: <OrderProgressLayout/>,
+              children: [
+                { path: 'display', element: <DisplayOutputPerSalesOrder/>},
+                { path: ':id', element: <DisplayOutputPerSalesOrderDetail/>}
+              ]
+            },
+            {
+              path: 'production',
+              element: <MonitoringProduction />
+            }
           ]
         },
         //Industrial Engineering Human Resources Route
@@ -353,8 +599,163 @@ export default function TestRouter() {
             { path: 'add', element: <AddInv /> },
             { path: ':id', element: <ShowInv /> },
             { path: 'display', element: <DisplayInv /> },
-            { path: 'document/:id', element: <DocumentINV/>}
+            { path: 'document/:id', element: <DocumentINV/>},
+            { path: 'report', element: <ReportINV/>}
           ]
+        },
+        { 
+          path: 'finance/vendor-bills', 
+          element: <VendorBillsLayout />,
+          children: [
+            { path: 'add', element: <AddVInv /> },
+            { path: ':id', element: <ShowVInv /> },
+            { path: 'display', element: <DisplayVInv /> },
+            { path: 'document/:id', element: <DocumentVINV/>},
+            { path: 'report', element: <ReportVB/>}
+          ]
+        },
+        {
+          path: 'finance/payment',
+          element: <PaymentLayout/>,
+          children: [
+            { path: 'add', element: <AddPayment /> },
+            { path: ':id', element: <ShowPayment /> },
+            { path: 'display', element: <DisplayPayment /> }
+          ]
+        },
+        {
+          path: 'finance/account',
+          element: <FinanceAccountLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceAccount /> },
+            { path: ':id', element: <ShowFinanceAccount /> },
+            { path: 'display', element: <DisplayFinanceAccount /> }
+          ]
+        },
+        {
+          path: 'finance/transaction',
+          element: <FinanceAccountTransactionLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceAccountTransaction /> },
+            // { path: ':id', element: <ShowFinanceAccountTransaction /> },
+            { path: 'display', element: <DisplayFinanceAccountTransaction /> }
+          ]
+        },
+        {
+          path: 'finance/order-budget-planning',
+          element: <FinancialOrderBudgetLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceOrderBudgetPlanning /> },
+            { path: 'report/:id', element: <ReportFinancialOrderBudgetPlanning /> },
+            { path: ':id', element: <ShowFinanceOrderBudgetPlanning /> },
+            { path: 'display', element: <DisplayFinanceOrderBudgetPlanning /> }
+          ]
+        },
+        {
+          path: 'finance/currency',
+          element: <CurrencyExchange />
+        },
+        // Finance
+        { 
+          path: 'factory', 
+          element: <FactoryLayout />,
+          children: [
+            { path: 'add', element: <AddFactory /> },
+            { path: ':id', element: <ShowFactory /> },
+            { path: 'display', element: <DisplayFactory /> },
+          ]
+        },
+        {
+          path: 'order-pl-analysis',
+          element: <OrderPLAnalysisLayout />,
+          children: [
+            { path: 'add', element: <AddOrderPLAnalysis /> },
+            { path: ':id', element: <ShowOrderPLAnalysis /> },
+            { path: 'display', element: <DisplayOrderPLAnalysis /> },
+          ]
+        },
+        { 
+          path: 'facility', 
+          element: <FacilityLayout />,
+          children: [
+            { path: 'add', element: <AddFacility /> },
+            { path: ':id', element: <ShowFacility /> },
+            { path: 'display', element: <DisplayFacility /> }
+          ]
+        },
+        { 
+          path: 'facility-target', 
+          element: <FacilityTargetLayout />,
+          children: [
+            { path: 'add', element: <AddLineTarget /> },
+            { path: ':id', element: <ShowLineTarget /> },
+            { path: 'display', element: <DisplayLineTarget /> }
+          ]
+        },
+        // Shipment
+        {
+          path: 'shipment/incoming',
+          element: <IncomingLayout/>,
+          children: [
+            { path: 'add', element: <AddIncomingShipment /> },
+            { path: ':id', element: <ShowIncomingShipment /> },
+            { path: 'display', element: <DisplayIncomingShipment /> },
+          ]
+        },
+        {
+          path: 'shipment/outgoing',
+          element: <OutgoingLayout/>,
+          children: [
+            { path: 'add', element: <AddOutgoingShipment /> },
+            { path: ':id', element: <ShowOutgoingShipment /> },
+            { path: 'display', element: <DisplayOutgoingShipment /> },
+            { path: 'document/:id', element: <DocumentShipment /> }
+          ]
+        },
+        {
+          path: 'shipment/status',
+          element: <StatusLayout/>,
+          children: [
+            { path: 'display', element: <Typography>Display</Typography> }
+          ]
+        },
+        { path: 'inputer-spreading', 
+          element: <MonitoringSpread /> 
+        },
+        { path: 'inputer-cutting', 
+          element: <MonitoringCutting /> 
+        },
+        { path: 'inputer-numbering', 
+          element: <MonitoringNumbering /> 
+        },
+        { path: 'inputer-supermarket', 
+          element: <MonitoringSupermarket /> 
+        },
+        { path: 'inputer-sewing', 
+          element: <MonitoringSewing /> 
+        },
+        { path: 'inputer-qc', 
+          element: <MonitoringQC /> 
+        },
+        { path: 'inputer-finished-goods', 
+          element: <MonitoringFinishedGoods />
+        },
+        { 
+          path: 'user-management', 
+          element: <UserManagementLayout />,
+          children: [
+            { path: 'reg-user', element: <UserRegister /> },
+            { path: 'display', element: <DisplayUser /> },
+            { path: 'display/:id', element: <UserTest /> }
+          ]
+        },
+        {
+          path: 'capacity',
+          element: <Capacity />
+        },
+        {
+          path: 'goods-valuation',
+          element: <ValuationTable />
         },
         { path: '*', element: <Navigate to="/404" /> }
       ]

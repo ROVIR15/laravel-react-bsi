@@ -8,86 +8,102 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { LoadingButton } from '@mui/lab';
 
+import AutoComplete from './components/AutoComplete';
+
 //api
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
+import { LaborSchema } from '../../../helpers/FormerSchema';
+import { laborArrangedData } from '../../../helpers/data';
 
 function Labor() {
   const {id} = useParams();
-  
-  const LaborSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    name: Yup.string().required('Name is required'),
-    npwp: Yup.string().required('NPWP is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('city is required'),
-    province: Yup.string().required('province is required'),
-    country: Yup.string().required('country is required'),
-    postal_code: Yup.string().required('postal_code is required'),
-    phone_number: Yup.string().required('Phone Number is required'),
+  const [choosen, setChoosen] = React.useState({
+    id: 0, name: '', role: ''
   });
 
   const formik = useFormik({
     initialValues: {
       email : "",
+      role_type_id: 0,
       name : "",
-      npwp : "",
-      address : "",
-      city : "",
-      province : "",
-      country : "",
-      postal_code : "",
       phone_number :"" 
     },
     validationSchema: LaborSchema,
-    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code}) => {
+    onSubmit: ({ name, npwp, email, role_type_id}) => {
       const data = {
         party_info: {
-          name, email, npwp
+          name, email, npwp: 0
         },
-        address: {
-          street: address,
-          city, province, country, postal_code
-        }, type: {
-          role: "Labor",
-          party: "Person"
+        roles : {
+          role_type_id,
+          relationship_id: 3
         }
       }
-      API.updateLabor(id, data, function(res){
-        setSubmitting(false);
-        alert(JSON.stringify(res));
-      });
+
+      try {
+        API.updateLabor(id, data, function(res){
+          setSubmitting(false);
+          alert(JSON.stringify(res));
+        });
+      } catch (e) {
+        alert(e);
+      }
+
     }
   })
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setValues, setSubmitting } = formik;
+  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setValues, setSubmitting, setFieldValue } = formik;
 
   useEffect(() => {
     if(!id) return;
-    API.getALabor(id, function(res){
+    API.getALabor(id,async function(res){
       if(!res.success) alert("Something went wrong!");
-      setValues({
-        ...values,
-        email: res.data.email,
-        name: res.data.name,
-        npwp: res.data.npwp,
-        address : res.data.street,
-        city: res.data.city,
-        province: res.data.province,
-        country: res.data.country,
-        postal_code: res.data.postal_code,
-        phone_number  : ""
-      });
+      const {role_type, ...arrangedData} = laborArrangedData(res.data);
+      setValues(arrangedData);
+      setChoosen(role_type)
     });
   }, [id]);
 
+// Auto Complete
+const [open, setOpen] = React.useState(false);
+
+const [options, setOptions] = React.useState([]);
+const loading = open && options.length === 0;
+
+React.useEffect(() => {
+  let active = true;
+
+  // get labor categories
+  if (!loading) {
+    return undefined;
+  }
+
+  API.getRoleType('?type=Employee', (res) => {
+    if(!res) return
+    if(!res.data) {
+      setOptions([]);
+    } else {
+      setOptions(res.data);
+    }
+  });
+
+  return () => {
+    active = false;
+  };
+}, [loading])
+
+const handleChangeAC = async (newValue) => {
+  setChoosen(newValue);
+  await setFieldValue('role_type_id', newValue.id);
+}
 
   return (
     <Page>
       <Container>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
         <Card >
           <CardHeader
@@ -95,7 +111,7 @@ function Labor() {
           />
           <CardContent>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   autoComplete="name"
@@ -107,95 +123,20 @@ function Labor() {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TextField
+                <AutoComplete
                   fullWidth
-                  autoComplete="npwp"
+                  autoComplete="role_type_id"
                   type="text"
-                  label="NPWP"
-                  {...getFieldProps('npwp')}
-                  error={Boolean(touched.npwp && errors.npwp)}
-                  helperText={touched.npwp && errors.npwp}
+                  label="Role Type"
+                  error={Boolean(touched.role_type_id && errors.role_type_id)}
+                  helperText={touched.role_type_id && errors.role_type_id}
+                  options={options}
+                  setOpen={setOpen}
+                  loading={loading}
+                  choosen={choosen}
+                  changeData={handleChangeAC}
                 />
               </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-        <Card>
-          <CardHeader
-            title="Address Information"
-          />
-          <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                autoComplete="address"
-                type="text"
-                label="Alamat"
-                {...getFieldProps('address')}
-                error={Boolean(touched.address && errors.address)}
-                helperText={touched.address && errors.address}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="city"
-                type="text"
-                label="Kota"
-                {...getFieldProps('city')}
-                error={Boolean(touched.city && errors.city)}
-                helperText={touched.city && errors.city}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="province"
-                type="text"
-                label="Provinsi"
-                {...getFieldProps('province')}
-                error={Boolean(touched.province && errors.province)}
-                helperText={touched.province && errors.province}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="country"
-                type="text"
-                label="Country"
-                {...getFieldProps('country')}
-                error={Boolean(touched.country && errors.country)}
-                helperText={touched.country && errors.country}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="postal code"
-                type="text"
-                label="Postal Code"
-                {...getFieldProps('postal_code')}
-                error={Boolean(touched.postal_code && errors.postal_code)}
-                helperText={touched.postal_code && errors.postal_code}
-              />
-            </Grid>
-          </Grid>
-          </CardContent>
-        </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card >
-            <CardHeader
-              title="Contact Information"
-            />
-            <CardContent>
-            <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -219,10 +160,10 @@ function Labor() {
                 />
               </Grid>
             </Grid>
-            </CardContent>
-          </Card>
-
+          </CardContent>
+        </Card>
         </Grid>
+
         <Grid item xs={12}>
           <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
             <LoadingButton
@@ -236,6 +177,7 @@ function Labor() {
             </LoadingButton>
             <Button
               size="large"
+              type="submit"
               color="grey"
               variant="contained"
               sx={{ m: 1 }}

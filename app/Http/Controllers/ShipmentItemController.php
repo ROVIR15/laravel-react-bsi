@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\Shipment\ShipmentItem;
@@ -21,7 +21,21 @@ class ShipmentItemController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ShipmentItem::all();
+      $shipment = $request->query('shipment');
+
+      try {
+        if(isset($shipment)){
+          $query = ShipmentItem::where('shipment_id', $shipment)->get();
+        } else {
+          $query = ShipmentItem::all();
+        }
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
 
       return new ShipmentItemCollection($query);
     }
@@ -42,7 +56,7 @@ class ShipmentItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {

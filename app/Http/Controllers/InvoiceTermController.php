@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\InvoiceTerm;
+use App\Models\Invoice\InvoiceTerm;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\InvoiceTerm as InvoiceTermOneCollection;
-use App\Http\Resources\Study\InvoiceTermCollection;
+use App\Http\Resources\Invoice\InvoiceTerm as InvoiceTermOneCollection;
+use App\Http\Resources\Invoice\InvoiceTermCollection;
 
 class InvoiceTermController extends Controller
 {
@@ -34,6 +34,23 @@ class InvoiceTermController extends Controller
         //
     }
 
+    public function getInvoiceTermOfInvoice($invoice)
+    {
+      try {
+        $query = InvoiceTerm::where('invoice_id', $invoice)->get();
+
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
+
+      return new InvoiceTermCollection($query);
+
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -45,8 +62,11 @@ class InvoiceTermController extends Controller
       $param = $request->all()['payload'];
       try {
         InvoiceTerm::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+          'invoice_id' => $param['invoice_id'],
+          'invoice_item_id' => $param['invoice_item_id'],
+          'term_description' => $param['term_description'],
+          'term_value' => $param['term_value'],
+          'value_type' => $param['value_type']
         ]);
       } catch (Exception $th) {
         return response()->json([

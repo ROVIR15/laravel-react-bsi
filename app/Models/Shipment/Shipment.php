@@ -4,6 +4,8 @@ namespace App\Models\Shipment;
 
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
+
 class Shipment extends Model
 {
     protected $table = 'shipment';
@@ -14,20 +16,38 @@ class Shipment extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'comment',
+        'serial_number',
+        'shipment_type_id',
         'delivery_date',
-        'order_id'
+        'est_delivery_date',
+        'order_id',
+        'imageUrl'
     ];
 
-    public function item(){
-        return $this->hasMany('App\Models\Shipment\ShipmentItem');
+    public function items(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
     }
 
-    public function buyer(){
-        return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id');
+    public function sum(){
+        return $this->hasMany('App\Models\Shipment\ShipmentItem')->select('id', 'shipment_id', DB::raw('sum(qty_shipped) as total_qty'))->groupBy('shipment_id');
     }
 
-    public function ship(){
-        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+    public function order(){
+        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order', 'purchase_order');
     }
 
+    public function type(){
+        return $this->belongsTo('App\Models\Shipment\ShipmentType', 'shipment_type_id');
+    }
+
+    public function status(){
+        return $this->hasMany('App\Models\Shipment\ShipmentStatus', 'shipment_id', 'id')
+        ->with('status_type')
+        ->orderBy('created_at', 'desc');
+    }
+
+    public function hasInvoice(){
+        return $this->belongsTo('App\Modes\Invoice\InvoiceHasShipment', 'id');
+    }
 }

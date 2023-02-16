@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
+use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Shipment\Shipment;
 use App\Models\Shipment\ShipmentView;
 use App\Models\Shipment\ShipmentItem;
+use App\Models\Shipment\ShipmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Shipment\ShipmentCollection;
 use App\Http\Resources\Shipment\Shipment as ShipmentOneCollection;
@@ -22,9 +26,81 @@ class ShipmentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info', 'issued_goods')->get();
+      $type = $request->query('shipment_type');
+      $monthYear = $request->query('monthYear');
 
-      return new ShipmentCollection($query);
+      try {
+        if(isset($monthYear)){    
+          $monthYear = date_create($monthYear);
+          $month = date_format($monthYear, 'm');
+          $year = date_format($monthYear, 'Y');
+    
+          if(isset($type)){
+            $query = Shipment::with('order', 'type', 'status', 'sum')
+            ->whereHas('type', function($query) use ($type){
+              $query->where('id', $type);
+            })
+            ->whereYear('delivery_date', '=', $year)
+            ->whereMonth('delivery_date', '=', $month)
+            ->get();
+          } else {
+            $query = Shipment::with('order', 'type', 'status', 'sum')
+            ->whereYear('delivery_date', '=', $year)
+            ->whereMonth('delivery_date', '=', $month)
+            ->get();
+          }  
+        } else {
+          if(isset($type)){
+            $query = Shipment::with('order', 'type', 'status', 'sum')
+            ->where('shipment_type_id', $type)
+            ->orderBy('order_id', 'asc')
+            ->get();
+          } else {
+            $query = Shipment::with('order', 'type', 'status', 'sum')
+            ->get();
+          }  
+        }
+  
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json(['data' => $query]);
+    }
+
+    public function shipmentInvoicing(Request $request){
+      $type = $request->query('shipment_type');
+
+      try {
+        $_shipmentHasInvoice = InvoiceHasShipment::select('shipment_id')->get();
+        if(isset($type)){
+          $query = Shipment::with('order', 'type', 'status', 'items')
+          ->where('shipment_type_id', $type)
+          ->whereNotIn('id', $_shipmentHasInvoice)
+          ->orderBy('order_id', 'asc')
+          ->get();
+        } else {
+          $query = Shipment::with('order', 'type', 'status', 'items')
+          ->whereNotIn('id', $_shipmentHasInvoice)
+          ->get();
+        }  
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'succees' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
+
     }
 
     /**
@@ -48,7 +124,11 @@ class ShipmentController extends Controller
       $param = $request->all()['payload'];
       try {
         $shipment = Shipment::create([
+          'comment'=> $param['comment'] ,
+          'serial_number'=> $param['serial_number'],
+          'est_delivery_date'=> $param['est_delivery_date'],
           'delivery_date'=> $param['delivery_date'],
+          'shipment_type_id'=> $param['shipment_type_id'],
           'order_id'=> $param['order_id']
         ]);
 
@@ -59,13 +139,20 @@ class ShipmentController extends Controller
         foreach($param['OD_items'] as $item){
           array_push($shipmentItemP, [
             'shipment_id' => $shipment->id,
-            'order_item_id' => $item['po_item_id'],
-            'qty_shipped' => $item['deliv_qty']
+            'order_item_id' => $item['order_item_id'],
+            'qty_shipped' => $item['deliv_qty'],
+            'description' => $item['description']
           ]);
         }
 
         ShipmentItem::insert($shipmentItemP);
       
+        ShipmentStatus::create([
+          'shipment_type_status_id' => 5,
+          'user_id'=> $param['user_id'],
+          'shipment_id' => $shipment->id
+        ]);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -86,8 +173,8 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = ShipmentView::with('item', 'buyer', 'ship', 'sales_info')->find($id);
-        return new ShipmentOneCollection($query);
+        $query = Shipment::with('items', 'order', 'type', 'status')->find($id);
+        return response()->json(['data' => $query]);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

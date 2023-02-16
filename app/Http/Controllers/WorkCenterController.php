@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 use App\Models\Manufacture\WorkCenter;
 
 use App\Http\Resources\Manufacture\WorkCenter as WorkCenterOneCollection;
@@ -20,7 +20,7 @@ class WorkCenterController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = WorkCenter::all();
+      $query = WorkCenter::with('goods')->orderBy('id', 'desc')->get();
 
       return new WorkCenterCollection($query);
     }
@@ -41,20 +41,21 @@ class WorkCenterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $param = $request->all()['payload'];
       try {
         WorkCenter::create([
-          'id' => $faker->unique()->numberBetween(1,3189),
           'name' => $param['name'],
           'work_hours' => $param['work_hours'],
+          'layout_produksi' => $param['layout_produksi'],
           'company_name' => $param['company_name'],
           'overhead_cost' => $param['overhead_cost'],
           'prod_capacity' => $param['prod_capacity'],
           'cost_per_hour' => $param['cost_per_hour'],
           'oee_target' => $param['oee_target'],
           'labor_alloc' => $param['labor_alloc'],
+          'goods_id' => $param['goods_id'],
           'description' => $param['description']
         ]);
       } catch (Exception $th) {
@@ -77,7 +78,7 @@ class WorkCenterController extends Controller
     public function show($id)
     {
       try {
-        $query = WorkCenter::find($id);
+        $query = WorkCenter::with('goods')->find($id);
         return new WorkCenterOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

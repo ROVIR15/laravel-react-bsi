@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty, isNull, uniqBy } from 'lodash';
+import { styled } from '@mui/material/styles';
 import {
   Card,
   Checkbox,
@@ -9,24 +10,38 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Chip
 } from '@mui/material';
+
 //components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import BUYERLIST from '../../../_mocks_/buyer';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
+
 // api
 import API from '../../../helpers';
+
+import useAuth from '../../../context';
+import moment, { isMoment } from 'moment';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'buyer', label: 'Buyer', alignRight: false },
+  { id: 'start_date', label: 'Start Production', alignRight: false },
+  { id: 'date', label: 'Issue Date', alignRight: false },
   { id: 'name', label: 'BOM Name', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'qty', label: 'Quantity', alignRight: false },
-  { id: 'company_name', label: 'Company Name', alignRight: false },
+  { id: 'remarks', label: 'Remarks', alignRight: false, width: 300 }
 ];
+
+const ChipStyled = styled(Chip)(({ theme }) => ({
+  color: '#fff',
+  fontWeight: 'bolder'
+}));
 
 // ----------------------------------------------------------------------
 
@@ -47,46 +62,69 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  if (query[1] !== 'All') {
+    if (query[2] !== 0) {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    } else {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          !isEmpty(_b.status) &&
+          _b.status[0]?.status_type.toLowerCase().indexOf(query[1].toLowerCase()) !== -1
+      );
+    }
+  } else {
+    if (query[2] !== 0)
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    else
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayBOM({ placeHolder }) {
+  let now = new Date();
 
   const [bomData, setBomData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const { user } = useAuth();
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
-    if(!isEmpty(bomData)) return;
-    API.getBOM((res) => {
-      console.log(res);
-      if(!res) return
-      if(!res.data) {
-        console.error('Nothing');
-        setBomData(BUYERLIST);
-      } else {
-        setBomData(res.data);
-      }
-    });
-  }, [bomData])
+    handleUpdateData();
+  }, [filterMonthYear]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -134,31 +172,145 @@ function DisplayBOM({ placeHolder }) {
     setFilterName(event.target.value);
   };
 
+  const handleFilterByStatus = (event) => {
+    setFilterStatus(event.target.value);
+  };
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+
+  const handleUpdateData = () => {
+    const { role } = user;
+    let params;
+
+    setLoading(true);
+
+    role.map((item) => {
+      if (item.approve) {
+        params = '?level=approve';
+        return;
+      }
+      if (item.submit) {
+        params = '?level=submit';
+        return;
+      }
+      if (item.review) {
+        params = '?level=review';
+        return;
+      }
+    });
+
+    params = params + `&monthYear=${filterMonthYear}`;
+
+    try {
+      API.getBOM(params, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setBomData([]);
+        } else {
+          let buyer = res.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.party);
+            })
+            .map(function (obj) {
+              return obj.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+
+          setOptionsBuyer(_buyer);
+
+          setBomData(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+
+    setLoading(false);
+  };
+
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
+
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteBOM(id, function(res){
-      if(res.success) location.reload();
-    })
-  }
+
+    try {
+      API.deleteBOM(id, function (res) {
+        if (res.success) setBomData([]);
+      });
+    } catch (error) {
+      alert('error');
+    }
+
+    handleUpdateData();
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bomData.length) : 0;
 
-  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(bomData, getComparator(order, orderBy), [
+    filterName,
+    filterStatus,
+    filterBuyer
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
+  function ChipStatus(param, _id) {
+    switch (param) {
+      case 'Submit':
+        return <ChipStyled label={param} color="primary" />;
+        break;
+
+      case 'Dropped':
+        return <ChipStyled label={param} color="error" />;
+        break;
+
+      case 'Review':
+        if (_id === 3) {
+          return <ChipStyled variant="filled" label={param} sx={{ backgroundColor: '#FF5F1F' }} />;
+        } else {
+          return <ChipStyled variant="filled" label={param} color="warning" />;
+        }
+        break;
+
+      case 'Approve':
+        return <ChipStyled label={param} color="success" />;
+        break;
+
+      default:
+        return <Chip label="Created" />;
+        break;
+    }
+  }
   return (
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
+        statusActive={true}
         filterName={filterName}
+        filterStatus={filterStatus}
         onFilterName={handleFilterByName}
+        onFilterStatus={handleFilterByStatus}
+        onGo={handleUpdateData}
         placeHolder={placeHolder}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -170,14 +322,17 @@ function DisplayBOM({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const { 
+                .map((row, index) => {
+                  const {
                     id,
+                    party,
                     product_id,
                     product_feature_id,
-                    name, 
-                    qty, 
-                    company_name
+                    status,
+                    name,
+                    qty,
+                    company_name,
+                    ...rest
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -189,18 +344,26 @@ function DisplayBOM({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
+                      <TableCell align="left">{index + 1}</TableCell>
+                      <TableCell align="left">{party?.name}</TableCell>
+                      <TableCell align="left">
+                        {moment(new Date(rest.start_date)).format('DD MMM YYYY')}
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">
+                        {moment(new Date(rest.created_at)).format('DD MMM YYYY')}
+                      </TableCell>
                       <TableCell align="left">{name}</TableCell>
+                      <TableCell align="left">
+                        {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
+                      </TableCell>
                       <TableCell align="left">{qty}</TableCell>
-                      <TableCell align="left">{company_name}</TableCell>
+                      <TableCell align="left">{ (isEmpty(status) && isNull(status[0]?.user)) ? "Tidak ada catetan" : `${status[0]?.user?.name} - ${status[0]?.description}`}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={id}
+                          document={true}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -224,7 +387,7 @@ function DisplayBOM({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 20, 25]}
         component="div"
         count={bomData.length}
         rowsPerPage={rowsPerPage}
@@ -233,7 +396,7 @@ function DisplayBOM({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayBOM;

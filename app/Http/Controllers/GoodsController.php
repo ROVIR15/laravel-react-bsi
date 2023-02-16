@@ -2,7 +2,7 @@
   
   namespace App\Http\Controllers;
 
-  use Faker\Generator as Faker;
+  
   use Exception;
 
   use Illuminate\Support\Facades\DB;
@@ -27,22 +27,47 @@
      */
     public function index()
     {
-      $query = DB::table("product as p")
-      ->rightJoin("goods as g", function($join){
-        $join->on("g.id", "=", "p.goods_id");
-      })
-      ->leftJoin("product_has_category as phc", function($join){
-        $join->on("phc.product_id", "=", "p.id");
-      })
-      ->leftJoin("product_category as pc", function($join){
-        $join->on("phc.product_category_id", "=", "pc.id");
-      })
-      ->select("g.id", "g.brand as brand", "g.name", "g.imageUrl", "g.satuan as unit_measurement", "g.value", "pc.name as category")
-      ->get();
+      $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
 
       return response()->json([
         "success" => true,
         "data" => $query
+      ]);
+    }
+
+    public function showFabric(){
+      try {
+        //code...
+        $query = ProductHasCategory::where('product_category_id', 3)->with('product', 'category')->get();
+      } catch (Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
+    }
+
+    public function showFG(){
+      try {
+        //code...
+        $query = ProductHasCategory::where('product_category_id', 1)->with('product', 'category')->get();
+      } catch (Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
       ]);
     }
 
@@ -62,7 +87,7 @@
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
       $goodsParam = $request->all()['payload']['goods'];
       $catParam = $request->all()['payload']['category'];
@@ -71,7 +96,6 @@
       
       try {
         $goods = Goods::create([
-          'id' => $faker->unique()->numberBetween(1,8939),
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
           'value' => $goodsParam['value'],
@@ -81,7 +105,6 @@
 
         $product = Product::create([
           'goods_id' => $goods['id'],
-          'id' => $faker->unique()->numberBetween(1,8939)
         ]);
 
         $productHasCategory = ProductHasCategory::create([
@@ -96,9 +119,7 @@
           # code...
           foreach ($feature_color as $key2) {
             # code...
-            $id = $faker->unique()->numberBetween(1,8939);
             $temp = [
-              'id' => $id,
               'product_id' => $product['id'],
               'color' => $key2,
               'size' => $key
@@ -129,18 +150,18 @@
                 break;
             }
 
-            $inventory = [
-              'facility_id' => $facility_cat,
-              'product_feature_id' => $id,
-              'qty_on_hand' => 0
-            ];
+            // $inventory = [
+            //   'facility_id' => $facility_cat,
+            //   'product_feature_id' => $id,
+            //   'qty_on_hand' => 0
+            // ];
 
-            array_push($inventory_items, $inventory);
+            // array_push($inventory_items, $inventory);
           }
         }
 
         ProductFeature::insert($items);
-        Inventory::insert($inventory_items);
+        // Inventory::insert($inventory_items);
         
       } catch (Exception $th) {
         return response()->json([
@@ -150,6 +171,7 @@
       }
       return response()->json([
         'success'=> true,
+        'items' => $items
       ], 200);
     }
 
@@ -162,6 +184,7 @@
     public function show($id, Goods $goods, Product $product)
     {
       try {
+        // $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
         $tes = $product->where('goods_id', $id)->get();
         $goods = $goods->find($tes[0]['goods_id']);
 
@@ -204,12 +227,23 @@
         Goods::find($id)->update([
           'name' => $goodsParam['name'],
           'satuan' => $goodsParam['unit'],
-          'value' => $goodsParam['value']
+          'value' => $goodsParam['value'],
+          'brand' => $goodsParam['brand'],
+          'imageUrl' => $goodsParam['imageUrl']
         ]);
-        ProductHasCategory::where('product_id', $existingProduct['id'])
+
+        $_goods = Product::where('goods_id', $id)->get();
+
+        if(sizeof($_goods) === 0){
+          return response()->json(sizeOf($_goods));
+          throw new Exception("Goods Not Found", 1);
+        }
+
+        ProductHasCategory::where('product_id', $_goods[0]['id'])
         ->update([
           'product_category_id' => $catParam
         ]);
+
       } catch (Exception $th) {
         //throw $th;
         return response()->json([

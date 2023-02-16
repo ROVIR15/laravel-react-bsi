@@ -1,78 +1,63 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import { IconButton, Stack, styled } from '@mui/material';
 
 import { Icon } from '@iconify/react';
-import SquareOutline from '@iconify/icons-eva/square-outline';
-import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
-
-const icon = <Icon icon={SquareOutline}/>;
-const checkedIcon = <Icon icon={CheckSquareOutline} />;
+import closeCircle from '@iconify/icons-eva/close-outline';
 
 // Components
 import API from '../../../../helpers';
-import AutoComplete from './AutoComplete';
+import Table from './Table';
+
+// Helpers
+import { optionProductFeature, productItemArrangedData } from '../../../../helpers/data';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  p: 4,
+  p: 4
 };
 
-export default function BasicModal({ payload, open, handleClose, setComponent}) {
-  const [value, setValue] = React.useState([])
-  
-  const [options, setOptions] = React.useState([])
-  const [openX, setOpenX] = React.useState(false);
-  const loading = openX && options.length === 0;
-
-  const handleDoneFill = () => {
-    if(!value.length) {
-      handleClose();
-      return
-    }
-    const _value = value.map(function(x, index){
-      return {...x, product_feature_id: x.id, id: payload.length+index, inquiry_item_id: null, qty: 0, unit_price: 0}
-    })
-    var _p = payload.concat(_value);
-
-    _p = _p.map(function(x, index){
-      return {...x, id: index}
-    });
-
-    setComponent(_p);
-
-    handleClose();
+const StyledCard = styled(Card)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  p: 4,
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '320px'
   }
+}));
+
+export default function BasicModal({ payload, open, handleClose, items, setItems, update }) {
+  const [options, setOptions] = React.useState([]);
+  const loading = open && options.length === 0;
 
   React.useEffect(() => {
     let active = true;
 
-    (async () => {
+    if (!loading) {
+      return undefined;
+    }
 
-      API.getProductFeature((res) => {
-        if(!res) return
-        if(!res.data) {
-          setOptions([]);
-        } else {
-          setOptions(res.data);
-        }
-      })
-
-    })();
+    API.getProductFeature(async (res) => {
+      if (!res) return;
+      if (!res.data) {
+        setOptions([]);
+      } else {
+        let data = await optionProductFeature(res.data);
+        setOptions(data);
+      }
+    });
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
   return (
     <div>
@@ -81,47 +66,18 @@ export default function BasicModal({ payload, open, handleClose, setComponent}) 
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Select Product to Inquiry Item
-          </Typography>
-          <Autocomplete
-            multiple
-            limitTags={3}
-            id="checkboxes-tags-demo"
-            onChange={(event, newValue) => {
-              const x = newValue.filter((option) => payload.indexOf(option) === -1)
-              setValue(x);
-            }}
-            open={openX}
-            onOpen={() => {
-              setOpenX(true);
-            }}
-            onClose={() => {
-              setOpenX(false);
-            }}
-            getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
-            options={options}
-            loading={loading}
-            disableCloseOnSelect
-            renderOption={(props, option, { selected }) =>
-              (
-              <li {...props}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                 {`${option.id} - ${option.name} ${option.color} - ${option.size}`}
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField {...params} label="Component" />
-            )}
-          />
-          <Button onClick={handleDoneFill}> Done </Button>
-        </Card>
+        <StyledCard sx={style}>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Select Product
+            </Typography>
+            <IconButton onClick={handleClose} color="error">
+              <Icon icon={closeCircle} />
+            </IconButton>
+          </Stack>
+
+          <Table list={options} selected={items} setSelected={setItems} />
+        </StyledCard>
       </Modal>
     </div>
   );

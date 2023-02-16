@@ -2,6 +2,7 @@
 
   namespace App\Models\Order;
   use Illuminate\Database\Eloquent\Model;
+  use DB;
   
   class PurchaseOrder extends Model
   {
@@ -10,7 +11,7 @@
     protected $primaryKey = 'id';
 
     public $timestamps = true;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',
@@ -24,7 +25,7 @@
     ];
 
     public function order(){
-      return $this->belongsTo('App\Models\Order\Order')->with('order_item');
+      return $this->belongsTo('App\Models\Order\Order')->with('status');
     }
 
     public function product_feature(){
@@ -32,15 +33,31 @@
     }
 
     public function order_item(){
-      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature');
+      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature', 'check_shipment');
+    }
+
+    public function sum(){
+      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->groupBy('order_id')->select(DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money'));
+    }
+
+    public function bought(){
+      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
     }
 
     public function party(){
-        return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id');
+      return $this->belongsTo('App\Models\Party\Party', 'bought_from', 'id')->with('address');
     }
 
     public function ship(){
-        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
+    }
+
+    public function status(){
+        return $this->hasManyThrough('App\Models\Order\OrderStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->orderBy('created_at', 'desc')->with('user_info');
+    }
+
+    public function completion_status(){
+        return $this->hasManyThrough('App\Models\Order\OrderCompletionStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('status')->orderBy('created_at', 'desc');
     }
 
   }

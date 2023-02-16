@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,28 +8,42 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
+import ChipStatusProduction from '../../../components/ChipStatusProduction';
+import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
+import { ListHead, MoreMenu } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
+
+import { useLocation } from 'react-router-dom';
+
 //
 import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 
+import { fCurrency } from '../../../utils/formatNumber';
+import useAuth from '../../../context';
+import moment from 'moment';
+moment.locale('id');
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'order_id', label: 'Order ID', alignRight: false },
-    { id: 'po_number', label: 'Ref. Quote', alignRight: false },
-    { id: 'bought_from', label: 'Supplier', alignRight: false },
-    { id: 'issue_date', label: 'Issue Date', alignRight: false },
-    { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
-    { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'po_number', label: 'Ref. Quote', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'completion_status', label: 'Progress', alignRight: false },
+  { id: 'bought_from', label: 'Supplier', alignRight: false },
+  { id: 'total_qty', label: 'Qty', alignRight: false },
+  { id: 'total_money', label: 'Total', alignRight: false },
+  { id: 'issue_date', label: 'Issue Date', alignRight: false },
+  { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
+  { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -50,46 +64,95 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.po_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+    );
+  else return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function PurchaseOrder({ placeHolder }) {
-
   const [purchaseOrderData, setpurchaseOrderData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+
+  const { user } = useAuth();
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+    handleUpdateData();
+  }, [filterMonthYear]);
 
-    if(isEmpty(purchaseOrderData)) {
-      API.getPurchaseOrder((res) => {
-		  if(!res) return
-		  if(!res.data) {
-          setpurchaseOrderData(BUYERLIST);
+  const handleUpdateData = () => {
+    const { role } = user;
+    let params;
+
+    setLoading(true);
+
+    role.map((item) => {
+      if (item.approve && item.submit && item.review) {
+        params = null;
+        return;
+      }
+      if (item.approve) {
+        params = '?level=approve';
+        return;
+      }
+      if (item.submit) {
+        params = '?level=submit';
+        return;
+      }
+      if (item.review) {
+        params = '?level=review';
+        return;
+      }
+    });
+
+    params = params + `&monthYear=${filterMonthYear}`;
+
+    try {
+      API.getPurchaseOrder(params, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setpurchaseOrderData([]);
         } else {
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.party);
+            })
+            .map(function (obj) {
+              return obj.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+          setOptionsBuyer(_buyer);
           setpurchaseOrderData(res.data);
         }
       });
+    } catch (error) {
+      alert('error');
     }
-  }, [])
+
+    setLoading(false);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -104,6 +167,11 @@ function PurchaseOrder({ placeHolder }) {
       return;
     }
     setSelected([]);
+  };
+
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
   };
 
   const handleClick = (event, name) => {
@@ -124,6 +192,29 @@ function PurchaseOrder({ placeHolder }) {
     setSelected(newSelected);
   };
 
+  const handleDateChanges = (event) => {
+    const { name, value } = event.target;
+    setFilterDate((prevValue) => {
+      if (name === 'fromDate') {
+        if (value > prevValue.thruDate) {
+          alert('from date cannot be more than to date');
+          return prevValue;
+        } else {
+          return { ...prevValue, [name]: value };
+        }
+      } else if (name === 'thruDate') {
+        if (value < prevValue.fromDate) {
+          alert('to date cannot be less than fron date');
+          return prevValue;
+        } else {
+          return { ...prevValue, [name]: value };
+        }
+      } else {
+        return { ...prevValue, [name]: value };
+      }
+    });
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -139,32 +230,57 @@ function PurchaseOrder({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) location.reload();
-    }).catch(function(error){
-      alert('error')
-    });
-  }
+
+    try {
+      API.deletePurchaseOrder(id, function (res) {
+        if (res.success) setpurchaseOrderData([]);
+      });
+    } catch (error) {
+      alert(error);
+    }
+
+    handleUpdateData();
+  };
+
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrderData.length) : 0;
 
-  const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
       <ListToolbar
         numSelected={selected.length}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        onGo={handleUpdateData}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -176,7 +292,7 @@ function PurchaseOrder({ placeHolder }) {
             <TableBody>
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, index) => {
                   const {
                     id,
                     order_id,
@@ -184,8 +300,16 @@ function PurchaseOrder({ placeHolder }) {
                     bought_from,
                     issue_date,
                     valid_thru,
-                    delivery_date
+                    delivery_date,
+                    sum,
+                    completion_status,
+                    status,
+                    currency_id
                   } = row;
+
+                  let currency;
+                  if(currency_id === 2) currency = "idr";
+                  else currency = "usd";
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -196,21 +320,26 @@ function PurchaseOrder({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{order_id}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
+                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
+                      <TableCell align="left">
+                        {ChipStatusProduction(completion_status[0]?.status?.name)}
+                      </TableCell>
                       <TableCell align="left">{bought_from}</TableCell>
-                      <TableCell align="left">{issue_date}</TableCell>
-                      <TableCell align="left">{valid_thru}</TableCell>
-                      <TableCell align="left">{delivery_date}</TableCell>
+                      <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                      <TableCell align="left">
+                        {sum?.length ? fCurrency(sum[0].total_money, currency) : null}
+                      </TableCell>
+                      <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                      <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu
+                          id={id}
+                          document={true}
+                          handleDelete={(event) => handleDeleteData(event, id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -225,7 +354,13 @@ function PurchaseOrder({ placeHolder }) {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
+                    {loading ? (
+                      <Typography variant="body2" align="center">
+                        Please Wait
+                      </Typography>
+                    ) : (
+                      <SearchNotFound searchQuery={filterName} />
+                    )}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -234,7 +369,7 @@ function PurchaseOrder({ placeHolder }) {
         </TableContainer>
       </Scrollbar>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[15, 25, 50]}
         component="div"
         count={purchaseOrderData.length}
         rowsPerPage={rowsPerPage}
@@ -243,7 +378,7 @@ function PurchaseOrder({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default PurchaseOrder;

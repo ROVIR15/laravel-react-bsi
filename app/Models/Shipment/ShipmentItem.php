@@ -17,10 +17,15 @@ class ShipmentItem extends Model
         'id',
         'shipment_id',
         'order_item_id',
-        'qty_shipped'
+        'qty_shipped',
+        'description'
     ];
 
     public function order_item(){
-      return $this->belongsTo('App\Models\Order\OrderItem')->with('product_feature');
+      return $this->belongsTo('App\Models\Order\OrderItem', 'order_item_id')->with('product_feature');
+    }
+
+    public function shipment(){
+      return $this->belongsTo('App\Models\Shipment\Shipment', 'shipment_id');
     }
 }

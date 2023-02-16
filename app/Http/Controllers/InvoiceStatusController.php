@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Study\InvoiceStatus;
+use App\Models\Invoice\InvoiceStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\InvoiceStatus as InvoiceStatusOneCollection;
-use App\Http\Resources\Study\InvoiceStatusCollection;
+use App\Http\Resources\Invoice\InvoiceStatus as InvoiceStatusOneCollection;
+use App\Http\Resources\Invoice\InvoiceStatusCollection;
 
 class InvoiceStatusController extends Controller
 {
@@ -45,8 +45,8 @@ class InvoiceStatusController extends Controller
       $param = $request->all()['payload'];
       try {
         InvoiceStatus::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+          'invoice_id' => $param['invoice_id'],
+          'invoice_status_type_id' => $param['invoice_status_type_id']
         ]);
       } catch (Exception $th) {
         return response()->json([
@@ -121,14 +121,14 @@ class InvoiceStatusController extends Controller
     public function destroy($id)
     {
       try {
-        InvoiceStatus::find($id)->delete();
-        return response()->json([ 'success'=> true ], 200);
+        // InvoiceStatus::find($id)->delete();
+        // return response()->json([ 'success'=> true ], 200);
       } catch (Exception $th) {
         //throw $th;
-        return response()->json([
-          'success' => false,
-          'errors' => $th->getMessage()
-        ]);
+        // return response()->json([
+        //   'success' => false,
+        //   'errors' => $th->getMessage()
+        // ]);
       }
     }
 }

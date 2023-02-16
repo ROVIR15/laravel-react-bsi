@@ -14,6 +14,7 @@ import { Icon } from '@iconify/react';
 
 // components
 import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
+import Display from './display';
 import Layout from '../../../layouts/Layout';
 
 import { useSnackbar } from 'notistack'
@@ -33,6 +34,18 @@ function Vendor() {
       variant: 'success'
     });
   };
+
+  const isBeginning = () => {
+    if(pathname.split('/').length === 4){
+      return (
+        <Display />
+      )
+    } else {
+      return (
+        <Outlet/>
+      )
+    }
+  }  
 
   return (
     <Layout>
@@ -57,17 +70,17 @@ function Vendor() {
           >
             Display
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             component='div'
             onClick={handleClick}
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Show Snackbar
-          </Button>
+          </Button> */}
         </Stack>
       </Stack>
-      <Outlet/>
+      {isBeginning()}
     </Layout>
   )
 }

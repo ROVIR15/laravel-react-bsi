@@ -24,7 +24,9 @@ class WorkCenter extends JsonResource
             'cost_per_hour' => $this->cost_per_hour,
             'oee_target' => $this->oee_target,
             'labor_alloc' => $this->labor_alloc,
-            'description' => $this->description
+            'goods_id' => $this->goods_id,
+            'description' => $this->description,
+            'goods' => $this->goods
         ];
     }
 }

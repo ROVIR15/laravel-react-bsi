@@ -23,7 +23,8 @@ export default function ListHead({
   headLabel,
   numSelected,
   onRequestSort,
-  onSelectAllClick
+  onSelectAllClick,
+  active = true
 }) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -32,6 +33,7 @@ export default function ListHead({
   return (
     <TableHead>
       <TableRow>
+      { active ? (
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -39,11 +41,14 @@ export default function ListHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
+        ) : null
+      }
         {headLabel.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
+            width={headCell.width}
           >
             <TableSortLabel
               hideSortIcon

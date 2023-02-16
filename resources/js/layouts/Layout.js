@@ -4,7 +4,7 @@ import Page from '../components/Page'
 
 function Layout({ children }) {
   return (
-    <Page>
+    <Page title="Dashboard | BSI IS">
       <Container>
         {children}
       </Container>

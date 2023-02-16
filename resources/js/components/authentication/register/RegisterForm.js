@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
+import API from '../../../helpers';
+
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
@@ -21,7 +23,6 @@ export default function RegisterForm() {
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
       .required('First name required'),
-    lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name required'),
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
   });
@@ -31,15 +32,30 @@ export default function RegisterForm() {
       firstName: '',
       lastName: '',
       email: '',
-      password: ''
+      password: '',
     },
     validationSchema: RegisterSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+      // navigate('/dashboard', { replace: true });
+      const { firstName, lastName, email, password, rPassword } = values;
+      let data = { name: firstName + lastName, email, password};
+
+      try {
+        API.register(data, function(res){
+          if(!res) return undefined;
+          if(!res.success) alert('error');
+          alert('success');
+        })
+      } catch (error) {
+        alert(error);
+      }
+
+      setSubmitting(false);
+
     }
   });
 
-  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+  const { errors, touched, values, handleSubmit, setSubmitting, isSubmitting, getFieldProps } = formik;
 
   return (
     <FormikProvider value={formik}>

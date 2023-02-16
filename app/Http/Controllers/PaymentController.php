@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+
 use Illuminate\Http\Request;
-use App\Models\Study\Payment;
+use App\Models\Invoice\Payment;
+use App\Models\Invoice\PaymentHasInvoice;
+use App\Models\Invoice\PaymentMethodType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\Payment as PaymentOneCollection;
-use App\Http\Resources\Study\PaymentCollection;
+use App\Http\Resources\Invoice\Payment as PaymentOneCollection;
+use App\Http\Resources\Invoice\PaymentMethodType as PaymentMethodTypeOneCollection;
+use App\Http\Resources\Invoice\PaymentCollection;
 
 class PaymentController extends Controller
 {
@@ -19,9 +24,44 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Payment::all();
+      $query = Payment::with('type', 'sales_invoice')->get();
 
       return new PaymentCollection($query);
+    }
+
+    public function getPaymentGroupByRefNum(Request $request)
+    {
+      try {
+        $query = Payment::groupBy('ref_num')->select('id', 'invoice_id', 'effective_date', 'ref_num', DB::raw('sum(amount) as total_amount'))->get();
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'data' => $query
+      ]);
+    }
+
+    /**
+     * Get payment method type
+     * 
+     */
+    public function getPaymentMethodType(){
+      try {
+        $query = PaymentMethodType::all();
+
+        return new PaymentMethodTypeOneCollection($query);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
     }
 
     /**
@@ -44,10 +84,26 @@ class PaymentController extends Controller
     {
       $param = $request->all()['payload'];
       try {
-        Payment::create([
-          'production_study_id' => $param['production_study_id'],
-          'party_id' => $param['party_id']
+        $payment = Payment::create([
+          'payment_method_type_id' => $param['payment_method_type_id'],
+          // 'invoice_id' => $param['invoice_id'],
+          'effective_date' => $param['effective_date'],
+          'ref_num' => $param['ref_num'],
+          'amount' => $param['amount'],
+          'comment' => $param['comment']
         ]);
+
+        $hh = [];
+        foreach ($param['invoice_id'] as $key) {
+          # code...
+          array_push($hh, [
+            'payment_id' => $payment['id'],
+            'invoice_id' => $key['id']
+          ]);
+        }
+
+        PaymentHasInvoice::insert($hh);
+
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
@@ -59,6 +115,25 @@ class PaymentController extends Controller
       ], 200);
     }
 
+    public function insertManyPayment(Request $request)
+    {
+      $param = $request->all()['payload'];
+
+      try {
+        Payment::insert($param);
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'errors' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true
+      ]);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -68,8 +143,8 @@ class PaymentController extends Controller
     public function show($id)
     {
       try {
-        $query = Payment::find($id);
-        return new PaymentCollection($query);
+        $query = Payment::with('sales_invoice', 'type')->find($id);
+        return new PaymentOneCollection($query);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

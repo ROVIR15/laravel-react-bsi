@@ -63,7 +63,7 @@ function Inquiry() {
   const deleteData = useCallback(
     (id) => () => {
       API.deleteRequestItem(id, function(res){
-        console.log(res)
+        
       });
     }, []
   )
@@ -167,7 +167,7 @@ function Inquiry() {
   useEffect(() => {
     if(!id) return;
     API.getAInquiry(id, function(res){
-      console.log(res)
+      
       if(!res) alert("Something went wrong!");
       setValues({
         ...values,

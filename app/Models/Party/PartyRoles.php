@@ -11,12 +11,13 @@ class PartyRoles extends Model
 
     protected $primaryKey = 'id';
 
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
         'id',
         'party_id',
+        'role_type_id',
         'relationship_id'
     ];
 
@@ -25,8 +26,18 @@ class PartyRoles extends Model
       return $this->belongsTo('App\Models\Party\Relationship');
     }
 
+    public function role_type()
+    {
+      return $this->belongsTo('App\Models\Party\RoleType');
+    }
+
     public function party()
     {
-      return $this->hasOneThrough('App\Models\Party\Party', 'App\Models\Party\Address');
+      return $this->belongsTo('App\Models\Party\Party')->with('person', 'organization','address');
+    }
+
+    public function invoice()
+    {
+      return $this->hasMany('App\Models\Invoice\Invoice', 'sold_to', 'party_id');
     }
 }

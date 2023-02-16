@@ -19,14 +19,21 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
       if(!value) return
       let id = value.split('.')[1]
       id = id.split('/')[0]
-      API.getAShipment(id, (res) => {
-        if(!res) return
-        if(!res.data) {
-          changeData([]);
-        } else {
-          changeData(res.data);
-        }
-      })
+      
+      try {
+        API.getAShipment(id, (res) => {
+          if(!res) return
+          if(!res.data) {
+            throw new Error('no Data')
+          } else {
+            // console.log(res.data);
+            changeData(res.data);
+          }        
+        })
+      } catch (error) {
+        alert(error)
+      }
+
     }, [value])
 
     return (
@@ -39,7 +46,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ sales: {po_number}, id}) => (`SHIP-NO.${id}/${po_number}`)}
+      getOptionLabel={({ name, date, id}) => (`SHIP-NO.${id}/${date}/${name}`)}
       options={options}
       loading={loading}
       value={choosen} 

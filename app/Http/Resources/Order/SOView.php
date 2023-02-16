@@ -17,12 +17,17 @@ class SOView extends JsonResource
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
+            'currency_id' => $this->order->currency_id,
+            'party' => $this->party,
             'sold_to' => $this->party->name,
             'ship_to' => $this->ship->name,
             'po_number' => $this->po_number,
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
-            'valid_thru' => $this->valid_thru
+            'valid_thru' => $this->valid_thru,
+            'status' => $this->status,
+            'completion_status' => $this->completion_status,
+            'sum' => $this->sum
         ];
 
     }

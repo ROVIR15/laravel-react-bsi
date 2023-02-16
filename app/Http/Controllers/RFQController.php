@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Generator as Faker;
+
 
 use Illuminate\Http\Request;
 use App\Models\RRQ\Quote;
@@ -44,31 +44,29 @@ class RFQController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $param = $request->all()['payload'];
         try {
           //code...
-          $id = $faker->unique()->numberBetween(1,8939);
           $rfqCreation = Quote::create([
-            'id' => $id,
-            'request_id' => $param['request_id'],
+            'quote_type' => $param['quote_type'],
             'po_number' => $param['po_number'],
             'delivery_date' => $param['delivery_date'],
             'party_id' => $param['bought_from'],
             'ship_to' => $param['ship_to'],
             'issue_date' => $param['issue_date'],
             'valid_thru' => $param['valid_thru'],
-            'quote_type' => $param['quote_type']
+            'tax' => $param['tax'],
+            'currency_id' => $param['currency_id']
           ]);
           
           $rfqItemsCreation = [];
   
           foreach($param['quote_items'] as $key){
             array_push($rfqItemsCreation, [
-              'id' => $faker->unique()->numberBetween(1,8939),
-              'quote_id' => $id,
-              'request_item_id' => $key['request_item_id'],
+              'quote_id' => $rfqCreation['id'],
+              'product_id' => $key['product_id'],
               'product_feature_id' => $key['product_feature_id'],
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']
@@ -98,7 +96,7 @@ class RFQController extends Controller
     public function show($id)
     {
       try {
-        $query = Quote::with('quote_item')->find($id);
+        $query = Quote::with('quote_item', 'status')->find($id);
         return new QuoteOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

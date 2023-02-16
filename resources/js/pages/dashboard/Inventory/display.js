@@ -19,12 +19,22 @@ import INVENTORYLIST from '../../../_mocks_/inventory'
 //API
 import API from '../../../helpers';
 
+//Helper
+
+import { inventoryItemArrangedItem } from '../../../helpers/data'
+
+const uri = process.env.MIX_API_URL;
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false},
   { id: 'product_name', label: 'Name', alignRight: false },
-  { id: 'facility_name', label: 'facility', alignRight: false},
+  { id: 'color', label: 'Warna', alignRight: false },
+  { id: 'size', label: 'Ukuran', alignRight: false },
+  { id: 'category', label: 'Kategori', alignRight: false},
+  { id: 'sub_category', label: 'Sub Kategori', alignRight: false},
+  { id: 'facility_name', label: 'Gudang', alignRight: false},
   { id: 'qty_on_hand', label: 'Qty', alignRight: false},
 ];
 
@@ -71,13 +81,28 @@ function DisplayInventory({ placeHolder }) {
 
   // GET Data Inventory Item
 
-  useEffect(() => {
+  useEffect(async () => {
+    function isEmpty(array){
+      if(!Array.isArray(array)) return true;
+      return !array.length;
+    }
 
-    API.getInventoryItem(function(res){
-      if(!res) setData(INVENTORYLIST);
-      setData(res.data);
-    })
-  
+    if(isEmpty(data)) {
+      try {
+        API.getInventoryItem(async (res) => {
+          if(isEmpty(res.data)) return undefined;
+          else {
+            let ras = await inventoryItemArrangedItem(res.data);
+            setData(ras)
+          }
+        })  
+
+      } catch(e) {
+        alert('error');
+      }
+
+    }
+
   }, [])
 
   const handleRequestSort = (event, property) => {
@@ -156,12 +181,9 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, product, facility, qty_on_hand} = row;
-                  const prepare = {
-                    product_name: `${product.name} ${product.size} - ${product.color}`,
-                    facility_name: facility.name
-                  }
-                  const isItemSelected = selected.indexOf(prepare.product_name) !== -1;
+                  const { id, info: { product: {goods}, color, size}, qty_on_hand, facility_name} = row;
+
+                  const isItemSelected = selected.indexOf(id) !== -1;
                   return (
                     <TableRow
                       hover
@@ -178,8 +200,12 @@ function DisplayInventory({ placeHolder }) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{prepare.product_name}</TableCell>
-                      <TableCell align="left">{prepare.facility_name}</TableCell>
+                      <TableCell align="left">{goods.name}</TableCell>
+                      <TableCell align="left">{color}</TableCell>
+                      <TableCell align="left">{size}</TableCell>
+                      <TableCell align="left">{''}</TableCell>
+                      <TableCell align="left">{''}</TableCell>
+                      <TableCell align="left">{facility_name}</TableCell>
                       <TableCell align="left">{qty_on_hand}</TableCell>
                       <TableCell align="right">
                         <MoreMenu />

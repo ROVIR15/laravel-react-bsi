@@ -25,7 +25,7 @@ export default function Asynchronous({ label, loading, options, open, setOpen, c
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ brand, name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
+      getOptionLabel={({ name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
       options={options}
       loading={loading}
       value={choosen} 

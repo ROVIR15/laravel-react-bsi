@@ -9,11 +9,12 @@ import CloseCircle from '@iconify/icons-eva/close-circle-fill';
 import useAuth from '../../context';
 
 import { Navigate } from 'react-router-dom';
+import Dashboard from './Dashboard';
 
 export default function SimpleSnackbar() {
   const { user } = useAuth();
 
-  if (!user) return <Navigate replace to="/auth/login" />;
+  // if (!user) return <Navigate replace to="/auth/login" />;
 
   const [open, setOpen] = React.useState(false);
 
@@ -55,6 +56,8 @@ export default function SimpleSnackbar() {
         message="Note archived"
         action={action}
       />
+
+      <Dashboard/>
     </div>
   );
 }
