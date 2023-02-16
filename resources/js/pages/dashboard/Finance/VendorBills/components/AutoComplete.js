@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import API from '../../../../../helpers';
-import { isArray } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 
 function sleep(delay = 0) {
   return new Promise((resolve) => {
@@ -15,6 +15,7 @@ function sleep(delay = 0) {
 export default function Asynchronous({
   label,
   loading,
+  order_id,
   options,
   open,
   setOpen,
@@ -24,12 +25,11 @@ export default function Asynchronous({
   const [value, setValue] = React.useState(null);
 
   React.useEffect(() => {
-    if (!value) return;
-    let id = value.split('.')[1];
-    id = id.split('/')[0];
+    if (isEmpty(value)) return;
+    let id = value.split('.')[1].split('/')[0]
 
     try {
-      API.getAShipment(id, (res) => {
+      API.getAPurchaseOrder(id, (res) => {
         if (!res) return;
         if (!res.data) {
           throw new Error('no Data');
@@ -53,7 +53,7 @@ export default function Asynchronous({
         setOpen(false);
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ name, date, id }) => `SHIP-NO.${id}/${date}/${name}`}
+      getOptionLabel={({ name, id, order_id }) => `PO-NO.${id}/${order_id}/${name}`}
       options={options}
       loading={loading}
       value={choosen}

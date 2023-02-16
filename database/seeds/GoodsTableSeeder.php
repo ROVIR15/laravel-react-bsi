@@ -24,9 +24,9 @@ class GoodsTableSeeder extends Seeder
                 'satuan' => 'pcs',
                 'value' => 0,
                 'brand' => 'Emba',
-                'imageUrl' => NULL,
+                'imageUrl' => '/data_file/image003.png',
                 'created_at' => '2022-09-03 16:40:49',
-                'updated_at' => '2022-09-03 16:40:49',
+                'updated_at' => '2022-11-13 02:40:27',
             ),
             1 => 
             array (
@@ -1858,12 +1858,12 @@ class GoodsTableSeeder extends Seeder
             array (
                 'id' => 174,
             'name' => 'SHCC-ZIP-(EUROZIP)N8XOR_AG/AG 2WAY-BLACK-60CM',
-                'satuan' => 'PCS',
+                'satuan' => 'pcs',
                 'value' => 0,
                 'brand' => 'SHCC J736 PON-1622638',
-                'imageUrl' => NULL,
+                'imageUrl' => '/data_file/bsi_logo.jpeg',
                 'created_at' => '2022-10-19 03:23:24',
-                'updated_at' => '2022-10-19 03:23:24',
+                'updated_at' => '2022-11-18 09:05:41',
             ),
             168 => 
             array (
@@ -2458,6 +2458,17 @@ class GoodsTableSeeder extends Seeder
                 'imageUrl' => '/data_file/CS57.jpg',
                 'created_at' => '2022-10-28 07:44:55',
                 'updated_at' => '2022-10-28 07:45:29',
+            ),
+            222 => 
+            array (
+                'id' => 231,
+                'name' => 'T3-20/2',
+                'satuan' => 'pcs',
+                'value' => 0,
+                'brand' => 'AOI',
+                'imageUrl' => '/data_file/image003.png',
+                'created_at' => '2022-11-13 02:34:30',
+                'updated_at' => '2022-11-13 02:34:30',
             ),
         ));
         

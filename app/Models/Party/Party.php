@@ -47,4 +47,5 @@ class Party extends Model
     {
       return $this->hasOneThrough('App\Models\Party\Relationship', 'App\Models\Party\PartyRoles');
     }
+
 }

@@ -129,6 +129,20 @@ class PartyRolesTableSeeder extends Seeder
                 'relationship_id' => 1,
                 'role_type_id' => 44,
             ),
+            16 => 
+            array (
+                'id' => 17,
+                'party_id' => 17,
+                'relationship_id' => 2,
+                'role_type_id' => 42,
+            ),
+            17 => 
+            array (
+                'id' => 42,
+                'party_id' => 42,
+                'relationship_id' => 1,
+                'role_type_id' => 44,
+            ),
         ));
         
         

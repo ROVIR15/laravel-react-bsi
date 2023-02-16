@@ -9,6 +9,8 @@ import DashboardSidebar from './DashboardSidebar';
 import useAuth from '../../context';
 import Welcoming from './Welcoming';
 
+import { APIRolesProvider } from '../../context/checkRoles';
+
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -40,26 +42,21 @@ export default function DashboardLayout() {
   const { loadingInitial } = useAuth();
   const { pathname } = useLocation();
 
-
-  function isWelcoming(){
-    if(pathname.split('/').length === 2){
-      return (
-        <Welcoming />
-      )  
+  function isWelcoming() {
+    if (pathname.split('/').length === 2) {
+      return <Welcoming />;
     } else {
-      return (
-        <Outlet/> 
-      )
+      return <Outlet />;
     }
   }
 
   return (
     <RootStyle>
-      <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
-      <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
-      <MainStyle>
-        {loadingInitial ? null : isWelcoming()}
-      </MainStyle>
+      <APIRolesProvider>
+        <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
+        <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+        <MainStyle>{loadingInitial ? null : isWelcoming()}</MainStyle>
+      </APIRolesProvider>
     </RootStyle>
   );
 }

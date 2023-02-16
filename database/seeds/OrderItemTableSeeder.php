@@ -23,8 +23,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 2,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-08-29',
+                'product_id' => NULL,
                 'product_feature_id' => 15,
+                'description' => NULL,
             ),
             1 => 
             array (
@@ -32,8 +35,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 2,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-08-29',
+                'product_id' => NULL,
                 'product_feature_id' => 16,
+                'description' => NULL,
             ),
             2 => 
             array (
@@ -41,8 +47,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 2,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-08-29',
+                'product_id' => NULL,
                 'product_feature_id' => 17,
+                'description' => NULL,
             ),
             3 => 
             array (
@@ -50,8 +59,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 3,
                 'qty' => 300,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-02',
+                'product_id' => NULL,
                 'product_feature_id' => 15,
+                'description' => NULL,
             ),
             4 => 
             array (
@@ -59,8 +71,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 3,
                 'qty' => 300,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-02',
+                'product_id' => NULL,
                 'product_feature_id' => 16,
+                'description' => NULL,
             ),
             5 => 
             array (
@@ -68,8 +83,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 3,
                 'qty' => 300,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-02',
+                'product_id' => NULL,
                 'product_feature_id' => 17,
+                'description' => NULL,
             ),
             6 => 
             array (
@@ -77,8 +95,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 4,
                 'qty' => 600,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-06',
+                'product_id' => NULL,
                 'product_feature_id' => 15,
+                'description' => NULL,
             ),
             7 => 
             array (
@@ -86,8 +107,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 4,
                 'qty' => 600,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-06',
+                'product_id' => NULL,
                 'product_feature_id' => 16,
+                'description' => NULL,
             ),
             8 => 
             array (
@@ -95,8 +119,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 4,
                 'qty' => 600,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-06',
+                'product_id' => NULL,
                 'product_feature_id' => 17,
+                'description' => NULL,
             ),
             9 => 
             array (
@@ -104,8 +131,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 5,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-15',
+                'product_id' => NULL,
                 'product_feature_id' => 9,
+                'description' => NULL,
             ),
             10 => 
             array (
@@ -113,8 +143,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 5,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-15',
+                'product_id' => NULL,
                 'product_feature_id' => 11,
+                'description' => NULL,
             ),
             11 => 
             array (
@@ -122,8 +155,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 5,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-15',
+                'product_id' => NULL,
                 'product_feature_id' => 12,
+                'description' => NULL,
             ),
             12 => 
             array (
@@ -131,8 +167,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 5,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-15',
+                'product_id' => NULL,
                 'product_feature_id' => 10,
+                'description' => NULL,
             ),
             13 => 
             array (
@@ -140,8 +179,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 6,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-15',
+                'product_id' => NULL,
                 'product_feature_id' => 15,
+                'description' => NULL,
             ),
             14 => 
             array (
@@ -149,8 +191,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 6,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-16',
+                'product_id' => NULL,
                 'product_feature_id' => 16,
+                'description' => NULL,
             ),
             15 => 
             array (
@@ -158,8 +203,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 6,
                 'qty' => 100,
                 'unit_price' => 2000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-17',
+                'product_id' => NULL,
                 'product_feature_id' => 17,
+                'description' => NULL,
             ),
             16 => 
             array (
@@ -167,8 +215,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 61,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 103,
+                'description' => NULL,
             ),
             17 => 
             array (
@@ -176,8 +227,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 61,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 104,
+                'description' => NULL,
             ),
             18 => 
             array (
@@ -185,8 +239,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 63,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 105,
+                'description' => NULL,
             ),
             19 => 
             array (
@@ -194,8 +251,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 66,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 106,
+                'description' => NULL,
             ),
             20 => 
             array (
@@ -203,8 +263,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 69,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 107,
+                'description' => NULL,
             ),
             21 => 
             array (
@@ -212,8 +275,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 97,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 108,
+                'description' => NULL,
             ),
             22 => 
             array (
@@ -221,8 +287,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 91,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 109,
+                'description' => NULL,
             ),
             23 => 
             array (
@@ -230,8 +299,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 104,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 110,
+                'description' => NULL,
             ),
             24 => 
             array (
@@ -239,8 +311,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 77,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 111,
+                'description' => NULL,
             ),
             25 => 
             array (
@@ -248,8 +323,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 7,
                 'qty' => 79,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 112,
+                'description' => NULL,
             ),
             26 => 
             array (
@@ -257,8 +335,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 116,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 28,
+                'description' => NULL,
             ),
             27 => 
             array (
@@ -266,8 +347,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 87,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 29,
+                'description' => NULL,
             ),
             28 => 
             array (
@@ -275,8 +359,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 87,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 30,
+                'description' => NULL,
             ),
             29 => 
             array (
@@ -284,8 +371,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 232,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 31,
+                'description' => NULL,
             ),
             30 => 
             array (
@@ -293,8 +383,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 174,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 32,
+                'description' => NULL,
             ),
             31 => 
             array (
@@ -302,8 +395,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 174,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 33,
+                'description' => NULL,
             ),
             32 => 
             array (
@@ -311,8 +407,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 232,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 34,
+                'description' => NULL,
             ),
             33 => 
             array (
@@ -320,8 +419,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 174,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 35,
+                'description' => NULL,
             ),
             34 => 
             array (
@@ -329,8 +431,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 174,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 36,
+                'description' => NULL,
             ),
             35 => 
             array (
@@ -338,8 +443,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 116,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 37,
+                'description' => NULL,
             ),
             36 => 
             array (
@@ -347,8 +455,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 87,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 38,
+                'description' => NULL,
             ),
             37 => 
             array (
@@ -356,8 +467,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 8,
                 'qty' => 87,
                 'unit_price' => 28000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 39,
+                'description' => NULL,
             ),
             38 => 
             array (
@@ -365,8 +479,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 77,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 40,
+                'description' => NULL,
             ),
             39 => 
             array (
@@ -374,8 +491,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 77,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 41,
+                'description' => NULL,
             ),
             40 => 
             array (
@@ -383,8 +503,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 154,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 42,
+                'description' => NULL,
             ),
             41 => 
             array (
@@ -392,8 +515,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 154,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 43,
+                'description' => NULL,
             ),
             42 => 
             array (
@@ -401,8 +527,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 231,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 44,
+                'description' => NULL,
             ),
             43 => 
             array (
@@ -410,8 +539,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 231,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 45,
+                'description' => NULL,
             ),
             44 => 
             array (
@@ -419,8 +551,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 309,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 46,
+                'description' => NULL,
             ),
             45 => 
             array (
@@ -428,8 +563,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 309,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 47,
+                'description' => NULL,
             ),
             46 => 
             array (
@@ -437,8 +575,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 154,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 48,
+                'description' => NULL,
             ),
             47 => 
             array (
@@ -446,8 +587,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 11,
                 'qty' => 154,
                 'unit_price' => 23000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-23',
+                'product_id' => NULL,
                 'product_feature_id' => 49,
+                'description' => NULL,
             ),
             48 => 
             array (
@@ -455,8 +599,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 84,
+                'description' => NULL,
             ),
             49 => 
             array (
@@ -464,8 +611,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 85,
+                'description' => NULL,
             ),
             50 => 
             array (
@@ -473,8 +623,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 86,
+                'description' => NULL,
             ),
             51 => 
             array (
@@ -482,8 +635,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 87,
+                'description' => NULL,
             ),
             52 => 
             array (
@@ -491,8 +647,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 88,
+                'description' => NULL,
             ),
             53 => 
             array (
@@ -500,8 +659,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 89,
+                'description' => NULL,
             ),
             54 => 
             array (
@@ -509,8 +671,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 12,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-29',
+                'product_id' => NULL,
                 'product_feature_id' => 90,
+                'description' => NULL,
             ),
             55 => 
             array (
@@ -518,8 +683,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 91,
+                'description' => NULL,
             ),
             56 => 
             array (
@@ -527,8 +695,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 92,
+                'description' => NULL,
             ),
             57 => 
             array (
@@ -536,8 +707,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 93,
+                'description' => NULL,
             ),
             58 => 
             array (
@@ -545,8 +719,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 94,
+                'description' => NULL,
             ),
             59 => 
             array (
@@ -554,8 +731,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 95,
+                'description' => NULL,
             ),
             60 => 
             array (
@@ -563,8 +743,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 96,
+                'description' => NULL,
             ),
             61 => 
             array (
@@ -572,8 +755,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 97,
+                'description' => NULL,
             ),
             62 => 
             array (
@@ -581,8 +767,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 98,
+                'description' => NULL,
             ),
             63 => 
             array (
@@ -590,8 +779,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 99,
+                'description' => NULL,
             ),
             64 => 
             array (
@@ -599,8 +791,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 121,
+                'description' => NULL,
             ),
             65 => 
             array (
@@ -608,8 +803,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 122,
+                'description' => NULL,
             ),
             66 => 
             array (
@@ -617,8 +815,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 123,
+                'description' => NULL,
             ),
             67 => 
             array (
@@ -626,8 +827,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 124,
+                'description' => NULL,
             ),
             68 => 
             array (
@@ -635,8 +839,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 125,
+                'description' => NULL,
             ),
             69 => 
             array (
@@ -644,8 +851,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 126,
+                'description' => NULL,
             ),
             70 => 
             array (
@@ -653,8 +863,11 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 127,
+                'description' => NULL,
             ),
             71 => 
             array (
@@ -662,3230 +875,4499 @@ class OrderItemTableSeeder extends Seeder
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 128,
+                'description' => NULL,
             ),
             72 => 
-            array (
-                'id' => 96,
-                'order_id' => 16,
-                'qty' => 100,
-                'unit_price' => 29000,
-                'shipment_estimated' => '2022-09-30',
-                'product_feature_id' => 129,
-            ),
-            73 => 
-            array (
-                'id' => 97,
-                'order_id' => 16,
-                'qty' => 100,
-                'unit_price' => 29000,
-                'shipment_estimated' => '2022-09-30',
-                'product_feature_id' => 130,
-            ),
-            74 => 
-            array (
-                'id' => 98,
-                'order_id' => 16,
-                'qty' => 100,
-                'unit_price' => 29000,
-                'shipment_estimated' => '2022-09-30',
-                'product_feature_id' => 131,
-            ),
-            75 => 
-            array (
-                'id' => 99,
-                'order_id' => 16,
-                'qty' => 100,
-                'unit_price' => 29000,
-                'shipment_estimated' => '2022-09-30',
-                'product_feature_id' => 132,
-            ),
-            76 => 
             array (
                 'id' => 100,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 133,
+                'description' => NULL,
             ),
-            77 => 
+            73 => 
             array (
                 'id' => 101,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 134,
+                'description' => NULL,
             ),
-            78 => 
+            74 => 
             array (
                 'id' => 102,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 135,
+                'description' => NULL,
             ),
-            79 => 
+            75 => 
             array (
                 'id' => 103,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 136,
+                'description' => NULL,
             ),
-            80 => 
+            76 => 
             array (
                 'id' => 104,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 137,
+                'description' => NULL,
             ),
-            81 => 
+            77 => 
             array (
                 'id' => 105,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 138,
+                'description' => NULL,
             ),
-            82 => 
+            78 => 
             array (
                 'id' => 106,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 139,
+                'description' => NULL,
             ),
-            83 => 
+            79 => 
             array (
                 'id' => 107,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 140,
+                'description' => NULL,
             ),
-            84 => 
+            80 => 
             array (
                 'id' => 108,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 141,
+                'description' => NULL,
             ),
-            85 => 
+            81 => 
             array (
                 'id' => 109,
                 'order_id' => 17,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 142,
+                'description' => NULL,
             ),
-            86 => 
+            82 => 
             array (
                 'id' => 110,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 143,
+                'description' => NULL,
             ),
-            87 => 
+            83 => 
             array (
                 'id' => 111,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 144,
+                'description' => NULL,
             ),
-            88 => 
+            84 => 
             array (
                 'id' => 112,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 145,
+                'description' => NULL,
             ),
-            89 => 
+            85 => 
             array (
                 'id' => 113,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 146,
+                'description' => NULL,
             ),
-            90 => 
+            86 => 
             array (
                 'id' => 114,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 147,
+                'description' => NULL,
             ),
-            91 => 
+            87 => 
             array (
                 'id' => 116,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 148,
+                'description' => NULL,
             ),
-            92 => 
+            88 => 
             array (
                 'id' => 117,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 149,
+                'description' => NULL,
             ),
-            93 => 
+            89 => 
             array (
                 'id' => 118,
                 'order_id' => 13,
                 'qty' => 100,
                 'unit_price' => 26000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-30',
+                'product_id' => NULL,
                 'product_feature_id' => 150,
+                'description' => NULL,
             ),
-            94 => 
+            90 => 
             array (
                 'id' => 119,
                 'order_id' => 20,
                 'qty' => 20,
                 'unit_price' => 19820,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-08',
+                'product_id' => NULL,
                 'product_feature_id' => 168,
+                'description' => NULL,
             ),
-            95 => 
+            91 => 
             array (
                 'id' => 120,
                 'order_id' => 20,
                 'qty' => 107,
                 'unit_price' => 44145,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-03',
+                'product_id' => NULL,
                 'product_feature_id' => 169,
+                'description' => NULL,
             ),
-            96 => 
+            92 => 
             array (
                 'id' => 121,
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 170,
+                'description' => NULL,
             ),
-            97 => 
+            93 => 
             array (
                 'id' => 122,
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 171,
+                'description' => NULL,
             ),
-            98 => 
+            94 => 
             array (
                 'id' => 123,
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 172,
+                'description' => NULL,
             ),
-            99 => 
+            95 => 
             array (
                 'id' => 124,
                 'order_id' => 14,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 173,
+                'description' => NULL,
             ),
-            100 => 
+            96 => 
             array (
                 'id' => 125,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 174,
+                'description' => NULL,
             ),
-            101 => 
+            97 => 
             array (
                 'id' => 126,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 175,
+                'description' => NULL,
             ),
-            102 => 
+            98 => 
             array (
                 'id' => 127,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 176,
+                'description' => NULL,
             ),
-            103 => 
+            99 => 
             array (
                 'id' => 128,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 177,
+                'description' => NULL,
             ),
-            104 => 
+            100 => 
             array (
                 'id' => 129,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 178,
+                'description' => NULL,
             ),
-            105 => 
+            101 => 
             array (
                 'id' => 130,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 179,
+                'description' => NULL,
             ),
-            106 => 
+            102 => 
             array (
                 'id' => 131,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 180,
+                'description' => NULL,
             ),
-            107 => 
+            103 => 
             array (
                 'id' => 132,
                 'order_id' => 15,
                 'qty' => 100,
                 'unit_price' => 29000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 181,
+                'description' => NULL,
             ),
-            108 => 
+            104 => 
             array (
                 'id' => 133,
                 'order_id' => 21,
                 'qty' => 4611,
                 'unit_price' => 44800,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 165,
+                'description' => NULL,
             ),
-            109 => 
+            105 => 
             array (
                 'id' => 134,
                 'order_id' => 21,
                 'qty' => 4611,
                 'unit_price' => 44800,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 166,
+                'description' => NULL,
             ),
-            110 => 
+            106 => 
             array (
                 'id' => 135,
                 'order_id' => 21,
                 'qty' => 4611,
                 'unit_price' => 44800,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 167,
+                'description' => NULL,
             ),
-            111 => 
+            107 => 
             array (
                 'id' => 136,
                 'order_id' => 22,
                 'qty' => 50,
                 'unit_price' => 12265,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-05',
+                'product_id' => NULL,
                 'product_feature_id' => 187,
+                'description' => NULL,
             ),
-            112 => 
+            108 => 
             array (
                 'id' => 137,
                 'order_id' => 22,
                 'qty' => 67,
                 'unit_price' => 12265,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-05',
+                'product_id' => NULL,
                 'product_feature_id' => 189,
+                'description' => NULL,
             ),
-            113 => 
+            109 => 
             array (
                 'id' => 138,
                 'order_id' => 23,
                 'qty' => 83,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 231,
+                'description' => NULL,
             ),
-            114 => 
+            110 => 
             array (
                 'id' => 139,
                 'order_id' => 23,
                 'qty' => 166,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 232,
+                'description' => NULL,
             ),
-            115 => 
+            111 => 
             array (
                 'id' => 140,
                 'order_id' => 23,
                 'qty' => 166,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 233,
+                'description' => NULL,
             ),
-            116 => 
+            112 => 
             array (
                 'id' => 141,
                 'order_id' => 23,
                 'qty' => 166,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 234,
+                'description' => NULL,
             ),
-            117 => 
+            113 => 
             array (
                 'id' => 142,
                 'order_id' => 23,
                 'qty' => 83,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 235,
+                'description' => NULL,
             ),
-            118 => 
+            114 => 
             array (
                 'id' => 143,
                 'order_id' => 23,
                 'qty' => 83,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 236,
+                'description' => NULL,
             ),
-            119 => 
+            115 => 
             array (
                 'id' => 144,
                 'order_id' => 23,
                 'qty' => 83,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 237,
+                'description' => NULL,
             ),
-            120 => 
+            116 => 
             array (
                 'id' => 145,
                 'order_id' => 23,
                 'qty' => 40,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 238,
+                'description' => NULL,
             ),
-            121 => 
+            117 => 
             array (
                 'id' => 146,
                 'order_id' => 23,
                 'qty' => 40,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 239,
+                'description' => NULL,
             ),
-            122 => 
+            118 => 
             array (
                 'id' => 147,
                 'order_id' => 23,
                 'qty' => 40,
                 'unit_price' => 37000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-18',
+                'product_id' => NULL,
                 'product_feature_id' => 240,
+                'description' => NULL,
             ),
-            123 => 
+            119 => 
             array (
                 'id' => 148,
                 'order_id' => 24,
                 'qty' => 83,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 223,
+                'description' => NULL,
             ),
-            124 => 
+            120 => 
             array (
                 'id' => 149,
                 'order_id' => 24,
                 'qty' => 185,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 224,
+                'description' => NULL,
             ),
-            125 => 
+            121 => 
             array (
                 'id' => 150,
                 'order_id' => 24,
                 'qty' => 185,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 225,
+                'description' => NULL,
             ),
-            126 => 
+            122 => 
             array (
                 'id' => 151,
                 'order_id' => 24,
                 'qty' => 180,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 226,
+                'description' => NULL,
             ),
-            127 => 
+            123 => 
             array (
                 'id' => 152,
                 'order_id' => 24,
                 'qty' => 98,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 227,
+                'description' => NULL,
             ),
-            128 => 
+            124 => 
             array (
                 'id' => 153,
                 'order_id' => 24,
                 'qty' => 98,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 228,
+                'description' => NULL,
             ),
-            129 => 
+            125 => 
             array (
                 'id' => 154,
                 'order_id' => 24,
                 'qty' => 93,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 229,
+                'description' => NULL,
             ),
-            130 => 
+            126 => 
             array (
                 'id' => 155,
                 'order_id' => 24,
                 'qty' => 5,
                 'unit_price' => 34000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-25',
+                'product_id' => NULL,
                 'product_feature_id' => 230,
+                'description' => NULL,
             ),
-            131 => 
+            127 => 
             array (
                 'id' => 156,
                 'order_id' => 25,
                 'qty' => 63,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 203,
+                'description' => NULL,
             ),
-            132 => 
+            128 => 
             array (
                 'id' => 157,
                 'order_id' => 25,
                 'qty' => 43,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 204,
+                'description' => NULL,
             ),
-            133 => 
+            129 => 
             array (
                 'id' => 158,
                 'order_id' => 25,
                 'qty' => 63,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 205,
+                'description' => NULL,
             ),
-            134 => 
+            130 => 
             array (
                 'id' => 159,
                 'order_id' => 25,
                 'qty' => 43,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 206,
+                'description' => NULL,
             ),
-            135 => 
+            131 => 
             array (
                 'id' => 160,
                 'order_id' => 25,
                 'qty' => 100,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 207,
+                'description' => NULL,
             ),
-            136 => 
+            132 => 
             array (
                 'id' => 161,
                 'order_id' => 25,
                 'qty' => 60,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 208,
+                'description' => NULL,
             ),
-            137 => 
+            133 => 
             array (
                 'id' => 162,
                 'order_id' => 25,
                 'qty' => 100,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 209,
+                'description' => NULL,
             ),
-            138 => 
+            134 => 
             array (
                 'id' => 163,
                 'order_id' => 25,
                 'qty' => 60,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 210,
+                'description' => NULL,
             ),
-            139 => 
+            135 => 
             array (
                 'id' => 164,
                 'order_id' => 25,
                 'qty' => 137,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 211,
+                'description' => NULL,
             ),
-            140 => 
+            136 => 
             array (
                 'id' => 165,
                 'order_id' => 25,
                 'qty' => 77,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 212,
+                'description' => NULL,
             ),
-            141 => 
+            137 => 
             array (
                 'id' => 166,
                 'order_id' => 25,
                 'qty' => 137,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 213,
+                'description' => NULL,
             ),
-            142 => 
+            138 => 
             array (
                 'id' => 167,
                 'order_id' => 25,
                 'qty' => 77,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 214,
+                'description' => NULL,
             ),
-            143 => 
+            139 => 
             array (
                 'id' => 168,
                 'order_id' => 25,
                 'qty' => 136,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 215,
+                'description' => NULL,
             ),
-            144 => 
+            140 => 
             array (
                 'id' => 169,
                 'order_id' => 25,
                 'qty' => 79,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 216,
+                'description' => NULL,
             ),
-            145 => 
+            141 => 
             array (
                 'id' => 170,
                 'order_id' => 25,
                 'qty' => 136,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 217,
+                'description' => NULL,
             ),
-            146 => 
+            142 => 
             array (
                 'id' => 171,
                 'order_id' => 25,
                 'qty' => 79,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 218,
+                'description' => NULL,
             ),
-            147 => 
+            143 => 
             array (
                 'id' => 172,
                 'order_id' => 25,
                 'qty' => 68,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 219,
+                'description' => NULL,
             ),
-            148 => 
+            144 => 
             array (
                 'id' => 173,
                 'order_id' => 25,
                 'qty' => 39,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 220,
+                'description' => NULL,
             ),
-            149 => 
+            145 => 
             array (
                 'id' => 174,
                 'order_id' => 25,
                 'qty' => 68,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 221,
+                'description' => NULL,
             ),
-            150 => 
+            146 => 
             array (
                 'id' => 175,
                 'order_id' => 25,
                 'qty' => 39,
                 'unit_price' => 32000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-26',
+                'product_id' => NULL,
                 'product_feature_id' => 222,
+                'description' => NULL,
             ),
-            151 => 
+            147 => 
             array (
                 'id' => 176,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 195,
+                'description' => NULL,
             ),
-            152 => 
+            148 => 
             array (
                 'id' => 177,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 196,
+                'description' => NULL,
             ),
-            153 => 
+            149 => 
             array (
                 'id' => 178,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 197,
+                'description' => NULL,
             ),
-            154 => 
+            150 => 
             array (
                 'id' => 179,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 198,
+                'description' => NULL,
             ),
-            155 => 
+            151 => 
             array (
                 'id' => 180,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 199,
+                'description' => NULL,
             ),
-            156 => 
+            152 => 
             array (
                 'id' => 181,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 200,
+                'description' => NULL,
             ),
-            157 => 
+            153 => 
             array (
                 'id' => 182,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 201,
+                'description' => NULL,
             ),
-            158 => 
+            154 => 
             array (
                 'id' => 183,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-15',
+                'product_id' => NULL,
                 'product_feature_id' => 202,
+                'description' => NULL,
             ),
-            159 => 
+            155 => 
             array (
                 'id' => 184,
                 'order_id' => 27,
                 'qty' => 716,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 256,
+                'description' => NULL,
             ),
-            160 => 
+            156 => 
             array (
                 'id' => 185,
                 'order_id' => 27,
                 'qty' => 546,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 257,
+                'description' => NULL,
             ),
-            161 => 
+            157 => 
             array (
                 'id' => 186,
                 'order_id' => 27,
                 'qty' => 352,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 258,
+                'description' => NULL,
             ),
-            162 => 
+            158 => 
             array (
                 'id' => 187,
                 'order_id' => 27,
                 'qty' => 508,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 259,
+                'description' => NULL,
             ),
-            163 => 
+            159 => 
             array (
                 'id' => 188,
                 'order_id' => 27,
                 'qty' => 532,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 260,
+                'description' => NULL,
             ),
-            164 => 
+            160 => 
             array (
                 'id' => 189,
                 'order_id' => 27,
                 'qty' => 520,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 261,
+                'description' => NULL,
             ),
-            165 => 
+            161 => 
             array (
                 'id' => 190,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 264,
+                'description' => NULL,
             ),
-            166 => 
+            162 => 
             array (
                 'id' => 191,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 265,
+                'description' => NULL,
             ),
-            167 => 
+            163 => 
             array (
                 'id' => 193,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 266,
+                'description' => NULL,
             ),
-            168 => 
+            164 => 
             array (
                 'id' => 194,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 267,
+                'description' => NULL,
             ),
-            169 => 
+            165 => 
             array (
                 'id' => 196,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-09-22',
+                'product_id' => NULL,
                 'product_feature_id' => 268,
+                'description' => NULL,
             ),
-            170 => 
+            166 => 
             array (
                 'id' => 197,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 269,
+                'description' => NULL,
             ),
-            171 => 
+            167 => 
             array (
                 'id' => 198,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 270,
+                'description' => NULL,
             ),
-            172 => 
+            168 => 
             array (
                 'id' => 199,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 271,
+                'description' => NULL,
             ),
-            173 => 
+            169 => 
             array (
                 'id' => 200,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 272,
+                'description' => NULL,
             ),
-            174 => 
+            170 => 
             array (
                 'id' => 201,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 273,
+                'description' => NULL,
             ),
-            175 => 
+            171 => 
             array (
                 'id' => 202,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 274,
+                'description' => NULL,
             ),
-            176 => 
+            172 => 
             array (
                 'id' => 203,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 275,
+                'description' => NULL,
             ),
-            177 => 
+            173 => 
             array (
                 'id' => 204,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 276,
+                'description' => NULL,
             ),
-            178 => 
+            174 => 
             array (
                 'id' => 205,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 277,
+                'description' => NULL,
             ),
-            179 => 
+            175 => 
             array (
                 'id' => 206,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 278,
+                'description' => NULL,
             ),
-            180 => 
+            176 => 
             array (
                 'id' => 207,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 279,
+                'description' => NULL,
             ),
-            181 => 
+            177 => 
             array (
                 'id' => 208,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 280,
+                'description' => NULL,
             ),
-            182 => 
+            178 => 
             array (
                 'id' => 209,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 280,
+                'description' => NULL,
             ),
-            183 => 
+            179 => 
             array (
                 'id' => 210,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 281,
+                'description' => NULL,
             ),
-            184 => 
+            180 => 
             array (
                 'id' => 211,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 282,
+                'description' => NULL,
             ),
-            185 => 
+            181 => 
             array (
                 'id' => 212,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 283,
+                'description' => NULL,
             ),
-            186 => 
+            182 => 
             array (
                 'id' => 213,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 284,
+                'description' => NULL,
             ),
-            187 => 
+            183 => 
             array (
                 'id' => 214,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 285,
+                'description' => NULL,
             ),
-            188 => 
+            184 => 
             array (
                 'id' => 215,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 286,
+                'description' => NULL,
             ),
-            189 => 
+            185 => 
             array (
                 'id' => 216,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 287,
+                'description' => NULL,
             ),
-            190 => 
+            186 => 
             array (
                 'id' => 217,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 288,
+                'description' => NULL,
             ),
-            191 => 
+            187 => 
             array (
                 'id' => 218,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 289,
+                'description' => NULL,
             ),
-            192 => 
+            188 => 
             array (
                 'id' => 219,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 290,
+                'description' => NULL,
             ),
-            193 => 
+            189 => 
             array (
                 'id' => 220,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 291,
+                'description' => NULL,
             ),
-            194 => 
+            190 => 
             array (
                 'id' => 221,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 292,
+                'description' => NULL,
             ),
-            195 => 
+            191 => 
             array (
                 'id' => 222,
                 'order_id' => 7,
                 'qty' => 200,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 293,
+                'description' => NULL,
             ),
-            196 => 
+            192 => 
             array (
                 'id' => 223,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 296,
+                'description' => NULL,
             ),
-            197 => 
+            193 => 
             array (
                 'id' => 224,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 297,
+                'description' => NULL,
             ),
-            198 => 
+            194 => 
             array (
                 'id' => 225,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 298,
+                'description' => NULL,
             ),
-            199 => 
+            195 => 
             array (
                 'id' => 226,
                 'order_id' => 26,
                 'qty' => 100,
                 'unit_price' => 0,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 299,
+                'description' => NULL,
             ),
-            200 => 
+            196 => 
             array (
                 'id' => 227,
                 'order_id' => 28,
                 'qty' => 20,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 300,
+                'description' => NULL,
             ),
-            201 => 
+            197 => 
             array (
                 'id' => 228,
                 'order_id' => 28,
                 'qty' => 25,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 301,
+                'description' => NULL,
             ),
-            202 => 
+            198 => 
             array (
                 'id' => 229,
                 'order_id' => 28,
                 'qty' => 50,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 302,
+                'description' => NULL,
             ),
-            203 => 
+            199 => 
             array (
                 'id' => 230,
                 'order_id' => 28,
                 'qty' => 120,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 303,
+                'description' => NULL,
             ),
-            204 => 
+            200 => 
             array (
                 'id' => 231,
                 'order_id' => 28,
                 'qty' => 260,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 304,
+                'description' => NULL,
             ),
-            205 => 
+            201 => 
             array (
                 'id' => 232,
                 'order_id' => 28,
                 'qty' => 360,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 305,
+                'description' => NULL,
             ),
-            206 => 
+            202 => 
             array (
                 'id' => 233,
                 'order_id' => 28,
                 'qty' => 210,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 306,
+                'description' => NULL,
             ),
-            207 => 
+            203 => 
             array (
                 'id' => 234,
                 'order_id' => 28,
                 'qty' => 60,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 307,
+                'description' => NULL,
             ),
-            208 => 
+            204 => 
             array (
                 'id' => 235,
                 'order_id' => 28,
                 'qty' => 15,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 308,
+                'description' => NULL,
             ),
-            209 => 
+            205 => 
             array (
                 'id' => 236,
                 'order_id' => 28,
                 'qty' => 300,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 309,
+                'description' => NULL,
             ),
-            210 => 
+            206 => 
             array (
                 'id' => 237,
                 'order_id' => 28,
                 'qty' => 431,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 310,
+                'description' => NULL,
             ),
-            211 => 
+            207 => 
             array (
                 'id' => 238,
                 'order_id' => 28,
                 'qty' => 130,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 311,
+                'description' => NULL,
             ),
-            212 => 
+            208 => 
             array (
                 'id' => 251,
                 'order_id' => 30,
                 'qty' => 55,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 312,
+                'description' => NULL,
             ),
-            213 => 
+            209 => 
             array (
                 'id' => 252,
                 'order_id' => 30,
                 'qty' => 130,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 313,
+                'description' => NULL,
             ),
-            214 => 
+            210 => 
             array (
                 'id' => 253,
                 'order_id' => 30,
                 'qty' => 131,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 314,
+                'description' => NULL,
             ),
-            215 => 
+            211 => 
             array (
                 'id' => 254,
                 'order_id' => 30,
                 'qty' => 100,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 315,
+                'description' => NULL,
             ),
-            216 => 
+            212 => 
             array (
                 'id' => 255,
                 'order_id' => 30,
                 'qty' => 70,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 316,
+                'description' => NULL,
             ),
-            217 => 
+            213 => 
             array (
                 'id' => 256,
                 'order_id' => 30,
                 'qty' => 30,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 317,
+                'description' => NULL,
             ),
-            218 => 
+            214 => 
             array (
                 'id' => 257,
                 'order_id' => 30,
                 'qty' => 20,
                 'unit_price' => 120280,
+                'cm_price' => 109000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 318,
+                'description' => NULL,
             ),
-            219 => 
+            215 => 
             array (
                 'id' => 258,
                 'order_id' => 31,
                 'qty' => 100,
                 'unit_price' => 25000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 339,
+                'description' => NULL,
             ),
-            220 => 
+            216 => 
             array (
                 'id' => 259,
                 'order_id' => 31,
                 'qty' => 100,
                 'unit_price' => 25000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 340,
+                'description' => NULL,
             ),
-            221 => 
+            217 => 
             array (
                 'id' => 260,
                 'order_id' => 31,
                 'qty' => 100,
                 'unit_price' => 25000,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 341,
+                'description' => NULL,
             ),
-            222 => 
+            218 => 
             array (
                 'id' => 261,
                 'order_id' => 32,
                 'qty' => 49,
                 'unit_price' => 11700,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-19',
+                'product_id' => NULL,
                 'product_feature_id' => 465,
+                'description' => NULL,
             ),
-            223 => 
+            219 => 
             array (
                 'id' => 262,
                 'order_id' => 32,
                 'qty' => 65,
                 'unit_price' => 11700,
+                'cm_price' => 0,
                 'shipment_estimated' => '2022-10-19',
+                'product_id' => NULL,
                 'product_feature_id' => 466,
+                'description' => NULL,
             ),
-            224 => 
+            220 => 
             array (
                 'id' => 263,
                 'order_id' => 33,
                 'qty' => 389,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 354,
+                'description' => NULL,
             ),
-            225 => 
+            221 => 
             array (
                 'id' => 264,
                 'order_id' => 33,
                 'qty' => 558,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 355,
+                'description' => NULL,
             ),
-            226 => 
+            222 => 
             array (
                 'id' => 265,
                 'order_id' => 33,
                 'qty' => 360,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 356,
+                'description' => NULL,
             ),
-            227 => 
+            223 => 
             array (
                 'id' => 266,
                 'order_id' => 33,
                 'qty' => 778,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 357,
+                'description' => NULL,
             ),
-            228 => 
+            224 => 
             array (
                 'id' => 267,
                 'order_id' => 33,
                 'qty' => 1116,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 358,
+                'description' => NULL,
             ),
-            229 => 
+            225 => 
             array (
                 'id' => 268,
                 'order_id' => 33,
                 'qty' => 820,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 359,
+                'description' => NULL,
             ),
-            230 => 
+            226 => 
             array (
                 'id' => 269,
                 'order_id' => 33,
                 'qty' => 778,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 360,
+                'description' => NULL,
             ),
-            231 => 
+            227 => 
             array (
                 'id' => 270,
                 'order_id' => 33,
                 'qty' => 1116,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 361,
+                'description' => NULL,
             ),
-            232 => 
+            228 => 
             array (
                 'id' => 271,
                 'order_id' => 33,
                 'qty' => 389,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 363,
+                'description' => NULL,
             ),
-            233 => 
+            229 => 
             array (
                 'id' => 272,
                 'order_id' => 33,
                 'qty' => 820,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 362,
+                'description' => NULL,
             ),
-            234 => 
+            230 => 
             array (
                 'id' => 273,
                 'order_id' => 33,
                 'qty' => 558,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 364,
+                'description' => NULL,
             ),
-            235 => 
+            231 => 
             array (
                 'id' => 274,
                 'order_id' => 33,
                 'qty' => 360,
                 'unit_price' => 34000,
+                'cm_price' => 31000,
                 'shipment_estimated' => '2022-10-31',
+                'product_id' => NULL,
                 'product_feature_id' => 365,
+                'description' => NULL,
             ),
-            236 => 
+            232 => 
             array (
                 'id' => 275,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 471,
+                'description' => NULL,
             ),
-            237 => 
+            233 => 
             array (
                 'id' => 276,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 492,
+                'description' => NULL,
             ),
-            238 => 
+            234 => 
             array (
                 'id' => 277,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 493,
+                'description' => NULL,
             ),
-            239 => 
+            235 => 
             array (
                 'id' => 278,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 494,
+                'description' => NULL,
             ),
-            240 => 
+            236 => 
             array (
                 'id' => 279,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 495,
+                'description' => NULL,
             ),
-            241 => 
+            237 => 
             array (
                 'id' => 280,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 496,
+                'description' => NULL,
             ),
-            242 => 
+            238 => 
             array (
                 'id' => 281,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 497,
+                'description' => NULL,
             ),
-            243 => 
+            239 => 
             array (
                 'id' => 282,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 498,
+                'description' => NULL,
             ),
-            244 => 
+            240 => 
             array (
                 'id' => 283,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 499,
+                'description' => NULL,
             ),
-            245 => 
+            241 => 
             array (
                 'id' => 284,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 500,
+                'description' => NULL,
             ),
-            246 => 
+            242 => 
             array (
                 'id' => 285,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 501,
+                'description' => NULL,
             ),
-            247 => 
+            243 => 
             array (
                 'id' => 286,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 513,
+                'description' => NULL,
             ),
-            248 => 
+            244 => 
             array (
                 'id' => 287,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 515,
+                'description' => NULL,
             ),
-            249 => 
+            245 => 
             array (
                 'id' => 288,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 516,
+                'description' => NULL,
             ),
-            250 => 
+            246 => 
             array (
                 'id' => 289,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 517,
+                'description' => NULL,
             ),
-            251 => 
+            247 => 
             array (
                 'id' => 290,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 518,
+                'description' => NULL,
             ),
-            252 => 
+            248 => 
             array (
                 'id' => 291,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 519,
+                'description' => NULL,
             ),
-            253 => 
+            249 => 
             array (
                 'id' => 292,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 520,
+                'description' => NULL,
             ),
-            254 => 
+            250 => 
             array (
                 'id' => 293,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 521,
+                'description' => NULL,
             ),
-            255 => 
+            251 => 
             array (
                 'id' => 294,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 523,
+                'description' => NULL,
             ),
-            256 => 
+            252 => 
             array (
                 'id' => 295,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 525,
+                'description' => NULL,
             ),
-            257 => 
+            253 => 
             array (
                 'id' => 296,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 527,
+                'description' => NULL,
             ),
-            258 => 
+            254 => 
             array (
                 'id' => 297,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 528,
+                'description' => NULL,
             ),
-            259 => 
+            255 => 
             array (
                 'id' => 298,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 530,
+                'description' => NULL,
             ),
-            260 => 
+            256 => 
             array (
                 'id' => 299,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 529,
+                'description' => NULL,
             ),
-            261 => 
+            257 => 
             array (
                 'id' => 300,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 531,
+                'description' => NULL,
             ),
-            262 => 
+            258 => 
             array (
                 'id' => 301,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 532,
+                'description' => NULL,
             ),
-            263 => 
+            259 => 
             array (
                 'id' => 302,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 533,
+                'description' => NULL,
             ),
-            264 => 
+            260 => 
             array (
                 'id' => 303,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 534,
+                'description' => NULL,
             ),
-            265 => 
+            261 => 
             array (
                 'id' => 304,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 535,
+                'description' => NULL,
             ),
-            266 => 
+            262 => 
             array (
                 'id' => 305,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 536,
+                'description' => NULL,
             ),
-            267 => 
+            263 => 
             array (
                 'id' => 306,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 537,
+                'description' => NULL,
             ),
-            268 => 
+            264 => 
             array (
                 'id' => 307,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 538,
+                'description' => NULL,
             ),
-            269 => 
+            265 => 
             array (
                 'id' => 308,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 539,
+                'description' => NULL,
             ),
-            270 => 
+            266 => 
             array (
                 'id' => 309,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 540,
+                'description' => NULL,
             ),
-            271 => 
+            267 => 
             array (
                 'id' => 310,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 541,
+                'description' => NULL,
             ),
-            272 => 
+            268 => 
             array (
                 'id' => 311,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 542,
+                'description' => NULL,
             ),
-            273 => 
+            269 => 
             array (
                 'id' => 312,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 543,
+                'description' => NULL,
             ),
-            274 => 
+            270 => 
             array (
                 'id' => 313,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 544,
+                'description' => NULL,
             ),
-            275 => 
+            271 => 
             array (
                 'id' => 314,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 545,
+                'description' => NULL,
             ),
-            276 => 
+            272 => 
             array (
                 'id' => 315,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 546,
+                'description' => NULL,
             ),
-            277 => 
+            273 => 
             array (
                 'id' => 316,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 547,
+                'description' => NULL,
             ),
-            278 => 
+            274 => 
             array (
                 'id' => 317,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 548,
+                'description' => NULL,
             ),
-            279 => 
+            275 => 
             array (
                 'id' => 318,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 549,
+                'description' => NULL,
             ),
-            280 => 
+            276 => 
             array (
                 'id' => 319,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 550,
+                'description' => NULL,
             ),
-            281 => 
+            277 => 
             array (
                 'id' => 320,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 551,
+                'description' => NULL,
             ),
-            282 => 
+            278 => 
             array (
                 'id' => 321,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 552,
+                'description' => NULL,
             ),
-            283 => 
+            279 => 
             array (
                 'id' => 322,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 553,
+                'description' => NULL,
             ),
-            284 => 
+            280 => 
             array (
                 'id' => 323,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 554,
+                'description' => NULL,
             ),
-            285 => 
+            281 => 
             array (
                 'id' => 324,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 555,
+                'description' => NULL,
             ),
-            286 => 
+            282 => 
             array (
                 'id' => 325,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 556,
+                'description' => NULL,
             ),
-            287 => 
+            283 => 
             array (
                 'id' => 326,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 557,
+                'description' => NULL,
             ),
-            288 => 
+            284 => 
             array (
                 'id' => 327,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 558,
+                'description' => NULL,
             ),
-            289 => 
+            285 => 
             array (
                 'id' => 328,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 559,
+                'description' => NULL,
             ),
-            290 => 
+            286 => 
             array (
                 'id' => 329,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 560,
+                'description' => NULL,
             ),
-            291 => 
+            287 => 
             array (
                 'id' => 330,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 561,
+                'description' => NULL,
             ),
-            292 => 
+            288 => 
             array (
                 'id' => 331,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 562,
+                'description' => NULL,
             ),
-            293 => 
+            289 => 
             array (
                 'id' => 332,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 563,
+                'description' => NULL,
             ),
-            294 => 
+            290 => 
             array (
                 'id' => 333,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 564,
+                'description' => NULL,
             ),
-            295 => 
+            291 => 
             array (
                 'id' => 334,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 565,
+                'description' => NULL,
             ),
-            296 => 
+            292 => 
             array (
                 'id' => 335,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 566,
+                'description' => NULL,
             ),
-            297 => 
+            293 => 
             array (
                 'id' => 336,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 567,
+                'description' => NULL,
             ),
-            298 => 
+            294 => 
             array (
                 'id' => 337,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 568,
+                'description' => NULL,
             ),
-            299 => 
+            295 => 
             array (
                 'id' => 338,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 569,
+                'description' => NULL,
             ),
-            300 => 
+            296 => 
             array (
                 'id' => 339,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 570,
+                'description' => NULL,
             ),
-            301 => 
+            297 => 
             array (
                 'id' => 340,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 571,
+                'description' => NULL,
             ),
-            302 => 
+            298 => 
             array (
                 'id' => 341,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 572,
+                'description' => NULL,
             ),
-            303 => 
+            299 => 
             array (
                 'id' => 342,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 573,
+                'description' => NULL,
             ),
-            304 => 
+            300 => 
             array (
                 'id' => 343,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 574,
+                'description' => NULL,
             ),
-            305 => 
+            301 => 
             array (
                 'id' => 344,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 575,
+                'description' => NULL,
             ),
-            306 => 
+            302 => 
             array (
                 'id' => 345,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 576,
+                'description' => NULL,
             ),
-            307 => 
+            303 => 
             array (
                 'id' => 346,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 577,
+                'description' => NULL,
             ),
-            308 => 
+            304 => 
             array (
                 'id' => 347,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 578,
+                'description' => NULL,
             ),
-            309 => 
+            305 => 
             array (
                 'id' => 348,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 579,
+                'description' => NULL,
             ),
-            310 => 
+            306 => 
             array (
                 'id' => 349,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 580,
+                'description' => NULL,
             ),
-            311 => 
+            307 => 
             array (
                 'id' => 350,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 581,
+                'description' => NULL,
             ),
-            312 => 
+            308 => 
             array (
                 'id' => 351,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 582,
+                'description' => NULL,
             ),
-            313 => 
+            309 => 
             array (
                 'id' => 352,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 583,
+                'description' => NULL,
             ),
-            314 => 
+            310 => 
             array (
                 'id' => 353,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 584,
+                'description' => NULL,
             ),
-            315 => 
+            311 => 
             array (
                 'id' => 354,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 585,
+                'description' => NULL,
             ),
-            316 => 
+            312 => 
             array (
                 'id' => 355,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 586,
+                'description' => NULL,
             ),
-            317 => 
+            313 => 
             array (
                 'id' => 356,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 587,
+                'description' => NULL,
             ),
-            318 => 
+            314 => 
             array (
                 'id' => 357,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 588,
+                'description' => NULL,
             ),
-            319 => 
+            315 => 
             array (
                 'id' => 358,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 589,
+                'description' => NULL,
             ),
-            320 => 
+            316 => 
             array (
                 'id' => 359,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 590,
+                'description' => NULL,
             ),
-            321 => 
+            317 => 
             array (
                 'id' => 360,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 591,
+                'description' => NULL,
             ),
-            322 => 
+            318 => 
             array (
                 'id' => 361,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 592,
+                'description' => NULL,
             ),
-            323 => 
+            319 => 
             array (
                 'id' => 362,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 593,
+                'description' => NULL,
             ),
-            324 => 
+            320 => 
             array (
                 'id' => 363,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 594,
+                'description' => NULL,
             ),
-            325 => 
+            321 => 
             array (
                 'id' => 364,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 595,
+                'description' => NULL,
             ),
-            326 => 
+            322 => 
             array (
                 'id' => 365,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 596,
+                'description' => NULL,
             ),
-            327 => 
+            323 => 
             array (
                 'id' => 366,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 597,
+                'description' => NULL,
             ),
-            328 => 
+            324 => 
             array (
                 'id' => 367,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 598,
+                'description' => NULL,
             ),
-            329 => 
+            325 => 
             array (
                 'id' => 368,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 599,
+                'description' => NULL,
             ),
-            330 => 
+            326 => 
             array (
                 'id' => 369,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 600,
+                'description' => NULL,
             ),
-            331 => 
+            327 => 
             array (
                 'id' => 370,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 602,
+                'description' => NULL,
             ),
-            332 => 
+            328 => 
             array (
                 'id' => 371,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 603,
+                'description' => NULL,
             ),
-            333 => 
+            329 => 
             array (
                 'id' => 372,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 605,
+                'description' => NULL,
             ),
-            334 => 
+            330 => 
             array (
                 'id' => 373,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 606,
+                'description' => NULL,
             ),
-            335 => 
+            331 => 
             array (
                 'id' => 374,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 608,
+                'description' => NULL,
             ),
-            336 => 
+            332 => 
             array (
                 'id' => 375,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 609,
+                'description' => NULL,
             ),
-            337 => 
+            333 => 
             array (
                 'id' => 376,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 611,
+                'description' => NULL,
             ),
-            338 => 
+            334 => 
             array (
                 'id' => 377,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 612,
+                'description' => NULL,
             ),
-            339 => 
+            335 => 
             array (
                 'id' => 378,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 613,
+                'description' => NULL,
             ),
-            340 => 
+            336 => 
             array (
                 'id' => 379,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 614,
+                'description' => NULL,
             ),
-            341 => 
+            337 => 
             array (
                 'id' => 380,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 615,
+                'description' => NULL,
             ),
-            342 => 
+            338 => 
             array (
                 'id' => 381,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 616,
+                'description' => NULL,
             ),
-            343 => 
+            339 => 
             array (
                 'id' => 382,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 617,
+                'description' => NULL,
             ),
-            344 => 
+            340 => 
             array (
                 'id' => 383,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 618,
+                'description' => NULL,
             ),
-            345 => 
+            341 => 
             array (
                 'id' => 384,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 619,
+                'description' => NULL,
             ),
-            346 => 
+            342 => 
             array (
                 'id' => 385,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 620,
+                'description' => NULL,
             ),
-            347 => 
+            343 => 
             array (
                 'id' => 386,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 621,
+                'description' => NULL,
             ),
-            348 => 
+            344 => 
             array (
                 'id' => 387,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 622,
+                'description' => NULL,
             ),
-            349 => 
+            345 => 
             array (
                 'id' => 388,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 623,
+                'description' => NULL,
             ),
-            350 => 
+            346 => 
             array (
                 'id' => 389,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 624,
+                'description' => NULL,
             ),
-            351 => 
+            347 => 
             array (
                 'id' => 390,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 625,
+                'description' => NULL,
             ),
-            352 => 
+            348 => 
             array (
                 'id' => 391,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 627,
+                'description' => NULL,
             ),
-            353 => 
+            349 => 
             array (
                 'id' => 392,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 628,
+                'description' => NULL,
             ),
-            354 => 
+            350 => 
             array (
                 'id' => 393,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 629,
+                'description' => NULL,
             ),
-            355 => 
+            351 => 
             array (
                 'id' => 394,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 630,
+                'description' => NULL,
             ),
-            356 => 
+            352 => 
             array (
                 'id' => 395,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 631,
+                'description' => NULL,
             ),
-            357 => 
+            353 => 
             array (
                 'id' => 396,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 632,
+                'description' => NULL,
             ),
-            358 => 
+            354 => 
             array (
                 'id' => 397,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 633,
+                'description' => NULL,
             ),
-            359 => 
+            355 => 
             array (
                 'id' => 398,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 634,
+                'description' => NULL,
             ),
-            360 => 
+            356 => 
             array (
                 'id' => 399,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 25000,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-10-28',
+                'product_id' => NULL,
                 'product_feature_id' => 635,
+                'description' => NULL,
             ),
-            361 => 
+            357 => 
             array (
                 'id' => 400,
                 'order_id' => 34,
                 'qty' => 0,
                 'unit_price' => 0,
+                'cm_price' => 23000,
                 'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
                 'product_feature_id' => 636,
+                'description' => NULL,
             ),
-            362 => 
+            358 => 
             array (
                 'id' => 401,
                 'order_id' => 35,
                 'qty' => 378,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 641,
+                'description' => NULL,
             ),
-            363 => 
+            359 => 
             array (
                 'id' => 402,
                 'order_id' => 35,
                 'qty' => 458,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 642,
+                'description' => NULL,
             ),
-            364 => 
+            360 => 
             array (
                 'id' => 403,
                 'order_id' => 35,
                 'qty' => 418,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 643,
+                'description' => NULL,
             ),
-            365 => 
+            361 => 
             array (
                 'id' => 407,
                 'order_id' => 37,
                 'qty' => 50,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 644,
+                'description' => NULL,
             ),
-            366 => 
+            362 => 
             array (
                 'id' => 408,
                 'order_id' => 37,
                 'qty' => 384,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 645,
+                'description' => NULL,
             ),
-            367 => 
+            363 => 
             array (
                 'id' => 409,
                 'order_id' => 37,
                 'qty' => 384,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 646,
+                'description' => NULL,
             ),
-            368 => 
+            364 => 
             array (
                 'id' => 410,
                 'order_id' => 37,
                 'qty' => 334,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 647,
+                'description' => NULL,
             ),
-            369 => 
+            365 => 
             array (
                 'id' => 411,
                 'order_id' => 38,
                 'qty' => 50,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 644,
+                'description' => NULL,
             ),
-            370 => 
+            366 => 
             array (
                 'id' => 412,
                 'order_id' => 38,
                 'qty' => 384,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 645,
+                'description' => NULL,
             ),
-            371 => 
+            367 => 
             array (
                 'id' => 413,
                 'order_id' => 38,
                 'qty' => 384,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 646,
+                'description' => NULL,
             ),
-            372 => 
+            368 => 
             array (
                 'id' => 414,
                 'order_id' => 38,
                 'qty' => 334,
                 'unit_price' => 19000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 647,
+                'description' => NULL,
             ),
-            373 => 
+            369 => 
             array (
                 'id' => 415,
                 'order_id' => 39,
                 'qty' => 646,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 648,
+                'description' => NULL,
             ),
-            374 => 
+            370 => 
             array (
                 'id' => 416,
                 'order_id' => 39,
                 'qty' => 490,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 649,
+                'description' => NULL,
             ),
-            375 => 
+            371 => 
             array (
                 'id' => 417,
                 'order_id' => 39,
                 'qty' => 310,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '2022-11-04',
+                'product_id' => NULL,
                 'product_feature_id' => 650,
+                'description' => NULL,
             ),
-            376 => 
+            372 => 
             array (
                 'id' => 422,
                 'order_id' => 40,
                 'qty' => 708,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 656,
+                'description' => NULL,
             ),
-            377 => 
+            373 => 
             array (
                 'id' => 423,
                 'order_id' => 40,
                 'qty' => 760,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 655,
+                'description' => NULL,
             ),
-            378 => 
+            374 => 
             array (
                 'id' => 424,
                 'order_id' => 40,
                 'qty' => 668,
                 'unit_price' => 18000,
+                'cm_price' => 15000,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 654,
+                'description' => NULL,
             ),
-            379 => 
+            375 => 
             array (
                 'id' => 425,
                 'order_id' => 41,
                 'qty' => 10,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 50,
+                'description' => NULL,
             ),
-            380 => 
+            376 => 
             array (
                 'id' => 426,
                 'order_id' => 41,
                 'qty' => 25,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 51,
+                'description' => NULL,
             ),
-            381 => 
+            377 => 
             array (
                 'id' => 427,
                 'order_id' => 41,
                 'qty' => 22,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 52,
+                'description' => NULL,
             ),
-            382 => 
+            378 => 
             array (
                 'id' => 428,
                 'order_id' => 41,
                 'qty' => 3,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 53,
+                'description' => NULL,
             ),
-            383 => 
+            379 => 
             array (
                 'id' => 429,
                 'order_id' => 41,
                 'qty' => 10,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 54,
+                'description' => NULL,
             ),
-            384 => 
+            380 => 
             array (
                 'id' => 430,
                 'order_id' => 41,
                 'qty' => 30,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 55,
+                'description' => NULL,
             ),
-            385 => 
+            381 => 
             array (
                 'id' => 431,
                 'order_id' => 41,
                 'qty' => 100,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 56,
+                'description' => NULL,
             ),
-            386 => 
+            382 => 
             array (
                 'id' => 432,
                 'order_id' => 41,
                 'qty' => 200,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 57,
+                'description' => NULL,
             ),
-            387 => 
+            383 => 
             array (
                 'id' => 433,
                 'order_id' => 41,
                 'qty' => 8,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 58,
+                'description' => NULL,
             ),
-            388 => 
+            384 => 
             array (
                 'id' => 434,
                 'order_id' => 41,
                 'qty' => 35,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 59,
+                'description' => NULL,
             ),
-            389 => 
+            385 => 
             array (
                 'id' => 435,
                 'order_id' => 41,
                 'qty' => 50,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 60,
+                'description' => NULL,
             ),
-            390 => 
+            386 => 
             array (
                 'id' => 436,
                 'order_id' => 41,
                 'qty' => 125,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 61,
+                'description' => NULL,
             ),
-            391 => 
+            387 => 
             array (
                 'id' => 437,
                 'order_id' => 41,
                 'qty' => 50,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 62,
+                'description' => NULL,
             ),
-            392 => 
+            388 => 
             array (
                 'id' => 438,
                 'order_id' => 41,
                 'qty' => 80,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 63,
+                'description' => NULL,
             ),
-            393 => 
+            389 => 
             array (
                 'id' => 439,
                 'order_id' => 41,
                 'qty' => 75,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 64,
+                'description' => NULL,
             ),
-            394 => 
+            390 => 
             array (
                 'id' => 440,
                 'order_id' => 41,
                 'qty' => 50,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 65,
+                'description' => NULL,
             ),
-            395 => 
+            391 => 
             array (
                 'id' => 441,
                 'order_id' => 41,
                 'qty' => 10,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 66,
+                'description' => NULL,
             ),
-            396 => 
+            392 => 
             array (
                 'id' => 442,
                 'order_id' => 41,
                 'qty' => 15,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 657,
+                'description' => NULL,
             ),
-            397 => 
+            393 => 
             array (
                 'id' => 443,
                 'order_id' => 41,
                 'qty' => 30,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 658,
+                'description' => NULL,
             ),
-            398 => 
+            394 => 
             array (
                 'id' => 444,
                 'order_id' => 41,
                 'qty' => 25,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 659,
+                'description' => NULL,
             ),
-            399 => 
+            395 => 
             array (
                 'id' => 445,
                 'order_id' => 41,
                 'qty' => 50,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 660,
+                'description' => NULL,
             ),
-            400 => 
+            396 => 
             array (
                 'id' => 446,
                 'order_id' => 42,
                 'qty' => 25,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 467,
+                'description' => NULL,
             ),
-            401 => 
+            397 => 
             array (
                 'id' => 447,
                 'order_id' => 42,
                 'qty' => 75,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 661,
+                'description' => NULL,
             ),
-            402 => 
+            398 => 
             array (
                 'id' => 448,
                 'order_id' => 42,
                 'qty' => 100,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 662,
+                'description' => NULL,
             ),
-            403 => 
+            399 => 
             array (
                 'id' => 449,
                 'order_id' => 42,
                 'qty' => 100,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 663,
+                'description' => NULL,
             ),
-            404 => 
+            400 => 
             array (
                 'id' => 450,
                 'order_id' => 42,
                 'qty' => 150,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 664,
+                'description' => NULL,
             ),
-            405 => 
+            401 => 
             array (
                 'id' => 451,
                 'order_id' => 42,
                 'qty' => 50,
                 'unit_price' => 69255,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 665,
+                'description' => NULL,
             ),
-            406 => 
+            402 => 
             array (
                 'id' => 452,
                 'order_id' => 43,
                 'qty' => 5,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 468,
+                'description' => NULL,
             ),
-            407 => 
+            403 => 
             array (
                 'id' => 453,
                 'order_id' => 43,
                 'qty' => 20,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 681,
+                'description' => NULL,
             ),
-            408 => 
+            404 => 
             array (
                 'id' => 454,
                 'order_id' => 43,
                 'qty' => 5,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 682,
+                'description' => NULL,
             ),
-            409 => 
+            405 => 
             array (
                 'id' => 455,
                 'order_id' => 43,
                 'qty' => 15,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 683,
+                'description' => NULL,
             ),
-            410 => 
+            406 => 
             array (
                 'id' => 456,
                 'order_id' => 43,
                 'qty' => 16,
                 'unit_price' => 73872,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 684,
+                'description' => NULL,
             ),
-            411 => 
+            407 => 
             array (
                 'id' => 457,
                 'order_id' => 44,
                 'qty' => 10,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 470,
+                'description' => NULL,
             ),
-            412 => 
+            408 => 
             array (
                 'id' => 458,
                 'order_id' => 44,
                 'qty' => 100,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 666,
+                'description' => NULL,
             ),
-            413 => 
+            409 => 
             array (
                 'id' => 459,
                 'order_id' => 44,
                 'qty' => 50,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 667,
+                'description' => NULL,
             ),
-            414 => 
+            410 => 
             array (
                 'id' => 460,
                 'order_id' => 44,
                 'qty' => 75,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 668,
+                'description' => NULL,
             ),
-            415 => 
+            411 => 
             array (
                 'id' => 461,
                 'order_id' => 44,
                 'qty' => 50,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 669,
+                'description' => NULL,
             ),
-            416 => 
+            412 => 
             array (
                 'id' => 462,
                 'order_id' => 44,
                 'qty' => 10,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 670,
+                'description' => NULL,
             ),
-            417 => 
+            413 => 
             array (
                 'id' => 463,
                 'order_id' => 44,
                 'qty' => 15,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 671,
+                'description' => NULL,
             ),
-            418 => 
+            414 => 
             array (
                 'id' => 464,
                 'order_id' => 44,
                 'qty' => 15,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 672,
+                'description' => NULL,
             ),
-            419 => 
+            415 => 
             array (
                 'id' => 465,
                 'order_id' => 44,
                 'qty' => 30,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 673,
+                'description' => NULL,
             ),
-            420 => 
+            416 => 
             array (
                 'id' => 466,
                 'order_id' => 44,
                 'qty' => 2,
                 'unit_price' => 74334,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 674,
+                'description' => NULL,
             ),
-            421 => 
+            417 => 
             array (
                 'id' => 467,
                 'order_id' => 45,
                 'qty' => 30,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 469,
+                'description' => NULL,
             ),
-            422 => 
+            418 => 
             array (
                 'id' => 468,
                 'order_id' => 45,
                 'qty' => 25,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 676,
+                'description' => NULL,
             ),
-            423 => 
+            419 => 
             array (
                 'id' => 469,
                 'order_id' => 45,
                 'qty' => 5,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 677,
+                'description' => NULL,
             ),
-            424 => 
+            420 => 
             array (
                 'id' => 470,
                 'order_id' => 45,
                 'qty' => 15,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 678,
+                'description' => NULL,
             ),
-            425 => 
+            421 => 
             array (
                 'id' => 471,
                 'order_id' => 45,
                 'qty' => 15,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 679,
+                'description' => NULL,
             ),
-            426 => 
+            422 => 
             array (
                 'id' => 472,
                 'order_id' => 45,
                 'qty' => 10,
                 'unit_price' => 76950,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 680,
+                'description' => NULL,
             ),
-            427 => 
+            423 => 
             array (
                 'id' => 473,
                 'order_id' => 46,
                 'qty' => 336,
                 'unit_price' => 18000,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 651,
+                'description' => NULL,
             ),
-            428 => 
+            424 => 
             array (
                 'id' => 474,
                 'order_id' => 46,
                 'qty' => 416,
                 'unit_price' => 18000,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 652,
+                'description' => NULL,
             ),
-            429 => 
+            425 => 
             array (
                 'id' => 475,
                 'order_id' => 46,
                 'qty' => 376,
                 'unit_price' => 18000,
+                'cm_price' => 0,
                 'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
                 'product_feature_id' => 653,
+                'description' => NULL,
+            ),
+            426 => 
+            array (
+                'id' => 476,
+                'order_id' => 40,
+                'qty' => 0,
+                'unit_price' => 0,
+                'cm_price' => 0,
+                'shipment_estimated' => '2022-04-03',
+                'product_id' => NULL,
+                'product_feature_id' => 91,
+                'description' => NULL,
+            ),
+            427 => 
+            array (
+                'id' => 477,
+                'order_id' => 47,
+                'qty' => 300,
+                'unit_price' => 2200,
+                'cm_price' => 0,
+                'shipment_estimated' => '2022-12-30',
+                'product_id' => NULL,
+                'product_feature_id' => 118,
+                'description' => 'Lorem ipsum dos santos',
+            ),
+            428 => 
+            array (
+                'id' => 479,
+                'order_id' => 50,
+                'qty' => 9,
+                'unit_price' => 11700,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 153,
+                'description' => 'Testign',
+            ),
+            429 => 
+            array (
+                'id' => 480,
+                'order_id' => 51,
+                'qty' => 4611,
+                'unit_price' => 44800,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 165,
+                'description' => 'Desription',
+            ),
+            430 => 
+            array (
+                'id' => 481,
+                'order_id' => 51,
+                'qty' => 4611,
+                'unit_price' => 44800,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 166,
+                'description' => 'Decs',
+            ),
+            431 => 
+            array (
+                'id' => 482,
+                'order_id' => 51,
+                'qty' => 4611,
+                'unit_price' => 44800,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 167,
+                'description' => 'scsc',
+            ),
+            432 => 
+            array (
+                'id' => 483,
+                'order_id' => 54,
+                'qty' => 20,
+                'unit_price' => 19820,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 168,
+                'description' => NULL,
+            ),
+            433 => 
+            array (
+                'id' => 484,
+                'order_id' => 54,
+                'qty' => 107,
+                'unit_price' => 44145,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 169,
+                'description' => NULL,
+            ),
+            434 => 
+            array (
+                'id' => 485,
+                'order_id' => 55,
+                'qty' => 77,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 40,
+                'description' => NULL,
+            ),
+            435 => 
+            array (
+                'id' => 486,
+                'order_id' => 55,
+                'qty' => 77,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 41,
+                'description' => NULL,
+            ),
+            436 => 
+            array (
+                'id' => 487,
+                'order_id' => 55,
+                'qty' => 154,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 42,
+                'description' => NULL,
+            ),
+            437 => 
+            array (
+                'id' => 488,
+                'order_id' => 55,
+                'qty' => 154,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 43,
+                'description' => NULL,
+            ),
+            438 => 
+            array (
+                'id' => 489,
+                'order_id' => 55,
+                'qty' => 231,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 44,
+                'description' => NULL,
+            ),
+            439 => 
+            array (
+                'id' => 490,
+                'order_id' => 55,
+                'qty' => 231,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 45,
+                'description' => NULL,
+            ),
+            440 => 
+            array (
+                'id' => 491,
+                'order_id' => 55,
+                'qty' => 309,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 46,
+                'description' => NULL,
+            ),
+            441 => 
+            array (
+                'id' => 492,
+                'order_id' => 55,
+                'qty' => 309,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 47,
+                'description' => NULL,
+            ),
+            442 => 
+            array (
+                'id' => 493,
+                'order_id' => 55,
+                'qty' => 154,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 48,
+                'description' => NULL,
+            ),
+            443 => 
+            array (
+                'id' => 494,
+                'order_id' => 55,
+                'qty' => 154,
+                'unit_price' => 25000,
+                'cm_price' => 10000,
+                'shipment_estimated' => '2022-12-22',
+                'product_id' => NULL,
+                'product_feature_id' => 49,
+                'description' => NULL,
+            ),
+            444 => 
+            array (
+                'id' => 495,
+                'order_id' => 56,
+                'qty' => 100,
+                'unit_price' => 100,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 13,
+                'description' => NULL,
+            ),
+            445 => 
+            array (
+                'id' => 496,
+                'order_id' => 56,
+                'qty' => 100,
+                'unit_price' => 100,
+                'cm_price' => 0,
+                'shipment_estimated' => '1970-01-01',
+                'product_id' => NULL,
+                'product_feature_id' => 14,
+                'description' => NULL,
             ),
         ));
         

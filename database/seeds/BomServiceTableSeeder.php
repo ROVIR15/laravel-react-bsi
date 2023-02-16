@@ -80,6 +80,20 @@ class BomServiceTableSeeder extends Seeder
                 'product_id' => 47,
                 'unit_price' => 1000.0,
             ),
+            9 => 
+            array (
+                'id' => 11,
+                'bom_id' => 32,
+                'product_id' => 48,
+                'unit_price' => 1000.0,
+            ),
+            10 => 
+            array (
+                'id' => 12,
+                'bom_id' => 32,
+                'product_id' => 47,
+                'unit_price' => 1000.0,
+            ),
         ));
         
         

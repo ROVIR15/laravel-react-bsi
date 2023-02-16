@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -89,6 +89,37 @@ function Invoice() {
     }
   });
 
+  /**
+   * Handling Data Grid for a InvoiceTerm BOM
+   */
+
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
+
+  const handleEditInvoiceTermRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        const data = new Object();
+        data[editedColumnName] = editRowData[editedColumnName].value;
+
+        API.updateInvoiceTerm(editedIds, data, function (res) {
+          alert(JSON.stringify(res));
+        });
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
   // GET DATA from spesific id
   React.useEffect(() => {
     if (!id) return undefined;
@@ -102,7 +133,10 @@ function Invoice() {
             invoice_id: res.data.id,
             po_number: generateInvSerialNumber(res.data, 2),
             sold_to: res.data.sold_to.id,
-            invoice_date: res.data.invoice_date
+            invoice_date: res.data.invoice_date,
+            due_date: res.data.due_date,
+            tax: res.data.tax,
+            description: res.data.description
           });
           let _data = _partyAddress(res.data.party);
           setSelectedValueSO({
@@ -111,6 +145,7 @@ function Invoice() {
             postal_code: _data.postal_code
           });
           setStatus(res.data?.status[0]?.invoice_status_type_id);
+          setRowsInvoiceTerm(res.data.terms)
           changeData(res.data);
         }
       });
@@ -257,12 +292,62 @@ function Invoice() {
     }
   };
 
+  //Invoice Terms
+  const [rowsInvoiceTerm, setRowsInvoiceTerm] = useState([]);
+  const columnsInvoiceTerm = React.useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'term_description', headerName: 'Term Description', editable: true, width: 350 },
+    { field: 'term_value', headerName: 'Value', editable: true, type: 'number' },
+    {
+      field: 'value_type',
+      headerName: 'Type',
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['Percentage', 'Number']
+    }
+  ]);
+
+  const handleAddInvoiceTerm = () => {
+    let a = {
+      id: rowsInvoiceTerm.length + 1,
+      invoice_id: id,
+      invoice_item_id: null,
+      term_description: 'contoh. Potongan',
+      term_value: 0,
+      value_type: 'Percentage'
+    };
+    try {
+      API.insertInvoiceTerm(a, function(res){
+        if(!res) return;
+        if(!res.success) throw new Error('failed to add invoice term');
+        else alert('success')
+      })
+    } catch (error) {
+      alert(error);
+    }
+    handleUpdateInvoiceTerm();
+  };
+
+  const handleUpdateInvoiceTerm = () => {
+    try {
+      API.getInvoiceTermByInvoice(id, function(res){
+        if(!res) return;
+        if(isEmpty(res.data)) throw new Error('failed to get data');
+        else {
+          setRowsInvoiceTerm(res.data);
+        }
+      })
+    } catch (error) {
+      alert(error);
+    }
+  }
+
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={1} direction="row">
           <Grid item xs={6}>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Info" />
 
               <CardContent>
@@ -272,24 +357,38 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={6}>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Date" />
               <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="invoice_date"
-                  type="date"
-                  placeholder="invoice_date"
-                  {...getFieldProps('invoice_date')}
-                  error={Boolean(touched.invoice_date && errors.invoice_date)}
-                  helperText={touched.invoice_date && errors.invoice_date}
-                />
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    fullWidth
+                    autoComplete="invoice_date"
+                    type="date"
+                    placeholder="invoice_date"
+                    {...getFieldProps('invoice_date')}
+                    error={Boolean(touched.invoice_date && errors.invoice_date)}
+                    helperText={touched.invoice_date && errors.invoice_date}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="due_date"
+                    type="number"
+                    placeholder="due_date"
+                    {...getFieldProps('due_date')}
+                    error={Boolean(touched.due_date && errors.due_date)}
+                    helperText={touched.due_date && errors.due_date}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">Hari</InputAdornment>
+                    }}
+                  />
+                </Stack>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item xs={12}>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Information" />
               <CardContent>
                 <Paper>
@@ -354,6 +453,7 @@ function Invoice() {
                       <Tab label="Description" value="1" />
                       <Tab label="Finance" value="2" />
                       <Tab label="Vendor Bills Status" value="3" />
+                      <Tab label="Terms" value="4" />
                     </TabList>
                   </Box>
 
@@ -401,6 +501,15 @@ function Invoice() {
 
                       <Button onClick={handleSubmitCompletionStatus}> Update </Button>
                     </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="4">
+                    <DataGrid
+                      columns={columnsInvoiceTerm}
+                      rows={rowsInvoiceTerm}
+                      handleAddRow={handleAddInvoiceTerm}
+                      onEditRowsModelChange={handleEditInvoiceTermRowsModelChange}
+                    />
                   </TabPanel>
                 </TabContext>
               </CardContent>

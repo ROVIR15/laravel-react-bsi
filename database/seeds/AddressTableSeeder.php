@@ -167,6 +167,16 @@ class AddressTableSeeder extends Seeder
                 'street' => 'Jalan Soekarno Hatta KM. 31, Kel. Randugunting, Kec. Bergas',
                 'postal_code' => 50661,
             ),
+            15 => 
+            array (
+                'id' => 16,
+                'party_id' => 17,
+                'city' => 'Malan',
+                'province' => 'Jawa Tengah',
+                'country' => 'Indonesia',
+                'street' => 'Jl. Bandulan Bar. No.36, Bandulan, Kec. Suku2',
+                'postal_code' => 12314,
+            ),
         ));
         
         

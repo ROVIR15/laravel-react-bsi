@@ -527,6 +527,51 @@ class MonitoringBsiCuttingTableSeeder extends Seeder
                 'created_at' => NULL,
                 'updated_at' => NULL,
             ),
+            34 => 
+            array (
+                'id' => 47,
+                'spread_id' => 0,
+                'date' => '2023-01-04',
+                'po_number' => '00',
+                'sales_order_id' => 3,
+                'order_id' => 3,
+                'order_item_id' => 8,
+                'product_feature_id' => 16,
+                'category_name' => NULL,
+                'output' => 10,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
+            35 => 
+            array (
+                'id' => 48,
+                'spread_id' => 0,
+                'date' => '2022-12-21',
+                'po_number' => '22',
+                'sales_order_id' => 34,
+                'order_id' => 45,
+                'order_item_id' => 1,
+                'product_feature_id' => 469,
+                'category_name' => NULL,
+                'output' => 10,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
+            36 => 
+            array (
+                'id' => 49,
+                'spread_id' => 0,
+                'date' => '2022-12-21',
+                'po_number' => '22',
+                'sales_order_id' => 34,
+                'order_id' => 45,
+                'order_item_id' => 2,
+                'product_feature_id' => 676,
+                'category_name' => NULL,
+                'output' => 10,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+            ),
         ));
         
         

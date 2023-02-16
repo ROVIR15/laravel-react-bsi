@@ -18,6 +18,7 @@ Route::get('/', function () {
 // Route::view('/app/{path?}', 'app');
 Route::view('/{path?}', 'dashboard')->where('path', '.*');
 Route::view('/dashboard/{path?}', 'dashboard')->where('path', '.*');
+Route::view('/downloads/{path?}', 'dashboard')->where('path', '.*');
 // Auth::routes([
 //   '/secret/register' => true,
 //   '/secret/login' => false

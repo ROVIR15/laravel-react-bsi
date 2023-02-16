@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 
 import {
   Box,
@@ -31,7 +31,7 @@ import API from '../../../../helpers';
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
-import { partyArrangedData } from '../../../../helpers/data';
+import { _partyAddress } from '../../../../helpers/data';
 
 import { orderItemToInvoiceItem } from '../utils';
 
@@ -61,16 +61,16 @@ function Invoice() {
   const formik = useFormik({
     initialValues: {
       order_id: 0,
-      purchase_order_id: 0,
       sold_to: 0,
       invoice_date: '',
+      due_date: 0,
       description: '',
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 2, tax: 11, description: '' };
+      let _data = { ...values, type: 2, terms: rowsInvoiceTerm, items, type: 2};
       try {
-        API.insertSalesInvoice(_data, (res) => {
+        API.insertVendorBills(_data, (res) => {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed to store data');
           else alert('success');
@@ -127,6 +127,7 @@ function Invoice() {
       active = false;
     };
   }, [loading]);
+
   const handleClose = (name, value) => {
     setOpenDialogBox(false);
     setOptions([]);
@@ -139,8 +140,6 @@ function Invoice() {
       setFieldValue('sold_to', value.id);
     }
   };
-
-  //   END
 
   /**
    * Data Grid for Invoice Item
@@ -182,7 +181,6 @@ function Invoice() {
   });
 
   // AutoComplete
-
   const [optionsAutoComplete, setOptionsAutoComplete] = React.useState([]);
   const [selectedShipment, setSelectedShipment] = React.useState({
     id: '',
@@ -191,11 +189,72 @@ function Invoice() {
   const [openAutoComplete, setOpenAutoComplete] = React.useState(false);
   const loadingAutoComplete = openAutoComplete && optionsAutoComplete.length === 0;
 
+  //Invoice Terms
+  const [rowsInvoiceTerm, setRowsInvoiceTerm] = useState([]);
+  const columnsInvoiceTerm = React.useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'term_description', headerName: 'Term Description', editable: true, width: 350 },
+    { field: 'term_value', headerName: 'Value', editable: true, type: 'number' },
+    {
+      field: 'value_type',
+      headerName: 'Type',
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['Percentage', 'Number']
+    }
+  ]);
+
+  const handleAddInvoiceTerm = () => {
+    setRowsInvoiceTerm([
+      ...rowsInvoiceTerm,
+      {
+        id: rowsInvoiceTerm.length + 1,
+        invoice_id: null,
+        invoice_item_id: null,
+        term_description: 'contoh. Potongan',
+        term_value: 0
+      }
+    ]);
+  };
+
+  //Data Grid Component of BOM
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
+
+  const handleEditRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        setRowsInvoiceTerm((prevItems) => {
+          const itemToUpdateIndex = parseInt(editedIds[0]);
+
+          return prevItems.map((row, index) => {
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+            } else {
+              return row;
+            }
+          });
+        });
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
   React.useEffect(() => {
     let active = true;
 
     (async () => {
-      API.getShipment(`?shipment_type=1`, (res) => {
+      API.getPurchaseOrderWhereNotInvoicedYet((res) => {
         if (!res) return;
         if (!res.data) {
           setOptionsAutoComplete([]);
@@ -203,8 +262,8 @@ function Invoice() {
           let _done = res.data.map(function (item) {
             return {
               id: item.id,
-              name: item.order?.purchase_order?.po_number,
-              date: item.delivery_date
+              order_id: item.order_id,
+              name: item?.po_number
             };
           });
           setOptionsAutoComplete(_done);
@@ -218,10 +277,29 @@ function Invoice() {
   }, [loadingAutoComplete]);
 
   const changeData = (payload) => {
-    let invoiceItems = orderItemToInvoiceItem(payload.items);
-    setFieldValue('purchase_order_id', payload.order.purchase_order.id);
-    setFieldValue('order_id', payload.order.id);
-    setItems(invoiceItems);
+    const temp = payload.order_item.map((item, index) => {
+      return {
+        id: index + 1,
+        order_item_id: item.id,
+        shipment_item_id: null,
+        name: item.product_feature.product.goods.name,
+        size: item.product_feature.size,
+        color: item.product_feature.color,
+        qty: item.qty,
+        amount: item.unit_price,
+        total: item.qty * item.unit_price
+      };
+    });
+
+    setFieldValue('order_id', payload.order_id);
+    setFieldValue('sold_to', payload.bought_from.id);
+    let _data = _partyAddress(payload.bought_from);
+    setSelectedValueSO({
+      name: _data.name,
+      address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
+      postal_code: _data.postal_code
+    });
+    setItems(temp);
   };
 
   const {
@@ -241,7 +319,7 @@ function Invoice() {
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={3} direction="row">
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Info" />
 
               <CardContent>
@@ -250,6 +328,7 @@ function Invoice() {
                   autoComplete="shipment_id"
                   type="text"
                   label="Shipment ID"
+                  order_id={values.order_id}
                   error={Boolean(touched.shipment_id && errors.shipment_id)}
                   helperText={touched.shipment_id && errors.shipment_id}
                   options={optionsAutoComplete}
@@ -262,24 +341,38 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Date" />
               <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="invoice_date"
-                  type="date"
-                  placeholder="invoice_date"
-                  {...getFieldProps('invoice_date')}
-                  error={Boolean(touched.invoice_date && errors.invoice_date)}
-                  helperText={touched.invoice_date && errors.invoice_date}
-                />
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    fullWidth
+                    autoComplete="invoice_date"
+                    type="date"
+                    placeholder="invoice_date"
+                    {...getFieldProps('invoice_date')}
+                    error={Boolean(touched.invoice_date && errors.invoice_date)}
+                    helperText={touched.invoice_date && errors.invoice_date}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="due_date"
+                    type="number"
+                    placeholder="due_date"
+                    {...getFieldProps('due_date')}
+                    error={Boolean(touched.due_date && errors.due_date)}
+                    helperText={touched.due_date && errors.due_date}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">Hari</InputAdornment>
+                    }}
+                  />
+                </Stack>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item xs={12}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Information" />
               <CardContent>
                 <Paper>
@@ -343,6 +436,7 @@ function Invoice() {
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                       <Tab label="Description" value="1" />
                       <Tab label="Finance" value="2" />
+                      <Tab label="Terms" value="3" />
                     </TabList>
                   </Box>
 
@@ -374,6 +468,15 @@ function Invoice() {
                         helperText={touched.tax && errors.tax}
                       />
                     </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="3">
+                    <DataGrid
+                      columns={columnsInvoiceTerm}
+                      rows={rowsInvoiceTerm}
+                      handleAddRow={handleAddInvoiceTerm}
+                      onEditRowsModelChange={handleEditRowsModelChange}
+                    />
                   </TabPanel>
                 </TabContext>
               </CardContent>

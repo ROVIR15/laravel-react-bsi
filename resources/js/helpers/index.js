@@ -1756,6 +1756,13 @@ const main = {
         cb(err.response);
       });
     },
+    getPurchaseOrderWhereNotInvoicedYet(cb){
+      axios.get( uri + '/purchase-order-v2' ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     // Purchasing - purchase-requisition
     insertPurchaseRequisiton(_data, cb){
         if(!_data) {
@@ -2296,6 +2303,16 @@ const main = {
           console.error('data not found');
       }
       axios.post( uri + '/invoice', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    insertVendorBills(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/vendor-bills', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
@@ -2849,6 +2866,111 @@ const main = {
         console.error('data not found');
       }
       axios.post( uri + '/reconcile-post-po', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getAnalysisCapacity(params=null, cb){
+      axios.get( uri + '/capacity-sewing/' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getReadyMadeGarmentValuation(params=null, cb){
+      axios.get( uri + '/finished-garment-valuation' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getCurrencyData(cb){
+      axios.get( uri + '/currency-exchange' ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    updateNewCurrency(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+      axios.post( uri + '/currency-exchange', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    }, 
+    insertFinancialOrderBudget(data, cb){
+      if(!data){
+        console.error('data not found');
+      }
+      axios.post( uri + '/financial-order-budget', { payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deleteFinancialOrderBudget(id, cb){
+      if(!id){
+        console.error('data not found');
+      }
+      axios.delete( uri + '/financial-order-budget/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getFinancialOrderBudget(cb){
+      axios.get( uri + '/financial-order-budget').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getAFinancialOrderBudget(id, cb){
+      if(!id){
+        console.error('data not found');
+      }
+      axios.get( uri + '/financial-order-budget/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    updateFinancialOrderBudget(id, data, cb){
+      if(!id || data){
+        console.error('data not found');
+      }
+      axios.put( uri + '/financial-order-budget/' + id,  { payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    insertNewFinancialBudgetOrderItem(data, cb){
+      if(!data){
+        console.error('data not found');
+      }
+      axios.post( uri + '/insert-fob-item', { payload: data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    deleteFinancialBudgetOrderItem(id, cb){
+      if(!id){
+        console.error('data not found');
+      }
+      axios.delete( uri + '/delete-fob-item/' + {id}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getAOrderBudgetReport(param=null, cb){
+      axios.get( uri + '/order-budget-planning' + param).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err);

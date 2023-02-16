@@ -688,6 +688,61 @@ class BomStatusTableSeeder extends Seeder
                 'created_at' => '2022-10-29 02:51:40',
                 'updated_at' => '2022-10-29 02:51:40',
             ),
+            61 => 
+            array (
+                'id' => 66,
+                'user_id' => 2,
+                'bom_id' => 25,
+                'status_type' => 'Review',
+                'final_price' => 27000.0,
+                'description' => NULL,
+                'created_at' => '2022-11-02 02:44:57',
+                'updated_at' => '2022-11-02 02:44:57',
+            ),
+            62 => 
+            array (
+                'id' => 67,
+                'user_id' => 2,
+                'bom_id' => 25,
+                'status_type' => 'Review',
+                'final_price' => 27000.0,
+                'description' => NULL,
+                'created_at' => '2022-11-02 02:45:09',
+                'updated_at' => '2022-11-02 02:45:09',
+            ),
+            63 => 
+            array (
+                'id' => 68,
+                'user_id' => 2,
+                'bom_id' => 25,
+                'status_type' => 'Review',
+                'final_price' => 29000.0,
+                'description' => NULL,
+                'created_at' => '2022-11-02 02:46:29',
+                'updated_at' => '2022-11-02 02:46:29',
+            ),
+            64 => 
+            array (
+                'id' => 69,
+                'user_id' => 2,
+                'bom_id' => 25,
+                'status_type' => 'Review',
+                'final_price' => 29000.0,
+                'description' => NULL,
+                'created_at' => '2022-11-02 02:47:55',
+                'updated_at' => '2022-11-02 02:47:55',
+            ),
+            65 => 
+            array (
+                'id' => 70,
+                'user_id' => 2,
+                'bom_id' => 25,
+                'status_type' => 'Review',
+                'final_price' => 30000.0,
+                'description' => NULL,
+                'created_at' => '2022-11-02 02:48:10',
+                'updated_at' => '2022-11-02 02:48:10',
+            ),
         ));
         
         

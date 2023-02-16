@@ -97,4 +97,63 @@ class MonitoringFinishedGoodsController extends Controller
         ], 500);
       }
     }
+
+    /**
+     * Get the valuation from ready-made garment
+     * 
+     * @param \App\X $X
+     * @return \Illuminate\Http\Response
+     */
+
+    public function getReadyMadeGarmentValuation(Request $request)
+    {
+      $monthYear = $request->query('monthYear');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try 
+      {
+        $query = FinishedGoods::select('id', 'date', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))
+                  ->with(['check_shipment' => function($query) use ($month, $year){
+                    return $query->whereHas('shipment', function($query) use ($month, $year){
+                      return $query
+                              ->whereYear('delivery_date', $year)
+                              ->whereMonth('delivery_date', $month);
+                    });
+                  }])
+                  ->with('order_item')
+                  ->whereHas('check_shipment', function($query) use ($year, $month)
+                  {
+                    return $query
+                    ->whereHas('shipment', function($query) use ($month, $year){
+                      $query
+                      ->whereMonth('delivery_date', $month)
+                      ->whereYear('delivery_date', $year);
+                    })
+                    ->whereNotNull('order_item_id');
+                  })
+                  ->whereYear('date', $year)
+                  ->whereMonth('date', $month)
+                  ->groupBy('order_item_id')
+                  ->get();
+      }
+
+      catch (\Throwable $th) 
+      {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+      return response()->json([
+        'data' => $query
+      ]);
+    }
 }

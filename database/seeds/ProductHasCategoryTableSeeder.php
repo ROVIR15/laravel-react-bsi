@@ -470,7 +470,7 @@ class ProductHasCategoryTableSeeder extends Seeder
             75 => 
             array (
                 'product_id' => 90,
-                'product_category_id' => 3,
+                'product_category_id' => 1,
                 'product_sub_category_id' => NULL,
             ),
             76 => 
@@ -974,7 +974,7 @@ class ProductHasCategoryTableSeeder extends Seeder
             159 => 
             array (
                 'product_id' => 174,
-                'product_category_id' => 1,
+                'product_category_id' => 3,
                 'product_sub_category_id' => NULL,
             ),
             160 => 
@@ -1034,7 +1034,7 @@ class ProductHasCategoryTableSeeder extends Seeder
             169 => 
             array (
                 'product_id' => 184,
-                'product_category_id' => 1,
+                'product_category_id' => 3,
                 'product_sub_category_id' => NULL,
             ),
             170 => 
@@ -1358,6 +1358,18 @@ class ProductHasCategoryTableSeeder extends Seeder
             223 => 
             array (
                 'product_id' => 240,
+                'product_category_id' => 1,
+                'product_sub_category_id' => NULL,
+            ),
+            224 => 
+            array (
+                'product_id' => 241,
+                'product_category_id' => 5,
+                'product_sub_category_id' => NULL,
+            ),
+            225 => 
+            array (
+                'product_id' => 90,
                 'product_category_id' => 1,
                 'product_sub_category_id' => NULL,
             ),

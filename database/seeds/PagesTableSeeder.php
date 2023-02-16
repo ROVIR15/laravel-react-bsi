@@ -131,6 +131,24 @@ class PagesTableSeeder extends Seeder
                 'name' => 'shipment',
                 'description' => NULL,
             ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'pages',
+                'description' => NULL,
+            ),
+            20 => 
+            array (
+                'id' => 21,
+                'name' => 'factory',
+                'description' => NULL,
+            ),
+            21 => 
+            array (
+                'id' => 23,
+                'name' => 'finance',
+                'description' => 'hahaha',
+            ),
         ));
         
         

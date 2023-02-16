@@ -49,6 +49,14 @@ function GoodsLayout() {
           >
             Display
           </Button>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to={getPathname(pathname.split('/')) + '/Reconcile'}
+            startIcon={<Icon icon={hardDriveFill} />}
+          >
+            Reconcile
+          </Button>
         </Stack>
     </Stack>
     {isBeginning()}

@@ -80,10 +80,14 @@ function Goods() {
         },
         category
       };
-      API.updateGoods(id, _new, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+      try {
+        API.updateGoods(id, _new, function (res) {
+          if (res.success) alert('success');
+          else throw new Error('failed to load data');
+        });          
+      } catch (error) {
+        alert(error);
+      }
       setSubmitting(false);
     }
   });

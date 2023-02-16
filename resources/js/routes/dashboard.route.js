@@ -38,7 +38,8 @@ import {
   PaymentLayout,
   FinanceAccountLayout,
   FinanceAccountTransactionLayout,
-  OrderPLAnalysisLayout
+  OrderPLAnalysisLayout,
+  FinancialOrderBudgetLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -85,6 +86,7 @@ import AddMP from '../pages/dashboard/ManufacturePlanning/add';
 import AddFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/new';
 import AddFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/new';
 import AddPayment from '../pages/dashboard/Finance/Payment/new';
+import AddFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -125,6 +127,7 @@ import DisplayFinanceAccountTransaction from '../pages/dashboard/Finance/Finance
 import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
 
 import DisplayOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/display';
+import DisplayFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/display';
 
 // Show Pages
 import ShowBuyer from '../pages/dashboard/Buyer/show';
@@ -159,6 +162,7 @@ import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
 // import ShowFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/show';
 import ShowPayment from '../pages/dashboard/Finance/Payment/show';
+import ShowFinanceOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/show';
 
 //Document
 import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
@@ -173,7 +177,8 @@ import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document'
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
-// import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
+import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
+import ReportFinancialOrderBudgetPlanning from '../pages/dashboard/Finance/OrderBudgetPlanning/report';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
@@ -217,6 +222,8 @@ import MonitoringProduction from '../pages/dashboard/Monitoring/Production';
 import AddOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/new';
 import ShowOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/show';
 
+import CurrencyExchange from '../pages/dashboard/Finance/CurrencyExchange';
+
 import { 
   IncomingLayout,
   OutgoingLayout,
@@ -224,9 +231,10 @@ import {
 } from '../pages/dashboard/Shipment'
 import { Typography } from '@mui/material';
 
-// import ValuationTable from '../components/experiment/Valuation';
+import ValuationTable from '../components/experiment/Valuation';
 // import TestVendor from '../pages/dashboard/Vendor/test';
-// import Capacity from '../components/experiment/capacity';
+import Capacity from '../components/experiment/capacity';
+import Layout from '../layouts/Layout';
 
 export default function TestRouter() {
 
@@ -603,7 +611,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowVInv /> },
             { path: 'display', element: <DisplayVInv /> },
             { path: 'document/:id', element: <DocumentVINV/>},
-            // { path: 'report', element: <ReportVB/>}
+            { path: 'report', element: <ReportVB/>}
           ]
         },
         {
@@ -632,6 +640,20 @@ export default function TestRouter() {
             // { path: ':id', element: <ShowFinanceAccountTransaction /> },
             { path: 'display', element: <DisplayFinanceAccountTransaction /> }
           ]
+        },
+        {
+          path: 'finance/order-budget-planning',
+          element: <FinancialOrderBudgetLayout/>,
+          children: [
+            { path: 'add', element: <AddFinanceOrderBudgetPlanning /> },
+            { path: 'report/:id', element: <ReportFinancialOrderBudgetPlanning /> },
+            { path: ':id', element: <ShowFinanceOrderBudgetPlanning /> },
+            { path: 'display', element: <DisplayFinanceOrderBudgetPlanning /> }
+          ]
+        },
+        {
+          path: 'finance/currency',
+          element: <CurrencyExchange />
         },
         // Finance
         { 
@@ -727,14 +749,14 @@ export default function TestRouter() {
             { path: 'display/:id', element: <UserTest /> }
           ]
         },
-        // {
-        //   path: 'capacity',
-        //   element: <Capacity />
-        // },
-        // {
-        //   path: 'goods-valuation',
-        //   element: <ValuationTable />
-        // },
+        {
+          path: 'capacity',
+          element: <Capacity />
+        },
+        {
+          path: 'goods-valuation',
+          element: <ValuationTable />
+        },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     }

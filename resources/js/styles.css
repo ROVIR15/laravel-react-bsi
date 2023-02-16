@@ -356,7 +356,6 @@ template {
 body,
 html {
   color: #666;
-  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6em;
@@ -371,7 +370,6 @@ h4,
 h5,
 h6 {
   clear: both;
-  color: #111;
   padding: 0;
   margin: 0 0 20px 0;
   font-weight: 500;
