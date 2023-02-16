@@ -254,6 +254,7 @@ function ValuationTable({ placeHolder }) {
 
             return {
               id: index + 1,
+              imageUrl: item?.order_item?.product_feature?.product?.goods?.imageUrl,
               order_id: item?.order_id,
               order_item_id: item?.order_item_id,
               qty: item?.total_output,

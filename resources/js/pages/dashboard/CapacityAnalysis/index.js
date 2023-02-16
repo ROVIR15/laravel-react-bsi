@@ -234,7 +234,6 @@ export default function CapacityAnalysis() {
         if (!res) return;
         if (!res.success) throw new Error('data cannot be retrieve');
         else {
-          alert('gotcha!');
           let data = processData(res.data);
           setData(data);
         }
