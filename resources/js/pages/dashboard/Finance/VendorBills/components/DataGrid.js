@@ -15,7 +15,7 @@ export default function ValidateRowModelControlGrid({
   handleAddRow,
   ...rest
 }) {
-  return (
+	return (
     <Box
       sx={{
         height: 400,
@@ -35,14 +35,6 @@ export default function ValidateRowModelControlGrid({
         }
       }}
     >
-      <Stack sx={{ width: '100%', mb: 1 }} direction="row" alignItems="flex-start" columnGap={1}>
-        <Button size="small" onClick={handleUpdateAllRows} disabled={!handleUpdateAllRows ? true : false}>
-          Update
-        </Button>
-        <Button size="small" onClick={handleAddRow} disabled={!handleAddRow ? true : false}>
-          Add Data
-        </Button>
-      </Stack>{' '}
       <DataGrid
         rows={rows ? rows : mrows}
         columns={columns ? columns : estColumns}

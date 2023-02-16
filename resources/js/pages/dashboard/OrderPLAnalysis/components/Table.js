@@ -133,6 +133,11 @@ function TableD({ list, type, placeHolder, selected, setSelected }) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
+    // API.deleteSalesOrder(id, function(res){
+    //   if(res.success) setSalesOrderData([]);
+    // }).catch(function(error){
+    //   alert('error')
+    // });
   };
 
   const handleDeleteSelected = () => {

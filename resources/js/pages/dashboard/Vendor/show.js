@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Page from '../../../components/Page';
 import {
   Box,
@@ -21,42 +21,25 @@ import { LoadingButton } from '@mui/lab';
 import AutoComplete from './components/AutoComplete';
 import { BuyerSchema } from '../../../helpers/FormerSchema';
 
-// Data Grid
-import DataGrid from '../../../components/DataGrid';
-import { GridActionsCellItem } from '@mui/x-data-grid';
-//Icons
-import { Icon } from '@iconify/react';
-import trash2Outline from '@iconify/icons-eva/trash-2-outline';
-
-// utils
-import { isEmpty } from 'lodash';
-import {
-  _getAddressInfoOfParty,
-  _getEmailInfoOfParty,
-  _getPhoneNumberInfoOfParty
-} from '../../../helpers/data';
-
 //api
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
 import { _partyArrangedData } from '../../../helpers/data';
 
+function getEditPathname(array) {
+  if (!array.length > 5) return null;
+  return '/' + array[1] + '/' + array[2] + `/${array[3]}`;
+}
+
 const initialVendor = {
   id: 0,
   name: '',
   role: ''
-};
+}
 
 function Vendor() {
   const { id } = useParams();
-  const [editRowsModel, setEditRowsModel] = React.useState({});
-  const [editRowData, setEditRowData] = React.useState({});
-
-  const [addressList, setAddressList] = React.useState([]);
-  const [emailList, setEmailList] = React.useState([]);
-  const [phoneNumberList, setPhoneNumberList] = React.useState([]);
-
-  const [choosen, setChoosen] = React.useState(initialVendor);
+  const [choosen, setChoosen] = React.useState(initialVendor)
 
   const formik = useFormik({
     initialValues: {
@@ -90,11 +73,7 @@ function Vendor() {
           npwp
         },
         address: {
-          street,
-          city,
-          province,
-          country,
-          postal_code
+          street, city, province, country, postal_code
         },
         roles: {
           role_type_id,
@@ -103,12 +82,12 @@ function Vendor() {
       };
       try {
         API.editVendor(id, data, function (res) {
-          if (!res) return;
-          if (!res.success) throw new Error('failed');
+          if(!res) return;
+          if(!res.success) throw new Error('failed');
           else alert('succees');
-        });
+        });          
       } catch (error) {
-        alert(error);
+        alert(error)
       }
       setSubmitting(false);
     }
@@ -128,30 +107,19 @@ function Vendor() {
 
   useEffect(() => {
     if (!id) return;
-    handleUpdateVendorInfo(id);
-  }, [id]);
 
-  // handle update data
-  const handleUpdateVendorInfo = (_id) => {
     try {
       API.getVendor(id, function (res) {
-        if (!res) return;
-        if (!res.data) throw new Error(`failed to load data vendor ${id}`);
+        if(!res) return;
+        if(!res.data) throw new Error(`failed to load data vendor ${id}`)
         const { role_type, ...arrangedData } = _partyArrangedData(res.data);
-        let _addr = _getAddressInfoOfParty(res?.address);
-        let _emailList = _getEmailInfoOfParty(res?.email);
-        let _phoneNumberList = _getPhoneNumberInfoOfParty(res?.phone_number);
-
-        setAddressList(_addr);
-        setEmailList(_emailList);
-        setPhoneNumberList(_phoneNumberList);
         setValues(arrangedData);
         setChoosen(role_type);
-      });
+      });        
     } catch (error) {
-      alert(error);
+      alert(error)
     }
-  };
+  }, [id]);
 
   /**
    * TAB Panel
@@ -184,7 +152,7 @@ function Vendor() {
         } else {
           setOptions(res.data);
         }
-      });
+      });        
     } catch (error) {
       alert(error);
     }
@@ -197,203 +165,6 @@ function Vendor() {
   const handleChangeAC = async (newValue) => {
     setChoosen(newValue);
     await setFieldValue('role_type_id', newValue.id);
-  };
-
-  /**
-   * Handle Data Grid Actions
-   *
-   * In this data grid user can actively doing CRUD.
-   */
-
-  const columnsAddress = useMemo(
-    () => [
-      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
-      { field: 'street', width: 500, headerName: 'Alamat', editable: true },
-      { field: 'city', width: 300, headerName: 'Kota', editable: true },
-      { field: 'province', width: 300, headerName: 'Provinsi', editable: true },
-      { field: 'country', width: 300, headerName: 'Negara', editable: true },
-      { field: 'postal_code', width: 300, headerName: 'Postal', type: 'number', editable: true },
-      { field: 'contact_mechanism_id', width: 50, headerName: 'Postal', hide: true },
-      {
-        field: 'actions',
-        type: 'actions',
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
-            onClick={deleteData(params?.row?.contact_mechanism_id)}
-            showInMenu
-          />
-        ]
-      }
-    ],
-    [deleteData]
-  );
-
-  const columnsEmail = useMemo(
-    () => [
-      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
-      { field: 'name', width: 200, headerName: 'Alamat', editable: true },
-      { field: 'contact_mechanism_id', width: 50, headerName: 'Postal', hide: true },
-      {
-        field: 'actions',
-        type: 'actions',
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
-            onClick={deleteData(params?.row?.contact_mechanism_id)}
-            showInMenu
-          />
-        ]
-      }
-    ],
-    [deleteData]
-  );
-
-  const columnsPhoneNumber = useMemo(
-    () => [
-      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
-      { field: 'number', width: 200, headerName: 'Alamat', editable: true },
-      { field: 'contact_mechanism_id', width: 50, headerName: 'Postal', hide: true },
-      {
-        field: 'actions',
-        type: 'actions',
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
-            onClick={deleteData(params?.row?.contact_mechanism_id)}
-            showInMenu
-          />
-        ]
-      }
-    ],
-    [deleteData]
-  );
-
-  const deleteData = useCallback(
-    (id) => () => {
-      try {
-        API.deleteContactMechanism(id, function (res) {
-          if (!res) return;
-          if (!res.success) throw new Error('failed to delete data');
-          else alert('deleted');
-        });
-      } catch (error) {
-        alert(error);
-      }
-
-      handleUpdateBuyerInfo(id);
-      // API.deleteProductFeature(id, function (res) {
-      //   handleUpdateAllRows();
-      // }).catch(function (error) {
-      //   alert('Fail');
-      // });
-    },
-    []
-  );
-
-  const handleEditRowsModelChange = React.useCallback(
-    (model) => {
-      const editedIds = Object.keys(model);
-      // user stops editing when the edit model is empty
-      if (editedIds.length === 0) {
-        const editedIds = Object.keys(editRowsModel);
-        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
-
-        const data = new Object();
-        data[editedColumnName] = editRowData[editedColumnName].value;
-        // update on firebase
-
-        try {
-          if (parseInt(valueTab) === 1) {
-            API.updateContactMechanismPostalAddress(editedIds, data, function (res) {
-              if (!res) return;
-              if (!res.success) throw new Error('failed to update an data');
-              else alert('succesfully address update data');
-            });
-          }
-
-          if (parseInt(valueTab) === 2) {
-            API.updateContactMechanismEmail(editedIds, data, function (res) {
-              if (!res) return;
-              if (!res.success) throw new Error('failed to update an data');
-              else alert('succesfully email update data');
-            });
-          }
-
-          if (parseInt(valueTab) === 3) {
-            API.updateContactMechanismTelecommunicationNumber(editedIds, data, function (res) {
-              if (!res) return;
-              if (!res.success) throw new Error('failed to update an data');
-              else alert('succesfully phone number update data');
-            });
-          }
-        } catch (error) {
-          alert('error');
-        }
-      } else {
-        setEditRowData(model[editedIds[0]]);
-      }
-
-      setEditRowsModel(model);
-    },
-    [editRowData]
-  );
-
-  const handleAddRow = (type) => {
-    let _new = {
-      type,
-      party_id: id
-    };
-
-    const _newAddress = {
-      street: 'Jl. .....',
-      city: 'Kota...',
-      province: 'Provinsi...',
-      country: 'Negara....',
-      postal_code: '59XX....'
-    };
-
-    const _newE = {
-      name: 'here_your_email@mail.com'
-    };
-
-    const _newNumber = {
-      number: '081XXXXXX'
-    };
-
-    try {
-      if (!type) throw new Error('Please defined a type');
-
-      if (type === 1) {
-        _new = { ..._new, ..._newNumber };
-      }
-
-      if (type === 2) {
-        _new = { ..._new, ..._newE };
-      }
-
-      if (type === 3) {
-        _new = { ..._new, ..._newAddress };
-      }
-
-      API.insertContactMechanism(_new, (res) => {
-        if (!res) return;
-        if (!res.success) throw new Error('failed to store data');
-        else {
-          alert('succesfully insert new data');
-        }
-      });
-    } catch (error) {
-      alert(error);
-    }
-
-    handleUpdateBuyerInfo(id);
   };
 
   return (
@@ -456,36 +227,95 @@ function Vendor() {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                           <Tab label="Address" value="1" />
-                          <Tab label="Email" value="2" />
-                          <Tab label="Number" value="3" />
+                          <Tab label="Contact Information" value="2" />
                         </TabList>
                       </Box>
 
                       <TabPanel value="1">
-                        <DataGrid
-                          columns={columnsAddress}
-                          rows={addressList}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleAddRow={() => handleAddRow(3)}
-                        />
+                        <Grid container spacing={2}>
+                          <Grid item xs={12}>
+                            <TextField
+                              fullWidth
+                              autoComplete="street"
+                              type="text"
+                              label="Alamat"
+                              {...getFieldProps('street')}
+                              error={Boolean(touched.street && errors.street)}
+                              helperText={touched.street && errors.street}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="city"
+                              type="text"
+                              label="Kota"
+                              {...getFieldProps('city')}
+                              error={Boolean(touched.city && errors.city)}
+                              helperText={touched.city && errors.city}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="province"
+                              type="text"
+                              label="Provinsi"
+                              {...getFieldProps('province')}
+                              error={Boolean(touched.province && errors.province)}
+                              helperText={touched.province && errors.province}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="country"
+                              type="text"
+                              label="Country"
+                              {...getFieldProps('country')}
+                              error={Boolean(touched.country && errors.country)}
+                              helperText={touched.country && errors.country}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="postal code"
+                              type="text"
+                              label="Postal Code"
+                              {...getFieldProps('postal_code')}
+                              error={Boolean(touched.postal_code && errors.postal_code)}
+                              helperText={touched.postal_code && errors.postal_code}
+                            />
+                          </Grid>
+                        </Grid>
                       </TabPanel>
 
                       <TabPanel value="2">
-                        <DataGrid
-                          columns={columnsEmail}
-                          rows={emailList}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleAddRow={() => handleAddRow(2)}
-                        />
-                      </TabPanel>
-
-                      <TabPanel value="3">
-                        <DataGrid
-                          columns={columnsPhoneNumber}
-                          rows={phoneNumberList}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleAddRow={() => handleAddRow(1)}
-                        />
+                        <Grid container spacing={3}>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="email"
+                              type="email"
+                              label="Email address"
+                              {...getFieldProps('email')}
+                              error={Boolean(touched.email && errors.email)}
+                              helperText={touched.email && errors.email}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              autoComplete="phone number"
+                              type="text"
+                              label="Phone Number"
+                              {...getFieldProps('phone_number')}
+                              error={Boolean(touched.phone_number && errors.phone_number)}
+                              helperText={touched.phone_number && errors.phone_number}
+                            />
+                          </Grid>
+                        </Grid>
                       </TabPanel>
                     </TabContext>
                   </Box>

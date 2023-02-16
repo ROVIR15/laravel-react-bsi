@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Page from '../../../components/Page';
 import { 
   Box,
@@ -21,13 +21,8 @@ import AutoComplete from './components/AutoComplete';
 //api
 import API from '../../../helpers';
 import { BuyerSchema } from '../../../helpers/FormerSchema';
-import useAPIRoles from '../../../context/checkRoles';
-import { useNavigate } from 'react-router-dom';
 
 function Buyer() {
-  const { isUserAllowedToInsertion, isNotReady } = useAPIRoles();
-  const navigate = useNavigate();
-
   const [choosen, setChoosen] = React.useState({
     id: 0, name: '', role: ''
   });
@@ -46,50 +41,22 @@ function Buyer() {
       phone_number: '',
     },
     validationSchema: BuyerSchema,
-    onSubmit: ({ name, npwp, email, address, phone_number, city, province, country, postal_code, role_type_id}) => {
+    onSubmit: ({ name, npwp, email, address, city, province, country, postal_code, role_type_id}) => {
       const data = {
-        name, email, npwp, type: choosen.name, role_type_id
-      }
-
-      const postal_address = {
-          contact_mechanism_type_id: 3,
-          type: 1,
+        name, email, npwp, type: choosen.name, address: {
           street: address,
           city, province, country, postal_code
+        }, role_type_id
       }
-
-      const telecommunication_number = {
-        contact_mechanism_type_id: 1,
-        type: 3,
-        number: phone_number
-      }
-
-      const _email = {
-        contact_mechanism_type_id: 2,
-        type: 2,
-        name: email
-      }
-
-      try {
-        API.setBuyer(data, function(res){
-          if(!res) return undefined;
-          if(!res.success) throw new Error('failed to store');
-          API.insertContactMechanism({...postal_address, party_id: res.party});
-          API.insertContactMechanism({...telecommunication_number, party_id: res.party});
-          API.insertContactMechanism({..._email, party_id: res.party});
-
-        });
-      } catch (error) {
-        alert(error)
-      }
-
-
+      API.setBuyer(data, function(res){
+        
+        alert(JSON.stringify(res));
+      });
       setSubmitting(false);
-      // handleReset()
     }
   })
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue, handleReset } = formik;
+  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   // Auto Complete
   const [open, setOpen] = React.useState(false);
@@ -132,6 +99,7 @@ function Buyer() {
   const handleChangeTab = (event, newValue) => {
     setValueTab(newValue);
   };
+
 
   return (
     <Page>

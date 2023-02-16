@@ -119,16 +119,6 @@ export default function BasicTable({ payload, terms, tax }) {
               <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
             </NoBorderCell>
           </TableRow>
-          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-            <NoBorderCell align="right" colSpan={4}>
-              <BoxStyle />
-              <Typography variant="body1"> Taxes </Typography>
-            </NoBorderCell>
-            <NoBorderCell align="right">
-              <BoxStyle />
-              <Typography variant="body1"> {`${tax}%`} </Typography>
-            </NoBorderCell>
-          </TableRow>
           {terms.map(function (item) {
             return (
               <TableRow
@@ -148,6 +138,16 @@ export default function BasicTable({ payload, terms, tax }) {
               </TableRow>
             );
           })}
+          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <NoBorderCell align="right" colSpan={4}>
+              <BoxStyle />
+              <Typography variant="body1"> Taxes </Typography>
+            </NoBorderCell>
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1"> {`${tax}%`} </Typography>
+            </NoBorderCell>
+          </TableRow>
           <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <NoBorderCell align="right" colSpan={4}>
               <BoxStyle />

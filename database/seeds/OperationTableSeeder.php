@@ -39,6 +39,16 @@ class OperationTableSeeder extends Seeder
             ),
             2 => 
             array (
+                'id' => 7,
+                'name' => 'Cressida-Line1',
+                'seq' => 0,
+                'work_center_id' => 5,
+                'bom_id' => 8,
+                'created_at' => '2022-10-05 02:21:08',
+                'updated_at' => NULL,
+            ),
+            3 => 
+            array (
                 'id' => 8,
                 'name' => 'KKS Emba-DAREN',
                 'seq' => 0,
@@ -47,7 +57,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-05 03:24:01',
                 'updated_at' => NULL,
             ),
-            3 => 
+            4 => 
             array (
                 'id' => 9,
                 'name' => 'KKS Emba-EDDIE',
@@ -57,7 +67,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-05 03:24:39',
                 'updated_at' => NULL,
             ),
-            4 => 
+            5 => 
             array (
                 'id' => 10,
                 'name' => 'KKS Emba-DEVANO',
@@ -67,7 +77,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-05 03:25:31',
                 'updated_at' => NULL,
             ),
-            5 => 
+            6 => 
             array (
                 'id' => 11,
                 'name' => 'Sewing-Line-Menshirt',
@@ -77,7 +87,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-13 03:14:27',
                 'updated_at' => NULL,
             ),
-            6 => 
+            7 => 
             array (
                 'id' => 12,
                 'name' => 'Sewing-Line-Menshirt',
@@ -87,7 +97,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-13 03:17:14',
                 'updated_at' => NULL,
             ),
-            7 => 
+            8 => 
             array (
                 'id' => 13,
                 'name' => 'SEWING_KKS_EMBA_SPIRNGBOXANDTOMSKY',
@@ -97,7 +107,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-14 00:25:08',
                 'updated_at' => NULL,
             ),
-            8 => 
+            9 => 
             array (
                 'id' => 14,
                 'name' => 'BIENSI_TOMTAYLOR_NOV',
@@ -107,7 +117,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-14 05:59:58',
                 'updated_at' => NULL,
             ),
-            9 => 
+            10 => 
             array (
                 'id' => 16,
                 'name' => 'II_AOI T785, T797, T796, S169, T819',
@@ -117,7 +127,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-18 05:12:43',
                 'updated_at' => NULL,
             ),
-            10 => 
+            11 => 
             array (
                 'id' => 17,
                 'name' => 'I_ISG_Celana_Okt_2022',
@@ -127,7 +137,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-18 08:50:01',
                 'updated_at' => NULL,
             ),
-            11 => 
+            12 => 
             array (
                 'id' => 18,
                 'name' => 'II_ISG_Celana_Okt_2022',
@@ -137,7 +147,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-19 04:55:07',
                 'updated_at' => NULL,
             ),
-            12 => 
+            13 => 
             array (
                 'id' => 20,
                 'name' => 'Finley, Eagle, dan Gates Pants',
@@ -147,7 +157,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-19 06:34:04',
                 'updated_at' => NULL,
             ),
-            13 => 
+            14 => 
             array (
                 'id' => 21,
                 'name' => 'Jacket Winslow dan Pegasus',
@@ -157,7 +167,7 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-19 06:48:43',
                 'updated_at' => NULL,
             ),
-            14 => 
+            15 => 
             array (
                 'id' => 23,
                 'name' => 'ISG-JOEYRIDAPANTS-SEWING',
@@ -167,7 +177,17 @@ class OperationTableSeeder extends Seeder
                 'created_at' => '2022-10-26 07:15:21',
                 'updated_at' => NULL,
             ),
-            15 => 
+            16 => 
+            array (
+                'id' => 24,
+                'name' => 'ISG-JOEYRIDAPANTS-SEWING',
+                'seq' => 0,
+                'work_center_id' => 26,
+                'bom_id' => 24,
+                'created_at' => '2022-10-26 07:15:39',
+                'updated_at' => NULL,
+            ),
+            17 => 
             array (
                 'id' => 25,
                 'name' => 'ISG-JOEYRIDAPANTS-SEWING-500',
@@ -175,26 +195,6 @@ class OperationTableSeeder extends Seeder
                 'work_center_id' => 27,
                 'bom_id' => 25,
                 'created_at' => '2022-10-26 07:21:00',
-                'updated_at' => NULL,
-            ),
-            16 => 
-            array (
-                'id' => 26,
-                'name' => 'I_ISG_Celana_Okt_2022',
-                'seq' => 0,
-                'work_center_id' => 22,
-                'bom_id' => 8,
-                'created_at' => '2022-11-14 05:36:39',
-                'updated_at' => NULL,
-            ),
-            17 => 
-            array (
-                'id' => 28,
-                'name' => 'EMBA-DEON.2',
-                'seq' => 2,
-                'work_center_id' => 32,
-                'bom_id' => 32,
-                'created_at' => '2022-12-13 04:06:09',
                 'updated_at' => NULL,
             ),
         ));

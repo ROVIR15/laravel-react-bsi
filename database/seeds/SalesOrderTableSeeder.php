@@ -25,10 +25,10 @@ class SalesOrderTableSeeder extends Seeder
                 'sold_to' => 2,
                 'ship_to' => 2,
                 'issue_date' => '2022-09-08',
-                'delivery_date' => '2022-09-14',
+                'delivery_date' => '2022-09-13',
                 'valid_thru' => '2022-09-10',
                 'created_at' => '2022-09-06 02:53:49',
-                'updated_at' => '2022-12-20 14:37:38',
+                'updated_at' => '2022-09-06 02:53:49',
             ),
             1 => 
             array (
@@ -111,17 +111,30 @@ class SalesOrderTableSeeder extends Seeder
             7 => 
             array (
                 'id' => 10,
-                'po_number' => '002CMTXHDE/SUP/HDEJKT/CMT ACC/22',
-                'order_id' => 47,
+                'po_number' => 'KKS-EMBA05-UIVER',
+                'order_id' => 15,
                 'sold_to' => 2,
-                'ship_to' => 7,
-                'issue_date' => '2022-10-10',
-                'delivery_date' => '2022-10-11',
-                'valid_thru' => '2022-10-24',
+                'ship_to' => 2,
+                'issue_date' => '2022-09-01',
+                'delivery_date' => '2022-09-30',
+                'valid_thru' => '2022-09-30',
                 'created_at' => '2022-09-19 03:04:50',
-                'updated_at' => '2022-12-20 14:29:15',
+                'updated_at' => '2022-09-19 03:04:50',
             ),
             8 => 
+            array (
+                'id' => 11,
+                'po_number' => 'KKS-EMBA06-STAR',
+                'order_id' => 16,
+                'sold_to' => 2,
+                'ship_to' => 2,
+                'issue_date' => '2022-09-01',
+                'delivery_date' => '2022-09-30',
+                'valid_thru' => '2022-09-10',
+                'created_at' => '2022-09-19 03:25:54',
+                'updated_at' => '2022-09-19 03:25:54',
+            ),
+            9 => 
             array (
                 'id' => 12,
                 'po_number' => 'KKS-EMBA07-BS07',
@@ -134,7 +147,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-09-20 03:31:42',
                 'updated_at' => '2022-09-20 03:31:42',
             ),
-            9 => 
+            10 => 
             array (
                 'id' => 13,
                 'po_number' => 'KKS-DEVANO-10',
@@ -147,7 +160,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-05 02:03:22',
                 'updated_at' => '2022-10-05 02:03:22',
             ),
-            10 => 
+            11 => 
             array (
                 'id' => 14,
                 'po_number' => 'KKS-DAREN',
@@ -160,7 +173,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-05 02:53:54',
                 'updated_at' => '2022-10-05 02:53:54',
             ),
-            11 => 
+            12 => 
             array (
                 'id' => 15,
                 'po_number' => 'KKS-EDDIE',
@@ -173,7 +186,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-05 03:00:51',
                 'updated_at' => '2022-10-05 03:00:51',
             ),
-            12 => 
+            13 => 
             array (
                 'id' => 16,
                 'po_number' => 'KKS-EMBA-10/22-ANGKASA',
@@ -186,7 +199,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-06 06:57:50',
                 'updated_at' => '2022-10-06 06:57:50',
             ),
-            13 => 
+            14 => 
             array (
                 'id' => 17,
                 'po_number' => 'Cressida-01',
@@ -199,7 +212,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-07 02:23:27',
                 'updated_at' => '2022-10-07 02:23:27',
             ),
-            14 => 
+            15 => 
             array (
                 'id' => 18,
                 'po_number' => 'AOI_J735_OKT_2022',
@@ -212,7 +225,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-14 01:04:07',
                 'updated_at' => '2022-10-14 01:04:07',
             ),
-            15 => 
+            16 => 
             array (
                 'id' => 20,
                 'po_number' => 'AOI_J736_OKT_2022',
@@ -225,7 +238,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-14 01:05:11',
                 'updated_at' => '2022-10-14 01:05:11',
             ),
-            16 => 
+            17 => 
             array (
                 'id' => 21,
                 'po_number' => 'KKS-EMBA-PRODIGY-JULY',
@@ -238,7 +251,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-14 01:10:29',
                 'updated_at' => '2022-10-14 01:10:29',
             ),
-            17 => 
+            18 => 
             array (
                 'id' => 22,
                 'po_number' => 'KKS-EMBA-SPRINGBOX',
@@ -251,7 +264,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-21 09:11:29',
                 'updated_at' => '2022-10-21 09:11:29',
             ),
-            18 => 
+            19 => 
             array (
                 'id' => 23,
                 'po_number' => 'ISG-TOMMY BAHAMA-1-OCT-22',
@@ -264,7 +277,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-24 02:33:47',
                 'updated_at' => '2022-10-24 02:33:47',
             ),
-            19 => 
+            20 => 
             array (
                 'id' => 24,
             'po_number' => '003CRS/HMKBS.HB026X-MM (CS 25)',
@@ -277,7 +290,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-27 04:40:44',
                 'updated_at' => '2022-10-27 04:40:44',
             ),
-            20 => 
+            21 => 
             array (
                 'id' => 26,
             'po_number' => '004CRS/HMKAL.HB030X-MM (CR 21)',
@@ -290,7 +303,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-27 04:43:05',
                 'updated_at' => '2022-10-27 04:43:05',
             ),
-            21 => 
+            22 => 
             array (
                 'id' => 27,
             'po_number' => '004CRS/HMKAL.HB030X-MM (CR 21)',
@@ -303,7 +316,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-27 04:43:15',
                 'updated_at' => '2022-10-27 04:43:15',
             ),
-            22 => 
+            23 => 
             array (
                 'id' => 28,
             'po_number' => '005CRS/HMKJS.KB016X-MM (KB 21)',
@@ -316,7 +329,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-27 04:44:04',
                 'updated_at' => '2022-10-27 04:44:04',
             ),
-            23 => 
+            24 => 
             array (
                 'id' => 29,
             'po_number' => '006CRS/HMKBL.HB066X-MM (CS 74)',
@@ -329,7 +342,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-28 07:59:07',
                 'updated_at' => '2022-10-28 07:59:07',
             ),
-            24 => 
+            25 => 
             array (
                 'id' => 30,
                 'po_number' => '003-AOI-T797-PON 1624368',
@@ -342,7 +355,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-28 08:42:13',
                 'updated_at' => '2022-10-28 08:42:13',
             ),
-            25 => 
+            26 => 
             array (
                 'id' => 31,
                 'po_number' => '004-AOI-T785-PON 1624320',
@@ -355,7 +368,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-29 02:47:27',
                 'updated_at' => '2022-10-29 02:47:27',
             ),
-            26 => 
+            27 => 
             array (
                 'id' => 32,
                 'po_number' => '005-AOI-T796-PON 1624367',
@@ -368,7 +381,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-29 02:48:21',
                 'updated_at' => '2022-10-29 02:48:21',
             ),
-            27 => 
+            28 => 
             array (
                 'id' => 33,
                 'po_number' => '006-AOI-T819-PON 1624369',
@@ -381,7 +394,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-29 02:48:34',
                 'updated_at' => '2022-10-29 02:48:34',
             ),
-            28 => 
+            29 => 
             array (
                 'id' => 34,
                 'po_number' => '007-AOI-S169-PON 1624377',
@@ -394,7 +407,7 @@ class SalesOrderTableSeeder extends Seeder
                 'created_at' => '2022-10-29 02:48:54',
                 'updated_at' => '2022-10-29 02:48:54',
             ),
-            29 => 
+            30 => 
             array (
                 'id' => 35,
             'po_number' => '002CRS/HMKBS.HB073X-MM (BS 6/CS 6)',
@@ -406,19 +419,6 @@ class SalesOrderTableSeeder extends Seeder
                 'valid_thru' => '2022-11-03',
                 'created_at' => '2022-10-29 06:10:20',
                 'updated_at' => '2022-10-29 06:10:20',
-            ),
-            30 => 
-            array (
-                'id' => 36,
-                'po_number' => 'KKS-EMBA03',
-                'order_id' => 55,
-                'sold_to' => 2,
-                'ship_to' => 2,
-                'issue_date' => '2022-09-01',
-                'delivery_date' => '2022-09-30',
-                'valid_thru' => '2022-09-16',
-                'created_at' => '2022-12-04 12:07:15',
-                'updated_at' => '2022-12-04 12:07:15',
             ),
         ));
         

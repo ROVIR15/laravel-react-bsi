@@ -1,88 +1,37 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { Icon } from '@iconify/react';
+import SquareOutline from '@iconify/icons-eva/square-outline';
+import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
+
+const icon = <Icon icon={SquareOutline}/>;
+const checkedIcon = <Icon icon={CheckSquareOutline} />;
 
 // Components
 import API from '../../../../helpers';
-
 import Table from './Table';
-import { _orderItem } from '../../../../helpers/data';
-import { IconButton, Stack } from '@mui/material';
-import closeCircle from '@iconify/icons-eva/close-outline';
+
+// Helpers
+import { optionProductFeature, productItemArrangedData } from '../../../../helpers/data'
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  p: 4
+  p: 4,
 };
 
-export default function BasicModal({ open, type, handleClose, selected, setSelected }) {
-  const [value, setValue] = React.useState([]);
-  const loading = open && value.length === 0;
-
-  React.useEffect(() => {
-    if (!open) setValue([]);
-    if (!open) return;
-
-    if(type === 1){
-      try {
-        API.getPurchaseOrderList((res) => {
-          if (!res) return;
-          if (!res.data.length) {
-            setValue([]);
-          } else {
-            let ras = res.data.map((item) => ({
-              id: item.id,
-              order_id: item.order_id,
-              po_number: item.po_number,
-              qty: item?.sum[0]?.total_qty,
-              amount: item?.sum[0]?.total_money
-            }));
-            setValue(ras);
-          }
-        });
-      } catch (error) {
-        alert(error);
-      }  
-    } 
-
-    if(type === 2){
-      try {
-        API.getSalesOrderList((res) => {
-          if (!res) return;
-          if (!res.data.length) {
-            setValue([]);
-          } else {
-            let ras = res.data.map((item) => ({
-              id: item.id,
-              order_id: item.order_id,
-              po_number: item.po_number,
-              qty: item?.sum[0]?.total_qty,
-              amount: item?.sum[0]?.total_money
-            }));
-            setValue(ras);
-          }
-        });
-      } catch (error) {
-        alert(error);
-      }  
-    }
-
-    else return;
-  }, [open]);
-
-  const getSelectedOrderData = () => {
-    if(!type) return [];
-    if(type === 1) return selected[0];
-    if(type === 2) return selected[1];
-    else return [];
-  }
-
+export default function BasicModal({ payload, open, options, handleClose, update, items, setItems}) {
+  const [value, setValue] = React.useState([])
+  
   return (
     <div>
       <Modal
@@ -91,16 +40,10 @@ export default function BasicModal({ open, type, handleClose, selected, setSelec
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Order Item
-            </Typography>
-            <IconButton onClick={handleClose} color="error">
-              <Icon icon={closeCircle} />
-            </IconButton>
-          </Stack>
-
-          <Table list={value} type={type} selected={getSelectedOrderData()} setSelected={setSelected} />
+          <Typography onClick={handleClose} id="modal-modal-title" variant="h6" component="h2">
+            Select Facility
+          </Typography>
+          <Table list={options} update={update} selected={items} setSelected={setItems}/>
         </Card>
       </Modal>
     </div>

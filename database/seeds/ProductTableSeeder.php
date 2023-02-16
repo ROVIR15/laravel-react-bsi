@@ -1585,13 +1585,6 @@ class ProductTableSeeder extends Seeder
                 'part_id' => NULL,
                 'service_id' => NULL,
             ),
-            224 => 
-            array (
-                'id' => 241,
-                'goods_id' => 231,
-                'part_id' => NULL,
-                'service_id' => NULL,
-            ),
         ));
         
         

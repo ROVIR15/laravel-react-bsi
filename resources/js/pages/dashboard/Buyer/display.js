@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isEmpty } from 'lodash';
+import { filter, isArray } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -19,7 +19,6 @@ import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
 import { partyArrangedData } from '../../../helpers/data'
-import useAPIRoles from '../../../context/checkRoles';
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +35,7 @@ const TABLE_HEAD = [
 ];
 
 // ----------------------------------------------------------------------
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -76,8 +76,6 @@ function DisplayBuyer({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { data, isUserAllowedToDeletion, isUserAllowedToEdit } = useAPIRoles();
-
   useEffect(() => {
     function isEmpty(array){
       if(!Array.isArray(array)) return true;
@@ -94,7 +92,7 @@ function DisplayBuyer({ placeHolder }) {
         }
       });
     }
-  }, [data])
+  }, [buyerData])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -207,11 +205,7 @@ function DisplayBuyer({ placeHolder }) {
                       <TableCell align="left">{country}</TableCell>
                       <TableCell align="left">{postal_code}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu 
-                          id={id} 
-                          deleteActive={data?.delete}
-                          editActive={data?.edit}
-                          handleDelete={(event) => handleDeleteData(event, id)} />
+                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
                     </TableRow>
                   );

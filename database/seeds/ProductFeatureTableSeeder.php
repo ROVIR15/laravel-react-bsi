@@ -4779,14 +4779,6 @@ class ProductFeatureTableSeeder extends Seeder
                 'size' => '18',
                 'price_component_id' => NULL,
             ),
-            95 => 
-            array (
-                'id' => 685,
-                'product_id' => 241,
-                'color' => '1',
-                'size' => '1000',
-                'price_component_id' => NULL,
-            ),
         ));
         
         

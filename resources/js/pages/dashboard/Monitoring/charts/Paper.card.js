@@ -73,6 +73,7 @@ const TextThree = styled(Typography)(({theme}) => ({
 
 function Test({value, qty, expectedIncome, expectedOutput, percentage}) {
 
+
   const chartOptions = merge(BaseOptionChart(), {        
     plotOptions: {
       radialBar: {

@@ -252,10 +252,3 @@ Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
 
 Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
 Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
-
-Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
-
-Route::resource('financial-order-budget', 'FinancialOrderBudgetController')->only(['index', 'show', 'store', 'destroy']);
-Route::get('order-budget-planning', 'FinancialOrderBudgetController@getAReportOrderBudget');
-Route::post('insert-fob-item', 'FinancialOrderBudgetController@insertNewFinancialOrderBudgetItem');
-Route::delete('delete-fob-item/{id}', 'FinancialOrderBudgetController@detroyItem');

@@ -172,7 +172,7 @@ class InvoiceController extends Controller
             'shipment_id' => $key
           ]);
         }
-      
+
         $terms = [];
         foreach ($param['terms'] as $key) {
           # code...
@@ -186,7 +186,7 @@ class InvoiceController extends Controller
 
         InvoiceHasShipment::insert($hh);
         
-        //Check if invoice successfully created
+        //Create purchase order item
         if(!isset($invoice)) throw new Error('Invoice failed to Store');
         if(!isset($param['items'])) {
           return response()->json([
@@ -228,76 +228,6 @@ class InvoiceController extends Controller
         'success' => true,
         'param' => $param
       ], 200);
-    }
-
-    /**
-     * Store data on purchase vendor bills
-     * 
-     * 
-     */
-    public function storeVendorBills(Request $request)
-    {
-      $param = $request->all()['payload'];
-
-      try {
-        $invoice = Invoice::create([
-          'invoice_date' => $param['invoice_date'],
-          'order_id' => $param['order_id'],
-          'due_date' => $param['due_date'],
-          'sold_to' => $param['sold_to'],
-          'tax' => $param['tax'],
-          'description' => $param['description']
-        ]);
-
-        $terms = [];
-        if(!blank($param['terms'])){
-          foreach ($param['terms'] as $key) {
-            # code...
-            array_push($terms, [
-              'invoice_id' => $invoice['id'],
-              'term_description' => $key['term_description'],
-              'term_value' => $key['term_value'],
-              'value_type' => $key['value_type']
-            ]);
-          }  
-        }
-
-        if(!isset($param['items'])) {
-          return response()->json([
-            'success' => true
-          ]);
-        }
-        
-        $IRItems = [];
-        foreach($param['items'] as $key){
-          array_push($IRItems, [
-            'invoice_id' => $invoice->id,
-            'order_item_id' => $key['order_item_id'],
-            'amount' => $key['amount'],
-            'qty' => $key['qty']
-          ]);
-        }
-
-        InvoiceItem::insert($IRItems);
-
-        InvoiceTerm::insert($terms);
-
-        InvoiceHasType::create([
-          'invoice_id' => $invoice->id,
-          'invoice_type_id' => $param['type']
-        ]);
-
-      } catch (\Throwable $th) {
-        //throw $th;
-        return response()->json([
-          'success' => false,
-          'error' => $th->getMessage()
-        ]);
-      }
-
-      return response()->json([
-        'success' => true
-      ]);
     }
 
     /**
@@ -433,6 +363,7 @@ class InvoiceController extends Controller
         foreach ($date as $key) {
           array_push($_date, $key['invoice_date']);
         }
+
 
         $ss = Invoice::select(
                 'id',

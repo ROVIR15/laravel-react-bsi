@@ -22,11 +22,6 @@ class PersonTableSeeder extends Seeder
                 'id' => 1,
                 'description' => '',
             ),
-            1 => 
-            array (
-                'id' => 2,
-                'description' => '',
-            ),
         ));
         
         

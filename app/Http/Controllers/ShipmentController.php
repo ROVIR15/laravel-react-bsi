@@ -29,7 +29,9 @@ class ShipmentController extends Controller
       $type = $request->query('shipment_type');
       $monthYear = $request->query('monthYear');
 
+
       try {
+        //code...
         if(isset($monthYear)){    
           $monthYear = date_create($monthYear);
           $month = date_format($monthYear, 'm');

@@ -16,7 +16,6 @@ use App\Models\Party\Party;
 use App\Models\Party\PartyRoles;
 use App\Models\Party\Relationship;
 
-use App\Models\Party\PartyHasContactMechanism;
 use App\Http\Resources\Party\BuyerCollection;
 
 class VendorController extends Controller
@@ -95,14 +94,14 @@ class VendorController extends Controller
           'relationship_id' => 2
         ]);
 
-        // $_addr = Address::create([
-        //   'party_id' => $parties['id'],
-        //   'street' => $param['address']['street'],
-        //   'city' => $param['address']['city'],
-        //   'province' => $param['address']['province'],
-        //   'country' => $param['address']['country'],
-        //   'postal_code' => $param['address']['postal_code']
-        // ]);
+        $_addr = Address::create([
+          'party_id' => $parties['id'],
+          'street' => $param['address']['street'],
+          'city' => $param['address']['city'],
+          'province' => $param['address']['province'],
+          'country' => $param['address']['country'],
+          'postal_code' => $param['address']['postal_code']
+        ]);
 
         return response()->json([
           'success' => true,
@@ -126,17 +125,11 @@ class VendorController extends Controller
     {
       try {
         $data = Party::where('id', $id)->with('party_roles', 'address', 'organization', 'person')->get()[0];
-        $_addr = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
-          return $query->where('contact_mechanism_type_id', 3);
-        })->with('info_address')->get();
 
-        $_email = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
-          return $query->where('contact_mechanism_type_id', 2);
-        })->with('info_email')->get();
-
-        $_phone_number = PartyHasContactMechanism::where('party_id', $id)->whereHas('contact_mechanism', function($query) {
-          return $query->where('contact_mechanism_type_id', 1);
-        })->with('info_number')->get();
+        return response()->json([
+          "success" => true,
+          "data" => $data
+        ]);
 
       } catch (Exception $th) {
         return response()->json([
@@ -144,14 +137,6 @@ class VendorController extends Controller
           "error" => $th->getMessage()
         ], 500);
       }
-
-      return response()->json([
-        "success" => true,
-        "data" => $data,
-        "address" => $_addr,
-        "email" => $_email,
-        "phone_number" => $_phone_number
-      ]);
     }
 
     /**

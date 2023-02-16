@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
-
 use Illuminate\Http\Request;
 use App\Models\Party\ContactMechanism;
 use App\Models\Party\ContactMechanismType;
@@ -70,16 +68,16 @@ class ContactMechanismController extends Controller
 
         // Create Contact Mechanism First
         $_newCM = ContactMechanism::create([
-            'contact_mechanism_type_id' => $payload['type']
+            'contact_mechanism_type_id' => $payload['contact_mechanism_type_id']
         ]);
 
-        $haha = PartyHasContactMechanism::create([
+        PartyHasContactMechanism::create([
             'party_id' => $payload['party_id'],
             'contact_mechanism_id' => $_newCM['id']
         ]);
 
         // type 1 - postal address
-        if($payload['type'] === 3) {
+        if($payload['type'] === 1) {
             $_newPA = PostalAddress::create([
                 'street' => $payload['street'],
                 'contact_mechanism_id' => $_newCM['id'],
@@ -99,7 +97,7 @@ class ContactMechanismController extends Controller
         }
 
         // type 3 - telecommunication number
-        if($payload['type'] === 1) {
+        if($payload['type'] === 3) {
             $_newTN = TelecommunicationNumber::create([
                 'contact_mechanism_id' => $_newCM['id'],
                 'number' => $payload['number']
@@ -118,7 +116,7 @@ class ContactMechanismController extends Controller
       }
 
       return response()->json([
-        'success'=> $haha
+        'success'=> true
       ], 200);
     }
 
@@ -174,129 +172,12 @@ class ContactMechanismController extends Controller
     }
 
     /**
-     * Update the specified resource in storage
-     */
-    public function update_postal_address($id, Request $request)
-    {
-      $param = $request->all()['payload'];
-
-      try {
-        PostalAddress::find($id)->update($param);
-      } catch (\Throwable $th) {
-        return response()->json([
-          'success' => false,
-          'error' => $th->getMessage()
-        ]);
-      }
-
-      return response()->json([
-        'success' => true,
-      ]);
-    }
-
-    /**
-     * Update the specified resource in storage
-     */
-    public function update_email($id, Request $request)
-    {
-      $param = $request->all()['payload'];
-
-      try {
-        Email::find($id)->update($param);
-      } catch (\Throwable $th) {
-        return response()->json([
-          'success' => false,
-          'error' => $th->getMessage()
-        ]);
-      }
-
-      return response()->json([
-        'success' => true,
-      ]);
-    }
-
-    //
-    public function update_flag_contact_mechanism($id, Request $request)
-    {
-      $param = $request->all()['payload'];
-      $contact_mechanism = $request->query('contact_mechanism');
-      $type = $request->query('type');
-      $party = $request->query('party');
-
-      try {
-        //code...
-        if($type === "1")
-        {
-          // Update data related with id;
-          TelecommunicationNumber::find($id)->update($param);
-
-          // if there is update on flag
-          if(isset($param['flag']))
-          {
-            $phcm = PartyHasContactMechanism::select('contact_mechanism_id')
-                    ->whereHas('contact_mechanism', function ($query) use ($type){
-                      $query->where('contact_mechanism_type_id', $type);
-                    })
-                    ->where('party_id', $party)
-                    ->get();
-            
-            return response()->json($phcm);
-            // TelecommunicationNumber::whereIn('contact_mechanism_id' $phcm);
-          }
-        }
-
-        if($type === "2")
-        {
-          Email::find($id)->update($param);
-        }
-
-        if($type === "3")
-        {
-          PostalAddress::find($id)->update($param);
-        }
-        
-        else {
-          throw new Exception("Error Processing Request", 500);
-        }
-
-      } catch (\Throwable $th) {
-        //throw $th;
-
-        return response()->json([
-          'success' => false,
-          'error' => $th->getMessage()
-        ]);
-      }
-    }
-
-    /**
-     * Update the specified resource in storage
-     */
-    public function update_telecommunication_number($id, Request $request)
-    {
-      $param = $request->all()['payload'];
-
-      try {
-        TelecommunicationNumber::find($id)->update($param);
-      } catch (\Throwable $th) {
-        return response()->json([
-          'success' => false,
-          'error' => $th->getMessage()
-        ]);
-      }
-
-      return response()->json([
-        'success' => true,
-      ]);
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\X  $X
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
       try {
           //code...

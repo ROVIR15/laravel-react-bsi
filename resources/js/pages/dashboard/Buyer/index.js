@@ -17,8 +17,7 @@ import Display from './display';
 import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
 import Layout from '../../../layouts/Layout';
 
-import { useSnackbar } from 'notistack';
-import useAPIRoles from '../../../context/checkRoles';
+import { useSnackbar } from 'notistack'
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -27,7 +26,6 @@ function getPathname(array){
 
 function BuyerList() {
   const { pathname } = useLocation();
-  const { data, check, isNotReady, isAllowedToInsert } = useAPIRoles();
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -47,9 +45,8 @@ function BuyerList() {
         <Outlet/>
       )
     }
-  }
+  }  
 
-  console.log('check data roles is ready?', isNotReady);
 
   return (
     <Layout>
@@ -74,10 +71,6 @@ function BuyerList() {
           >
             Display
           </Button>
-          <Button
-            variant="contained"
-            onClick={check}
-          > Check Roles</Button>
           {/* <Button
             variant="contained"
             component='div'

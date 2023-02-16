@@ -232,10 +232,6 @@ const sidebarConfig = [
     path: '/dashboard/finance',
     children: [
       {
-        title: 'Order Budget Planning',
-        path: '/dashboard/finance/order-budget-planning'
-      },
-      {
         title: 'Vendor Bills',
         path: '/dashboard/finance/vendor-bills',
       },
@@ -254,10 +250,6 @@ const sidebarConfig = [
       {
         title: 'Payment',
         path: '/dashboard/finance/payment'
-      },
-      {
-        title: 'Currency Exchange Rate',
-        path: '/dashboard/finance/currency'
       }
     ]
   },
@@ -271,20 +263,8 @@ const sidebarConfig = [
         path: '/dashboard/finance/invoice/report',
       },
       {
-        title: 'Vendor Bills Report',
-        path: '/dashboard/finance/vendor-bills/report',
-      },
-      {
         title: 'Order P/L Analysis',
         path: '/dashboard/order-pl-analysis'
-      },
-      {
-        title: 'Factory Capacity',
-        path: '/dashboard/capacity'
-      },
-      {
-        title: 'Good Garment Valuation',
-        path: '/dashboard/goods-valuation'
       }
     ]
   },

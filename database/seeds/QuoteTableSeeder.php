@@ -602,19 +602,6 @@ class QuoteTableSeeder extends Seeder
                 'updated_at' => '2022-10-29 06:09:06',
                 'quote_type' => 'SO',
             ),
-            45 => 
-            array (
-                'id' => 54,
-                'po_number' => 'PON-1614941',
-                'party_id' => 6,
-                'ship_to' => 16,
-                'issue_date' => '2023-01-03',
-                'valid_thru' => '2023-01-06',
-                'delivery_date' => '2023-01-12',
-                'created_at' => '2023-01-02 07:24:53',
-                'updated_at' => '2023-01-02 07:24:53',
-                'quote_type' => 'PO',
-            ),
         ));
         
         
