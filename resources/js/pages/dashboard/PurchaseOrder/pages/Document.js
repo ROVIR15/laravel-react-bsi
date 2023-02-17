@@ -379,7 +379,7 @@ function FirstPage() {
           <IconButton>
             <Icon icon={editFill} width={20} height={20} />
           </IconButton>
-          <IconButton onClick={handleDownload}>
+          <IconButton onClick={handleDownload} disabled={isEmpty(valueReview)}>
             <Icon icon={downloadFill} width={20} height={20} />
           </IconButton>
         </div>
