@@ -267,6 +267,10 @@ const sidebarConfig = [
         path: '/dashboard/order-pl-analysis'
       },
       {
+        title: 'Running Order by Buyer',
+        path: '/dashboard/running-buyer-order'
+      },
+      {
         title: 'Factory Capacity',
         path: '/dashboard/capacity'
       },

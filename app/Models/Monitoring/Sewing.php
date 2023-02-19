@@ -39,6 +39,10 @@ class Sewing extends Model
     public function sales_order(){
         return $this->belongsTo('App\Models\Order\SalesOrder')->with('party');
     }
+
+    public function buyer(){
+        return $this->hasManyThrough('App\Models\Party\Party', 'App\Models\Order\SalesOrder', 'id', 'id', 'sales_order_id', 'sold_to');
+    }
   
     public function inventory(){
         return $this->belongsTo('App\Models\Inventory\InventoryItem', 'id', 'product_feature_id')->with('facility');

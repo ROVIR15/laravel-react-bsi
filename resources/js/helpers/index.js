@@ -2867,6 +2867,13 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       })
+    },
+    getNewAPIOfNewFeature(params=null, cb){
+      axios.get( uri + '/running-buyer-order' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
     }
   }
 export default main;

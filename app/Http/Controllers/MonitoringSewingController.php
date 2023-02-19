@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Monitoring\Sewing;
 use App\Models\Facility\Facility;
+use App\Models\Order\SalesOrder;
+use App\Models\Party\Party;
 use DB;
 
 class MonitoringSewingController extends Controller
@@ -177,6 +179,91 @@ class MonitoringSewingController extends Controller
       return response()->json([
         'success' => true,
         'data' => $query
+      ]);
+    }
+
+      /**
+     * Display of a listing of facility capacity in factory
+     * 
+     */
+
+    public function indexV3(Request $request)
+    {
+      //get the param of month year parameter
+      $monthYear = $request->query('monthYear');
+
+      //check if month year paramaeter is defined
+      if(empty($monthYear)) {
+        //if empty so create current time
+        $monthYear = date('Y-m');
+      }
+
+      //transform to unixdate format
+      $monthYear = date_create($monthYear);
+
+      //get the month of the parameter
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      try {
+        //gert buyer order on working;
+        // $query = Sewing::select('id', 'order_id', 'sales_order_id')
+        //           ->with('buyer')
+        //           ->groupBy('order_id', 'sales_order_id')
+        //           ->whereMonth('date', $month)
+        //           ->whereYear('date', $year)
+        //           ->get();
+
+        //get unique order group by sold_to
+        $query2 = SalesOrder::with('party')
+                   ->whereHas('monitoring_sewing_detail', function ($query) use ($month, $year){
+                     return $query->whereMonth('date', $month)
+                                  ->whereYear('date', $year);
+                   })
+                   ->groupBy('sold_to')
+                   ->get();
+
+        //alternative 2
+        $query_alt = Party::with(['sales_order' => function ($query) use ($month, $year) {
+                        return $query->with(['sewing_output' => function ($query) use ($month, $year) {
+                          return $query
+                                  ->select('id', 'date', 'order_id', 'sales_order_id', DB::raw('sum(output) as output'))
+                                  ->whereMonth('date', $month)->whereYear('date', $year)
+                                  ->groupBy('order_id', 'sales_order_id');
+                        }])
+                        ->with('order_item', 'avg_price')
+                        ->whereHas('sewing_output', function ($query) use ($month, $year){
+                          return $query
+                                  ->whereMonth('date', $month)
+                                  ->whereYear('date', $year);
+                        });
+                      }])
+                      ->whereHas('sales_order', function ($query) use ($month, $year){
+                        return $query->whereHas('sewing_output', function ($query) use ($month, $year){
+                          return $query
+                                  ->whereMonth('date', $month)
+                                  ->whereYear('date', $year);
+                        });
+                      })
+                      ->get();
+
+        //get output sewing of selected buyer
+        // $query2 = Sewing::select('id', 'order_id', 'sales_order_id', DB::raw('sum(output) as total_output'))
+        //            ->with('sum')
+        //            ->groupBy('order_id', 'sales_order_id')
+        //            ->whereIn('order_id', $buyer_list_based_order);
+
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query_alt
       ]);
     }
 

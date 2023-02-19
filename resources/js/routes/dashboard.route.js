@@ -225,7 +225,7 @@ import {
 import { Typography } from '@mui/material';
 
 import ValuationTable from '../pages/dashboard/ValuationAnalysis';
-// import TestVendor from '../pages/dashboard/Vendor/test';
+import NewFeatureUnamed from '../pages/dashboard/NewFeatureUnamed';
 import Capacity from '../pages/dashboard/CapacityAnalysis';
 
 export default function TestRouter() {
@@ -734,6 +734,10 @@ export default function TestRouter() {
         {
           path: 'goods-valuation',
           element: <ValuationTable />
+        },
+        {
+          path: 'running-buyer-order',
+          element: <NewFeatureUnamed />
         },
         { path: '*', element: <Navigate to="/404" /> }
       ]

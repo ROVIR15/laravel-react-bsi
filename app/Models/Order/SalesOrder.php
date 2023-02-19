@@ -32,7 +32,7 @@
     }
 
     public function product_feature(){
-      return $this->hasManyThrough('App\Models\Product\ProductFeature', 'App\Models\Order\OrderItem', 'order_id', 'id', 'order_id', 'id')->with('product');
+      return $this->hasManyThrough('App\Models\Product\ProductFeature', 'App\Models\Order\OrderItem', 'order_id', 'id', 'order_id', 'product_feature_id')->with('product');
     }
 
     public function order_item(){
@@ -69,6 +69,10 @@
 
     public function monitoring_sewing(){
       return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id')->groupBy('sales_order_id')->select(DB::raw('id, order_id, sales_order_id, sum(output) as output'));
+    }
+
+    public function sewing_output(){
+      return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id');
     }
 
     public function monitoring_qc(){

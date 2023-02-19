@@ -47,4 +47,9 @@ class Party extends Model
     {
       return $this->hasOneThrough('App\Models\Party\Relationship', 'App\Models\Party\PartyRoles');
     }
+
+    public function sales_order()
+    { 
+      return $this->hasMany('App\Models\Order\SalesOrder', 'sold_to', 'id');
+    }
 }
