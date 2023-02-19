@@ -141,7 +141,7 @@ class MonitoringSewingController extends Controller
                         ->with('sales_order')
                         ->whereMonth('date', $month)
                         ->whereYear('date', $year)  
-                        ->groupBy('sales_order_id', 'order_id', 'facility_id');
+                        ->groupBy('facility_id','sales_order_id', 'order_id');
                       }])
                       // ->with(['sewing' => function($query) use ($month, $year){
                       //   return $query
