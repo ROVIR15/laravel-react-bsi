@@ -152,7 +152,7 @@ function Row(props) {
                         <img
                           src={historyRow.imageUrl}
                           alt={historyRow.product_name}
-                          sx={{ maxHeight: '15ch', maxWidth: '12ch', margin: 'auto' }}
+                          sx={{ height: '15ch', maxWidth: '12ch', margin: 'auto' }}
                         />
                       </TableCell>
                       <TableCell component="th" scope="row">
