@@ -127,7 +127,7 @@ function Row(props) {
         <TableCell align="right">{fCurrency(row.amount_of_money)}</TableCell>
         <TableCell align="right">{fCurrency(row.cm_price)}</TableCell>
       </TableRow>
-      <TableRow>
+      <TableRow sx={{background: '#f9f9f9'}}>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
@@ -138,6 +138,7 @@ function Row(props) {
                 <TableHead>
                   {/* Head Column Name */}
                   <TableRow>
+                    <TableCell>Gambar Product</TableCell>
                     <TableCell>PO Number</TableCell>
                     <TableCell>Product Name</TableCell>
                     <TableCell>Total Qty Order</TableCell>
