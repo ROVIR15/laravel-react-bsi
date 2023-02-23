@@ -43,8 +43,8 @@ class MonitoringSewingController extends Controller
                   ->groupBy('order_item_id')
                   ->get();
         } else {
-          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, facility_id, sum(qty_loading) as qty_loading, sum(output) as output')
-                  ->groupBy('line', 'date', 'po_number', 'sales_order_id')
+          $query = Sewing::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, facility_id, qty_loading, output')
+                  // ->groupBy('line', 'date', 'po_number', 'sales_order_id')
                   ->with('sales_order', 'product_feature', 'qc')
                   ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
                   ->orderBy('date', 'desc')
