@@ -74,7 +74,7 @@ function processData(array) {
             total_qty_order: initial.total_qty_order + parseFloat(next?.avg_price[0]?.total_qty),
             total_output_sewing:
               initial.total_output_sewing + parseFloat(next?.sewing_output[0]?.output),
-            amount_of_money: initial.amount_of_money + parseFloat(next?.avg_price[0]?.total_money),
+            amount_of_money: initial.amount_of_money + parseFloat(next?.sewing_output[0]?.output) * parseFloat(next?.avg_price[0]?.cm_price_avg),
             cm_price:
               initial.cm_price + parseFloat(next?.avg_price[0]?.cm_price_avg) / sales_order.length
           };
