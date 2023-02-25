@@ -57,9 +57,12 @@ function processData(array) {
       const detail_each_order = sales_order.map(function (next) {
         const { avg_price } = next;
 
+        let total_money_2 = parseFloat(avg_price[0].cm_price_avg) * parseFloat(next?.sewing_output[0]?.output);
+
         return {
           id: next.id,
           ...avg_price[0],
+          total_money: total_money_2,
           total_output_sewing: next?.sewing_output[0]?.output,
           po_number: next?.po_number,
           sales_order_id: next?.id,
