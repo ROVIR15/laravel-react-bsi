@@ -219,6 +219,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('new-api-test-2', 'GraphSewingController@testingAPI2');
     Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');    
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
+    Route::resource('invoice-submission', 'InvoiceSubmissionController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
 });
 

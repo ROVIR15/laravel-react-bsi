@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Page from '../../../../../components/Page';
 
 import { styled } from '@mui/material/styles';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import moment from 'moment';
 
 import { Box, Button, IconButton, Grid, Paper, Stack, Typography } from '@mui/material';
@@ -15,6 +15,7 @@ import { Icon } from '@iconify/react';
 
 // Components
 import Table from '../components/TableINV';
+import Dialog from '../../../../../components/DialogBox/dialog';
 
 // API
 import API from '../../../../../helpers/index';
@@ -24,6 +25,12 @@ import { generateInvSerialNumber } from '../../utils';
 //pdf
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import useAuth from '../../../../../context';
+import { getPages } from '../../../../../utils/getPathname';
+
+//utils
+import { isEmpty, isEqual, uniqBy } from 'lodash';
+import QRCode from 'react-qr-code';
 
 const RootStyle = styled(Page)(({ theme }) => ({
   display: 'flex',
@@ -81,7 +88,9 @@ const SpaceBetween = styled(Box)(({ theme }) => ({
 
 function FirstPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const pdfRef = useRef(null);
+  const { pathname } = useLocation();
 
   const [invInfo, setInvInfo] = useState({
     invoice_date: '',
@@ -155,6 +164,34 @@ function FirstPage() {
     setItems(temp);
 
     setTerms(payload.terms);
+
+    // submission status
+    let _statusOrderData = uniqBy(payload.submission, 'status_type');
+
+    console.log(_statusOrderData)
+
+    let _isReviewed = _statusOrderData.filter(
+      (item) => item.status_type.toLowerCase() === 'review'
+    );
+    let _isSubmitted = _statusOrderData.filter(
+      (item) => item.status_type.toLowerCase() === 'submit'
+    );
+    
+    if(_isSubmitted.length > 0) {
+      // let salt = _isSubmitted?.id + _isSubmitted?.order_id + _isSubmitted?.user_id;
+      let { user_info, ...rest } = _isSubmitted[0];
+      setValueSubmit({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by submitter'});
+      setIsSubmitted(true);
+    }
+
+    if(_isReviewed.length > 0) {
+      // let salt = _isReviewed?.id + _isReviewed?.order_id + _isReviewed?.user_id;
+      let { user_info, ...rest } = _isReviewed[0];
+      setValueReview({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by reviewer'});
+      setIsReviewed(true);
+    }
+
+    console.log(_isReviewed, _isSubmitted)
   };
 
   const handleDownload = React.useCallback(() => {
@@ -215,8 +252,137 @@ function FirstPage() {
     }, 1000);
   }, [pdfRef]);
 
+  /**
+   * Dialog for submission process.
+   */
+
+  // variable for submission dialog
+  const [submit, setSubmit] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [review, setReview] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(false);
+  const [approve, setApprove] = useState(true);
+
+  const [valueSubmit, setValueSubmit] = useState(false);
+  const [valueReview, setValueReview] = useState(false);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [comment, setComment] = useState(false);
+  const [commentCtn, setCommentCtn] = useState('');
+  const [warning, setWarning] = useState({
+    title: '',
+    message: ''
+  });
+
+  //handle tile, message, type on dialog
+  function handleDialog(key) {
+    switch (key) {
+      case 'submit':
+        setWarning({
+          title: 'Submit Purchase Order?',
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'submit',
+          send: (type, content) => handleSubmission(type, content)
+        });
+        setDialogOpen(true);
+        break;
+
+      case 'review':
+        setWarning({
+          title: 'Review Purchase Order?',
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'review',
+          send: (type, content) => handleSubmission(type, content)
+        });
+        setDialogOpen(true);
+        break;
+
+      case 'approve':
+        setWarning({
+          title: 'Apporve Purchase Order?',
+          message: "Once you submit you cannot make changes unless it's rejected",
+          type: 'approve',
+          send: (type, content) => handleSubmission(type, content)
+        });
+        setDialogOpen(true);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  // set variable when its initila load
+  useEffect(() => {
+    const { role } = user;
+    console.log(role)
+    const name = getPages(pathname.split('/'));
+
+    role.map(function (x) {
+      if (x.name === name) {
+        setSubmit(Boolean(x.submit));
+        setReview(Boolean(x.review));
+        setApprove(Boolean(x.approve));
+      }
+    });
+  }, []);
+
+  //handle submission
+  function handleSubmission(key, description) {
+    let payload = { user_id: user.id, status_type: '', invoice_id: id };
+    switch (key) {
+      case 'submit':
+        payload = { ...payload, status_type: 'Submit', description: '' };
+        break;
+
+      case 'review':
+        payload = { ...payload, status_type: 'Review', description };
+        break;
+
+      case 'reject-review':
+        payload = { ...payload, status_type: 'Reject Review', description };
+        break;
+
+      case 'approve':
+        payload = { ...payload, status_type: 'Approve', description: '' };
+        break;
+
+      case 'reject-approve':
+        payload = { ...payload, status_type: 'Reject Approve', description };
+        break;
+
+      default:
+        payload;
+        break;
+    }
+    // alert(JSON.stringify(payload));
+    // return;
+    try {
+      API.insertInvoiceSubmission(payload, (res) => {
+        if (!res) return undefined;
+        if (!res.success) new Error('Failed');
+        else alert('Success');
+      });
+    } catch (error) {
+      alert('error');
+    }
+
+    setDialogOpen(false);
+  }
+  // --------------------------------------------------------------------------------
+
   return (
     <MHidden width="mdDown">
+      <Dialog
+        title={warning.title}
+        message={warning.message}
+        setOpen={setDialogOpen}
+        open={dialogOpen}
+        comment={comment}
+        setComment={setComment}
+        type={warning.type}
+        send={warning.send}
+      />
       <SpaceBetween>
         <div>
           <IconButton>
@@ -228,9 +394,12 @@ function FirstPage() {
         </div>
 
         <div>
-          <Button disabled>Submit</Button>
-          <Button disabled>Review</Button>
-          <Button disabled>Tandai Approve</Button>
+          <Button onClick={() => handleDialog('submit')} disabled={!submit || isSubmitted}>
+            Submit
+          </Button>
+          <Button onClick={() => handleDialog('review')} disabled={!review || isReviewed}>
+            Approve
+          </Button>
         </div>
       </SpaceBetween>
 
@@ -255,7 +424,16 @@ function FirstPage() {
                     sx={{ width: '15%', height: '80px', marginLeft: '0.75 em' }}
                   />
                 </Grid>
-                <Grid item={6} sx={{ width: '50%', marginBottom: '1em', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+                <Grid
+                  item={6}
+                  sx={{
+                    width: '50%',
+                    marginBottom: '1em',
+                    display: 'flex',
+                    justifyContent: 'end',
+                    alignItems: 'center'
+                  }}
+                >
                   <Box sx={{ textAlign: 'right' }}>
                     <IDontKnow>INVOICE</IDontKnow>
                     <Typography variant="h6">{invInfo.invoice_id}</Typography>
@@ -344,15 +522,33 @@ function FirstPage() {
               </Grid>
 
               <Grid item xs={12}>
-                <Stack direction="row" spacing={2} justifyContent="space-around" style={{margin: '12px 0'}}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent="space-around"
+                  style={{ margin: '12px 0' }}
+                >
                   <div className="wk_sign wk_text_center">
                     {/* <img
                       src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
                       alt="Sign"
                       style={{ margin: 'auto' }}
                     /> */}
-                    <div style={{ height: '50px' }} />
-                    <p className="wk_m0 wk_ternary_color">Titin</p>
+                    {isEmpty(valueSubmit) ? (
+                      <div style={{ height: '75px' }} />
+                    ) : (
+                      <QRCode
+                        size={256}
+                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
+                        value={JSON.stringify(valueSubmit)}
+                        viewBox={`0 0 256 256`}
+                      />
+                    )}
+
+                    {/* <div style={{ height: '50px' }} /> */}
+                    <p className="wk_m0 wk_ternary_color">
+                      {isEmpty(valueSubmit) ? 'Not Signed Yet' : valueSubmit?.name}
+                    </p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Finance Person</p>
                   </div>
 
@@ -362,14 +558,25 @@ function FirstPage() {
                       alt="Sign"
                       style={{ margin: 'auto' }}
                     /> */}
-                    <div style={{ height: '50px' }} />
-                    <p className="wk_m0 wk_ternary_color">Alex Faisol Tas'an Wartono</p>
+                    {isEmpty(valueReview) ? (
+                      <div style={{ height: '75px' }} />
+                    ) : (
+                      <QRCode
+                        size={256}
+                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
+                        value={JSON.stringify(valueReview)}
+                        viewBox={`0 0 256 256`}
+                      />
+                    )}
+                    <p className="wk_m0 wk_ternary_color">
+                      {isEmpty(valueReview) ? 'Not Signed Yet' : valueReview?.name}
+                    </p>
                     <p className="wk_m0 wk_f16 wk_primary_color">Direktur</p>
                   </div>
                 </Stack>
               </Grid>
 
-              <div style={{height: '10px'}}/>
+              <div style={{ height: '10px' }} />
             </Stack>
           </div>
         </PaperStyled>

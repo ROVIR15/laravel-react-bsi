@@ -182,6 +182,9 @@ function Invoice() {
     }
   ]);
 
+  /**
+   * Handle Invoice Term
+   */
   const [rowsInvoiceTerm, setRowsInvoiceTerm] = useState([]);
   const columnsInvoiceTerm = React.useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },

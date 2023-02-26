@@ -26,8 +26,7 @@ const pages = [
   'sales-order',
   'purchase-order',
   'bom',
-  'hde',
-  'bsi'
+  'invoice'
 ];
 
 const initialData = {

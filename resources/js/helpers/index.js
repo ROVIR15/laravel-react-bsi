@@ -738,6 +738,49 @@ const main = {
         cb(err.response);
       });
     },
+    // Order Status
+    insertInvoiceSubmission(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/invoice-submission', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    getInvoiceSubmission(cb){
+      axios.get( uri + '/invoice-submission').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      })
+    },
+    getAInvoiceSubmission(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/invoice-submission' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteInvoiceSubmission(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/invoice-submission/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateInvoiceSubmission(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/invoice-submission/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     // SalesOrder
     insertSalesOrder(_data, cb){
       if(!_data) {
@@ -2301,6 +2344,16 @@ const main = {
           cb(err.response);
       });
     },
+    insertVendorBills(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/store-vendor-bills', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     getSalesInvoice(params=null, cb){
       axios.get( uri + '/invoice' + params).then(function(res){
         cb(res.data);
@@ -2874,6 +2927,13 @@ const main = {
       }).catch(function(err){
         cb(err.response);
       })
+    },
+    getUninvoicedPurchaseOrder(params=null, cb){
+      axios.get( uri + '/uninvoiced-purchase-order' + params ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response)
+      });
     }
   }
 export default main;

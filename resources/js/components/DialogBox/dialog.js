@@ -80,6 +80,7 @@ export default function AlertDialogSlide({
             </Button>
             <Button
               onClick={() => {
+                console.log(type, content)
                 send(type, content);
                 setComment(false);
               }}

@@ -55,4 +55,8 @@ class Invoice extends Model
     public function type(){
         return $this->belongsTo('App\Models\Invoice\InvoiceHasType', 'id', 'invoice_id');
     }
+
+    public function submission(){
+      return $this->hasMany('App\Models\Invoice\InvoiceSubmission')->with('user_info')->orderBy('created_at', 'desc');
+    }
 }

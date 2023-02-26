@@ -71,8 +71,11 @@ class InvoiceController extends Controller
                 if(isset($type)) {
                   $query = InvoiceHasType::with('purchase_invoice', 'terms')
                   ->where('invoice_type_id', $type)
-                  ->whereYear('invoice_date', '=', $year)
-                  ->whereMonth('invoice_date', '=', $month)
+                  ->whereHas('sales_invoice', function($query) use ($year, $month){
+                    $query
+                    ->whereYear('invoice_date', '=', $year)
+                    ->whereMonth('invoice_date', '=', $month);  
+                  })
                   ->get();
                 } else {
                   $query = Invoice::all();
@@ -109,13 +112,13 @@ class InvoiceController extends Controller
       try {
         $_invoiceList = PaymentHasInvoice::select('invoice_id')->get();
         if(isset($type)){
-          $query = InvoiceHasType::with('sales_invoice')
+          $query = InvoiceHasType::with('all_invoice_type')
           ->where('invoice_type_id', $type)
           ->whereNotIn('invoice_id', $_invoiceList)
           ->get();
         } else {
-          $query = Invoice::
-          whereNotIn('id', $_invoiceList)
+          $query = InvoiceHasType::with('all_invoice_type')
+          ->whereNotIn('invoice_id', $_invoiceList)
           ->get();
         }  
       } catch (\Throwable $th) {
@@ -231,6 +234,82 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeVendorBills(Request $request)
+    {
+      $param = $request->all()['payload'];
+      try {
+        //Goods Receipt Creation
+        $invoice = Invoice::create([
+            'invoice_date' => $param['invoice_date'],
+            'order_id' => $param['order_id'],
+            'shipment_id' => $param['shipment_id'][0],
+            'due_date' => $param['due_date'],
+            'sold_to' => $param['sold_to'],
+            'tax' => $param['tax'],
+            'description' => $param['description']
+        ]);
+
+        $terms = [];
+        foreach ($param['terms'] as $key) {
+          # code...
+          array_push($terms, [
+            'invoice_id' => $invoice['id'],
+            'term_description' => $key['term_description'],
+            'term_value' => $key['term_value'],
+            'value_type' => $key['value_type']
+          ]);
+        }
+        
+        //Create purchase order item
+        if(!isset($invoice)) throw new Error('Invoice failed to Store');
+        if(!isset($param['items'])) {
+          return response()->json([
+            'success' => true
+          ]);
+        }
+        
+        $IRItems = [];
+        foreach($param['items'] as $key){
+          array_push($IRItems, [
+            'invoice_id' => $invoice->id,
+            'order_item_id' => $key['order_item_id'],
+            'amount' => $key['amount'],
+            'qty' => $key['qty']
+          ]);
+        }
+
+        InvoiceItem::insert($IRItems);
+
+        InvoiceTerm::insert($terms);
+
+        InvoiceHasType::create([
+          'invoice_id' => $invoice->id,
+          'invoice_type_id' => $param['type']
+        ]);
+
+      } catch (Exception $e) {
+        //throw $th;
+        return response()->json(
+          [
+            'success' => false,
+            'errors' => $e->getMessage()
+          ],
+          500
+        );
+      }
+      
+      return response()->json([
+        'success' => true,
+        'param' => $param
+      ], 200);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\X  $X
@@ -243,7 +322,7 @@ class InvoiceController extends Controller
       try {
 
         if(isset($type)){
-            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status', 'terms')->find($id);  
+            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status', 'terms', 'submission')->find($id);  
         } else {
             $query = Invoice::with('party')->find($id);
         }

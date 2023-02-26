@@ -42,7 +42,7 @@ export default function ValidateRowModelControlGrid({
         <Button size="small" onClick={handleAddRow} disabled={!handleAddRow ? true : false}>
           Add Data
         </Button>
-      </Stack>{' '}
+      </Stack>
       <DataGrid
         rows={rows ? rows : mrows}
         columns={columns ? columns : estColumns}
