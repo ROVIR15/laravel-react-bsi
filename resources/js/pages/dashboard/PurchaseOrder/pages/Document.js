@@ -100,6 +100,7 @@ function FirstPage() {
   const pdfRef = useRef(null);
   const { pathname } = useLocation();
 
+  // variable for submission dialog
   const [submit, setSubmit] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [review, setReview] = useState(false);
@@ -178,18 +179,6 @@ function FirstPage() {
       }
     });
   }, []);
-
-  const handleDownloadPdf = () => {
-    const content = pdfRef.current;
-
-    const doc = new jsPDF('l', 'mm', [210, 297]);
-
-    doc.html(content, {
-      callback: (doc) => {
-        doc.save('wow.pdf');
-      }
-    });
-  };
 
   const handleDownload = React.useCallback(() => {
     const content = pdfRef.current;

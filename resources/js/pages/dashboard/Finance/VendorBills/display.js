@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isUndefined } from 'lodash';
+import { filter, isArray, isUndefined, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -8,13 +8,15 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
-import { fNumber, fCurrency } from '../../../../utils/formatNumber'
+import { fNumber, fCurrency } from '../../../../utils/formatNumber';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from '../components/ListToolbar';
+import moment from 'moment';
 //
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
@@ -52,21 +54,24 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_b) => _b.id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party_id === query[1]
+    );
+  else return filter(array, (_b) => _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  // return stabilizedThis.map((el) => el[0]);
 }
 
 function Invoice({ placeHolder }) {
-
   const [invoice, setInvoice] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -75,26 +80,36 @@ function Invoice({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
+  //----------------filter by month and year------------------//
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
+  //----------------------------------------------------------//
 
-    if(isEmpty(invoice)) { 
-      handleUpdateData();
-    }
-  }, [])
+  //----------------filter by buyer name----------------------//
+  const [filterBuyer, setFilterBuyer] = useState(0);
+  const [optionsBuyer, setOptionsBuyer] = useState([]);
+
+  const handleBuyerFilter = (event) => {
+    setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
+  useEffect(() => {
+    handleUpdateData();
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
     try {
-      API.getSalesInvoice('?invoice_type=2', (res) => {
-        if(!res) return
-        if(!res.data) {
+      API.getSalesInvoice(`?invoice_type=2&monthYear=${filterMonthYear}`, (res) => {
+        if (!res) return;
+        if (!res.data) {
           setInvoice([]);
         } else {
-          const _data = res.data.map(function(item){
-          const { purchase_invoice } = item
+          const _data = res.data.map(function (item) {
+            const { purchase_invoice } = item;
             return {
               id: purchase_invoice?.id,
               invoice_date: purchase_invoice?.invoice_date,
@@ -104,16 +119,28 @@ function Invoice({ placeHolder }) {
               total_qty: purchase_invoice?.sum[0]?.total_qty,
               total_amount: purchase_invoice?.sum[0]?.total_amount,
               status: purchase_invoice?.status[0]?.type?.name
-            }
+            };
           });
+
+          let buyer = res?.data
+            .filter(function (item, index, arr) {
+              return !isNull(item.purchase_invoice?.party);
+            })
+            .map(function (obj) {
+              return obj.purchase_invoice?.party;
+            });
+
+          let _buyer = uniqBy(buyer, 'id');
+
+          setOptionsBuyer(_buyer);
 
           setInvoice(_data);
         }
-      });          
+      });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
-  }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -165,23 +192,22 @@ function Invoice({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteSalesInvoice(id, function(res){
-        if(res.success) setInvoice([]);
-        else throw new Error('failed to delete data')
-      });  
-    } catch(error) {
-      alert(error)
+      API.deleteSalesInvoice(id, function (res) {
+        if (res.success) setInvoice([]);
+        else throw new Error('failed to delete data');
+      });
+    } catch (error) {
+      alert(error);
     }
 
     handleUpdateData();
-
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;
 
-  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), filterName);
+  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), [filterName, filterBuyer]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -189,7 +215,14 @@ function Invoice({ placeHolder }) {
         numSelected={selected.length}
         filterName={filterName}
         onFilterName={handleFilterByName}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
         placeHolder={placeHolder}
+        buyerFilterActive={true}
+        filterBuyer={filterBuyer}
+        onFilterBuyer={handleBuyerFilter}
+        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -234,7 +267,9 @@ function Invoice({ placeHolder }) {
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{billed_to}</TableCell>
                       <TableCell align="left">{fNumber(total_qty)}</TableCell>
-                      <TableCell align="left">Rp. {fCurrency(total_amount*((tax/100)+1))}</TableCell>
+                      <TableCell align="left">
+                        Rp. {fCurrency(total_amount * (tax / 100 + 1))}
+                      </TableCell>
                       <TableCell align="left">{tax}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
@@ -270,7 +305,7 @@ function Invoice({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default Invoice;

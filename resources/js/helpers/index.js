@@ -2851,7 +2851,7 @@ const main = {
     },
     deletePayment(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/payment' + id).then(function(res){
+      axios.delete( uri + '/payment' + `/${id}`).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

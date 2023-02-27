@@ -7,9 +7,9 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
-import { fCurrency } from '../../../../utils/formatNumber'
+import { fCurrency } from '../../../../utils/formatNumber';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
@@ -18,8 +18,9 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
-// 
-import moment from 'moment'
+//
+import moment from 'moment';
+import { generateInvSerialNumber_alt } from '../utils';
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -65,7 +66,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 function FinanceAccountDisplay({ placeHolder }) {
-  moment.locale("id")
+  moment.locale('id');
   const [list, setList] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -76,34 +77,34 @@ function FinanceAccountDisplay({ placeHolder }) {
 
   useEffect(() => {
     handleUpdateData();
-  }, [])
+  }, [filterMonthYear]);
 
   const handleUpdateData = () => {
-      try {
-        API.getPayment('', (res) => {
-          if(!res) return
-          if(!res.data) {
-            setList([]);
-          } else {
-            const _data = res.data.map(function(item){
-              const { sales_invoice } = item;
-              return {
-                id: item?.id,
-                payment_method_type_id: item?.type?.name,
-                invoice_id: `INV. No ${sales_invoice?.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice?.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
-                ref_num: item?.ref_num,
-                effective_date: item?.effective_date,
-                amount: item?.amount,
-                comment: item?.comment
-              }
-            });
-            setList(_data);
-          }
-        });          
-      } catch (error) {
-        alert(error)
-      }
-  }
+    try {
+      API.getPayment(`?monthYear=${filterMonthYear}`, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setList([]);
+        } else {
+          const _data = res.data.map(function (item) {
+            const { invoice } = item;
+            return {
+              id: item?.id,
+              payment_method_type_id: item?.type?.name,
+              invoice_id: generateInvSerialNumber_alt(invoice[0], invoice[0]?.type?.invoice_type_id),
+              ref_num: item?.ref_num,
+              effective_date: item?.effective_date,
+              amount: item?.amount,
+              comment: item?.comment
+            };
+          });
+          setList(_data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -155,24 +156,30 @@ function FinanceAccountDisplay({ placeHolder }) {
     event.preventDefault();
 
     try {
-      // API.deletePayment(id, function(res){
-      //   if(res.success) alert('success');
-      //   else throw new Error('failed to delete data')
-      // });  
-    } catch(error) {
-      alert(error)
+      API.deletePayment(id, function(res){
+        if(res.success) alert('success');
+        else throw new Error('failed to delete data')
+      });
+    } catch (error) {
+      alert(error);
     }
 
-    setInvoice([])
     handleUpdateData();
+  };
 
-  }
+  //----------------filter by month and year------------------//
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
+  //----------------------------------------------------------//
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -181,6 +188,9 @@ function FinanceAccountDisplay({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -257,7 +267,7 @@ function FinanceAccountDisplay({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default FinanceAccountDisplay;

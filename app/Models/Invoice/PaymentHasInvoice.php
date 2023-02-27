@@ -16,4 +16,14 @@ class PaymentHasInvoice extends Model
         'payment_id',
         'invoice_id'
     ];
+
+    public function payment()
+    {
+        return $this->belongsTo('App\Models\Invoice\Payment', 'payment_id');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id');
+    }
 }

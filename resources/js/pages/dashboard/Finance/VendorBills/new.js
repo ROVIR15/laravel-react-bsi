@@ -33,7 +33,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../../helpers/data';
 
-import { orderItemToInvoiceItem } from '../utils';
+import { orderItemToVendorBillItems } from '../utils';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -68,9 +68,9 @@ function Invoice() {
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 2, tax: 11, description: '' };
+      let _data = { ...values, items, type: 2, tax: 11, description: '', shipment_id: null, terms: rowsInvoiceTerm };
       try {
-        API.insertSalesInvoice(_data, (res) => {
+        API.insertVendorBills(_data, (res) => {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed to store data');
           else alert('success');
@@ -127,6 +127,7 @@ function Invoice() {
       active = false;
     };
   }, [loading]);
+
   const handleClose = (name, value) => {
     setOpenDialogBox(false);
     setOptions([]);
@@ -151,9 +152,7 @@ function Invoice() {
   const columns = React.useMemo(
     () => [
       { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', editable: false },
+      { field: 'item_name', headerName: 'Name', width: 300, editable: false },
       { field: 'qty', headerName: 'Quantity', type: 'number', editable: false, flex: 1 },
       { field: 'amount', type: 'number', headerName: 'Unit Price', editable: false, flex: 1 },
       { field: 'total', type: 'number', headerName: 'Total', editable: false, flex: 1 },
@@ -181,6 +180,68 @@ function Invoice() {
     });
   });
 
+  /**
+   * Handle Invoice Term
+   */
+  const [rowsInvoiceTerm, setRowsInvoiceTerm] = React.useState([]);
+  const columnsInvoiceTerm = React.useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'term_description', headerName: 'Term Description', editable: true, width: 350 },
+    { field: 'term_value', headerName: 'Value', editable: true, type: 'number' },
+    {
+      field: 'value_type',
+      headerName: 'Type',
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['Percentage', 'Number']
+    }
+  ]);
+
+  const handleAddInvoiceTerm = () => {
+    setRowsInvoiceTerm([
+      ...rowsInvoiceTerm,
+      {
+        id: rowsInvoiceTerm.length + 1,
+        invoice_id: null,
+        invoice_item_id: null,
+        term_description: 'contoh. Potongan',
+        term_value: 0
+      }
+    ]);
+  };
+
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
+
+  const handleEditRowsModelChange = React.useCallback(
+    (model) => {
+      const editedIds = Object.keys(model);
+      // user stops editing when the edit model is empty
+      if (editedIds.length === 0) {
+        const editedIds = Object.keys(editRowsModel);
+        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+        //update items state
+        setRowsInvoiceTerm((prevItems) => {
+          const itemToUpdateIndex = parseInt(editedIds[0]);
+
+          return prevItems.map((row, index) => {
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+            } else {
+              return row;
+            }
+          });
+        });
+      } else {
+        setEditRowData(model[editedIds[0]]);
+      }
+
+      setEditRowsModel(model);
+    },
+    [editRowData]
+  );
+
   // AutoComplete
 
   const [optionsAutoComplete, setOptionsAutoComplete] = React.useState([]);
@@ -195,19 +256,12 @@ function Invoice() {
     let active = true;
 
     (async () => {
-      API.getShipment(`?shipment_type=1`, (res) => {
+      API.getUninvoicedPurchaseOrder(``, (res) => {
         if (!res) return;
         if (!res.data) {
           setOptionsAutoComplete([]);
         } else {
-          let _done = res.data.map(function (item) {
-            return {
-              id: item.id,
-              name: item.order?.purchase_order?.po_number,
-              date: item.delivery_date
-            };
-          });
-          setOptionsAutoComplete(_done);
+          setOptionsAutoComplete(res.data);
         }
       });
     })();
@@ -218,9 +272,16 @@ function Invoice() {
   }, [loadingAutoComplete]);
 
   const changeData = (payload) => {
-    let invoiceItems = orderItemToInvoiceItem(payload.items);
-    setFieldValue('purchase_order_id', payload.order.purchase_order.id);
-    setFieldValue('order_id', payload.order.id);
+    console.log(payload.bought_from);
+    let invoiceItems = orderItemToVendorBillItems(payload.order_item);
+    setFieldValue('purchase_order_id', payload.id);
+    setFieldValue('order_id', payload.order_id);
+    setFieldValue('sold_to', payload.bought_from.id)
+    setSelectedValueSO({
+      name: payload.bought_from.name,
+      address: `${payload.bought_from.address.street} ${payload.bought_from.address.city} ${payload.bought_from.address.province} ${payload.bought_from.address.country}`,
+      postal_code: payload.bought_from.address.postal_code
+    });
     setItems(invoiceItems);
   };
 
@@ -241,7 +302,7 @@ function Invoice() {
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={3} direction="row">
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Info" />
 
               <CardContent>
@@ -262,18 +323,32 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={6}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
+            <Card>
               <CardHeader title="Invoice Date" />
               <CardContent>
-                <TextField
-                  fullWidth
-                  autoComplete="invoice_date"
-                  type="date"
-                  placeholder="invoice_date"
-                  {...getFieldProps('invoice_date')}
-                  error={Boolean(touched.invoice_date && errors.invoice_date)}
-                  helperText={touched.invoice_date && errors.invoice_date}
-                />
+                <Stack direction="row" spacing={2}>
+                  <TextField
+                    fullWidth
+                    autoComplete="invoice_date"
+                    type="date"
+                    placeholder="invoice_date"
+                    {...getFieldProps('invoice_date')}
+                    error={Boolean(touched.invoice_date && errors.invoice_date)}
+                    helperText={touched.invoice_date && errors.invoice_date}
+                  />
+                  <TextField
+                    fullWidth
+                    autoComplete="due_date"
+                    type="number"
+                    placeholder="due_date"
+                    {...getFieldProps('due_date')}
+                    error={Boolean(touched.due_date && errors.due_date)}
+                    helperText={touched.due_date && errors.due_date}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">Hari</InputAdornment>
+                    }}
+                  />
+                </Stack>
               </CardContent>
             </Card>
           </Grid>
@@ -286,7 +361,7 @@ function Invoice() {
                   <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                     <ColumnBox>
                       <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagih </Typography>
+                        <Typography variant="h6"> Penagihan ke </Typography>
                         <Button disabled>Select</Button>
                       </SpaceBetweenBox>
                       <div>
@@ -298,7 +373,7 @@ function Invoice() {
                     <Divider orientation="vertical" variant="middle" flexItem />
                     <ColumnBox>
                       <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagihan ke </Typography>
+                        <Typography variant="h6"> Penagih </Typography>
                         <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
                       </SpaceBetweenBox>
                       {selectedValueSO?.name ? (
@@ -343,6 +418,7 @@ function Invoice() {
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                       <Tab label="Description" value="1" />
                       <Tab label="Finance" value="2" />
+                      <Tab label="Terms" value="3" />
                     </TabList>
                   </Box>
 
@@ -374,6 +450,15 @@ function Invoice() {
                         helperText={touched.tax && errors.tax}
                       />
                     </Stack>
+                  </TabPanel>
+
+                  <TabPanel value="3">
+                    <DataGrid
+                      columns={columnsInvoiceTerm}
+                      rows={rowsInvoiceTerm}
+                      handleAddRow={handleAddInvoiceTerm}
+                      onEditRowsModelChange={handleEditRowsModelChange}
+                    />
                   </TabPanel>
                 </TabContext>
               </CardContent>

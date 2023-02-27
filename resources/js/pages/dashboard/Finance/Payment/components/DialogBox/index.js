@@ -134,6 +134,10 @@ function SimpleDialog(props) {
       .map((e) => e.id)
       .indexOf(item.id);
     let newSelected = [];
+
+    if(item.type === 1) item = {...item, total_amount: item.total_amount}
+    if(item.type === 2) item = {...item, total_amount: item.total_amount * -1}
+
     if (selectedIndex === -1) {
       if (isEditCondition(pathname.split('/'), id)) {
         try {
@@ -159,6 +163,7 @@ function SimpleDialog(props) {
         selected.slice(selectedIndex + 1)
       );
     }
+    
     setSelected(newSelected);
   };
 

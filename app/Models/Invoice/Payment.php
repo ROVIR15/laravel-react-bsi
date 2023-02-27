@@ -31,4 +31,9 @@ class Payment extends Model
     public function sales_invoice(){
         return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id')->with('sales_order', 'party', 'sum', 'status', 'items');
     }
+
+    public function invoice()
+    {
+        return $this->hasManyThrough('App\Models\Invoice\Invoice', 'App\Models\Invoice\PaymentHasInvoice', 'payment_id', 'id', 'id', 'invoice_id')->with('type', 'sales_order', 'purchase_order');
+    }
 }

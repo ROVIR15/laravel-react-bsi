@@ -27,9 +27,10 @@ export default function Asynchronous({
     if (!value) return;
     let id = value.split('.')[1];
     id = id.split('/')[0];
+    id = id.split('-')[0];
 
     try {
-      API.getAShipment(id, (res) => {
+      API.getAPurchaseOrder(id, (res) => {
         if (!res) return;
         if (!res.data) {
           throw new Error('no Data');
@@ -52,8 +53,11 @@ export default function Asynchronous({
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={({ name, date, id }) => `SHIP-NO.${id}/${date}/${name}`}
+      isOptionEqualToValue={(option, value) => option.purchase_order_id === value.purchase_order_id}
+      getOptionLabel={({ purchase_order_id,
+        order_id,
+        issue_date,
+        po_number }) => `PO-No.${purchase_order_id}-${order_id}/${issue_date}/${po_number}`}
       options={options}
       loading={loading}
       value={choosen}

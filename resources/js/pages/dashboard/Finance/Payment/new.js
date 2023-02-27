@@ -24,8 +24,6 @@ import {
   IconButton
 } from '@mui/material';
 import { isArray, isUndefined } from 'lodash';
-import ColumnBox from '../../../../components/ColumnBox';
-import SpaceBetweenBox from '../../../../components/SpaceBetweenBox';
 import DialogBox from './components/DialogBox';
 //API
 import API from '../../../../helpers';
@@ -34,6 +32,9 @@ import BasicTable from './components/BasicTable';
 //Icons
 import plusSquare from '@iconify/icons-eva/plus-square-fill';
 import { Icon } from '@iconify/react';
+
+//
+import { generateInvSerialNumber_alt } from '../utils'
 
 const GridData = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -138,19 +139,21 @@ function PaymentAccountNew() {
 
     (() => {
       try {
-        API.getInvoiceHasPayment('?invoice_type=1', (res) => {
+        API.getInvoiceHasPayment('', (res) => {
           if (!res) return;
           if (!res.data) {
             setOptionsInvoice([]);
           } else {
             const _data = res.data.map(function (item) {
-              const { sales_invoice } = item;
+              const { all_invoice_type } = item;
+
               return {
-                id: sales_invoice?.id,
-                serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
-                billed_to: sales_invoice?.party?.name,
-                status: sales_invoice?.status[0]?.type?.name,
-                total_amount: sales_invoice?.sum[0]?.total_amount * (1 + sales_invoice?.tax / 100)
+                id: item?.invoice_id,
+                type: item?.invoice_type_id,
+                serial_number: generateInvSerialNumber_alt(all_invoice_type, item.invoice_type_id),
+                billed_to: all_invoice_type?.party?.name,
+                status: all_invoice_type?.status[0]?.type?.name,
+                total_amount: all_invoice_type?.sum[0]?.total_amount * (1 + all_invoice_type?.tax / 100)
               };
             });
             setOptionsInvoice(_data);
@@ -173,7 +176,13 @@ function PaymentAccountNew() {
     //   setOpenSH(false);
     // } else {
     // setSelectedValueSH(data);
-    const a = selected.map((e) => ({ id: e.id, amount: e.total_amount }));
+    const a = selected.map((e) => {
+      if(e.type === 1) return ({ id: e.id, type: e.type, amount: e.total_amount });
+      if(e.type === 2) return ({ id: e.id, type: e.type, amount: e.total_amount*-1 });
+      else return ({ id: e.id, type: 0, amount: e.total_amount * 0});
+    });
+
+    console.log(a);
     setFieldValue('invoice_id', a);
     setFieldValue('amount', billedAmount);
     setOpenSH(false);

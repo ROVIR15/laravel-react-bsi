@@ -24,7 +24,20 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
       $param = $request->all();
-      $query = Payment::with('type', 'sales_invoice')->get();
+      $monthYear = $request->query('monthYear');
+
+      if(empty($monthYear)){
+        $monthYear = date('Y-m');
+      }
+
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+
+      $query = Payment::with('type', 'invoice')
+      ->whereYear('effective_date', '=', $year)
+      ->whereMonth('effective_date', '=', $month)
+      ->get();
 
       return new PaymentCollection($query);
     }
@@ -143,7 +156,7 @@ class PaymentController extends Controller
     public function show($id)
     {
       try {
-        $query = Payment::with('sales_invoice', 'type')->find($id);
+        $query = Payment::with('invoice', 'type')->find($id);
         return new PaymentOneCollection($query);
       } catch (Exception $th) {
         return response()->json([

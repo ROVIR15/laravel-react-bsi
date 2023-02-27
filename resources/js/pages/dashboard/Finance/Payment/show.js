@@ -30,6 +30,7 @@ import API from '../../../../helpers';
 import { fCurrency } from '../../../../utils/formatNumber';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { generateInvSerialNumber_alt } from '../utils';
 
 const UploadPaper = styled(Button)(({ theme }) => ({
   outline: 'none',
@@ -128,13 +129,13 @@ function PaymentAccountNew() {
           setFieldValue('amount', res.data.amount);
           setFieldValue('comment', res.data.comment);
           setFile(res.data.imageUrl)
-          const { sales_invoice } = res.data;
+          const { invoice } = res.data;
           setSelectedValueSH({
-            id: sales_invoice?.id,
-            serial_number: `INV. No ${sales_invoice.id}/${sales_invoice?.sales_order?.id}-${sales_invoice?.sales_order?.sales_order?.id}/${sales_invoice.invoice_date}/${sales_invoice?.sales_order?.sales_order?.po_number}`,
-            billed_to: sales_invoice?.party?.name,
-            status: sales_invoice?.status[0]?.type?.name,
-            total_amount: sales_invoice?.sum[0]?.total_amount * (1 + sales_invoice?.tax / 100)
+            id: invoice[0]?.id,
+            serial_number: generateInvSerialNumber_alt(invoice[0], invoice[0]?.type?.invoice_type_id),
+            // billed_to: sales_invoice?.party?.name,
+            // status: sales_invoice?.status[0]?.type?.name,
+            total_amount: res.data.amount
           });
         }
       });
@@ -282,16 +283,16 @@ function PaymentAccountNew() {
                     <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
                       <CardContent>
                         <ColumnBox>
-                          <SpaceBetweenBox>
+                          {/* <SpaceBetweenBox>
                             <Typography variant="h6"> Invoice </Typography>
                             <Button disabled onClick={() => setOpenSH(true)}>Select</Button>
-                          </SpaceBetweenBox>
-                          <div>
+                          </SpaceBetweenBox> */}
+                          {/* <div>
                             <Typography variant="subtitle1">
                               {selectedValueSH?.serial_number}
                             </Typography>
                             <Typography variant="body2">{selectedValueSH?.billed_to}</Typography>
-                          </div>
+                          </div> */}
                           {/* <DialogBox
                             options={optionsInvoice}
                             loading={loadingSH}
@@ -311,7 +312,7 @@ function PaymentAccountNew() {
                       <CardContent>
                         <ColumnBox>
                           <SpaceBetweenBox>
-                            <Typography variant="h6"> Invoice Amount </Typography>
+                            <Typography variant="h6"> Payment Amount </Typography>
                           </SpaceBetweenBox>
                         </ColumnBox>
                         <Typography variant="h3" sx={{ color: '#636b6f' }}>
