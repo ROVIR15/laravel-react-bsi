@@ -75,10 +75,6 @@ function FinanceAccountDisplay({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    handleUpdateData();
-  }, [filterMonthYear]);
-
   const handleUpdateData = () => {
     try {
       API.getPayment(`?monthYear=${filterMonthYear}`, (res) => {
@@ -174,6 +170,12 @@ function FinanceAccountDisplay({ placeHolder }) {
     setFilterMonthYear(value);
   };
   //----------------------------------------------------------//
+
+  useEffect(() => {
+    setList([]);
+    handleUpdateData();
+  }, [filterMonthYear]);
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
