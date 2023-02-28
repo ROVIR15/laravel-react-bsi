@@ -27,7 +27,7 @@ class InvoiceHasType extends Model
     }
 
     public function all_invoice_type(){
-        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('sales_order', 'purchase_order', 'party', 'sum', 'status');
+        return $this->belongsTo('App\Models\Invoice\Invoice', 'invoice_id', 'id')->with('sales_order', 'purchase_order', 'party', 'sum', 'status', 'terms');
     }
 
     public function terms(){
