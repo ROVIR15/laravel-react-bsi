@@ -247,7 +247,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::create([
             'invoice_date' => $param['invoice_date'],
             'order_id' => $param['order_id'],
-            'shipment_id' => $param['shipment_id'][0],
+            // 'shipment_id' => $param['shipment_id'][0],
             'due_date' => $param['due_date'],
             'sold_to' => $param['sold_to'],
             'tax' => $param['tax'],
