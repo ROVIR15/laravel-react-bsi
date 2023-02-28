@@ -163,7 +163,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               order={order}
               orderBy={orderBy}

@@ -135,7 +135,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListRadioHead
               order={order}
               orderBy={orderBy}

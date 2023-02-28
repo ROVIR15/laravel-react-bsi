@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, initial, isArray } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -20,13 +20,18 @@ import BUYERLIST from '../../../_mocks_/buyer';
 import API from '../../../helpers';
 import { serviceList2 } from '../../../helpers/data';
 import moment from 'moment';
+import { fNumber } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'month', label: 'month', alignRight: false },
-  { id: 'year', label: 'year', alignRight: false }
+  { id: 'year', label: 'year', alignRight: false },
+  { id: 'total_expected_output', label: 'Planned Output', alignRight: true },
+  { id: 'total_amount_of_money', label: 'Planned Output Valuation', alignRight: true },
+  // { id: 'total_sewing_output', label: 'Output Realisation', alignRight: true },
+  // { id: 'total_sewing_output_valuation', label: 'Output Realisation Valuation', alignRight: true }
 ];
 
 // ----------------------------------------------------------------------
@@ -83,7 +88,32 @@ function DisplayBuyer({ placeHolder }) {
           setGoodsData([]);
         } else {
           // let data = serviceList2(res.data);
-          setGoodsData(res);
+          let data = res.map(function(payloadPerMonth){
+            let info = payloadPerMonth.items_with_price.reduce(function(initial, payloadEachOrder) {
+              // calculate expected pieces of good garment produced
+              let total_expected_output = (parseFloat(payloadEachOrder?.expected_output) * parseFloat(payloadEachOrder?.work_days));
+
+              // calculate expected pieces of good garment valuation
+              let total_expected_valuation = total_expected_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
+
+              // store total_sewing_output
+              // let sewing_output = parseFloat(payloadEachOrder?.ckck[0]?.total_output);
+
+              // calculate valuation of garment sewing output
+              // let val_sewing_output = sewing_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
+
+              return {
+                total_amount_of_money: initial.total_amount_of_money + total_expected_valuation,
+                total_expected_output: initial.total_expected_output + total_expected_output,
+                // total_sewing_output: initial.total_sewing_output + sewing_output,
+                // total_sewing_output_valuation: initial.total_sewing_output + val_sewing_output
+              }
+            }, { total_expected_output: 0, total_amount_of_money: 0, total_sewing_output: 0});
+
+            return {...info, month: payloadPerMonth?.month, year: payloadPerMonth?.year}
+          })
+
+          setGoodsData(data);
         }
         });
       }
@@ -160,7 +190,7 @@ function DisplayBuyer({ placeHolder }) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               active={false}
               order={order}
@@ -175,7 +205,8 @@ function DisplayBuyer({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const { id, month, year} = row;
+                  const { id, month, year, total_amount_of_money, total_expected_output, total_sewing_output, total_sewing_output_valuation
+                  } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -189,6 +220,10 @@ function DisplayBuyer({ placeHolder }) {
                       <TableCell align="left">{index}</TableCell>
                       <TableCell align="left">{`Planning - ${moment(new Date(`${year}-${month}`)).format("MMMM")}`}</TableCell>
                       <TableCell align="left">{year}</TableCell>
+                      <TableCell align="right">{fNumber(total_expected_output)}</TableCell>
+                      <TableCell align="right">{fNumber(total_amount_of_money)}</TableCell>
+                      {/* <TableCell align="right">{fNumber(total_sewing_output)}</TableCell> */}
+                      {/* <TableCell align="right">{fNumber(total_sewing_output_valuation)}</TableCell> */}
                       <TableCell align="right">
                         <MoreMenu id={id} deleteActive={false}/>
                       </TableCell>

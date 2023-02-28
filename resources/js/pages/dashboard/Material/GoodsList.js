@@ -127,7 +127,7 @@ function DisplayMaterial({ placeHolder }) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               order={order}
               orderBy={orderBy}

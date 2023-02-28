@@ -278,7 +278,7 @@ function PurchaseOrder({ placeHolder }) {
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
+          <Table size="small">
             <ListHead
               active={false}
               order={order}
