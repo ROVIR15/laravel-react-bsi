@@ -36,6 +36,20 @@ import { Icon } from '@iconify/react';
 //
 import { generateInvSerialNumber_alt } from '../utils'
 
+
+const total = (terms, amount_of_money) => {
+  let sub_total = parseFloat(amount_of_money);
+
+  if(terms.length === 0) return sub_total;
+  let sub_total2 = terms.reduce(function (initial, next) {
+    let type = next?.value_type?.toLowerCase();
+    if (type === 'percentage') return initial * (1 + next?.term_value / 100);
+    if (type === 'number') return initial + next?.term_value;
+    else return initial;
+  }, sub_total);
+  return sub_total2.toFixed(0);
+};
+
 const GridData = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -146,16 +160,20 @@ function PaymentAccountNew() {
           } else {
             const _data = res.data.map(function (item) {
               const { all_invoice_type } = item;
+              // calculate total after terms
+              let final_calculation = total(all_invoice_type?.terms, all_invoice_type?.sum[0]?.total_amount);
 
               return {
                 id: item?.invoice_id,
                 type: item?.invoice_type_id,
-                serial_number: generateInvSerialNumber_alt(all_invoice_type, item.invoice_type_id),
+                serial_number: generateInvSerialNumber_alt(all_invoice_type, item?.invoice_type_id),
                 billed_to: all_invoice_type?.party?.name,
                 status: all_invoice_type?.status[0]?.type?.name,
-                total_amount: all_invoice_type?.sum[0]?.total_amount * (1 + all_invoice_type?.tax / 100)
+                total_amount: final_calculation * (1 + all_invoice_type?.tax / 100)
               };
             });
+
+            console.log(_data)
             setOptionsInvoice(_data);
           }
         });
@@ -176,13 +194,16 @@ function PaymentAccountNew() {
     //   setOpenSH(false);
     // } else {
     // setSelectedValueSH(data);
-    const a = selected.map((e) => {
-      if(e.type === 1) return ({ id: e.id, type: e.type, amount: e.total_amount });
-      if(e.type === 2) return ({ id: e.id, type: e.type, amount: e.total_amount*-1 });
-      else return ({ id: e.id, type: 0, amount: e.total_amount * 0});
-    });
 
-    console.log(a);
+    const a = selected.map((e) => ({
+      id: e.id, type: e.type, amount: e.total_amount
+    }));
+    // const a = selected.map((e) => {
+    //   if(e.type === 1) return ({ id: e.id, type: e.type, amount: e.total_amount });
+    //   if(e.type === 2) return ({ id: e.id, type: e.type, amount: e.total_amount*-1 });
+    //   else return ({ id: e.id, type: 0, amount: e.total_amount * 0});
+    // });
+
     setFieldValue('invoice_id', a);
     setFieldValue('amount', billedAmount);
     setOpenSH(false);
