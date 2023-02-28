@@ -60,6 +60,11 @@
         return $this->hasManyThrough('App\Models\Order\OrderCompletionStatus', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('status')->orderBy('created_at', 'desc');
     }
 
+    public function invoice()
+    {
+      return $this->hasMany('App\Models\Invoice\Invoice', 'order_id', 'order_id');
+    }
+
   }
 
 ?>

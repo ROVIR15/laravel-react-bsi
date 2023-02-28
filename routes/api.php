@@ -254,3 +254,5 @@ Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
 Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
 Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
 Route::get('running-buyer-order', 'MonitoringSewingController@indexV3');
+Route::get('uninvoiced-purchase-order', 'PurchaseOrderController@getUninvoicedPurchaseOrder');
+Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');

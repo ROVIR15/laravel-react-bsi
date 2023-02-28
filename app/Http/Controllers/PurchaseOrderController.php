@@ -17,7 +17,7 @@
   use App\Http\Resources\Order\POView as onePurchaseOrderView;
 
   class PurchaseOrderController extends Controller
-  {  
+  {
     /**
      * Display a listing of the resource.
      *
@@ -283,5 +283,32 @@
           'errors' => $th->getMessage()
         ], 500);
       }
+    }
+
+    /**
+     * Display unpaid purchase order
+     * 
+     * @param \App\Models\Invoice\Payment
+     * @return \Illuminate\Http\Response
+     */
+    public function getUninvoicedPurchaseOrder()
+    {
+      try {
+        $query = PurchaseOrder::select('id as purchase_order_id', 'order_id', 'po_number', 'issue_date') 
+                  ->whereDoesntHave('invoice')
+                  ->get();
+        
+      } catch (\Throwable $th) {
+        //throw $th;
+        return response()->json([
+          'success' => false,
+          'error' => 'Invalid'
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
     }
   }
