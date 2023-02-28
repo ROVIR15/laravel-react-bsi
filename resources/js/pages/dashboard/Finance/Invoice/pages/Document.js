@@ -289,7 +289,7 @@ function FirstPage() {
 
       case 'review':
         setWarning({
-          title: 'Review Purchase Order?',
+          title: 'Review?',
           message: "Once you submit you cannot make changes unless it's rejected",
           type: 'review',
           send: (type, content) => handleSubmission(type, content)
@@ -299,7 +299,7 @@ function FirstPage() {
 
       case 'approve':
         setWarning({
-          title: 'Apporve Purchase Order?',
+          title: 'Apporve?',
           message: "Once you submit you cannot make changes unless it's rejected",
           type: 'approve',
           send: (type, content) => handleSubmission(type, content)

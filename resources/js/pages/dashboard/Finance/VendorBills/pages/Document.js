@@ -16,6 +16,10 @@ import API from '../../../../../helpers/index';
 import { _partyAddress } from '../../../../../helpers/data';
 import { generateInvSerialNumber } from '../../utils';
 
+//utils
+import { isEmpty, isEqual, uniqBy } from 'lodash';
+import QRCode from 'react-qr-code';
+
 const RootStyle = styled(Page)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -73,6 +77,7 @@ function FirstPage() {
     total_price: 0
   });
   const [items, setItems] = useState([]);
+  const [terms, setTerms] = useState([]);
 
   const [selectedValueSO, setSelectedValueSO] = React.useState({
     name: '',
@@ -96,7 +101,7 @@ function FirstPage() {
         else {
           changeData(res.data);
         }
-      });        
+      });
     } catch (error) {
       alert(error);
     }
@@ -107,8 +112,8 @@ function FirstPage() {
       return qty * price;
     }
 
-    const temp = payload.items.map((item, index) => {    
-      const { order_item, ...rest } = item
+    const temp = payload.items.map((item, index) => {
+      const { order_item, ...rest } = item;
       return {
         id: rest.id,
         order_item_id: order_item.id,
@@ -135,6 +140,7 @@ function FirstPage() {
     });
 
     setItems(temp);
+    setTerms(payload.terms);
   };
 
   return (
@@ -232,7 +238,12 @@ function FirstPage() {
               </Grid>
             </Grid>
             <GridItemX>
-              <Table payload={items} subTotal={invInfo.total_price} tax={invInfo.tax}/>
+              <Table
+                payload={items}
+                terms={terms}
+                subTotal={invInfo.total_price}
+                tax={invInfo.tax}
+              />
             </GridItemX>
 
             <Grid item xs={12}>
@@ -241,7 +252,6 @@ function FirstPage() {
                 return <Typography variant="body2">{`${item}`}</Typography>;
               })}
             </Grid>
-
           </Stack>
         </PaperStyled>
       </RootStyle>
