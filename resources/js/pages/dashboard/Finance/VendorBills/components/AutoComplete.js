@@ -25,9 +25,9 @@ export default function Asynchronous({
 
   React.useEffect(() => {
     if (!value) return;
-    let id = value.split('.')[1];
-    id = id.split('/')[0];
-    id = id.split('-')[0];
+    let id = value?.split('.')[1];
+    id = id?.split('/')[0];
+    id = id?.split('-')[0];
 
     try {
       API.getAPurchaseOrder(id, (res) => {
