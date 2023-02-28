@@ -21,7 +21,7 @@ import ArrowDownIcon from '@iconify/icons-eva/arrow-down-fill';
 import moment from 'moment';
 import API from '../../../helpers';
 import { fPercent } from '../../../utils/formatNumber';
-import { isArray, isEmpty, uniqBy } from 'lodash';
+import { isArray, isEmpty, isUndefined, result, uniqBy } from 'lodash';
 
 moment.locale('id');
 
@@ -52,40 +52,56 @@ function processData(array) {
   if (isArray(array) && !isEmpty(array)) {
     // rebuild object structure using reduce
     return array.reduce(function (initial, next) {
-      //calculate planned output and realisation cuz data is breakdown by sales order id. And make it total
-      const { planned_output, realisation } = next?.plans.reduce(
-        (initial2, next2) => ({
-          ...initial2,
-          planned_output: initial2?.planned_output + Math.round(next2?.total_expected_output),
-          realisation:
-            initial2.realisation + parseFloat(next2?.find_realisation_of_sewing?.total_output || 0)
-        }),
-        { planned_output: 0, realisation: 0 }
-      );
-      //detail of order
-      const _breakdown = next?.plans?.map((item, index) => ({
-        id: index,
-        name: item?.find_realisation_of_sewing?.sales_order?.po_number,
-        start_date: moment(item?.find_realisation_of_sewing?.start_date).format('ll'),
-        end_date: moment(item?.find_realisation_of_sewing?.end_date).format('ll'),
-        planned_qty: item?.total_expected_output,
-        realisation: parseFloat(item?.find_realisation_of_sewing?.total_output)
-      }));
-      //calculate percentage of realisation and planned output
+      const { items, result_sewing } = next;
+
+      let realisation = result_sewing.reduce(function (initial, next) {
+        return initial + parseFloat(next.total_output);
+      }, 0);
+
+      let planned_output = items.reduce(function (initial, next) {
+        return initial + parseFloat(next?.expected_output) * parseFloat(next?.work_days);
+      }, 0);
+
       const percentage = realisation / planned_output;
+
+      let _breakdown = result_sewing.map(function(order_placed_in_each_line, index){
+        const matched = items.find(
+          (item) => ((order_placed_in_each_line?.sales_order_id === item?.sales_order_id) && (order_placed_in_each_line?.facility_id === item?.facility_id))
+        )
+
+        if(isEmpty(matched)) {
+          return {
+            id: 0,
+            name: order_placed_in_each_line?.sales_order?.po_number,
+            start_date: order_placed_in_each_line?.start_date,
+            end_date: order_placed_in_each_line?.end_date,
+            planned_output: 0,
+            realisation: order_placed_in_each_line?.total_output
+          }
+        } else {
+          return {
+            id: 0,
+            name: order_placed_in_each_line?.sales_order?.po_number,
+            start_date: order_placed_in_each_line?.start_date,
+            end_date: order_placed_in_each_line?.end_date,
+            planned_output: parseFloat(matched?.expected_output) * parseFloat(matched?.work_days),
+            realisation: order_placed_in_each_line?.total_output
+          }  
+        }
+      })
+
       return [
         ...initial,
         {
           id: next.id,
           name: next?.name,
+          history: _breakdown,
           planned_output,
           realisation,
-          // planned_output: Math.round(next?.plans[0]?.total_expected_output),
-          // realisation: next?.plans[0]?.find_realisation_of_sewing[0]?.total_output,
-          percentage,
-          history: _breakdown
+          percentage
         }
       ];
+
     }, []);
   } else return [];
 }
@@ -140,7 +156,7 @@ function Row(props) {
                         {historyRow.end_date}
                       </TableCell>
                       <TableCell>{historyRow.name}</TableCell>
-                      <TableCell align="right">{Math.round(historyRow.planned_qty)}</TableCell>
+                      <TableCell align="right">{Math.round(historyRow.planned_output)}</TableCell>
                       <TableCell align="right">{Math.round(historyRow.realisation)}</TableCell>
                     </TableRow>
                   ))}

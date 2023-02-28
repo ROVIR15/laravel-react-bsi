@@ -30,6 +30,10 @@ class Facility extends Model
                     ->groupBy('facility_id', 'sales_order_id');
     }
 
+    public function archive(){
+        return $this->hasManyThrough('App\Models\Manufacture\ManufacturePlanning', 'App\Models\Manufacture\ManufacturePlanningItems', 'facility_id', 'id', 'id', 'manufacture_planning_id');
+    }
+
     public function items(){
         return $this->hasMany('App\Models\Manufacture\ManufacturePlanningItems', 'facility_id');
     }

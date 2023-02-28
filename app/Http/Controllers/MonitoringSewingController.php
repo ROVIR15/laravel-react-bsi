@@ -126,48 +126,79 @@ class MonitoringSewingController extends Controller
 
       try {
         //code...
-        $query = Facility::where('facility_type_id', 7)
-                ->with(['plans' => function($query) use ($month, $year)
-                  {
-                    $query
-                      ->whereHas('man_plan', function($query) use ($month, $year){
-                        $query
-                        ->where('month', $month)
-                        ->where('year', $year);  
-                      })
-                      ->with(['find_realisation_of_sewing' => function($query) use ($month, $year){
-                        $query
-                        ->select('id', 'date', 'facility_id', 'sales_order_id', DB::raw('sum(output) as total_output, max(date) as end_date, min(date) as start_date'))
-                        ->with('sales_order')
-                        ->whereMonth('date', $month)
-                        ->whereYear('date', $year)  
-                        ->groupBy('facility_id','sales_order_id', 'order_id');
-                      }])
-                      // ->with(['sewing' => function($query) use ($month, $year){
-                      //   return $query
-                      //   ->select('id', 'date', 'facility_id', 'sales_order_id', DB::raw('sum(output) as total_output'))
-                      //   ->whereMonth('date', $month)
-                      //   ->whereYear('date', $year)  
-                      //   ->groupBy('facility_id');
-                      // }])
-                      // ->with(['sewing' => function ($query)  use ($month, $year){
-                      //   return $query
-                      //   ->select('id', 'sales_order_id', 'date', DB::raw('sum(output) as total_output'))
-                      //   ->whereMonth('date', $month)
-                      //   ->whereYear('date', $year);    
-                      // }])
-                      ;
-                  }
-                ])
-                ->with(['items' => function($query) use ($month, $year){
-                  $query
-                  ->whereHas('man_plan', function($query) use ($month, $year){
-                    $query
-                    ->where('month', $month)
-                    ->where('year', $year);  
-                  });
+        // $query = Facility::where('facility_type_id', 7)
+        //         ->with(['plans' => function($query) use ($month, $year)
+        //           {
+        //             $query
+        //               ->whereHas('man_plan', function($query) use ($month, $year){
+        //                 $query
+        //                 ->where('month', $month)
+        //                 ->where('year', $year);  
+        //               })
+        //               ->with(['find_realisation_of_sewing' => function($query) use ($month, $year){
+        //                 $query
+        //                 ->select('id', 'date', 'facility_id', 'sales_order_id', DB::raw('sum(output) as total_output, max(date) as end_date, min(date) as start_date'))
+        //                 ->with('sales_order')
+        //                 ->whereMonth('date', $month)
+        //                 ->whereYear('date', $year)  
+        //                 ->groupBy('facility_id','sales_order_id', 'order_id');
+        //               }])
+        //               // ->with(['sewing' => function($query) use ($month, $year){
+        //               //   return $query
+        //               //   ->select('id', 'date', 'facility_id', 'sales_order_id', DB::raw('sum(output) as total_output'))
+        //               //   ->whereMonth('date', $month)
+        //               //   ->whereYear('date', $year)  
+        //               //   ->groupBy('facility_id');
+        //               // }])
+        //               // ->with(['sewing' => function ($query)  use ($month, $year){
+        //               //   return $query
+        //               //   ->select('id', 'sales_order_id', 'date', DB::raw('sum(output) as total_output'))
+        //               //   ->whereMonth('date', $month)
+        //               //   ->whereYear('date', $year);    
+        //               // }])
+        //               ;
+        //           }
+        //         ])
+        //         ->with(['items' => function($query) use ($month, $year){
+        //           $query
+        //           ->whereHas('man_plan', function($query) use ($month, $year){
+        //             $query
+        //             ->where('month', $month)
+        //             ->where('year', $year);  
+        //           });
+        //         }])
+        //         ->get();
+
+                $query_alt = Facility::where('facility_type_id', 7)
+                ->with(['result_sewing' => function($query) use ($month, $year){
+                  return $query
+                  ->select('id', 'date', 'facility_id', 'sales_order_id', DB::raw('sum(output) as total_output, max(date) as end_date, min(date) as start_date'))
+                  ->with('sales_order')
+                  ->whereMonth('date', $month)
+                  ->whereYear('date', $year)  
+                  ->groupBy('facility_id','sales_order_id', 'order_id');
+                  // ->select('monitoring_bsi_sewing.id', 'monitoring_bsi_sewing.date', 'monitoring_bsi_sewing.facility_id', 'monitoring_bsi_sewing.sales_order_id', 'monitoring_bsi_sewing.order_id', 
+                  //   DB::raw('manufacture_planning_items.expected_output, manufacture_planning_items.work_days, manufacture_planning.id as man_plan_id, manufacture_planning.month, manufacture_planning.year, sum(monitoring_bsi_sewing.output) as total_output'))
+                  // ->whereMonth('monitoring_bsi_sewing.date', $month)
+                  // ->whereYear('monitoring_bsi_sewing.date', $year)
+                  // ->where('manufacture_planning.month', $month)
+                  // ->where('manufacture_planning.year', $year)
+                  // ->join('manufacture_planning_items', function($join) use ($month, $year){
+                  //   $join->on('manufacture_planning_items.sales_order_id', '=', 'monitoring_bsi_sewing.sales_order_id')
+                  //         ->orOn('manufacture_planning_items.facility_id', '=', 'monitoring_bsi_sewing.facility_id')
+                  //         ->join('manufacture_planning', 'manufacture_planning.id', '=', 'manufacture_planning_items.manufacture_planning_id');
+                  // })
+                  // ->groupBy('monitoring_bsi_sewing.facility_id', 'monitoring_bsi_sewing.sales_order_id', 'monitoring_bsi_sewing.order_id');
+                }])
+                ->with(['items' => function ($query) use ($month, $year){
+                  return $query
+                    ->select('id', 'sales_order_id', 'facility_id', 'expected_output', 'work_days')
+                    ->whereHas('month_archive', function($query) use ($month, $year){
+                      return $query->where('month', $month)->where('year', $year);
+                    });
                 }])
                 ->get();
+
       } catch (\Throwable $th) {
         //throw $th;
         return response()->json([
@@ -178,7 +209,7 @@ class MonitoringSewingController extends Controller
 
       return response()->json([
         'success' => true,
-        'data' => $query
+        'data' => $query_alt
       ]);
     }
 
