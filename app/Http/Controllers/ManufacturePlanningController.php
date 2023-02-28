@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Manufacture\ManufacturePlanning;
 use App\Models\Manufacture\ManufacturePlanningItems;
-
+use DB;
 class ManufacturePlanningController extends Controller
 {
     /**
@@ -17,7 +17,8 @@ class ManufacturePlanningController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
-        $query = ManufacturePlanning::all();
+        $query = ManufacturePlanning::with('items_with_price')
+                  ->get();
 
         return response()->json($query);
     }
