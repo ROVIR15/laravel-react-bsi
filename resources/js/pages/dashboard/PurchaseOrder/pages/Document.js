@@ -273,14 +273,14 @@ function FirstPage() {
           if(_isSubmitted.length > 0) {
             // let salt = _isSubmitted?.id + _isSubmitted?.order_id + _isSubmitted?.user_id;
             let { user_info, ...rest } = _isSubmitted[0];
-            setValueSubmit({id: rest.id, name: user_info?.name, email: user_info?.email, status: 'Signed by submitter'});
+            setValueSubmit({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by submitter'});
             setIsSubmitted(true);
           }
 
           if(_isReviewed.length > 0) {
             // let salt = _isReviewed?.id + _isReviewed?.order_id + _isReviewed?.user_id;
             let { user_info, ...rest } = _isReviewed[0];
-            setValueReview({id: rest.id, name: user_info?.name, email: user_info?.email, status: 'Signed by reviewer'});
+            setValueReview({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by reviewer'});
             setIsReviewed(true);
           }
 
