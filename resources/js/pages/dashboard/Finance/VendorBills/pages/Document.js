@@ -177,7 +177,7 @@ function FirstPage() {
                 <Box>
                   <div>
                     <Typography variant="overline" display="block" gutterBottom>
-                      Invoice From
+                      Invoice To
                     </Typography>
                     <Typography variant="h6" gutterBottom component="div">
                       {selectedValueSH.name}
@@ -195,7 +195,7 @@ function FirstPage() {
                 <Box>
                   <div>
                     <Typography variant="overline" display="block" gutterBottom>
-                      Invoice To
+                      Invoice From
                     </Typography>
                     <Typography variant="h6" gutterBottom component="div">
                       {selectedValueSO.name}
