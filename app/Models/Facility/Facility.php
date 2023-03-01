@@ -40,8 +40,12 @@ class Facility extends Model
 
     public function result_sewing(){
         return $this->hasMany('App\Models\Monitoring\Sewing', 'facility_id', 'id');
-                // ->orderBy('date', 'desc')
-                // ->select('id', 'date', 'facility_id', 'sales_order_id', 'output');
     }
+
+    // i need this to do another query of sewing output haha..
+    public function last_sewing_completion(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'facility_id', 'id');
+    }
+
 
 }

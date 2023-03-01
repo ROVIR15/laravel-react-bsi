@@ -22,8 +22,17 @@ import moment from 'moment';
 import API from '../../../helpers';
 import { fPercent } from '../../../utils/formatNumber';
 import { isArray, isEmpty, isUndefined, result, uniqBy } from 'lodash';
+import { styled } from '@mui/material/styles';
 
 moment.locale('id');
+
+const BoxStyle = styled(Box)(({ theme }) => ({
+  margin: 12
+}));
+
+const NoBorderCell = styled(TableCell)(({ theme }) => ({
+  border: 'unset'
+}));
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -52,7 +61,7 @@ function processData(array) {
   if (isArray(array) && !isEmpty(array)) {
     // rebuild object structure using reduce
     return array.reduce(function (initial, next) {
-      const { items, result_sewing } = next;
+      const { items, result_sewing, last_sewing_completion } = next;
 
       let realisation = result_sewing.reduce(function (initial, next) {
         return initial + parseFloat(next.total_output);
@@ -64,12 +73,14 @@ function processData(array) {
 
       const percentage = realisation / planned_output;
 
-      let _breakdown = result_sewing.map(function(order_placed_in_each_line, index){
+      let _breakdown = result_sewing.map(function (order_placed_in_each_line, index) {
         const matched = items.find(
-          (item) => ((order_placed_in_each_line?.sales_order_id === item?.sales_order_id) && (order_placed_in_each_line?.facility_id === item?.facility_id))
-        )
+          (item) =>
+            order_placed_in_each_line?.sales_order_id === item?.sales_order_id &&
+            order_placed_in_each_line?.facility_id === item?.facility_id
+        );
 
-        if(isEmpty(matched)) {
+        if (isEmpty(matched)) {
           return {
             id: 0,
             name: order_placed_in_each_line?.sales_order?.po_number,
@@ -77,7 +88,7 @@ function processData(array) {
             end_date: order_placed_in_each_line?.end_date,
             planned_output: 0,
             realisation: order_placed_in_each_line?.total_output
-          }
+          };
         } else {
           return {
             id: 0,
@@ -86,9 +97,9 @@ function processData(array) {
             end_date: order_placed_in_each_line?.end_date,
             planned_output: parseFloat(matched?.expected_output) * parseFloat(matched?.work_days),
             realisation: order_placed_in_each_line?.total_output
-          }  
+          };
         }
-      })
+      });
 
       return [
         ...initial,
@@ -101,7 +112,6 @@ function processData(array) {
           percentage
         }
       ];
-
     }, []);
   } else return [];
 }
@@ -143,7 +153,7 @@ function Row(props) {
                     <TableCell>End Date</TableCell>
                     <TableCell>Sales Order</TableCell>
                     <TableCell align="right">Planned Qty</TableCell>
-                    <TableCell align="right">Realisation</TableCell>
+                    <TableCell align="right">Realisasi Bulan Ini</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -226,6 +236,33 @@ function CollapsibleTable({ rows }) {
           {rows?.map((row) => (
             <Row key={row.id} row={row} />
           ))}
+          <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <NoBorderCell align="right" colSpan={2}>
+              <BoxStyle />
+              <Typography variant="body1"> Total </Typography>
+            </NoBorderCell>
+            {/* Planned Output */}
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1">
+                {rows.reduce((initial, next) => initial + next?.planned_output, 0)}{' '}
+              </Typography>
+            </NoBorderCell>
+            {/* Realisation */}
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1">
+                {rows.reduce((initial, next) => initial + next?.realisation, 0)}{' '}
+              </Typography>
+            </NoBorderCell>
+            {/* Realisation */}
+            <NoBorderCell align="right">
+              <BoxStyle />
+              <Typography variant="body1">
+                {fPercent(rows.reduce((initial, next) => { if(isNaN(next?.percentage)) return initial + 0; return(initial + (parseFloat(next?.percentage*100)/parseInt(rows?.length)))}, 0))}
+              </Typography>
+            </NoBorderCell>
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>

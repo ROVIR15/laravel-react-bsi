@@ -75,6 +75,10 @@
       return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id');
     }
 
+    public function sewing_output2(){
+      return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id');
+    }
+
     public function monitoring_qc(){
       return $this->hasMany('App\Models\Monitoring\Qc', 'sales_order_id')->groupBy('sales_order_id')->select(DB::raw('id, order_id, sales_order_id, sum(output) as output'));
     }

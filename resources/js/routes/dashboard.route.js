@@ -724,7 +724,7 @@ export default function TestRouter() {
           children: [
             { path: 'reg-user', element: <UserRegister /> },
             { path: 'display', element: <DisplayUser /> },
-            { path: 'display/:id', element: <UserTest /> }
+            { path: ':id', element: <UserTest /> }
           ]
         },
         {

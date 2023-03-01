@@ -262,6 +262,11 @@ class MonitoringSewingController extends Controller
                                   ->whereMonth('date', $month)->whereYear('date', $year)
                                   ->groupBy('order_id', 'sales_order_id');
                         }])
+                        ->with(['sewing_output2' => function ($query) use ($month, $year) {
+                          return $query
+                                  ->select('id', 'date', 'order_id', 'sales_order_id', DB::raw('sum(output) as output'))
+                                  ->groupBy('order_id', 'sales_order_id');
+                        }])
                         ->with('order_item', 'avg_price')
                         ->whereHas('sewing_output', function ($query) use ($month, $year){
                           return $query
