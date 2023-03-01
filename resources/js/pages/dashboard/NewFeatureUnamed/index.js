@@ -69,6 +69,9 @@ function processData(array) {
         let total_money_2 =
           parseFloat(avg_price[0].cm_price_avg) * parseFloat(next?.sewing_output[0]?.output);
 
+        let left_qty =
+          parseInt(avg_price[0]?.total_qty) - parseInt(next?.sewing_output2[0]?.output);
+
         return {
           id: next.id,
           ...avg_price[0],
@@ -76,7 +79,7 @@ function processData(array) {
           total_output_sewing: next?.sewing_output[0]?.output,
           last_total_output_sewing:
             parseInt(next?.sewing_output2[0]?.output) - parseInt(next?.sewing_output[0]?.output),
-          left_qty: parseInt(avg_price[0]?.total_qty) - parseInt(next?.sewing_output2[0]?.output),
+          left_qty: left_qty * -1,
           po_number: next?.po_number,
           sales_order_id: next?.id,
           product_name: next?.order_item[0]?.product_feature?.product?.goods?.name,
@@ -90,6 +93,8 @@ function processData(array) {
             total_qty_order: initial.total_qty_order + parseFloat(next?.avg_price[0]?.total_qty),
             total_output_sewing:
               initial.total_output_sewing + parseFloat(next?.sewing_output[0]?.output),
+            last_output_sewing:
+              parseInt(next?.sewing_output2[0]?.output) - parseInt(next?.sewing_output[0]?.output),
             amount_of_money:
               initial.amount_of_money +
               parseFloat(next?.sewing_output[0]?.output) *
@@ -102,6 +107,7 @@ function processData(array) {
           total_qty_order: 0,
           total_output_sewing: 0,
           amount_of_money: 0,
+          last_output_sewing: 0,
           cm_price: 0
         }
       );
@@ -141,8 +147,9 @@ function Row(props) {
           {row.name}
         </TableCell>
         <TableCell align="center">{fNumber(row.total_order)}</TableCell>
-        <TableCell align="center">{fNumber(row.total_qty_order)}</TableCell>
         <TableCell align="center">{fNumber(row.total_output_sewing)}</TableCell>
+        <TableCell align="center">{fNumber(row.last_output_sewing)}</TableCell>
+        <TableCell align="center">{fNumber(row.total_qty_order)}</TableCell>
         <TableCell align="center">{fCurrency(row.amount_of_money)}</TableCell>
         <TableCell align="center">{fCurrency(row.cm_price)}</TableCell>
       </TableRow>
@@ -237,10 +244,13 @@ const columns = [
     name: 'Banyaknya Order'
   },
   {
-    name: 'Total Qty Buyer'
+    name: 'Output Pengerjaan (sewing)'
   },
   {
-    name: 'Total Output Pengerjaan (sewing)'
+    name: 'Output Pengerjaan Sebelumnya (sewing)'
+  },
+  {
+    name: 'Total Qty Buyer'
   },
   {
     name: 'Jumlah Uang'
@@ -279,25 +289,42 @@ function CollapsibleTable({ rows }) {
                 {fNumber(rows.reduce((initial, next) => initial + next?.detail?.length, 0))}{' '}
               </Typography>
             </NoBorderCell>
-            {/* Total Qty Order placed by this month */}
+            {/* Last Total of Completion Order placed */}
             <NoBorderCell align="center">
               <BoxStyle />
               <Typography variant="body1">
-                {fNumber(rows.reduce((initial, next) => initial + parseInt(next?.total_qty_order), 0))}{' '}
+                {fNumber(
+                  rows.reduce((initial, next) => initial + parseInt(next?.total_output_sewing), 0)
+                )}{' '}
               </Typography>
-            </NoBorderCell>
+            </NoBorderCell>            
             {/* Total of Completion Order placed by this month */}
             <NoBorderCell align="center">
               <BoxStyle />
               <Typography variant="body1">
-                {fNumber(rows.reduce((initial, next) => initial + parseInt(next?.total_output_sewing), 0))}{' '}
+                {fNumber(
+                  rows.reduce((initial, next) => initial + parseInt(next?.last_output_sewing), 0)
+                )}{' '}
               </Typography>
             </NoBorderCell>
+            {/* Total Qty Order placed by this month */}
+            <NoBorderCell align="center">
+              <BoxStyle />
+              <Typography variant="body1">
+                {fNumber(
+                  rows.reduce((initial, next) => initial + parseInt(next?.total_qty_order), 0)
+                )}{' '}
+              </Typography>
+            </NoBorderCell>
+
             {/* Total Money */}
             <NoBorderCell align="center">
               <BoxStyle />
               <Typography variant="body1">
-                {fCurrency(rows.reduce((initial, next) => initial + parseFloat(next?.amount_of_money), 0), 'idr')}{' '}
+                {fCurrency(
+                  rows.reduce((initial, next) => initial + parseFloat(next?.amount_of_money), 0),
+                  'idr'
+                )}{' '}
               </Typography>
             </NoBorderCell>
           </TableRow>

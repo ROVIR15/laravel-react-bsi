@@ -90,6 +90,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         total_qty: name.total_qty,
         manufacture_planning_item_id: name.id,
         sales_order_id: name.id,
+        expected_total_output: 0,
         expected_output: 0,
         work_days: 0
       }
@@ -99,6 +100,7 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
         manufacture_planning_item_id: name.id,
         manufacture_planning_id: id,
         sales_order_id: name.id,
+        expected_total_output: 0,
         expected_output: 0,
         work_days: 0
       }  

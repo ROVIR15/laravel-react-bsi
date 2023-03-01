@@ -15,8 +15,8 @@ import { isArray } from 'lodash'
 import API from '../../../helpers'
 
 function calculateOutput(params){
-  const layer = parseFloat(params.row.expected_output)*parseFloat(params.row.work_days);
-  return Math.floor(layer);
+  const layer = parseFloat(params.row.expected_total_output)/parseFloat(params.row.expected_output);
+  return layer.toFixed(2);
 }
 
 const columns = [
@@ -25,9 +25,9 @@ const columns = [
   { field: 'costing_name', headerName: 'Costing', width: 250, editable: false},
   { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
   { field: 'total_qty', headerName: 'Total Qty', editable: false},
-  { field: 'expected_output', headerName: 'Expected Output', editable: true},
-  { field: 'work_days', headerName: 'Work Days Output', editable: true},
-  { field: 'expected_total_output', headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
+  { field: 'expected_total_output', headerName: 'Estimasi Output', width: 300, editable: true},
+  { field: 'expected_output', headerName: 'Estimasi Kecepatan Output', width: 300, editable: true},
+  { field: 'work_days', headerName: 'Work Days Output', editable: false, valueGetter: calculateOutput},
 ];
 
 function Goods() {
@@ -159,12 +159,14 @@ function Goods() {
             </Grid>
 
             <Grid item xs={12}>
-              <DataGrid 
-                columns={columns} 
-                rows={items}
-                onEditRowsModelChange={handleEditRowsModelChange}
-                handleAddRow={handleOpenModal}
-              />
+              <Paper>
+                <DataGrid 
+                  columns={columns} 
+                  rows={items}
+                  onEditRowsModelChange={handleEditRowsModelChange}
+                  handleAddRow={handleOpenModal}
+                />
+              </Paper>
             </Grid>
 
             <Grid item xs={12}>
