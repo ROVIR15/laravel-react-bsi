@@ -24,6 +24,7 @@ import { fCurrency, fNumber } from '../../../utils/formatNumber';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-2-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import moment from 'moment';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -33,8 +34,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 function calculateOutput(params){
-  const layer = parseFloat(params.row.expected_output)*parseFloat(params.row.work_days);
-  return Math.floor(layer);
+  const layer = parseFloat(params.row.expected_total_output)/parseFloat(params.row.expected_output);
+  return layer.toFixed(2);
 }
 
 const FloatingPaper = styled(Box)(({theme}) => ({
@@ -77,9 +78,9 @@ function Goods() {
     { field: 'costing_name', headerName: 'Costing', width: 250, editable: false},
     { field: 'po_number', headerName: 'Sales PO Number', width: 300, editable: false},
     { field: 'total_qty', headerName: 'Total Qty', editable: false},
-    { field: 'expected_output', width: 200, alignItem: 'right',headerName: 'Expected Output', editable: true},
-    { field: 'work_days', width: 200, alignItem: 'right',headerName: 'Work Days Output', editable: true},
-    { field: 'expected_total_output', width: 200, alignItem: 'right',headerName: 'Est. Output', editable: false, valueGetter: calculateOutput},
+    { field: 'expected_total_output', headerName: 'Estimasi Output', width: 300, editable: true},
+    { field: 'expected_output', headerName: 'Estimasi Kecepatan Output', width: 300, editable: true},
+    { field: 'work_days', headerName: 'Work Days Output', editable: false, valueGetter: calculateOutput},
     { field: 'actions', type: 'actions', width: 50, 
       getActions: (params) => [
         <GridActionsCellItem
@@ -147,24 +148,33 @@ function Goods() {
       if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+        let _payloadToBePosted = {};
 
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
           return prevItems.map((row, index) => {
             if(row.id === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+              if (editedColumnName === 'expected_total_output' && row?.expected_output > 0) {
+                _payloadToBePosted = {[editedColumnName]: editRowData[editedColumnName].value, work_days: (editRowData[editedColumnName].value/row?.expected_output)?.toFixed(2)}
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value, work_days: (editRowData[editedColumnName].value/row?.expected_output)?.toFixed(2)}
+              }
+              else if ( editedColumnName === 'expected_output' && row?.expected_total_output > 0 ) {
+                _payloadToBePosted = {[editedColumnName]: editRowData[editedColumnName].value, work_days: (row?.expected_total_output/editRowData[editedColumnName].value).toFixed(2)}
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value, work_days: (row?.expected_total_output/editRowData[editedColumnName].value).toFixed(2)}
+              }
+              else {
+                _payloadToBePosted = {[editedColumnName]: editRowData[editedColumnName].value}
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+              }
             } else {
               return row
             }
           });
         });
 
-        const data = new Object();
-        data[editedColumnName] = editRowData[editedColumnName].value
-
         try {
-          API.updateManufacturePlanningItems(editedIds, data, function(res){
+          API.updateManufacturePlanningItems(editedIds, _payloadToBePosted, function(res){
             if(res.success) alert('success');
             else throw new Error('failed');
           })
@@ -225,7 +235,8 @@ function Goods() {
               po_number: item?.info?.po_number,
               total_qty: item?.info?.avg_price[0]?.total_qty,
               expected_output: item?.expected_output,
-              work_days: item?.work_days,
+              work_days: parseFloat(item?.work_days),
+              expected_total_output: Math.round(parseFloat(item?.work_days) * parseFloat(item?.expected_output)),
               total_plan_qty: Math.floor(item?.expected_output * item?.work_days),
               total_plan_amount: Math.floor(item?.expected_output * item?.work_days * parseFloat(item?.info?.avg_price[0]?.cm_price_avg))
             }
@@ -244,7 +255,10 @@ function Goods() {
           setCollected(result)
           setItems(payload);
 
-          setFieldValue('monthYear', `${res.year}-${res.month}`);
+          let monthYear =  `${res?.year}-${res?.month}`;
+          monthYear = moment(monthYear).format('YYYY-MMMM');
+
+          setFieldValue('monthYear', monthYear);
         }
       })
     } catch (error) {

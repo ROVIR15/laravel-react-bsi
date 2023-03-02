@@ -44,7 +44,8 @@ export default function BasicModal({
   options,
   handleClose,
   selected,
-  setSelected
+  setSelected,
+  lengthOfSelected
 }) {
   const { id } = useParams();
   const { pathname } = useLocation();
@@ -313,6 +314,7 @@ export default function BasicModal({
                     selected={values.selectedItem}
                     setSelected={handleSelectedItems}
                     update={update}
+                    lengthOfSelected={lengthOfSelected}
                   />
                 </Grid>
               </Grid>

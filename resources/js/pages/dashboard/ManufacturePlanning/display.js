@@ -110,7 +110,7 @@ function DisplayBuyer({ placeHolder }) {
               }
             }, { total_expected_output: 0, total_amount_of_money: 0, total_sewing_output: 0});
 
-            return {...info, month: payloadPerMonth?.month, year: payloadPerMonth?.year}
+            return {...info, month: payloadPerMonth?.month, year: payloadPerMonth?.year, id: payloadPerMonth?.id}
           })
 
           setGoodsData(data);
@@ -217,7 +217,7 @@ function DisplayBuyer({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index}</TableCell>
+                      <TableCell align="left">{index + 1}</TableCell>
                       <TableCell align="left">{`Planning - ${moment(new Date(`${year}-${month}`)).format("MMMM")}`}</TableCell>
                       <TableCell align="left">{year}</TableCell>
                       <TableCell align="right">{fNumber(total_expected_output)}</TableCell>

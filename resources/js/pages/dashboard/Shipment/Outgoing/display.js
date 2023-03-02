@@ -28,6 +28,7 @@ const TABLE_HEAD = [
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'name', label: 'Buyer', alignRight: false },
+  { id: 'delivery_qty', label: 'Shipped Qty', alignRight: false },
   { id: 'delivery_date', label: 'Arrival Date', alignRight: false },
   { id: 'est_delivery_date', label: 'Estimated Arrival Date', alignRight: false },
   { id: 'remarks', label: 'Keterangan', alignRight: false }
@@ -247,6 +248,7 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{serial_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.po_number}</TableCell>
                       <TableCell align="left">{order?.sales_order?.ship?.name}</TableCell>
+                      <TableCell align="left">{sum[0]?.total_qty}</TableCell>
                       <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
                       <TableCell align="left">
                         {moment(order?.sales_order?.delivery_date).format('ll')}

@@ -103,7 +103,15 @@ function Goods() {
     
           return prevItems.map((row, index) => {
             if(row.id === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+              if (editedColumnName === 'expected_total_output' && row?.expected_output > 0) {
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value, work_days: (editRowData[editedColumnName].value/row?.expected_output)?.toFixed(2)}
+              }
+              else if ( editedColumnName === 'expected_output' && row?.expected_total_output > 0 ) {
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value, work_days: (row?.expected_total_output/editRowData[editedColumnName].value).toFixed(2)}
+              }
+              else {
+                return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+              }
             } else {
               return row
             }
@@ -129,6 +137,7 @@ function Goods() {
         handleClose={handleCloseModal}
         selected={items}
         setSelected={setItems}
+        lengthOfSelected={items.length}
       />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>

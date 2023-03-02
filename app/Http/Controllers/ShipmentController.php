@@ -44,17 +44,20 @@ class ShipmentController extends Controller
             })
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
+            ->groupBy('order_id')
             ->get();
           } else {
             $query = Shipment::with('order', 'type', 'status', 'sum')
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
+            ->groupBy('order_id')
             ->get();
           }  
         } else {
           if(isset($type)){
             $query = Shipment::with('order', 'type', 'status', 'sum')
             ->where('shipment_type_id', $type)
+            ->groupBy('order_id')
             ->orderBy('order_id', 'asc')
             ->get();
           } else {

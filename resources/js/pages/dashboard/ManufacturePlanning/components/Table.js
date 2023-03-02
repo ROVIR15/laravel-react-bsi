@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray } from 'lodash';
+import { filter, isArray, isEmpty } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -65,7 +65,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, update, selected, setSelected}) {
+function TableD({ list, placeHolder, update, selected, setSelected, lengthOfSelected}) {
   const {id} = useParams();
 
   const [page, setPage] = useState(0);
@@ -83,9 +83,10 @@ function TableD({ list, placeHolder, update, selected, setSelected}) {
 
   const handleClick = (event, name) => {
     let payload = {}
+
     if(isUndefined(id)){
       payload = {
-        id: name.id,
+        id: lengthOfSelected + 1,
         po_number: name.po_number,
         total_qty: name.total_qty,
         manufacture_planning_item_id: name.id,
