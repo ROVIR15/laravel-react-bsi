@@ -314,9 +314,9 @@ function Display({ placeHolder }) {
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{sum[0]?.total_qty}</TableCell>
                       <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_sewing[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_qc[0]?.output}</TableCell>
-                      <TableCell align="left">{monitoring_fg[0]?.output}</TableCell>
+                      <TableCell align="left" style={(monitoring_sewing[0]?.output > monitoring_cutting[0]?.output ? { color: 'red'} : null)}>{monitoring_sewing[0]?.output}</TableCell>
+                      <TableCell align="left" style={(monitoring_qc[0]?.output > monitoring_sewing[0]?.output ? { color: 'red'} : null)}>{monitoring_qc[0]?.output}</TableCell>
+                      <TableCell align="left" style={(monitoring_fg[0]?.output > monitoring_qc[0]?.output ? { color: 'red'} : null)}>{monitoring_fg[0]?.output}</TableCell>
                       <TableCell align="left">{fPercent(percentage)}</TableCell>
                       <TableCell align="left">{difference}</TableCell>
                       <TableCell align="right">

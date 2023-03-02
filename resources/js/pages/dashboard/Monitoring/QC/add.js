@@ -130,6 +130,10 @@ function WorkCenter() {
     
           return prevItems.map((row, index) => {
             if(row.id === parseInt(itemToUpdateIndex)){
+              if(editRowData[editedColumnName].value > row.qty_loading ) {
+                alert('You trying to do something wrong! please check your input');
+                return row;
+              }
               return {...row, [editedColumnName]: editRowData[editedColumnName].value}
             } else {
               return row
