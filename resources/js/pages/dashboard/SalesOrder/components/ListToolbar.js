@@ -72,18 +72,21 @@ export default function ListToolbar({
   filterDate,
   filterMonthYear,
   filterCategory,
+  filterProductionStatus,
   listOfBuyer,
   buyerFilterActive=false,
   statusActive=false,
   dateActive=false,
   monthYearActive=false,
   categoryFilterActive=false,
+  productionStatusFilterActive=false,
   onFilterBuyer,
   onFilterName, 
   onFilterStatus,
   onFilterDate,
   onFilterMonthYear,
   onFilterCategoryAndSub,
+  onFilterProductionStatus,
   onGo,
   onDeletedSelected, 
   placeHolder 
@@ -160,10 +163,31 @@ export default function ListToolbar({
             onChange={onFilterStatus}
           >
             <MenuItem value="All">All</MenuItem>
+            <MenuItem value="Draft">Approve</MenuItem>
             <MenuItem value="Approve">Approve</MenuItem>
             <MenuItem value="Dropped">Dropped</MenuItem>
             <MenuItem value="Review">Review</MenuItem>
             <MenuItem value="Submit">Submit</MenuItem>
+          </Select>
+        </FormControl>
+    )
+  }
+
+  function productionStatusFilter() {
+    if(productionStatusFilterActive) return (
+        <FormControl fullWidth sx={{ maxWidth: '150px'}}>
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            value={filterProductionStatus}
+            label="status"
+            onChange={onFilterProductionStatus}
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="draft">Draft</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="running">Running</MenuItem>
+            <MenuItem value="waiting">Waiting</MenuItem>
+            <MenuItem value="on shipment">On Shipment</MenuItem>
           </Select>
         </FormControl>
     )
@@ -226,6 +250,8 @@ export default function ListToolbar({
         {buyerList()}
 
         {statusFilter()}
+
+        {productionStatusFilter()}
 
         <SearchStyle
           value={filterName}

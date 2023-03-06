@@ -2054,6 +2054,17 @@ const main = {
     },
 
     // Goods Receipt Items
+    postIncomingGoods(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+
+      axios.post( uri + '/post-incoming-goods', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     insertShipment(_data, cb){
       if(!_data) {
           console.error('data not found');

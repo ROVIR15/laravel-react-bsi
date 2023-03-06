@@ -4,8 +4,14 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 
+use Exception;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 use App\Models\Invoice\InvoiceHasShipment;
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
 use App\Models\Shipment\Shipment;
 use App\Models\Shipment\ShipmentView;
 use App\Models\Shipment\ShipmentItem;
@@ -186,6 +192,76 @@ class ShipmentController extends Controller
           'errors' => $e->getMessage()
         ],500);
       }
+    }
+
+    /**
+     * Post incoming goods request from order type 'purchase'
+     * 
+     * @param id an ID of requested order (purhcase order)
+     * @return \Illuminate\Http\Response
+     */
+
+    public function postIncomingGoods(Request $request)
+    {
+      $orderId = $request->all()['payload']['id'];
+      $userId = $request->all()['payload']['user_id'];
+
+      try {
+        
+        $check_order_shipment = Shipment::where('order_id', $orderId)->get();
+
+        if(count($check_order_shipment) > 0) throw new Exception("Error Processing Request Due To Order Already Made A Shipment");
+        
+        $purchaseOrder = Order::where('id', $orderId)->with('purchase_order')->get();
+
+        $orderItem = OrderItem::where('order_id', $orderId)->get();
+
+        $serialNumber = Str::random(10);
+
+        $payloadShipment = [
+          'serial_number' => $serialNumber,
+          'shipment_type_id' => 1,
+          'est_delivery_date' => $purchaseOrder[0]['purchase_order']['delivery_date'],
+          'delivery_date' => date('Y-m-d'),
+          'order_id' => $orderId,
+          'imageUrl' => NULL
+        ];
+
+        $shipment_creation = Shipment::create($payloadShipment);
+
+        $payloadShipmentStatus = [
+          'shipment_type_status_id' => 3,
+          'shipment_id' => $shipment_creation['id'],
+          'user_id' => $userId
+        ];
+
+        ShipmentStatus::create($payloadShipmentStatus);
+
+        $order_to_shipment_item = [];
+
+        foreach ($orderItem as $item) {
+          array_push($order_to_shipment_item, [
+            'shipment_id' => $shipment_creation['id'],
+            'order_item_id' => $item['id'],
+            'qty_shipped' => 0,
+            'description' => $item['description']
+          ]);
+        }
+        
+        ShipmentItem::insert($order_to_shipment_item);
+
+      } catch (\Throwable $th) {
+
+        return response()->json([
+          'success' => false,
+          'message' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Post Incoming Goods successfully created tell your warehouse admin to check data already inserted on their dashboard or not.'
+      ]);
     }
 
     /**

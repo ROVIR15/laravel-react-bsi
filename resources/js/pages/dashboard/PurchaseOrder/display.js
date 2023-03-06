@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isNull, uniqBy } from 'lodash';
+import { filter, isArray, isEmpty, isNull, uniqBy } from 'lodash';
 import {
   Card,
   Checkbox,
@@ -71,14 +71,43 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query[1] !== 0)
-    return filter(
-      array,
-      (_b) =>
-        _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
-    );
-  else return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-  // return stabilizedThis.map((el) => el[0]);
+
+  if (query[1] !== 'All') {
+    if (query[2] !== 0) {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.status[0]?.status_type?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    } else {
+      if (query[1] === 'Created') return filter(
+        array,
+        (_b) => {
+          return  _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          isEmpty(_b.status);
+        }
+      );
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          !isEmpty(_b.status) &&
+          _b.status[0]?.status_type?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1
+      );
+    }
+  } else {
+    if (query[2] !== 0)
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    else
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  }  // return stabilizedThis.map((el) => el[0]);
 }
 
 function PurchaseOrder({ placeHolder }) {
@@ -251,10 +280,19 @@ function PurchaseOrder({ placeHolder }) {
   };
   //------------------------------------------------------------//
 
+  //----------------filter status----------------------//
+  const [filterStatus, setFilterStatus] = useState('All');
+
+  const handleFilterByStatus = (event) => {
+    setFilterStatus(event.target.value);
+  };
+  //------------------------------------------------------------//
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrderData.length) : 0;
 
   const filteredData = applySortFilter(purchaseOrderData, getComparator(order, orderBy), [
     filterName,
+    filterStatus,
     filterBuyer
   ]);
 
@@ -275,6 +313,9 @@ function PurchaseOrder({ placeHolder }) {
         filterBuyer={filterBuyer}
         onFilterBuyer={handleBuyerFilter}
         listOfBuyer={optionsBuyer}
+        statusActive={true}
+        filterStatus={filterStatus}
+        onFilterStatus={handleFilterByStatus}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>

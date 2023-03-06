@@ -73,14 +73,44 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
 
-  if (query[1] !== 0)
-    return filter(
-      array,
-      (_b) =>
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
-    );
-  else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-  // return stabilizedThis.map((el) => el[0]);
+  if (query[1] !== 'all') {
+    if (query[2] !== 0) {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.completion_status[0]?.status?.name?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    } else {
+      if (query[1] === 'draft') return filter(
+        array,
+        (_b) => {
+          console.log(_b.completion_status.length === 0)
+          return  _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          isEmpty(_b.completion_status);
+        }
+      );
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          !isEmpty(_b.completion_status) &&
+          _b.completion_status[0]?.status?.name?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1
+      );
+    }
+  } else {
+    if (query[2] !== 0)
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.party?.id === query[2]
+      );
+    else
+      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+  }
+  return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplaySalesOrder({ placeHolder }) {
@@ -107,6 +137,14 @@ function DisplaySalesOrder({ placeHolder }) {
 
   const handleBuyerFilter = (event) => {
     setFilterBuyer(event.target.value);
+  };
+  //------------------------------------------------------------//
+
+  //----------------filter production----------------------//
+  const [filterProductionStatus, setFilterProductionStatus] = useState('all');
+
+  const handleFilterProductionStatus = (event) => {
+    setFilterProductionStatus(event.target.value);
   };
   //------------------------------------------------------------//
 
@@ -265,6 +303,7 @@ function DisplaySalesOrder({ placeHolder }) {
 
   const filteredData = applySortFilter(salesOrderData, getComparator(order, orderBy), [
     filterName,
+    filterProductionStatus,
     filterBuyer
   ]);
 
@@ -284,6 +323,9 @@ function DisplaySalesOrder({ placeHolder }) {
         filterBuyer={filterBuyer}
         onFilterBuyer={handleBuyerFilter}
         listOfBuyer={optionsBuyer}
+        productionStatusFilterActive={true}
+        filterProductionStatus={filterProductionStatus}
+        onFilterProductionStatus={handleFilterProductionStatus}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>

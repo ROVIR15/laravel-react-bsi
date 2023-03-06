@@ -119,6 +119,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
     Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
+    Route::post('post-incoming-goods', 'ShipmentController@postIncomingGoods');
 
     //Inventory
     Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -256,3 +257,4 @@ Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getR
 Route::get('running-buyer-order', 'MonitoringSewingController@indexV3');
 Route::get('uninvoiced-purchase-order', 'PurchaseOrderController@getUninvoicedPurchaseOrder');
 Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');
+Route::get('invoice-payment', 'InvoiceController@paymentInvoice');

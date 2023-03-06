@@ -31,6 +31,8 @@ import { useParams } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
+import useAuth from '../../../context';
+
 // api
 import API from '../../../helpers';
 
@@ -61,6 +63,7 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 
 function SalesOrder() {
   const { id } = useParams();
+  const { user } = useAuth();
 
   // Option for Quote
   const [options, setOptions] = useState([]);
@@ -217,6 +220,23 @@ function SalesOrder() {
   useEffect(() => {
     var orderItem;
   }, [items]);
+
+  const postIncomingGoods = (order_id) => {
+    try {
+      API.postIncomingGoods({ id: order_id, user_id: user?.id }, function(res) {
+        if(!res) return;
+        if(!res.success) {
+          alert(res.message);
+          throw new Error(res.message);
+        }
+        else {
+          alert(res.message);
+        }
+      })
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
@@ -635,6 +655,13 @@ function SalesOrder() {
 
               <Grid item xs={12}>
                 <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+                  <Button
+                    size="large"
+                    color="grey"
+                    variant="contained"
+                    sx={{ m: 1 }}
+                    onClick={() => postIncomingGoods(values?.order_id)}
+                  > Post Incoming Goods </Button>
                   <LoadingButton
                     size="large"
                     type="submit"
