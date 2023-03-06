@@ -2158,6 +2158,15 @@ const main = {
         cb(err.response);
       });
     },
+    updateShipmentItem(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/shipment-item/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
     //Inventory
     getInventoryItem(cb){
       axios.get( uri + '/inventory').then(function(res){

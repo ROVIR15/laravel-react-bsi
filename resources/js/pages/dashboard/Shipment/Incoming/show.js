@@ -211,7 +211,7 @@ function OutboundDelivery() {
       { field: 'color', headerName: 'Color', editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
       { field: 'satuan', headerName: 'Satuan', editable: false },
-      { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
+      { field: 'qty_shipped', headerName: 'Qty Delivery', editable: true },
       { field: 'description', width: 400, headerName: 'Description', editable: true },
       {
         field: 'actions',
@@ -249,6 +249,16 @@ function OutboundDelivery() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
+        // update on shipment item
+        try {
+          API.updateShipmentItem(editedIds, { [editedColumnName]: editRowData[editedColumnName].value}, function(res){
+            if(!res) return;
+            if(!res.success) throw new Error('failed');
+            else alert('done')
+          })            
+        } catch (error) {
+          alert(error)
+        }
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
