@@ -2374,6 +2374,16 @@ const main = {
           cb(err.response);
       });
     },
+    postVendorBills(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/post-vendor-bills', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
     getSalesInvoice(params=null, cb){
       axios.get( uri + '/invoice' + params).then(function(res){
         cb(res.data);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Party\PartyRoles;
 use App\Models\Invoice\Invoice;
+use App\Models\Invoice\InvoiceStatus;
 use App\Models\Invoice\InvoiceTerm;
 use App\Models\Invoice\PaymentHasInvoice;
 use App\Models\Invoice\InvoiceHasShipment;
@@ -15,6 +16,11 @@ use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
 use App\Http\Resources\Study\InvoiceCollection;
 
 use DB;
+
+use Exception;
+
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
 
 class InvoiceController extends Controller
 {
@@ -105,6 +111,84 @@ class InvoiceController extends Controller
           ]);
         }
     }
+
+    /**
+     * Post Vendor Bills based on reference of purchase order
+     * 
+     * @param Object {id, user_id}
+     * @return \Illuminate\Http\Response
+     */
+
+     public function postVendorBills(Request $request)
+     {
+       $orderId = $request->all()['payload']['order_id'];
+       $userId = $request->all()['payload']['user_id'];
+       $param = $request->all()['payload']['info'];
+
+       try {
+        //  get data from purchase order
+        $check_order_invoice = Invoice::where('order_id', $orderId)
+                              ->whereHas('type', function($query) {
+                                return $query->where('invoice_type_id', 2);
+                              })
+                              ->get();
+        
+        // if found on invoice
+        if(count($check_order_invoice) > 0) throw new Exception("Error Processing Request", 1);
+        
+        $purchaseOrder = Order::where('id', $orderId)->with('purchase_order')->get();
+
+        $orderItem = OrderItem::where('order_id', $orderId)->get();
+
+        // return response()->json($orderItem);
+        $payloadInvoice = [
+          'invoice_date' => $param['invoice_date'],
+          'due_date' => $param['due_date'],
+          'order_id' => $orderId,
+          'sold_to' => $purchaseOrder[0]['ship_to']['id'],
+          'tax' => $purchaseOrder[0]['tax'],
+          'description' => $purchaseOrder[0]['description']
+        ];
+
+        // create Invoice 
+        $invoice = Invoice::create($payloadInvoice);
+
+        $payloadInvoiceItem = [];
+
+        foreach ($orderItem as $item) {
+          array_push($payloadInvoiceItem, [
+            'invoice_id' => $invoice['id'],
+            'order_item_id' => $item['id'],
+            'qty' => $item['qty'],
+            'amount' => $item['unit_price']
+          ]);
+        }
+
+        InvoiceItem::insert($payloadInvoiceItem);
+
+        InvoiceHasType::create([
+          'invoice_id' => $invoice['id'],
+          'invoice_type_id' => 2
+        ]);
+
+        InvoiceStatus::create([
+          'invoice_id' => $invoice['id'],
+          'invoice_status_type_id' => 4
+        ]);
+
+       } catch (\Throwable $th) {
+         //throw $th;
+         return response()->json([
+           'success' => false,
+           'message' => $th->getMessage()
+         ], 500);
+       }
+
+       return response()->json([
+         'success' => true,
+         'message' => 'succesfully'
+       ]);
+     }
 
     public function paymentInvoice(Request $request){
       $type = $request->query('invoice_type');
@@ -320,13 +404,11 @@ class InvoiceController extends Controller
       $type = $request->query('invoice_type');
 
       try {
-
         if(isset($type)){
-            $query = Invoice::with('items', 'party', 'sales_order', 'purchase_order', 'status', 'terms', 'submission')->find($id);  
+            $query = Invoice::with('items', 'party', 'payment_history', 'sales_order', 'purchase_order', 'status', 'terms', 'submission')->find($id);  
         } else {
             $query = Invoice::with('party')->find($id);
         }
-
       } catch (Exception $th) {
         return response()->json([
           'success' => false,

@@ -146,7 +146,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('invoice-party', 'InvoiceController@getInvoicedParty');
     Route::resource('invoice-receipt', 'InvoiceReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('invoice-receipt-item', 'IRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    
+    Route::post('post-vendor-bills', 'InvoiceController@postVendorBills');
+
     //Purchasing
     Route::resource('request-for-quotation', 'RFQController')->only('index', 'store', 'destroy', 'update', 'show');
 

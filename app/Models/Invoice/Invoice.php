@@ -28,6 +28,10 @@ class Invoice extends Model
         return $this->belongsTo('App\Models\Party\Party', 'sold_to', 'id')->with('address');
     }
 
+    public function payment_history(){
+        return $this->hasManyThrough('App\Models\Invoice\Payment', 'App\Models\Invoice\PaymentHasInvoice', 'invoice_id', 'id', 'id', 'payment_id');
+    }
+
     public function sales_order(){
         return $this->belongsTo('App\Models\Order\Order', 'order_id', 'id')->with('sales_order');
     }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
   Box,
   Button,
@@ -16,7 +16,8 @@ import {
   Paper,
   Select,
   Stack,
-  TextField
+  TextField,
+  Table
 } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { LoadingButton } from '@mui/lab';
@@ -39,6 +40,10 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { invoiceItemArrangedData, generateInvSerialNumber } from '../utils';
 import { _partyAddress } from '../../../../helpers/data';
+import { fCurrency } from '../../../../utils/formatNumber';
+import moment from 'moment';
+
+moment.locale('id');
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -89,6 +94,9 @@ function Invoice() {
     }
   });
 
+  // Payment History
+  const [paymentHistory, setPaymentHistory] = useState([]);
+
   // GET DATA from spesific id
   React.useEffect(() => {
     if (!id) return undefined;
@@ -107,6 +115,7 @@ function Invoice() {
             tax: res.data.tax,
             description: res.data.description
           });
+          setPaymentHistory(res.data.payment_history);
           let _data = _partyAddress(res.data.party);
           setSelectedValueSO({
             name: _data.name,
@@ -114,7 +123,7 @@ function Invoice() {
             postal_code: _data.postal_code
           });
           setStatus(res.data?.status[0]?.invoice_status_type_id);
-          setRowsInvoiceTerm(res.data?.terms)
+          setRowsInvoiceTerm(res.data?.terms);
           changeData(res.data);
         }
       });
@@ -360,7 +369,7 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={6}>
-            <Card >
+            <Card>
               <CardHeader title="Invoice Date" />
               <CardContent>
                 <Stack direction="row" spacing={2}>
@@ -391,7 +400,7 @@ function Invoice() {
           </Grid>
 
           <Grid item xs={12}>
-            <Card >
+            <Card>
               <CardHeader title="Invoice Information" />
               <CardContent>
                 <Paper>
@@ -457,6 +466,7 @@ function Invoice() {
                       <Tab label="Finance" value="2" />
                       <Tab label="Vendor Bills Status" value="3" />
                       <Tab label="Terms" value="4" />
+                      <Tab label="Payment History" value="5" />
                     </TabList>
                   </Box>
 
@@ -514,6 +524,50 @@ function Invoice() {
                       handleAddRow={handleAddInvoiceTerm}
                       onEditRowsModelChange={handleEditInvoiceTermRowsModelChange}
                     />
+                  </TabPanel>
+
+                  <TabPanel value="5">
+                    <Paper
+                      style={{
+                        backgroundColor: 'rgb(255, 255, 255)',
+                        color: 'rgb(17, 25, 39)',
+                        transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                        border: '1px solid rgb(242, 244, 247)',
+                        backgroundImage: 'none',
+                        overflow: 'hidden',
+                        borderRadius: '20px'
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{ padding: '12px 16px' }}
+                      >
+                        <Typography variant="h5">Tanggal</Typography>
+                        <Typography variant="h5">Jumlah Uang</Typography>
+                      </Stack>
+                      <Divider />
+                      {paymentHistory.map(function (item) {
+                        return (
+                          <>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              style={{ padding: '12px 16px', width: '100%' }}
+                            >
+                              <Typography variant="subtitle">
+                                {moment(item.effective_date).format('LL')}
+                              </Typography>
+                              <Typography variant="subtitle">
+                                {fCurrency(item.amount, 'idr')}
+                              </Typography>
+                            </Stack>
+                          </>
+                        );
+                      })}
+                    </Paper>
                   </TabPanel>
                 </TabContext>
               </CardContent>

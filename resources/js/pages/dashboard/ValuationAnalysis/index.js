@@ -310,23 +310,23 @@ function ValuationTable({ placeHolder }) {
 
       <Grid container direction="row" justifyContent="space-evenly" spacing={1}>
         <Grid item xs={3}>
-          <PaperBox title="Total Ready-Made Garments" value={obj?.total_produced} />
+          <PaperBox title="Total Garment Jadi" value={obj?.total_produced} />
         </Grid>
 
         <Grid item xs={3}>
-          <PaperBox title="Shipped Garments" value={obj?.total_shipped} />
+          <PaperBox title="Total Garment Terkirim" value={obj?.total_shipped} />
         </Grid>
 
         <Grid item xs={3}>
           <PaperBox
-            title="Valuation Produced Garments"
+            title="Nilai Garment Jadi"
             value={fCurrency(obj?.m_total_produced, 'idr')}
           />
         </Grid>
 
         <Grid item xs={3}>
           <PaperBox
-            title="Valuation Shipped Garments"
+            title="Nilai Garment Terkirim"
             value={fCurrency(obj?.m_total_shipped, 'idr')}
           />
         </Grid>

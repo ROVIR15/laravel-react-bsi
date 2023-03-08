@@ -39,6 +39,7 @@ import API from '../../../helpers';
 //Component
 import DataGrid from '../../../components/DataGrid';
 import Modal from './components/Modal';
+import ModalGenerateVendorBills from './components/ModalGenerateVendorBills';
 
 //Icons
 import { Icon } from '@iconify/react';
@@ -145,8 +146,8 @@ function SalesOrder() {
     setTax(load.order.tax);
 
     let ras;
-    if(load.order?.currency_id === 1) ras='usd';
-    else ras='idr';
+    if (load.order?.currency_id === 1) ras = 'usd';
+    else ras = 'idr';
 
     setCurrency(ras);
     let _bought_from = _partyAddress(load.bought_from);
@@ -196,7 +197,16 @@ function SalesOrder() {
     };
   }, [loading]);
 
-  const { errors, touched, values, isSubmitting, handleSubmit, setValues, getFieldProps, setFieldValue } = formik;
+  const {
+    errors,
+    touched,
+    values,
+    isSubmitting,
+    handleSubmit,
+    setValues,
+    getFieldProps,
+    setFieldValue
+  } = formik;
 
   const deleteData = useCallback((id) => () => {
     setItems((prevItems) => {
@@ -223,20 +233,19 @@ function SalesOrder() {
 
   const postIncomingGoods = (order_id) => {
     try {
-      API.postIncomingGoods({ id: order_id, user_id: user?.id }, function(res) {
-        if(!res) return;
-        if(!res.success) {
+      API.postIncomingGoods({ id: order_id, user_id: user?.id }, function (res) {
+        if (!res) return;
+        if (!res.success) {
           alert(res.message);
           throw new Error(res.message);
-        }
-        else {
+        } else {
           alert(res.message);
         }
-      })
+      });
     } catch (error) {
       alert(error);
     }
-  }
+  };
 
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
@@ -419,11 +428,15 @@ function SalesOrder() {
 
   // Radio
   const handleRadioChange = (event) => {
-    if(event.target.value === 1) setCurrency('usd');
+    if (event.target.value === 1) setCurrency('usd');
     else setCurrency('idr');
     setFieldValue('currency_id', event.target.value);
   };
 
+  //-------------------------------------------------------//
+  const [orderId, setOrderId] = useState(0);
+  const [openGenerateVendorBillsModal, setOpenGenerateVendorBillsModal] = useState(false);
+  //-------------------------------------------------------//
   return (
     <Page>
       <Container>
@@ -435,6 +448,11 @@ function SalesOrder() {
           setItems={setItems}
           order_id={values.order_id}
           update={handleUpdateAllRows}
+        />
+        <ModalGenerateVendorBills
+          order_id={orderId}
+          open={openGenerateVendorBillsModal}
+          handleClose={() => setOpenGenerateVendorBillsModal(false)}
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -660,8 +678,23 @@ function SalesOrder() {
                     color="grey"
                     variant="contained"
                     sx={{ m: 1 }}
+                    onClick={() => {
+                      setOrderId(values?.order_id)
+                      setOpenGenerateVendorBillsModal(true)
+                    }}
+                  >
+                    Post Vendor Bills{' '}
+                  </Button>
+                  <Button
+                    size="large"
+                    color="grey"
+                    variant="contained"
+                    sx={{ m: 1 }}
                     onClick={() => postIncomingGoods(values?.order_id)}
-                  > Post Incoming Goods </Button>
+                  >
+                    {' '}
+                    Post Incoming Goods{' '}
+                  </Button>
                   <LoadingButton
                     size="large"
                     type="submit"
