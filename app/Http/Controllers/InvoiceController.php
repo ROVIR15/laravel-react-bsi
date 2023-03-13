@@ -198,11 +198,9 @@ class InvoiceController extends Controller
         if(isset($type)){
           $query = InvoiceHasType::with('all_invoice_type')
           ->where('invoice_type_id', $type)
-          ->whereNotIn('invoice_id', $_invoiceList)
           ->get();
         } else {
           $query = InvoiceHasType::with('all_invoice_type')
-          ->whereNotIn('invoice_id', $_invoiceList)
           ->get();
         }  
       } catch (\Throwable $th) {
