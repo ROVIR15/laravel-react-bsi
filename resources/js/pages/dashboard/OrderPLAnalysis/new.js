@@ -42,7 +42,7 @@ function DisplayBuyer({ placeHolder }) {
   const [modalType, setModalType] = useState(1);
   const [selectedPO, setSelectedPO] = useState([]);
   const [selectedSO, setSelectedSO] = useState([]);
-  const [selectedCosting, setSelectedCosting] = useState({});
+  const [selectedCosting, setSelectedCosting] = useState([]);
 
   const handleCloseModal = () => setOpen(false);
   const handleOpenModal = (open, type) => {
@@ -58,15 +58,15 @@ function DisplayBuyer({ placeHolder }) {
   };
 
   const ReconcileSchema = Yup.object().shape({
-    costing_id: Yup.number().required('costing is required'),
-    sales_order: Yup.object().required('Sales Order is required'),
+    costing_id: Yup.array().required('costing is required'),
+    sales_order: Yup.array().required('Sales Order is required'),
     purchase_order: Yup.array().required('Purchase Order is required')
   });
 
   const formik = useFormik({
     initialValues: {
-      costing_id: '',
-      sales_order: null,
+      costing_id: [],
+      sales_order: [],
       purchase_order: []
     },
     validationSchema: ReconcileSchema,
@@ -87,19 +87,31 @@ function DisplayBuyer({ placeHolder }) {
 
   const handleChangeOfCosting = (data) => {
     setSelectedCosting(data);
-    setFieldValue('costing_id', data.id);
+    let a = data.reduce((initial, next) => {
+      return [
+        ...initial,
+        {
+          costing_id: next.id
+        }
+      ];
+    }, []);
+
+    setFieldValue('costing_id', a);
   };
 
   const handleChangeOfSalesOrder = (data) => {
-    if (data.length > 1) {
-      alert('please choose one costing and uncheck the selected data');
-      return;
-    }
     setSelectedSO(data);
-    setFieldValue('sales_order', {
-      id: data[0].id,
-      order_id: data[0].order_id
-    });
+    let a = data.reduce((initial, next) => {
+      return [
+        ...initial,
+        {
+          sales_order_id: next.id,
+          order_id: next.order_id
+        }
+      ];
+    }, []);
+
+    setFieldValue('sales_order_id', a);
   };
 
   const handleChangeOfPurchaseOrder = (data) => {
@@ -137,6 +149,8 @@ function DisplayBuyer({ placeHolder }) {
       alert(error);
     }
   }, []);
+
+  console.log(errors)
 
   return (
     <>

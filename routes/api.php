@@ -242,6 +242,8 @@ Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt')
 Route::resource('reconcile', 'ReconcileController')->only(['index', 'store', 'show']);
 
 Route::post('reconcile-post-po', 'ReconcileController@insertReconcilePurchaseOrder');
+Route::post('reconcile-post-so', 'ReconcileController@insertReconcileSalesOrder');
+Route::post('reconcile-post-costing', 'ReconcileController@insertReconcileCosting');
 
 Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::put('update-postal-address/{id}', 'ContactMechanismController@update_postal_address');

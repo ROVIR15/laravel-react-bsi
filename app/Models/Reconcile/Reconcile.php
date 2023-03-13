@@ -40,7 +40,18 @@ class Reconcile extends Model
         return $this->belongsTo('App\Models\Invoice\Invoice', 'order_id', 'order_id')->with('sum');
     }
 
-    public function shipment(){
+    public function shipment()
+    {
         return $this->belongsTo('App\Models\Shipment\Shipment', 'order_id', 'order_id')->with('sum');
+    }
+
+    public function so()
+    {
+        return $this->hasMany('App\Models\Reconcile\ReconcileHasSalesOrder', 'reconcile_id', 'id')->with('order', 'detail', 'invoice');
+    }
+
+    public function alt_costing()
+    {
+        return $this->hasMany('App\Models\Reconcile\ReconcileHasCosting', 'reconcile_id', 'id')->with('costing');
     }
 }

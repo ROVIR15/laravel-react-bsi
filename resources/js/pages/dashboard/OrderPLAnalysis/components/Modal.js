@@ -73,6 +73,27 @@ export default function BasicModal({ open, type, handleClose, selected, setSelec
       }  
     }
 
+    if(type === 3){
+      try {
+        API.getBOMList((res) => {
+          if (!res) return;
+          if (!res.data) {
+            setValue([]);
+          } else {
+            const ras = res.data.map((item) => ({
+              id: item.id,
+              po_number: item.name,
+              qty: item.qty,
+              amount: item.final_price
+            }));
+            setValue(ras);
+          }
+        });
+      } catch (error) {
+        alert(error);
+      }
+    }
+
     else return;
   }, [open]);
 
@@ -80,6 +101,15 @@ export default function BasicModal({ open, type, handleClose, selected, setSelec
     if(!type) return [];
     if(type === 1) return selected[0];
     if(type === 2) return selected[1];
+    if(type === 3) return selected[2];
+    else return [];
+  }
+
+  const getTitle = () => {
+    if(!type) return [];
+    if(type === 1) return 'Purchase Order';
+    if(type === 2) return 'Sales Order';
+    if(type === 3) return 'Costing';
     else return [];
   }
 
@@ -93,7 +123,7 @@ export default function BasicModal({ open, type, handleClose, selected, setSelec
         <Card sx={style}>
           <Stack direction="row" justifyContent="space-between">
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Order Item
+              Select {getTitle()}
             </Typography>
             <IconButton onClick={handleClose} color="error">
               <Icon icon={closeCircle} />

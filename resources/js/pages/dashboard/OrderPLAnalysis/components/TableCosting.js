@@ -72,7 +72,22 @@ function TableCosting({ list, placeHolder, selected, setSelected }) {
   };
 
   const handleClick = (event, name) => {
-    setSelected(name);
+    const selectedIndex = selected?.map(e => e.id).indexOf(name.id);
+    let newSelected = [];
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+      console.log(newSelected)
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -107,7 +122,7 @@ function TableCosting({ list, placeHolder, selected, setSelected }) {
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table size="small">
-            <ListRadioHead
+            <ListHead
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -121,7 +136,7 @@ function TableCosting({ list, placeHolder, selected, setSelected }) {
                 : filteredData
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      let isItemSelected = selected?.id === row?.id;
+                      let isItemSelected = selected?.map(e => e.id).indexOf(row.id) !== -1;
                       const { id, name, qty, final_price } = row;
                       return (
                         <TableRow
@@ -132,8 +147,8 @@ function TableCosting({ list, placeHolder, selected, setSelected }) {
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
                         >
-                          <TableCell padding="none">
-                            <Radio
+                          <TableCell padding="checkbox">
+                            <Checkbox
                               checked={isItemSelected}
                               onChange={(event) => handleClick(event, row)}
                             />

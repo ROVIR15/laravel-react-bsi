@@ -2937,6 +2937,26 @@ const main = {
         cb(err);
       });
     },
+    insertReconcileSalesOrder(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+      axios.post( uri + '/reconcile-post-so', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    insertReconcileCosting(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+      axios.post( uri + '/reconcile-post-costing', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    },
     getAnalysisCapacity(params=null, cb){
       axios.get( uri + '/capacity-sewing/' + params ).then(function(res){
         cb(res.data);

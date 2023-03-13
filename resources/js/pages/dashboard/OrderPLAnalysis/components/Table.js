@@ -90,20 +90,55 @@ function TableD({ list, type, placeHolder, selected, setSelected }) {
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
 
-      if(type === 1){
-        try {
-          API.insertReconcilePurchaseOrder([{ reconcile_id: id, order_id: name.order_id, purchase_order_id: name.id }], function (res) {
-            if (!res) return;
-            if (!res.success) throw new Error('failed to store');
-            else {
-              alert('done');
-            }
-          });
-        } catch (error) {
-          alert(error);
-        }  
-      }
+      if (id) {
+        if (type === 1) {
+          try {
+            API.insertReconcilePurchaseOrder(
+              [{ reconcile_id: id, order_id: name.order_id, purchase_order_id: name.id }],
+              function (res) {
+                if (!res) return;
+                if (!res.success) throw new Error('failed to store');
+                else {
+                  alert('done');
+                }
+              }
+            );
+          } catch (error) {
+            alert(error);
+          }
+        }
 
+        if (type === 2) {
+          try {
+            API.insertReconcileSalesOrder(
+              [{ reconcile_id: id, order_id: name.order_id, sales_order_id: name.id }],
+              function (res) {
+                if (!res) return;
+                if (!res.success) throw new Error('failed to store');
+                else {
+                  alert('done');
+                }
+              }
+            );
+          } catch (error) {
+            alert(error);
+          }
+        }
+
+        if (type === 3) {
+          try {
+            API.insertReconcileCosting([{ reconcile_id: id, costing_id: name.id }], function (res) {
+              if (!res) return;
+              if (!res.success) throw new Error('failed to store');
+              else {
+                alert('done');
+              }
+            });
+          } catch (error) {
+            alert(error);
+          }
+        }
+      }
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {

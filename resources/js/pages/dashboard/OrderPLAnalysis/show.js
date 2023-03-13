@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isUndefined } from 'lodash';
+import { filter, initial, isArray, isUndefined } from 'lodash';
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -19,17 +19,8 @@ import {
   Paper,
   Button
 } from '@mui/material';
-//components
-
-import TableCosting from './components/TableCosting';
-import Scrollbar from '../../../components/Scrollbar';
-import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import BUYERLIST from '../../../_mocks_/buyer';
 // api
 import API from '../../../helpers';
-import { serviceList2 } from '../../../helpers/data';
 
 import Modal from './components/Modal';
 import { useParams } from 'react-router-dom';
@@ -48,7 +39,7 @@ function DisplayBuyer({ placeHolder }) {
   const [modalType, setModalType] = useState(1);
   const [selectedPO, setSelectedPO] = useState([]);
   const [selectedSO, setSelectedSO] = useState([]);
-  const [selectedCosting, setSelectedCosting] = useState({});
+  const [selectedCosting, setSelectedCosting] = useState([]);
 
   const handleCloseModal = () => setOpen(false);
   const handleOpenModal = (open, type) => {
@@ -97,15 +88,11 @@ function DisplayBuyer({ placeHolder }) {
   };
 
   const handleChangeOfSalesOrder = (data) => {
-    if (data.length > 1) {
-      alert('please choose one costing and uncheck the selected data');
-      return;
-    }
+    // if (data.length > 1) {
+    //   alert('please choose one costing and uncheck the selected data');
+    //   return;
+    // }
     setSelectedSO(data);
-    setFieldValue('sales_order', {
-      id: data[0].id,
-      order_id: data[0].order_id
-    });
   };
 
   const handleChangeOfPurchaseOrder = (data) => {
@@ -129,44 +116,77 @@ function DisplayBuyer({ placeHolder }) {
         if (!res.data) {
           setBomRows([]);
         } else {
-          const {
-            costing: { bom_items, bom_services, operation, qty },
-            order: { sales_order, info, ...order }
-          } = res.data;
+          const { alt_costing, so } = res.data;
 
-          const so = [
-            {
-              id: sales_order?.id,
-              order_id: order?.id,
-              po_number: sales_order?.po_number,
-              qty: info[0]?.total_qty,
-              amount: info[0]?.total_amount
-            }
-          ];
+          let _so = so.map(function (sales_order) {
+            let _inv = sales_order?.invoice?.reduce((initial, next) => {
+              return {
+                total_qty: initial?.total_qty + parseInt(next?.sum[0]?.total_qty),
+                total_amount: initial?.total_amount + parseFloat(next?.sum[0]?.total_amount)
+              }
+            }, { total_qty: 0, total_amount: 0 })
+            return {
+              id: sales_order?.sales_order_id,
+              order_id: sales_order?.order_id,
+              po_number: sales_order?.detail?.po_number,
+              qty: sales_order?.order?.info[0]?.total_qty,
+              amount: sales_order?.order?.info[0]?.total_amount,
+              invoice: _inv
+            };
+          });
 
-          setSelectedSO(so);
+          setSelectedSO(_so);
 
-          let total_bom_items = bom_items.reduce(
-            (initial, next) =>
-              initial +
-              Math.round(next.consumption * (1 + next.allowance / 100) * next.unit_price * qty),
-            0
-          );
+          const _costing = alt_costing.map((item) => ({ id: item?.costing_id }));
+          setSelectedCosting(_costing)
 
-          let total_bom_services = bom_services.reduce(
-            (initial, next) => initial + Math.round(next.unit_price * qty),
-            0
-          );
+          let { total_bom_items, total_bom_services, total_cost_cmt, total_budget } =
+            alt_costing.reduce(
+              (initial, next) => {
+                const {
+                  costing: { bom_items, bom_services, operation, qty }
+                } = next;
 
-          let total_cost_cmt = operation.reduce(
-            (initial, next) =>
-              initial +
-              Math.round(next?.work_center?.work_hours * next?.work_center?.cost_per_hour),
-            0
-          );
+                let _bom_items_value = bom_items.reduce(
+                  (initial, next) =>
+                    initial +
+                    Math.round(
+                      next.consumption * (1 + next.allowance / 100) * next.unit_price * qty
+                    ),
+                  0
+                );
+
+                console.log(_bom_items_value)
+
+                let _bom_services_value = bom_services.reduce(
+                  (initial, next) => initial + Math.round(next.unit_price * qty),
+                  0
+                );
+
+                let _cost_cmt = operation.reduce(
+                  (initial, next) =>
+                    initial +
+                    Math.round(next?.work_center?.work_hours * next?.work_center?.cost_per_hour),
+                  0
+                );
+
+                return {
+                  total_bom_items: initial.total_bom_items + _bom_items_value,
+                  total_bom_services: initial.total_bom_services + _bom_services_value,
+                  total_cost_cmt: initial.total_cost_cmt + _cost_cmt,
+                  total_budget: initial.total_budget + (_bom_items_value + _bom_services_value + _cost_cmt)
+                };
+              },
+              {
+                total_bom_items: 0,
+                total_bom_services: 0,
+                total_cost_cmt: 0,
+                total_budget: 0
+              }
+            );
 
           setInfoInvoice(res.data?.invoice?.sum[0]);
-          setTotalBudget(total_bom_items + total_bom_services + total_cost_cmt);
+          setTotalBudget(total_budget);
 
           setCostingRows([
             { id: 1, name: 'Total Material Budget', total: total_bom_items },
@@ -196,9 +216,9 @@ function DisplayBuyer({ placeHolder }) {
   }, [id]);
 
   const total = () => {
-    return selectedPO.reduce((initial, next) => {
-      return initial + parseInt(next.amount);
-    }, 0);
+    return selectedPO.reduce((initial, next) => 
+      (initial + parseFloat(next.amount))
+    , 0);
   };
 
   return (
@@ -209,7 +229,7 @@ function DisplayBuyer({ placeHolder }) {
             open={open}
             type={modalType}
             handleClose={handleCloseModal}
-            selected={[selectedPO, selectedSO]}
+            selected={[selectedPO, selectedSO, selectedCosting]}
             setSelected={(payload, type) => setSelectedOrder(payload, type)}
           />
           <Grid container direction="row" spacing={2}>
@@ -255,7 +275,7 @@ function DisplayBuyer({ placeHolder }) {
                             Total Invoice
                           </TableCell>
                           <TableCell align="right">{`Rp. ${fCurrency(
-                            infoInvoice?.total_amount
+                            selectedSO?.reduce((initial, next) => ( initial + parseFloat(next?.invoice?.total_amount)), 0)
                           )}`}</TableCell>
                         </TableRow>
 
@@ -279,20 +299,30 @@ function DisplayBuyer({ placeHolder }) {
                           <TableCell align="right" colSpan={2} style={{ fontWeight: 'bold' }}>
                             Profit / Loss
                           </TableCell>
-                          <TableCell align="right" style={ (infoInvoice?.total_amount - (total() + costingRows[2]?.total)) > 0 ? { color: 'green'} : {color: 'red'}}>{`Rp. ${fCurrency(
-                            infoInvoice?.total_amount - (total() + costingRows[2]?.total)
+                          <TableCell
+                            align="right"
+                            style={
+                              infoInvoice?.total_amount - (total() + costingRows[2]?.total) > 0
+                                ? { color: 'green' }
+                                : { color: 'red' }
+                            }
+                          >{`Rp. ${fCurrency(
+                            selectedSO?.reduce((initial, next) => ( initial + parseFloat(next?.invoice?.total_amount)), 0) - (total() + costingRows[2]?.total)
                           )}`}</TableCell>
                         </TableRow>
+
+                        <TableRow>
+                          <Button onClick={() => handleOpenModal(true, 3)} fullWidth>
+                            Add Items
+                          </Button>
+                        </TableRow>
+
                       </TableBody>
                     </Table>
                   </TableContainer>
                 </CardContent>
               </Card>
-              {/* <TableCosting
-                list={bomRows}
-                selected={selectedCosting}
-                setSelected={handleChangeOfCosting}
-              /> */}
+
             </Grid>
             <Grid item xs={12}>
               <Card>
@@ -311,50 +341,87 @@ function DisplayBuyer({ placeHolder }) {
                             Qty
                           </TableCell>
                           <TableCell width={200} align="right">
-                            Total (Rp)
+                            Jumlah (Rp)
                           </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {selectedSO.map((row) => (
-                          <TableRow
-                            key={row.name}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                          >
-                            <TableCell component="th" scope="row">
-                              {row.id}
-                            </TableCell>
-                            <TableCell align="right">{row.order_id}</TableCell>
-                            <TableCell align="right">{row.po_number}</TableCell>
-                            <TableCell align="right">{row.qty}</TableCell>
-                            <TableCell align="right">{`Rp. ${fCurrency(row.amount)}`}</TableCell>
-                          </TableRow>
+                          <>
+                            <TableRow
+                              key={row.name}
+                              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {row.id}
+                              </TableCell>
+                              <TableCell align="right">{row.order_id}</TableCell>
+                              <TableCell align="right">{row.po_number}</TableCell>
+                              <TableCell align="right">{row.qty}</TableCell>
+                              <TableCell align="right">{`${fCurrency(
+                                row.amount,
+                                'idr'
+                              )}`}</TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                              <TableCell align="right" colSpan={3} style={{ fontWeight: 'bold' }}>
+                                Total Kirim dan Tagihan
+                              </TableCell>
+                              <TableCell align="right">
+                                {fNumber(row?.invoice?.total_qty)}
+                              </TableCell>
+                              <TableCell align="right">{`Rp. ${fCurrency(
+                                row?.invoice?.total_amount
+                              )}`}</TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                              <TableCell align="right" colSpan={3} style={{ fontWeight: 'bold' }}>
+                                Selisih
+                              </TableCell>
+
+                              <TableCell
+                                align="right"
+                                style={
+                                  ( parseInt(row?.qty) -
+                                    parseInt(row?.invoice?.total_qty)) *
+                                    -1 >
+                                  0
+                                    ? { color: 'green' }
+                                    : { color: 'red' }
+                                }
+                              >
+                                { (parseInt(row?.qty) -
+                                  parseInt(row?.invoice?.total_qty)) *
+                                  -1}
+                              </TableCell>
+
+                              <TableCell
+                                align="right"
+                                style={
+                                  ( parseFloat(row?.amount) -
+                                    parseFloat(row?.invoice?.total_amount)) *
+                                    -1 >
+                                  0
+                                    ? { color: 'green' }
+                                    : { color: 'red' }
+                                }
+                              >
+                                {fCurrency(
+                                  ( parseFloat(row?.amount) -
+                                  parseFloat(row?.invoice?.total_amount)) *
+                                    -1
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          </>
                         ))}
 
                         <TableRow>
-                          <TableCell align="right" colSpan={3} style={{ fontWeight: 'bold' }}>
-                            Total Kirim dan Tagihan
-                          </TableCell>
-                          <TableCell align="right">{fNumber(infoInvoice?.total_qty)}</TableCell>
-                          <TableCell align="right">{`Rp. ${fCurrency(
-                            infoInvoice?.total_amount
-                          )}`}</TableCell>
-                        </TableRow>
-
-                        <TableRow>
-                          <TableCell align="right" colSpan={3} style={{ fontWeight: 'bold' }}>
-                            Selisih
-                          </TableCell>
-
-                          <TableCell align="right" style={ (selectedSO[0]?.qty - parseInt(infoInvoice?.total_qty)) * -1 > 0 ? {color: 'green'} : {color: 'red'}}>
-                            {(selectedSO[0]?.qty - parseInt(infoInvoice?.total_qty)) * -1}
-                          </TableCell>
-
-                          <TableCell align="right" style={(selectedSO[0]?.amount - parseInt(infoInvoice?.total_amount)) * -1 > 0 ? {color: 'green'} : {color: 'red'}}>
-                            {fCurrency(
-                              (selectedSO[0]?.amount - parseInt(infoInvoice?.total_amount)) * -1
-                            )}
-                          </TableCell>
+                          <Button onClick={() => handleOpenModal(true, 2)} fullWidth>
+                            Add Items
+                          </Button>
                         </TableRow>
                       </TableBody>
                     </Table>
@@ -399,29 +466,40 @@ function DisplayBuyer({ placeHolder }) {
                           </TableRow>
                         ))}
                         <TableRow>
-                          <TableCell align="right" colSpan={4} style={{fontWeight: 'bold'}}>Total Realisasi Pengadaan</TableCell>
+                          <TableCell align="right" colSpan={4} style={{ fontWeight: 'bold' }}>
+                            Total Realisasi Pengadaan
+                          </TableCell>
                           <TableCell align="right" colSpan={5}>{`Rp. ${fCurrency(
                             total()
                           )}`}</TableCell>
                         </TableRow>
 
                         <TableRow>
-                          <TableCell align="right" colSpan={4} style={{fontWeight: 'bold'}}>Total Budget Pengadaan</TableCell>
+                          <TableCell align="right" colSpan={4} style={{ fontWeight: 'bold' }}>
+                            Total Budget Pengadaan
+                          </TableCell>
                           <TableCell align="right" colSpan={5}>{`Rp. ${fCurrency(
                             costingRows[0]?.total
                           )}`}</TableCell>
                         </TableRow>
 
                         <TableRow>
-                          <TableCell align="right" colSpan={4} style={{fontWeight: 'bold'}}>Selisih Pengadaan</TableCell>
-                          <TableCell align="right" colSpan={5} style={costingRows[0]?.total > total() ? {color: 'green'} : {color: 'red'}}>{`Rp. ${fCurrency(
-                            (costingRows[0]?.total - total())
-                          )}`}</TableCell>
+                          <TableCell align="right" colSpan={4} style={{ fontWeight: 'bold' }}>
+                            Selisih Pengadaan
+                          </TableCell>
+                          <TableCell
+                            align="right"
+                            colSpan={5}
+                            style={
+                              costingRows[0]?.total > total()
+                                ? { color: 'green' }
+                                : { color: 'red' }
+                            }
+                          >{fCurrency(costingRows[0]?.total - total(), 'idr')}</TableCell>
                         </TableRow>
 
                         <TableRow>
                           <Button onClick={() => handleOpenModal(true, 1)} fullWidth>
-                            {' '}
                             Add Items
                           </Button>
                         </TableRow>
