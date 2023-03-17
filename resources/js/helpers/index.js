@@ -2734,6 +2734,23 @@ const main = {
       })
     },
     // Financial Transaction
+    getCurrencyData(cb){
+      axios.get( uri + '/currency-exchange' ).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    updateNewCurrency(_data, cb){
+      if(!_data) {
+        console.error('data not found');
+      }
+      axios.post( uri + '/currency-exchange', { payload: _data }).then( function(res) {
+        cb(res.data);
+      }).catch(function(err){
+        cb(err);
+      });
+    }, 
     insertFinanceTransaction(_data, cb){
       if(!_data) {
           console.error('data not found');

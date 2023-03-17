@@ -11,6 +11,9 @@ import {
   FormControlLabel,
   FormLabel,
   InputAdornment,
+  Table,
+  TableRow,
+  TableCell,
   Tab,
   TextField,
   Typography,
@@ -26,12 +29,13 @@ import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
-import { useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import { LoadingButton } from '@mui/lab';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 
 import useAuth from '../../../context';
+import moment from 'moment';
 
 // api
 import API from '../../../helpers';
@@ -47,6 +51,8 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { PurchaseOrderSchema } from '../../../helpers/FormerSchema';
 import { _partyAddress } from '../../../helpers/data';
 import { isEmpty } from 'lodash';
+import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
+import { fCurrency } from '../../../utils/formatNumber';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -83,6 +89,9 @@ function SalesOrder() {
   //Data Grid
   const [editRowsModel, setEditRowsModel] = React.useState({});
   const [editRowData, setEditRowData] = React.useState({});
+
+  // invoice
+  const [generatedInvoice, setGeneratedInvoice] = useState([]);
 
   // Sales Order Items storage variable on Data Grid
   const [items, setItems] = useState([]);
@@ -175,7 +184,39 @@ function SalesOrder() {
         ...key
       };
     });
+    // store data transfromation of order item into items state
     setItems(c);
+
+    // simplify the data into desired Array Object
+    const _inv = load.invoice?.map(function (item) {
+
+      let payment_history = {}
+      if(isEmpty(item.payment_history)) payment_history = { paid_amount: 0, payment_number: 0}
+      payment_history = item.payment_history?.reduce(
+        function (initial, next) {
+          return {
+            paid_amount: initial.paid_amount + parseFloat(next.amount),
+            payment_number: initial.payment_number++
+          };
+        },
+        { paid_amount: 0, payment_number: 0 }
+      );
+
+      let status_of_inv =
+        payment_history.paid_amount >= item?.sum[0]?.total_amount ? 'Paid' : 'Unpaid';
+
+      return {
+        id: item.id, // invoice_id
+        effective_date: item?.effective_date,
+        serial_number: generateInvSerialNumber_alt(item, 2),
+        qty: item?.sum[0]?.total_qty,
+        total_amount: item?.sum[0]?.total_amount,
+        payment_history,
+        status_of_inv
+      };
+    });
+
+    setGeneratedInvoice(_inv);
   }, [id]);
 
   useEffect(() => {
@@ -566,6 +607,7 @@ function SalesOrder() {
                           <Tab label="Description" value="2" />
                           <Tab label="Shipment Tracking" value="3" />
                           <Tab label="Finance" value="4" />
+                          <Tab label="Invoice List" value="5" />
                         </TabList>
                       </Box>
 
@@ -666,6 +708,51 @@ function SalesOrder() {
                           </Button>
                         </Stack>
                       </TabPanel>
+
+                      <TabPanel value="5">
+                        <Table>
+                          <TableRow>
+                            <TableCell>
+                              <Typography variant="h6">Tanggal</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">Nomor Invoice</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">Qty</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">Jumlah Uang</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">Jumlah Bayar</Typography>
+                            </TableCell>
+                          </TableRow>
+                          {generatedInvoice.map(function (item) {
+                            return (
+                              <TableRow>
+                                <TableCell variant="subtitle">
+                                  {moment(item.effective_date).format('LL')}
+                                </TableCell>
+                                <TableCell
+                                  variant="subtitle"
+                                  component={RouterLink}
+                                  to={`/dashboard/finance/vendor-bills/${item.id}`}
+                                >
+                                  {item.serial_number}
+                                </TableCell>
+                                <TableCell variant="subtitle">{item.qty}</TableCell>
+                                <TableCell variant="subtitle">
+                                  {fCurrency(item.total_amount * 1.11, 'idr')}
+                                </TableCell>
+                                <TableCell>
+                                  {fCurrency(item.payment_history?.paid_amount)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </Table>
+                      </TabPanel>
                     </TabContext>
                   </CardContent>
                 </Card>
@@ -679,8 +766,8 @@ function SalesOrder() {
                     variant="contained"
                     sx={{ m: 1 }}
                     onClick={() => {
-                      setOrderId(values?.order_id)
-                      setOpenGenerateVendorBillsModal(true)
+                      setOrderId(values?.order_id);
+                      setOpenGenerateVendorBillsModal(true);
                     }}
                   >
                     Post Vendor Bills{' '}

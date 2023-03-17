@@ -22,13 +22,17 @@ import {
   Select,
   Stack,
   Button,
-  Grid
+  Grid,
+  Table,
+  TableRow,
+  TableCell
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import { useFormik, Form, FormikProvider } from 'formik';
-import { useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import moment from 'moment';
 
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
@@ -48,8 +52,11 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import useAuth from '../../../context';
 
+// utils
+import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { _partyAddress } from '../../../helpers/data';
 import { isEmpty } from 'lodash';
+import { fCurrency } from '../../../utils/formatNumber';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -89,6 +96,9 @@ function SalesOrder() {
 
   // Sales Order Items storage variable on Data Grid
   const [items, setItems] = useState([]);
+
+  // invoice
+  const [generatedInvoice, setGeneratedInvoice] = useState([]);
 
   // Modal Props and Handling
   const [openM, setOpenM] = React.useState(false);
@@ -171,21 +181,28 @@ function SalesOrder() {
 
     setTax(load.order.tax);
 
-    let ras;
-    if (load.order?.currency_id === 1) ras = 'usd';
-    else ras = 'idr';
-
-    setCurrency(ras);
-
-    setDescription(load.order.description);
-
+    // Party data transformation
     let _party = _partyAddress(load.party);
+    // Shipped To party data transformation
     let _ship = _partyAddress(load.ship);
+
+    // store party dan ship data into use state
     setSelectedValueSO(_party);
     setSelectedValueSH(_ship);
 
+    // set currency
+    let ras;
+    if (load.order?.currency_id === 1) ras = 'usd';
+    else ras = 'idr';
+    setCurrency(ras);
+
+    // set description
+    setDescription(load.order.description);
+
+    // set status of the sales order
     setStatus(load.completion_status[0]?.status?.id);
 
+    // transfrom data of order item
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
       return {
@@ -205,7 +222,34 @@ function SalesOrder() {
         ...key
       };
     });
+
+    // store data transfromation of order item into items state
     setItems(c);
+
+    // simplify the data into desired Array Object
+    const _inv = load.invoice?.map(function (item) {
+
+      const payment_history = item.payment_history?.reduce(function(initial, next) {
+        return {
+          paid_amount: initial.paid_amount + parseFloat(next.amount),
+          payment_number: initial.payment_number++
+        }
+      }, { paid_amount: 0, payment_number: 0})
+
+      let status_of_inv = (payment_history.paid_amount >= item?.sum[0]?.total_amount) ? 'Paid' : 'Unpaid';
+
+      return {
+        id: item.id, // invoice_id
+        effective_date: item?.effective_date,
+        serial_number: generateInvSerialNumber_alt(item, 1),
+        qty: item?.sum[0]?.total_qty,
+        total_amount: item?.sum[0]?.total_amount,
+        payment_history,
+        status_of_inv
+      };
+    });
+
+    setGeneratedInvoice(_inv);
   };
 
   useEffect(() => {
@@ -596,8 +640,9 @@ function SalesOrder() {
                           <Tab label="Overview" value="1" />
                           <Tab label="Status" value="2" />
                           <Tab label="Description" value="3" />
-                          <Tab label="Shipment Transaction" value="4" />
+                          <Tab label="Shipment Tracking" value="4" />
                           <Tab label="Finance" value="5" />
+                          <Tab label="Invoice List" value="6" />
                         </TabList>
                       </Box>
 
@@ -721,6 +766,55 @@ function SalesOrder() {
                             Save
                           </Button>
                         </Stack>
+                      </TabPanel>
+
+                      <TabPanel value="6">
+                        <Paper
+                          style={{
+                            backgroundColor: 'rgb(255, 255, 255)',
+                            color: 'rgb(17, 25, 39)',
+                            transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                            border: '1px solid rgb(242, 244, 247)',
+                            backgroundImage: 'none',
+                            overflow: 'hidden',
+                            borderRadius: '20px'
+                          }}
+                        >
+                          <Table>
+                            <TableRow>
+                              <TableCell>
+                                <Typography variant="h6">Tanggal</Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="h6">Nomor Invoice</Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="h6">Qty</Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="h6">Jumlah Uang</Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="h6">Jumlah Bayar</Typography>
+                              </TableCell>
+                            </TableRow>
+                            {generatedInvoice.map(function (item) {
+                              return (
+                                <TableRow>
+                                  <TableCell variant="subtitle">
+                                    {moment(item.effective_date).format('LL')}
+                                  </TableCell>
+                                  <TableCell variant="subtitle" component={RouterLink} to={`/dashboard/finance/invoice/${item.id}`} >{item.serial_number}</TableCell>
+                                  <TableCell variant="subtitle">{item.qty}</TableCell>
+                                  <TableCell variant="subtitle">
+                                    {fCurrency(item.total_amount * 1.11, 'idr')}
+                                  </TableCell>
+                                  <TableCell>{fCurrency(item.payment_history?.paid_amount)}</TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </Table>
+                        </Paper>
                       </TabPanel>
                     </TabContext>
                   </CardContent>

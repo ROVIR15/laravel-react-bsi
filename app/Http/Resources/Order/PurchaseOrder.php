@@ -28,6 +28,7 @@
         'order' => $this->order,
         'order_item' => new OrderItemCollection($this->order_item),
         'status' => $this->status,
+        'invoice' => $this->invoice,
       ];
     }
   }

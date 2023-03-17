@@ -99,4 +99,8 @@
       return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'sales_order_id')->groupBy('po_number')->select(DB::raw('id, order_id, sales_order_id, po_number, sum(output) as output, product_feature_id'))->with('product_feature');
     }    
 
+    public function invoice(){
+      return $this->hasMany('App\Models\Invoice\Invoice', 'order_id', 'order_id')->with('sales_order', 'sum', 'terms', 'payment_history');
+    }
+
   }

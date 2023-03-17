@@ -137,6 +137,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
     Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
     Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
+    Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
     //Accounting
     Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);

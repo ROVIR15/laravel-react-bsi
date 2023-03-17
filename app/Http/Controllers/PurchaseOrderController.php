@@ -217,7 +217,7 @@
     public function show($id)
     {
       try {
-        $purchaseOrderData = PurchaseOrder::with('bought', 'ship', 'order_item', 'order', 'status', 'completion_status')->find($id);
+        $purchaseOrderData = PurchaseOrder::with('bought', 'invoice', 'ship', 'order_item', 'order', 'status', 'completion_status')->find($id);
         // return response()->json($purchaseOrderData);
         return new onePurchaseOrder($purchaseOrderData);
     } catch (Throwable $th) {

@@ -38,7 +38,7 @@ import API from '../../../../helpers';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
-import { invoiceItemArrangedData, generateInvSerialNumber } from '../utils';
+import { invoiceItemArrangedData, generateInvSerialNumber_alt } from '../utils';
 import { _partyAddress } from '../../../../helpers/data';
 import { fCurrency } from '../../../../utils/formatNumber';
 import moment from 'moment';
@@ -108,7 +108,7 @@ function Invoice() {
         else {
           setValues({
             invoice_id: res.data.id,
-            po_number: generateInvSerialNumber(res.data, 2),
+            po_number: generateInvSerialNumber_alt(res.data, 2),
             sold_to: res.data.sold_to.id,
             invoice_date: res.data.invoice_date,
             due_date: res.data.due_date,

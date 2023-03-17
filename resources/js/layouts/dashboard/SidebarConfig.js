@@ -232,6 +232,10 @@ const sidebarConfig = [
     path: '/dashboard/finance',
     children: [
       {
+        title: 'Currency Exchange Rate',
+        path: '/dashboard/finance/currency'
+      },
+      {
         title: 'Vendor Bills',
         path: '/dashboard/finance/vendor-bills'
       },

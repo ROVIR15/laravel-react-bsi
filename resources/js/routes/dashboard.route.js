@@ -221,7 +221,9 @@ import {
   IncomingLayout,
   OutgoingLayout,
   StatusLayout
-} from '../pages/dashboard/Shipment'
+} from '../pages/dashboard/Shipment';
+
+import CurrencyExchange from '../pages/dashboard/Finance/CurrencyExchange';
 import { Typography } from '@mui/material';
 
 import ValuationTable from '../pages/dashboard/ValuationAnalysis';
@@ -632,6 +634,10 @@ export default function TestRouter() {
             // { path: ':id', element: <ShowFinanceAccountTransaction /> },
             { path: 'display', element: <DisplayFinanceAccountTransaction /> }
           ]
+        },
+        {
+          path: 'finance/currency',
+          element: <CurrencyExchange />
         },
         // Finance
         { 
