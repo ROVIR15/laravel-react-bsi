@@ -37,16 +37,18 @@ import { Icon } from '@iconify/react';
 import { generateInvSerialNumber_alt } from '../utils'
 
 
-const total = (terms, amount_of_money) => {
+const total = (terms, amount_of_money, tax) => {
   let sub_total = parseFloat(amount_of_money);
 
-  if(terms.length === 0) return sub_total;
+  if(terms.length === 0) sub_total2 = sub_total;
   let sub_total2 = terms.reduce(function (initial, next) {
     let type = next?.value_type?.toLowerCase();
     if (type === 'percentage') return initial * (1 + next?.term_value / 100);
     if (type === 'number') return initial + next?.term_value;
     else return initial;
   }, sub_total);
+
+  if(tax > 0) sub_total2 = sub_total2 * (1 + (tax/100));
   return sub_total2.toFixed(0);
 };
 
@@ -161,7 +163,7 @@ function PaymentAccountNew() {
             const _data = res.data.map(function (item) {
               const { all_invoice_type } = item;
               // calculate total after terms
-              let final_calculation = total(all_invoice_type?.terms, all_invoice_type?.sum[0]?.total_amount);
+              let final_calculation = total(all_invoice_type?.terms, all_invoice_type?.sum[0]?.total_amount, all_invoice_type?.tax);
 
               return {
                 id: item?.invoice_id,
@@ -169,11 +171,10 @@ function PaymentAccountNew() {
                 serial_number: generateInvSerialNumber_alt(all_invoice_type, item?.invoice_type_id),
                 billed_to: all_invoice_type?.party?.name,
                 status: all_invoice_type?.status[0]?.type?.name,
-                total_amount: final_calculation * (1 + all_invoice_type?.tax / 100)
+                total_amount: final_calculation
               };
             });
 
-            console.log(_data)
             setOptionsInvoice(_data);
           }
         });
@@ -187,7 +188,7 @@ function PaymentAccountNew() {
     };
   }, [loadingSH]);
 
-  const billedAmount = selected.reduce((initial, next) => initial + next?.total_amount, 0);
+  const billedAmount = selected.reduce((initial, next) => initial + parseFloat(next?.total_amount), 0);
 
   const handleCloseDialog = () => {
     // if (!data) {
@@ -196,7 +197,7 @@ function PaymentAccountNew() {
     // setSelectedValueSH(data);
 
     const a = selected.map((e) => ({
-      id: e.id, type: e.type, amount: e.total_amount
+      id: e.id, type: e.type, amount: parseFloat(e.total_amount)
     }));
     // const a = selected.map((e) => {
     //   if(e.type === 1) return ({ id: e.id, type: e.type, amount: e.total_amount });

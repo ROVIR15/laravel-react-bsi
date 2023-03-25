@@ -44,7 +44,7 @@ class InvoiceController extends Controller
                 $month = date_format($monthYear, 'm');
                 $year = date_format($monthYear, 'Y');
                 if(isset($type)) {
-                  $query = InvoiceHasType::with('sales_invoice', 'terms')
+                  $query = InvoiceHasType::with('sales_invoice', 'payment_history', 'terms')
                   ->where('invoice_type_id', $type)
                   ->whereHas('sales_invoice', function($query) use ($year, $month){
                     $query
@@ -57,7 +57,7 @@ class InvoiceController extends Controller
                 }
               } else {
                 if(isset($type)){
-                  $query = InvoiceHasType::with('sales_invoice', 'terms')
+                  $query = InvoiceHasType::with('sales_invoice', 'payment_history', 'terms')
                   ->where('invoice_type_id', $type)
                   ->get();
                 } else {
@@ -75,7 +75,7 @@ class InvoiceController extends Controller
                 $month = date_format($monthYear, 'm');
                 $year = date_format($monthYear, 'Y');
                 if(isset($type)) {
-                  $query = InvoiceHasType::with('purchase_invoice', 'terms')
+                  $query = InvoiceHasType::with('purchase_invoice', 'payment_history', 'terms')
                   ->where('invoice_type_id', $type)
                   ->whereHas('sales_invoice', function($query) use ($year, $month){
                     $query
@@ -88,7 +88,7 @@ class InvoiceController extends Controller
                 }
               } else {
                 if(isset($type)){
-                  $query = InvoiceHasType::with('purchase_invoice', 'terms')
+                  $query = InvoiceHasType::with('purchase_invoice', 'payment_history', 'terms')
                   ->where('invoice_type_id', $type)
                   ->get();
                 } else {

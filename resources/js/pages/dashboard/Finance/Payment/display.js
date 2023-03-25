@@ -10,6 +10,7 @@ import {
   TablePagination
 } from '@mui/material';
 import { fCurrency } from '../../../../utils/formatNumber';
+import { checkStatusPayment } from '../../../../utils/math'; 
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
@@ -219,6 +220,7 @@ function FinanceAccountDisplay({ placeHolder }) {
                     effective_date,
                     amount
                   } = row;
+
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -230,7 +232,7 @@ function FinanceAccountDisplay({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{payment_method_type_id}</TableCell>
+                      <TableCell align="left">{status_payment}</TableCell>
                       <TableCell align="left">{invoice_id}</TableCell>
                       <TableCell align="left">{ref_num}</TableCell>
                       <TableCell align="left">{moment(effective_date).format('LL')}</TableCell>

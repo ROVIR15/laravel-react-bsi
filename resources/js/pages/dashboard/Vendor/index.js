@@ -1,11 +1,5 @@
-import React from 'react'
-import Page from '../../../components/Page';
-import {
-  Button,
-  Container,
-  Stack,
-  Typography
-} from '@mui/material';
+import React from 'react';
+import { Button, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 //icons
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
@@ -13,47 +7,46 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
 // components
-import DisplayBuyer from '../../../components/_dashboard/sales/buyer/display/DisplayBuyer';
 import Display from './display';
+import Breadcumbs from '../../../components/Breadcumbs';
 import Layout from '../../../layouts/Layout';
 
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
 
-function getPathname(array){
-  if(!array.length) console.error('Require an Array type');
+function getPathname(array) {
+  if (!array.length) console.error('Require an Array type');
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
 }
 
 function Vendor() {
   const { pathname } = useLocation();
 
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const isBeginning = () => {
+    if (pathname.split('/').length === 4) {
+      return <Display />;
+    } else {
+      return <Outlet />;
+    }
+  };
 
+  // Snackbar
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const handleClick = () => {
     enqueueSnackbar('Here I am', {
       variant: 'success'
     });
   };
 
-  const isBeginning = () => {
-    if(pathname.split('/').length === 4){
-      return (
-        <Display />
-      )
-    } else {
-      return (
-        <Outlet/>
-      )
-    }
-  }  
-
   return (
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4" gutterBottom>
-          Vendor
-        </Typography>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="h4" gutterBottom>
+            Vendor
+          </Typography>
+          <Breadcumbs />
+        </div>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
           <Button
             variant="contained"
             component={RouterLink}
@@ -82,7 +75,7 @@ function Vendor() {
       </Stack>
       {isBeginning()}
     </Layout>
-  )
+  );
 }
 
 export default Vendor;

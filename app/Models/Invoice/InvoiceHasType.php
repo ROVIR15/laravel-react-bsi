@@ -34,4 +34,8 @@ class InvoiceHasType extends Model
         return $this->hasMany('App\Models\Invoice\InvoiceTerm', 'invoice_id', 'invoice_id');
     }
 
+    public function payment_history(){
+        return $this->hasManyThrough('App\Models\Invoice\Payment', 'App\Models\Invoice\PaymentHasInvoice', 'invoice_id', 'id', 'invoice_id', 'payment_id')->select('id', 'payment_method_type_id', 'effective_date', 'ref_num', 'amount');
+    }
+
 }

@@ -1,18 +1,19 @@
 import React from 'react'
 import {
   Button,
-  Container,
   Stack,
   Typography
 } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+
 //icons
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Icon } from '@iconify/react';
 
 // components
 import Display from './display'
+import Breadcumbs from '../../../../components/Breadcumbs';
 import Layout from '../../../../layouts/Layout';
 
 function getPathname(array){
@@ -38,9 +39,12 @@ function FinanceAccount() {
   return (
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <div style={{ display: 'flex', flexDirection: 'column'}}>
         <Typography variant="h4" gutterBottom>
           Finance Account
         </Typography>
+        <Breadcumbs/>
+        </div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} >
           <Button
             variant="contained"

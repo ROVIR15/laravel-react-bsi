@@ -55,7 +55,7 @@ const sidebarConfig = [
     children: [
       {
         title: 'Costing',
-        path: '/dashboard/production/bom'
+        path: '/dashboard/production/costing'
       },
       {
         title: 'Work Center',

@@ -1,11 +1,16 @@
 import React from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+
+// icons
 import plusFill from '@iconify/icons-eva/plus-fill';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
-import { Icon } from '@iconify/react';
+
+// components
 import Display from './display';
 import Layout from '../../../layouts/Layout';
+import Breadcumbs from '../../../components/Breadcumbs';
 
 function getPathname(array){
   if(!array.length) console.error('Require an Array type');
@@ -28,9 +33,12 @@ function SalesOrderLayout() {
   return (
     <Layout>
     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+      <div style={{ display: 'flex', flexDirection: 'column'}}>
       <Typography variant="h4" gutterBottom>
         Purchase Order
       </Typography>
+      <Breadcumbs/>
+      </div>
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
         <Button
           variant="contained"

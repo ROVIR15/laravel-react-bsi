@@ -31,12 +31,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
 
-import AutoComplete from './components/AutoComplete';
-import Page from '../../../../components/Page';
 import API from '../../../../helpers';
-//Icons
-import { Icon } from '@iconify/react';
-import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { invoiceItemArrangedData, generateInvSerialNumber_alt } from '../utils';
 import { _partyAddress } from '../../../../helpers/data';

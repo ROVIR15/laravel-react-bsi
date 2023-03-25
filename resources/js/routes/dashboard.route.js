@@ -338,7 +338,7 @@ export default function TestRouter() {
           ]
         },
         { 
-          path: 'production/bom', 
+          path: 'production/costing', 
           element: <BillOfMaterialLayout />,
           children: [
             { path: ':id', element: <ShowBOM />},

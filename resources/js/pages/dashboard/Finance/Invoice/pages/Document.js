@@ -168,8 +168,6 @@ function FirstPage() {
     // submission status
     let _statusOrderData = uniqBy(payload.submission, 'status_type');
 
-    console.log(_statusOrderData)
-
     let _isReviewed = _statusOrderData.filter(
       (item) => item.status_type.toLowerCase() === 'review'
     );
@@ -191,7 +189,6 @@ function FirstPage() {
       setIsReviewed(true);
     }
 
-    console.log(_isReviewed, _isSubmitted)
   };
 
   const handleDownload = React.useCallback(() => {
@@ -315,7 +312,6 @@ function FirstPage() {
   // set variable when its initila load
   useEffect(() => {
     const { role } = user;
-    console.log(role)
     const name = getPages(pathname.split('/'));
 
     role.map(function (x) {
