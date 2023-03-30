@@ -3,7 +3,6 @@ import { filter, isArray, isEmpty, isNull, uniqBy } from 'lodash';
 import { styled } from '@mui/material/styles';
 import {
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableRow,
@@ -18,6 +17,7 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../components/Table';
 import ListToolbar from './components/ListToolbar';
+import Test2 from '../../../components/Test2';
 
 // api
 import API from '../../../helpers';
@@ -288,6 +288,8 @@ function DisplayBOM({ placeHolder }) {
     }
   }
   return (
+    <>
+    <Test2 data={filteredData}/>
     <Card>
       <ListToolbar
         numSelected={selected.length}
@@ -396,6 +398,7 @@ function DisplayBOM({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
+    </>
   );
 }
 

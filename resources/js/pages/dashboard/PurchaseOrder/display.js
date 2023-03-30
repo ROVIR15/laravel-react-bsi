@@ -16,6 +16,7 @@ import ChipStatus from '../../../components/ChipStatus';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../components/Table';
+import Test2 from '../../../components/Test2';
 import ListToolbar from './components/ListToolbar';
 
 import { useLocation } from 'react-router-dom';
@@ -82,13 +83,12 @@ function applySortFilter(array, comparator, query) {
           _b.party?.id === query[2]
       );
     } else {
-      if (query[1] === 'Created') return filter(
-        array,
-        (_b) => {
-          return  _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
-          isEmpty(_b.status);
-        }
-      );
+      if (query[1] === 'Created')
+        return filter(array, (_b) => {
+          return (
+            _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && isEmpty(_b.status)
+          );
+        });
       return filter(
         array,
         (_b) =>
@@ -107,7 +107,7 @@ function applySortFilter(array, comparator, query) {
       );
     else
       return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-  }  // return stabilizedThis.map((el) => el[0]);
+  } // return stabilizedThis.map((el) => el[0]);
 }
 
 function PurchaseOrder({ placeHolder }) {
@@ -299,126 +299,129 @@ function PurchaseOrder({ placeHolder }) {
   const isDataNotFound = filteredData.length === 0;
 
   return (
-    <Card>
-      <ListToolbar
-        numSelected={selected.length}
-        monthYearActive={true}
-        filterMonthYear={filterMonthYear}
-        onFilterMonthYear={handleMonthYearChanges}
-        filterName={filterName}
-        onFilterName={handleFilterByName}
-        placeHolder={placeHolder}
-        onGo={handleUpdateData}
-        buyerFilterActive={true}
-        filterBuyer={filterBuyer}
-        onFilterBuyer={handleBuyerFilter}
-        listOfBuyer={optionsBuyer}
-        statusActive={true}
-        filterStatus={filterStatus}
-        onFilterStatus={handleFilterByStatus}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
-            <ListHead
-              active={false}
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={purchaseOrderData.length}
-              numSelected={selected.length}
-              onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const {
-                    id,
-                    order_id,
-                    po_number,
-                    bought_from,
-                    issue_date,
-                    valid_thru,
-                    delivery_date,
-                    sum,
-                    completion_status,
-                    status,
-                    currency_id
-                  } = row;
-
-                  let currency;
-                  if(currency_id === 2) currency = "idr";
-                  else currency = "usd";
-                  const isItemSelected = selected.indexOf(name) !== -1;
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
-                    >
-                      <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
-                      <TableCell align="left">
-                        {ChipStatusProduction(completion_status[0]?.status?.name)}
-                      </TableCell>
-                      <TableCell align="left">{bought_from}</TableCell>
-                      <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
-                      <TableCell align="left">
-                        {sum?.length ? fCurrency(sum[0].total_money, currency) : null}
-                      </TableCell>
-                      <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
-                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
-                      <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu
-                          id={id}
-                          document={true}
-                          handleDelete={(event) => handleDeleteData(event, id)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            {isDataNotFound && (
+    <>
+      <Test2 data={filteredData} type='purchase' />
+      <Card>
+        <ListToolbar
+          numSelected={selected.length}
+          monthYearActive={true}
+          filterMonthYear={filterMonthYear}
+          onFilterMonthYear={handleMonthYearChanges}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+          placeHolder={placeHolder}
+          onGo={handleUpdateData}
+          buyerFilterActive={true}
+          filterBuyer={filterBuyer}
+          onFilterBuyer={handleBuyerFilter}
+          listOfBuyer={optionsBuyer}
+          statusActive={true}
+          filterStatus={filterStatus}
+          onFilterStatus={handleFilterByStatus}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table size="small">
+              <ListHead
+                active={false}
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={purchaseOrderData.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
               <TableBody>
-                <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    {loading ? (
-                      <Typography variant="body2" align="center">
-                        Please Wait
-                      </Typography>
-                    ) : (
-                      <SearchNotFound searchQuery={filterName} />
-                    )}
-                  </TableCell>
-                </TableRow>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const {
+                      id,
+                      order_id,
+                      po_number,
+                      bought_from,
+                      issue_date,
+                      valid_thru,
+                      delivery_date,
+                      sum,
+                      completion_status,
+                      status,
+                      currency_id
+                    } = row;
+
+                    let currency;
+                    if (currency_id === 2) currency = 'idr';
+                    else currency = 'usd';
+                    const isItemSelected = selected.indexOf(name) !== -1;
+                    return (
+                      <TableRow
+                        hover
+                        key={id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={isItemSelected}
+                        aria-checked={isItemSelected}
+                      >
+                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{po_number}</TableCell>
+                        <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
+                        <TableCell align="left">
+                          {ChipStatusProduction(completion_status[0]?.status?.name)}
+                        </TableCell>
+                        <TableCell align="left">{bought_from}</TableCell>
+                        <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                        <TableCell align="left">
+                          {sum?.length ? fCurrency(sum[0].total_money, currency) : null}
+                        </TableCell>
+                        <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
+                        <TableCell align="right">
+                          <MoreMenu
+                            id={id}
+                            document={true}
+                            handleDelete={(event) => handleDeleteData(event, id)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
               </TableBody>
-            )}
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <TablePagination
-        rowsPerPageOptions={[15, 25, 50]}
-        component="div"
-        count={purchaseOrderData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Card>
+              {isDataNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      {loading ? (
+                        <Typography variant="body2" align="center">
+                          Please Wait
+                        </Typography>
+                      ) : (
+                        <SearchNotFound searchQuery={filterName} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <TablePagination
+          rowsPerPageOptions={[15, 25, 50]}
+          component="div"
+          count={purchaseOrderData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+    </>
   );
 }
 

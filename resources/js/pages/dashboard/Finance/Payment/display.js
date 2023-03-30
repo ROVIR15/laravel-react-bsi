@@ -214,7 +214,7 @@ function FinanceAccountDisplay({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    payment_method_type_id,
+                    type,
                     invoice_id,
                     ref_num,
                     effective_date,
@@ -232,7 +232,7 @@ function FinanceAccountDisplay({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{status_payment}</TableCell>
+                      <TableCell align="left">{type?.name}</TableCell>
                       <TableCell align="left">{invoice_id}</TableCell>
                       <TableCell align="left">{ref_num}</TableCell>
                       <TableCell align="left">{moment(effective_date).format('LL')}</TableCell>
