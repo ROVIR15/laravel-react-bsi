@@ -15,11 +15,10 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../../components/Table';
 import ListToolbar from './components/ListToolbar'
-//
-import BUYERLIST from '../../../../_mocks_/buyer';
 // api
 import API from '../../../../helpers';
-import { outboundShipmentArrangedData } from '../../../../helpers/data';
+// 
+import Test4 from '../../../../components/Test4'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -106,7 +105,6 @@ function OutboundDelivery({ placeHolder }) {
           let _buyer = uniqBy(buyer, 'id');
           setOptionsBuyer(_buyer);
 
-
           setGoodsReceipt(res.data);
         }
       });
@@ -190,6 +188,8 @@ function OutboundDelivery({ placeHolder }) {
   const isDataNotFound = filteredData.length === 0;
 
   return (
+    <>
+    <Test4 data={filteredData}/>
     <Card>
       <ListToolbar
         numSelected={selected.length}
@@ -279,6 +279,7 @@ function OutboundDelivery({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
+    </>
   );
 }
 
