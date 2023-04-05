@@ -145,6 +145,8 @@ function BillofMaterial() {
             category: res.data[0]?.product_feature?.product_category?.category?.name
           });
 
+          setFile(res.data[0]?.product_feature?.product?.goods?.imageUrl)
+
           if(isEmpty(res.data[0]?.items)) return;
           let bom_item = bomitem_data_alt(res.data[0]?.items);
           setComponent(bom_item);
