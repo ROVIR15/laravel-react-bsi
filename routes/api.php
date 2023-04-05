@@ -60,11 +60,16 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('goods-option', 'GoodsOptionController')->only(['index']);
 
     //BOM
-    Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
-    Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store']);
-    Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store']);
-    Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+    Route::resource('costing', 'BOMController')->only(['index', 'store', 'show', 'update']);
+    Route::resource('costing-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store']);
+    Route::resource('costing-service', 'BOMServiceController')->only(['index', 'show', 'store']);
+    Route::resource('costing-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
+    //BOM alt
+    Route::resource('bom-alt-v2', 'BOM_AltController')->only(['index', 'store', 'show', 'destroy']);
+    Route::resource('bom-item-alt-v2', 'BOMItem_AltController')->only(['store', 'update', 'destroy']);
+    Route::get('bom-items-list-v2/{bom_id}', 'BOM_AltController@getBOMItem_alt');
 
     // Manufacture
     Route::resource('manufacture', 'ManufactureController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -76,11 +81,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'destroy', 'store']);
     
     //Operation
-    Route::resource('operation', 'BOMController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('operation', 'OperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
     //WorkCenter & Operation
     Route::resource('work-center', 'WorkCenterController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('operation', 'OperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
     //Party
     Route::resource('address', 'AddressController')->only(['index']);
@@ -127,6 +131,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('inventory', 'InventoryController')->only(['index', 'store']);
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
+    Route::resource('material-transfer', 'MaterialTransferController')->only(['store', 'show', 'update', 'destroy']);
+    Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
+    Route::post('post-material-transfer-status', 'MaterialTransferController@new_material_transfer_update_status');
 
     //Finance
     Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);

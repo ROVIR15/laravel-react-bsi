@@ -33,7 +33,7 @@ function BillOfMaterial() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h4" gutterBottom>
-            Bill of Material
+            Costing
           </Typography>
           <Breadcumbs />
         </div>
@@ -41,7 +41,7 @@ function BillOfMaterial() {
           <Button
             variant="contained"
             component={RouterLink}
-            to={getPathname(pathname.split('/')) + '/new'}
+            to={getPathname(pathname.split('/')) + '/add'}
             startIcon={<Icon icon={plusFill} />}
           >
             New

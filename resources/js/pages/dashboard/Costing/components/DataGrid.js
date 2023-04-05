@@ -14,7 +14,6 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleReset
   return (
     <Box
       sx={{
-				marginTop: 3,
         height: 400,
         width: 1,
         '& .MuiDataGrid-cell--editing': {

@@ -38,7 +38,9 @@ import {
   PaymentLayout,
   FinanceAccountLayout,
   FinanceAccountTransactionLayout,
-  OrderPLAnalysisLayout
+  OrderPLAnalysisLayout,
+  MaterialTransferLayout,
+  CostingLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -55,7 +57,8 @@ import AddBuyer from '../pages/dashboard/Buyer/new';
 import AddInquiry from '../pages/dashboard/Inquiry/new';
 import AddQuotation from '../pages/dashboard/Quotation/new';
 import AddSalesOrder from '../pages/dashboard/SalesOrder/new';
-import AddBillOfMaterial from '../pages/dashboard/BillofMaterial/new';
+import AddCosting from '../pages/dashboard/Costing/new';
+import AddBillOfMaterial from '../pages/dashboard/BillOfMaterial/new';
 import AddRouting from '../pages/dashboard/Routing/new';
 import AddWorkCenter from '../pages/dashboard/WorkCenter/new';
 import AddInventory from '../pages/dashboard/Inventory/new';
@@ -93,7 +96,8 @@ import DisplayService from '../pages/dashboard/Service/display';
 import DisplayInquiry from '../pages/dashboard/Inquiry/display';
 import DisplayQuote from '../pages/dashboard/Quotation/display';
 import DisplaySalesOrder from '../pages/dashboard/SalesOrder/display';
-import DisplayBOM from '../pages/dashboard/BillofMaterial/display';
+import DisplayCosting from '../pages/dashboard/Costing/display';
+import DisplayBOM from '../pages/dashboard/BillOfMaterial/display';
 import DisplayWorkCenter from '../pages/dashboard/WorkCenter/display';
 import DisplayVendor from '../pages/dashboard/Vendor/display';
 import DisplayPurchaseReq from '../pages/dashboard/PurchaseRequisition/display';
@@ -133,7 +137,8 @@ import ShowService from '../pages/dashboard/Service/show';
 import ShowInquiry from '../pages/dashboard/Inquiry/show';
 import ShowQuote from '../pages/dashboard/Quotation/show';
 import ShowSalesOrder from '../pages/dashboard/SalesOrder/show';
-import ShowBOM from '../pages/dashboard/BillofMaterial/show';
+import ShowCosting from '../pages/dashboard/Costing/show';
+import ShowBillOfMaterial from '../pages/dashboard/BillOfMaterial/show';
 import ShowWorkCenter from '../pages/dashboard/WorkCenter/show';
 import ShowVendor from '../pages/dashboard/Vendor/show';
 import ShowPurchaseReq from '../pages/dashboard/PurchaseRequisition/show';
@@ -161,7 +166,7 @@ import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
 import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 
 //Document
-import DocumentBOM from '../pages/dashboard/BillofMaterial/pages/Document';
+import DocumentCosting from '../pages/dashboard/Costing/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
 import DocumentShipment from '../pages/dashboard/Shipment/Outgoing/pages/Document';
 import DocumentQuotation from '../pages/dashboard/Quotation/pages/Document';
@@ -229,6 +234,7 @@ import { Typography } from '@mui/material';
 import ValuationTable from '../pages/dashboard/ValuationAnalysis';
 import NewFeatureUnamed from '../pages/dashboard/NewFeatureUnamed';
 import Capacity from '../pages/dashboard/CapacityAnalysis';
+import MaterialTransferNew from '../pages/dashboard/Inventory/MaterialTransfer/new';
 
 export default function TestRouter() {
 
@@ -339,13 +345,21 @@ export default function TestRouter() {
         },
         { 
           path: 'production/costing', 
-          element: <BillOfMaterialLayout />,
+          element: <CostingLayout />,
           children: [
-            { path: ':id', element: <ShowBOM />},
-            { path: 'add', element: <AddBillOfMaterial />},
+            { path: ':id', element: <ShowCosting />},
+            { path: 'add', element: <AddCosting />},
+            { path: 'display', element: <DisplayCosting />},
+            { path: 'document/:id', element: <DocumentCosting/>}
+          ]
+        },
+        {
+          path: 'production/bom',
+          element: <BillOfMaterialLayout/>,
+          children: [
+            { path: 'new', element: <AddBillOfMaterial />},
+            { path: ':id', element: <ShowBillOfMaterial />},
             { path: 'display', element: <DisplayBOM />},
-            { path: 'edit', element: <p>edit</p>},
-            { path: 'document/:id', element: <DocumentBOM/>}
           ]
         },
         { 
@@ -429,6 +443,13 @@ export default function TestRouter() {
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
             { path: 'document/:id', element: <DocumentGR/>}
+          ]
+        },
+        {
+          path: 'inventory/material-transfer',
+          element: <MaterialTransferLayout/>,
+          children: [
+            { path: 'new', element: <MaterialTransferNew/>}
           ]
         },
         { 

@@ -529,14 +529,14 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom-status', { payload:  _data } ).then( function(res) {
+      axios.post( uri + '/costing-status', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
       });
     },
     getBOMStatus(cb){
-      axios.get( uri + '/bom-status').then(function(res){
+      axios.get( uri + '/costing-status').then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
@@ -544,7 +544,7 @@ const main = {
     },
     getABOMStatus(id, cb){
       if(!id) console.error('ID not found')
-      axios.get( uri + '/bom-status' + `/${id}`).then( function(res){
+      axios.get( uri + '/costing-status' + `/${id}`).then( function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -552,7 +552,7 @@ const main = {
     },
     deleteBOMStatus(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/bom-status/' + id).then(function(res){
+      axios.delete( uri + '/costing-status/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -561,7 +561,7 @@ const main = {
     updateBOMStatus(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/bom-status/' + id, { payload: _data}).then(function(res){
+      axios.put( uri + '/costing-status/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -907,33 +907,109 @@ const main = {
         cb(err.response)
       })
     },
+    //BOM_alt
+    insertBOM_alt(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom-alt-v2', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+        cb(err);
+      });
+    },
+    getBOM_alt(params='', cb){
+      axios.get( uri + '/bom-alt-v2' + params).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+    getABOM_alt(id, cb){
+      if(!id) console.error('ID not found')
+      axios.get( uri + '/bom-alt-v2' + `/${id}`).then( function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteBOM_alt(id, cb){
+      if(!id) throw new Error('ID is required');
+      axios.delete( uri + '/bom-alt-v2/' + id).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    updateBOM_alt(id, _data, cb){
+      if(!id) throw new Error('ID is required');
+      if(!_data) throw new Error('data is required');
+      axios.put( uri + '/bom-alt-v2/' + id, { payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    //BOMITem alt
+    insertBOMItem_alt(_data, cb){
+      if(!_data) {
+          console.error('data not found');
+      }
+      axios.post( uri + '/bom-item-alt-v2', { payload:  _data } ).then( function(res) {
+        cb(res.data)
+      }).catch(function(err){
+          cb(err.response);
+      });
+    },
+    updateABOMItem_alt(bom_altId, _data, cb){
+      axios.put( uri + '/bom-item-alt-v2/' + bom_altId, {payload: _data}).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    deleteABOMItem_alt(bom_altId, cb){
+      axios.delete( uri + '/bom-item-alt-v2/' + bom_altId).then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      });
+    },
+    getBOMMaterial_altToDuplicate(cb){
+      axios.get( uri + '/bom-item-v2-alt').then(function(res){
+        cb(res.data);
+      }).catch(function(err){
+        cb(err.response);
+      })
+    },
+
     //BOM
     insertBOM(_data, cb){
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom', { payload:  _data } ).then( function(res) {
+      axios.post( uri + '/costing', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
         cb(err);
       });
     },
     getBOMMaterialToDuplicate(cb){
-      axios.get( uri + '/bom-items-v1').then(function(res){
+      axios.get( uri + '/costing-items-v1').then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       })
     },
     getBOMList(cb){
-      axios.get( uri + '/bom-listv1').then(function(res){
+      axios.get( uri + '/costing-listv1').then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response)
       })
     },
     getBOM(params='', cb){
-      axios.get( uri + '/bom' + params).then(function(res){
+      axios.get( uri + '/costing' + params).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -941,7 +1017,7 @@ const main = {
     },
     getABOM(id, cb){
       if(!id) console.error('ID not found')
-      axios.get( uri + '/bom' + `/${id}`).then( function(res){
+      axios.get( uri + '/costing' + `/${id}`).then( function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -949,7 +1025,7 @@ const main = {
     },
     deleteBOM(id, cb){
       if(!id) throw new Error('ID is required');
-      axios.delete( uri + '/bom/' + id).then(function(res){
+      axios.delete( uri + '/costing/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -958,7 +1034,7 @@ const main = {
     updateBOM(id, _data, cb){
       if(!id) throw new Error('ID is required');
       if(!_data) throw new Error('data is required');
-      axios.put( uri + '/bom/' + id, { payload: _data}).then(function(res){
+      axios.put( uri + '/costing/' + id, { payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -969,28 +1045,28 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom-item', { payload:  _data } ).then( function(res) {
+      axios.post( uri + '/costing-item', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
       });
     },
     getABOMItembyBOMId(bomId, cb){
-      axios.get( uri + '/bom-item/' + bomId ).then(function(res){
+      axios.get( uri + '/costing-item/' + bomId ).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       });
     },
     updateABOMItem(bomId, _data, cb){
-      axios.put( uri + '/bom-item/' + bomId, {payload: _data}).then(function(res){
+      axios.put( uri + '/costing-item/' + bomId, {payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       });
     },
     deleteABOMItem(id, cb){
-      axios.delete( uri + '/bom-item/' + id).then(function(res){
+      axios.delete( uri + '/costing-item/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
@@ -1001,28 +1077,28 @@ const main = {
       if(!_data) {
           console.error('data not found');
       }
-      axios.post( uri + '/bom-service', { payload:  _data } ).then( function(res) {
+      axios.post( uri + '/costing-service', { payload:  _data } ).then( function(res) {
         cb(res.data)
       }).catch(function(err){
           cb(err.response);
       });
     },
     getABOMServicebyBOMId(bomId, cb){
-      axios.get( uri + '/bom-service/' + bomId ).then(function(res){
+      axios.get( uri + '/costing-service/' + bomId ).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       });
     },
     updateABOMService(bomId, _data, cb){
-      axios.put( uri + '/bom-service/' + bomId, {payload: _data}).then(function(res){
+      axios.put( uri + '/costing-service/' + bomId, {payload: _data}).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);
       });
     },
     deleteABOMService(id, cb){
-      axios.delete( uri + '/bom-service/' + id).then(function(res){
+      axios.delete( uri + '/costing-service/' + id).then(function(res){
         cb(res.data);
       }).catch(function(err){
         cb(err.response);

@@ -58,6 +58,10 @@ const sidebarConfig = [
         path: '/dashboard/production/costing'
       },
       {
+        title: 'Bill of Material',
+        path: '/dashboard/production/bom'
+      },
+      {
         title: 'Work Center',
         path: '/dashboard/production/work-center'
       },

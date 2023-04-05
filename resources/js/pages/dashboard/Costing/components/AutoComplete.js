@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { styled } from '@mui/material/styles';
 
 import API from '../../../../helpers';
-import { isEmpty, isString } from 'lodash';
+import { isArray } from 'lodash';
 
 function sleep(delay = 0) {
   return new Promise((resolve) => {
@@ -13,24 +12,11 @@ function sleep(delay = 0) {
   });
 }
 
-const StyledAutoComplete = styled(Autocomplete)(({ theme }) => ({
-  '& .MuiInputBase-root': {
-    backgroundColor: '#f3f3f3'
-  }
-}));
+export default function Asynchronous({ label, loading, options, open, setOpen, choosen, changeData }) {
+    const [value, setValue] = React.useState(null);
 
-export default function Asynchronous({
-  label,
-  loading,
-  options,
-  open,
-  setOpen,
-  choosen,
-  changeData
-}) {
-  const [value, setValue] = React.useState(null);
-  return (
-    <StyledAutoComplete
+    return (
+    <Autocomplete
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -38,17 +24,15 @@ export default function Asynchronous({
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => {
-        if(isEmpty(value)) return;
-        return(option.id === parseInt(choosen?.split(',')[0]))
-      }}
-      getOptionLabel={({ item_name, id }) => `${id}, ${item_name}`}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      getOptionLabel={({ name, color, size, id}) => (`${id} - ${name} ${color} - ${size}`)}
       options={options}
-      value={choosen}
       loading={loading}
-      onInputChange={(event, newInputValue) => {
-        if(isString(newInputValue)) changeData(parseInt(newInputValue?.split(',')[0]), newInputValue);
-      }}
+      value={choosen} 
+      onInputChange={async (event, newInputValue) => {
+        await changeData('product_feature_id', parseInt(newInputValue.split('-')[0]));
+      }
+      }
       renderInput={(params) => (
         <TextField
           {...params}
@@ -61,7 +45,7 @@ export default function Asynchronous({
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
-            )
+            ),
           }}
         />
       )}
