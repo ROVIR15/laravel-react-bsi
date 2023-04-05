@@ -29,7 +29,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   }
 }));
 
-function BillOfMaterial() {
+function BillofMaterial() {
   //Modal Component of BOM
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
@@ -327,4 +327,4 @@ function BillOfMaterial() {
   );
 }
 
-export default BillOfMaterial;
+export default BillofMaterial;

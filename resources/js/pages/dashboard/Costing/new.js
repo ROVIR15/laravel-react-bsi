@@ -62,7 +62,7 @@ function totalMoney(params) {
   ).toFixed(4);
 }
 
-function BillOfMaterial() {
+function BillofMaterial() {
   const { pathname } = useLocation();
   const [items, setItems] = useState([]);
 
@@ -773,4 +773,4 @@ function BillOfMaterial() {
   );
 }
 
-export default BillOfMaterial;
+export default BillofMaterial;

@@ -9,7 +9,7 @@ export { default as MaterialTransferLayout} from './Inventory/MaterialTransfer';
 export { default as WorkCenterLayout } from './WorkCenter';
 export { default as RoutingLayout } from './Routing';
 export { default as CostingLayout } from './Costing';
-export { default as BillOfMaterialLayout } from './BillOfMaterial';
+export { default as BillofMaterialLayout } from './BillofMaterial';
 export { default as VendorLayout } from './Vendor';
 export { default as PurchaseRequisitionLayout } from './PurchaseRequisition';
 export { default as RFQLayout } from './RFQ';

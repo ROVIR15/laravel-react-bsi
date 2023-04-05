@@ -12,7 +12,7 @@ import {
   InventoryLayout,
   WorkCenterLayout,
   RoutingLayout,
-  BillOfMaterialLayout,
+  BillofMaterialLayout,
   VendorLayout,
   PurchaseRequisitionLayout,
   RFQLayout,
@@ -58,7 +58,7 @@ import AddInquiry from '../pages/dashboard/Inquiry/new';
 import AddQuotation from '../pages/dashboard/Quotation/new';
 import AddSalesOrder from '../pages/dashboard/SalesOrder/new';
 import AddCosting from '../pages/dashboard/Costing/new';
-import AddBillOfMaterial from '../pages/dashboard/BillOfMaterial/new';
+import AddBillofMaterial from '../pages/dashboard/BillofMaterial/new';
 import AddRouting from '../pages/dashboard/Routing/new';
 import AddWorkCenter from '../pages/dashboard/WorkCenter/new';
 import AddInventory from '../pages/dashboard/Inventory/new';
@@ -97,7 +97,7 @@ import DisplayInquiry from '../pages/dashboard/Inquiry/display';
 import DisplayQuote from '../pages/dashboard/Quotation/display';
 import DisplaySalesOrder from '../pages/dashboard/SalesOrder/display';
 import DisplayCosting from '../pages/dashboard/Costing/display';
-import DisplayBOM from '../pages/dashboard/BillOfMaterial/display';
+import DisplayBOM from '../pages/dashboard/BillofMaterial/display';
 import DisplayWorkCenter from '../pages/dashboard/WorkCenter/display';
 import DisplayVendor from '../pages/dashboard/Vendor/display';
 import DisplayPurchaseReq from '../pages/dashboard/PurchaseRequisition/display';
@@ -138,7 +138,7 @@ import ShowInquiry from '../pages/dashboard/Inquiry/show';
 import ShowQuote from '../pages/dashboard/Quotation/show';
 import ShowSalesOrder from '../pages/dashboard/SalesOrder/show';
 import ShowCosting from '../pages/dashboard/Costing/show';
-import ShowBillOfMaterial from '../pages/dashboard/BillOfMaterial/show';
+import ShowBillofMaterial from '../pages/dashboard/BillofMaterial/show';
 import ShowWorkCenter from '../pages/dashboard/WorkCenter/show';
 import ShowVendor from '../pages/dashboard/Vendor/show';
 import ShowPurchaseReq from '../pages/dashboard/PurchaseRequisition/show';
@@ -355,10 +355,10 @@ export default function TestRouter() {
         },
         {
           path: 'production/bom',
-          element: <BillOfMaterialLayout/>,
+          element: <BillofMaterialLayout/>,
           children: [
-            { path: 'new', element: <AddBillOfMaterial />},
-            { path: ':id', element: <ShowBillOfMaterial />},
+            { path: 'new', element: <AddBillofMaterial />},
+            { path: ':id', element: <ShowBillofMaterial />},
             { path: 'display', element: <DisplayBOM />},
           ]
         },

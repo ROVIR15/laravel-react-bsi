@@ -17,7 +17,7 @@ function getPathname(array) {
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
 }
 
-function BillOfMaterial() {
+function BillofMaterial() {
   const { pathname } = useLocation();
 
   const isBeginning = () => {
@@ -62,4 +62,4 @@ function BillOfMaterial() {
   );
 }
 
-export default BillOfMaterial;
+export default BillofMaterial;

@@ -60,7 +60,7 @@ function totalMoney(params){
   return ((((parseFloat(params.row.allowance)/100) + 1) * parseFloat(params.row.consumption)) * params.row.unit_price).toFixed(4)
 }
 
-function BillOfMaterial() {
+function BillofMaterial() {
   const { pathname } = useLocation();
   const {id} = useParams();
 
@@ -857,4 +857,4 @@ function BillOfMaterial() {
   )
 }
 
-export default BillOfMaterial
+export default BillofMaterial

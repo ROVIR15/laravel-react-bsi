@@ -51,7 +51,7 @@ export function bomitem_data_alt(array, filter) {
   return arranged;
 }
 
-function BillOfMaterial() {
+function BillofMaterial() {
   // param
   const { id } = useParams();
 
@@ -359,4 +359,4 @@ function BillOfMaterial() {
   );
 }
 
-export default BillOfMaterial;
+export default BillofMaterial;
