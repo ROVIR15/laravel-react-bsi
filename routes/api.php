@@ -60,11 +60,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('goods-option', 'GoodsOptionController')->only(['index']);
 
     //BOM
-    Route::resource('costing', 'BOMController')->only(['index', 'store', 'show', 'update']);
-    Route::resource('costing-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store']);
-    Route::resource('costing-service', 'BOMServiceController')->only(['index', 'show', 'store']);
-    Route::resource('costing-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+    Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
+    Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store']);
+    Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store']);
+    Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
     //BOM alt
     Route::resource('bom-alt-v2', 'BOM_AltController')->only(['index', 'store', 'show', 'destroy']);
@@ -131,7 +131,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('inventory', 'InventoryController')->only(['index', 'store']);
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
-    Route::resource('material-transfer', 'MaterialTransferController')->only(['store', 'show', 'update', 'destroy']);
+    Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
     Route::post('post-material-transfer-status', 'MaterialTransferController@new_material_transfer_update_status');
 
@@ -269,3 +269,5 @@ Route::get('running-buyer-order', 'MonitoringSewingController@indexV3');
 Route::get('uninvoiced-purchase-order', 'PurchaseOrderController@getUninvoicedPurchaseOrder');
 Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');
 Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
+
+Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
