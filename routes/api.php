@@ -66,6 +66,12 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store']);
     Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
+    Route::resource('costing', 'BOMController')->only(['index', 'store', 'show', 'update']);
+    Route::resource('costing-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store']);
+    Route::resource('costing-service', 'BOMServiceController')->only(['index', 'show', 'store']);
+    Route::resource('costing-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
     //BOM alt
     Route::resource('bom-alt-v2', 'BOM_AltController')->only(['index', 'store', 'show', 'destroy']);
     Route::resource('bom-item-alt-v2', 'BOMItem_AltController')->only(['store', 'update', 'destroy']);
