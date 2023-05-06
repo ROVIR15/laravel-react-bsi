@@ -205,8 +205,14 @@ function Document() {
   const [boolSwitch, setBoolSwitch] = useState(false);
 
   const handleSwitchChange = (event) => {
-    if (event.target.checked) setSwitchCurrency('usd');
-    else setSwitchCurrency('idr');
+    if (event.target.checked) {
+      setBoolSwitch(true)
+      setSwitchCurrency('usd');
+    }
+    else {
+      setBoolSwitch(false)
+      setSwitchCurrency('idr');
+    }
   };
 
   const handleDownload = React.useCallback(async () => {
@@ -350,6 +356,7 @@ function Document() {
 
         setInitialCurrency(_currency);
         setSwitchCurrency(_currency);
+
         if (_currency === 'usd') setBoolSwitch(true);
         if (_currency === 'idr') setBoolSwitch(false);
       });
@@ -503,7 +510,7 @@ function Document() {
       <div>
         <FormControlLabel
           control={
-            <CurrencySwitch defaultChecked={false} onChange={handleSwitchChange} sx={{ m: 1 }} />
+            <CurrencySwitch checked={boolSwitch} onChange={handleSwitchChange} sx={{ m: 1 }} />
           }
           label="Currency Switch"
         />

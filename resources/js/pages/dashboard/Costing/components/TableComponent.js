@@ -38,7 +38,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
   const sumSubTotal = () => {
     var sub = 0;
     sub = payload.reduce((prev, next) => {
-      return prev + Math.floor(next.consumption * (next.allowance / 100 + 1) * next.unit_price);
+      return prev + next.consumption * (next.allowance / 100 + 1) * next.unit_price;
     }, 0);
     return sub;
   };
@@ -48,7 +48,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
     payload.map(function (item) {
       sub = sub + item.qty * item.unit_price;
     });
-    return fCurrency(Math.floor(sub) * 1.11);
+    return fCurrency(sub * 1.11);
   };
 
   return (

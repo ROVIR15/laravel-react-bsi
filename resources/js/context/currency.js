@@ -51,11 +51,11 @@ export const CurrencyProvider = ({ children }) => {
       // case exchange usd to idr
       // the calculation must be value divided by idr_currency;
       case 'idr':
-        return (parseFloat(value) * currencyData[initialCurrencyType]).toFixed(2);
+        return (parseFloat(value) * currencyData[requestedCurrencyType]).toFixed(2);
       // case exchange idr to usd
       // the calculation must be value divided by usd_currency;
       case 'usd':
-        return (parseFloat(value) / currencyData[initialCurrencyType]).toFixed(2);
+        return (parseFloat(value) / currencyData[requestedCurrencyType]).toFixed(2);
       default:
         alert(`Requested currency type isn't supported yet`);
         return 0;
