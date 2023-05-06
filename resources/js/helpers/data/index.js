@@ -869,7 +869,7 @@ export function bomDocumentArranged(data) {
       return {
         total_work_days:
           prevValue +
-          Math.floor(
+          (
             qty / nextValue.work_center_info.prod_capacity +
               nextValue.work_center_info.layout_produksi
           ),
@@ -877,8 +877,8 @@ export function bomDocumentArranged(data) {
         total_overhead_cost: prevValue + nextValue.work_center_info.overhead_cost,
         total_cost_of_wc:
           prevValue +
-          Math.floor(
-            (Math.round((qty / nextValue.work_center_info?.prod_capacity) * 0.85) +
+          (
+            (((qty / nextValue.work_center_info?.prod_capacity) * 0.85) +
               nextValue.work_center_info?.layout_produksi) *
               nextValue.work_center_info?.cost_per_hour
           ),
@@ -908,10 +908,10 @@ export function bomDocumentArranged(data) {
         return {
           total_cost_of_items:
             prevValue.total_cost_of_items +
-            Math.floor(totalConsumption(nextValue) * qty * nextValue.unit_price),
+            (totalConsumption(nextValue) * qty * nextValue.unit_price),
           average_of_product_cost:
             prevValue.average_of_product_cost +
-            Math.floor(totalConsumption(nextValue) * nextValue.unit_price),
+            (totalConsumption(nextValue) * nextValue.unit_price),
           components_numbers: bom_items.length
         };
       },
@@ -929,10 +929,10 @@ export function bomDocumentArranged(data) {
 
   if (!isEmpty(bom_services)) {
     additionalCost = bom_services.reduce((initial, next) => {
-      return initial + Math.floor(parseFloat(next.unit_price) * parseInt(qty));
+      return initial + (parseFloat(next.unit_price) * parseInt(qty));
     }, 0);
 
-    average_add_cost = Math.floor(additionalCost / qty);
+    average_add_cost = (additionalCost / qty);
 
     list_of_service = bom_services.reduce((initial, next) => {
       return initial + `${next.product.service.name}, `;
