@@ -93,7 +93,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
               <TableCell align="right">
                 {fCurrency(
                   exchanger(
-                    Math.floor(row.consumption * (row.allowance / 100 + 1) * row.unit_price),
+                    row.consumption * (row.allowance / 100 + 1) * row.unit_price,
                     initialCurrency,
                     switchCurrency
                   ),
@@ -111,7 +111,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
             <NoBorderCell align="right">
               <BoxStyle />
               <Typography variant="body1">
-                {fCurrency(exchanger(Math.floor(sumSubTotal()), initialCurrency, switchCurrency), switchCurrency)}
+                {fCurrency(exchanger(sumSubTotal(), initialCurrency, switchCurrency), switchCurrency)}
               </Typography>
             </NoBorderCell>
           </TableRow>
