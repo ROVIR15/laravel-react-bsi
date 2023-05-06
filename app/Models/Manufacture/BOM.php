@@ -13,7 +13,7 @@ class BOM extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'id',
+        'currency_id',
         'party_id',
         'product_id',
         'product_feature_id',
@@ -27,6 +27,10 @@ class BOM extends Model
         'end_date',
         'company_name'
     ];
+
+    public function currency_info(){
+        return $this->belongsTo('App\Models\FInance\Currency', 'currency_id');
+    }
 
     public function bom_items(){
         return $this->hasMany('App\Models\Manufacture\BOMItem', 'bom_id');

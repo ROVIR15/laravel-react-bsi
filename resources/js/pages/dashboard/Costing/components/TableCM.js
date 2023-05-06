@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import { fCurrency } from '../../../../utils/formatNumber';
+import useCurrencyExchange from '../../../../context/currency';
 
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 12
@@ -35,21 +36,23 @@ const rows = [
   createData('Product D', 200, 20000)
 ];
 
-export default function BasicTable({ payload, qty }) {
+export default function BasicTable({ initialCurrency, switchCurrency, payload, qty }) {
+
+  const { exchanger } = useCurrencyExchange();
 
   const sumSubTotal = () => {
     var sub = 0;
     sub = payload.reduce((prev, next) => {
       return prev + Math.floor((Math.round(qty/(next.work_center_info?.prod_capacity*0.85)) + next.work_center_info?.layout_produksi) * next.work_center_info?.cost_per_hour);
     }, 0)
-    return fCurrency(Math.floor(sub));
+    return Math.floor(sub);
   }
 
   const total = () => {
     let res = payload.reduce((prev, next) => {
       return prev + Math.floor((next.work_center_info?.overhead_cost + next.work_center_info?.cost_per_hour)/(next.work_center_info?.prod_capacity*0.85));
     }, 0)
-    return fCurrency(Math.floor(res/payload.length));
+    return Math.floor(res/payload.length);
   }
 
   return (
@@ -83,8 +86,8 @@ export default function BasicTable({ payload, qty }) {
               <TableCell align="right">{row.work_center_info?.prod_capacity * 0.85}</TableCell>
               <TableCell align="right">{qty}</TableCell>
               <TableCell align="right">{Math.round((qty/(row.work_center_info?.prod_capacity * 0.85)))+row.work_center_info?.layout_produksi}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(row.work_center_info?.cost_per_hour)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(Math.round((qty/(row.work_center_info?.prod_capacity*0.85))+row.work_center_info?.layout_produksi) * row.work_center_info?.cost_per_hour)}</TableCell>
+              <TableCell align="right">{fCurrency(exchanger(row.work_center_info?.cost_per_hour, initialCurrency, switchCurrency), switchCurrency)}</TableCell>
+              <TableCell align="right">{fCurrency(exchanger(Math.round((qty/(row.work_center_info?.prod_capacity*0.85))+row.work_center_info?.layout_produksi) * row.work_center_info?.cost_per_hour, initialCurrency, switchCurrency), switchCurrency)}</TableCell>
             </TableRow>
           ))}
           
@@ -98,7 +101,7 @@ export default function BasicTable({ payload, qty }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1"> Rp. {sumSubTotal() } </Typography>
+                <Typography variant="body1"> {fCurrency(exchanger(sumSubTotal(), initialCurrency, switchCurrency), switchCurrency) } </Typography>
               </NoBorderCell>
             </TableRow>
             <TableRow
@@ -111,7 +114,7 @@ export default function BasicTable({ payload, qty }) {
               </NoBorderCell>
               <NoBorderCell align="right">
                 <BoxStyle />
-                <Typography variant="body1">Rp. {total()} </Typography>
+                <Typography variant="body1"> {fCurrency(exchanger(total(), initialCurrency, switchCurrency), switchCurrency) } </Typography>
               </NoBorderCell>
             </TableRow>
         </TableBody>

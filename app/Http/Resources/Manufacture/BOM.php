@@ -21,6 +21,7 @@ class BOM extends JsonResource
     {
         return [
             'id' => $this->id,
+            'currency_info' => $this->currency_info,
             'party' => $this->party,
             'product_id' => $this->product_id,
             'product_feature_id' => $this->product_feature_id,

@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import { styled } from '@mui/material/styles';
-import { Box, Button, Divider, Grid, IconButton, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Paper,
+  Typography
+} from '@mui/material';
 
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -13,6 +22,7 @@ import TableService from '../components/TableService';
 import { MHidden } from '../../../../components/@material-extend';
 import Page from '../../../../components/Page';
 import { fDate, dateDifference } from '../../../../utils/formatTime';
+import { CurrencySwitch } from '../components/SwitchCurrency';
 
 // axios
 import axios from 'axios';
@@ -26,6 +36,7 @@ import { Icon } from '@iconify/react';
 
 //Comtext
 import useAuth from '../../../../context';
+import useCurrencyExcahnge from '../../../../context/currency';
 import { getPages } from '../../../../utils/getPathname';
 
 import jsPDF from 'jspdf';
@@ -104,6 +115,14 @@ const GridItemX = styled('div')(({ theme }) => ({
 }));
 
 function Document() {
+  const { currencyData, exchanger } = useCurrencyExcahnge();
+
+  // initial currency is to store data of initial currency of costing document
+  const [initialCurrency, setInitialCurrency] = useState('idr');
+
+  // state to store data when the user toggle switch currency
+  const [switchCurrency, setSwitchCurrency] = useState('idr');
+
   const { id } = useParams();
   const [items, setItems] = useState([]);
   const [service, setService] = useState([]);
@@ -182,6 +201,14 @@ function Document() {
     }
   }
 
+  // boolean state on to manage switch button
+  const [boolSwitch, setBoolSwitch] = useState(false);
+
+  const handleSwitchChange = (event) => {
+    if (event.target.checked) setSwitchCurrency('usd');
+    else setSwitchCurrency('idr');
+  };
+
   const handleDownload = React.useCallback(async () => {
     const content = pdfRef.current;
     const content2 = pdfRef2.current;
@@ -190,16 +217,13 @@ function Document() {
     const imgWidth = 190;
     const pageHeight = 280;
 
-
-    let a = await html2canvas(content, { allowTaint: true, useCORS: true }).then(
-      (canvas) => {
-        let image1 = canvas.toDataURL('image/png');
-        let imgHeight = (canvas.height * imgWidth) / canvas.width;
-        const doc = new jsPDF('pt', 'mm');
-        doc.addImage(image1, 'SVG', 10, imgWidth, imgHeight + 25);    
-        return doc;
-      }
-    );
+    let a = await html2canvas(content, { allowTaint: true, useCORS: true }).then((canvas) => {
+      let image1 = canvas.toDataURL('image/png');
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const doc = new jsPDF('pt', 'mm');
+      doc.addImage(image1, 'SVG', 10, imgWidth, imgHeight + 25);
+      return doc;
+    });
 
     a.save('download.pdf');
 
@@ -227,7 +251,6 @@ function Document() {
     //   heightLeft -= pageHeight;
     // }
 
-
     // let c = await html2canvas(content3, { scale: 3, allowTaint: true, useCORS: true }).then(
     //   (canvas) => {
     //     return canvas;
@@ -238,7 +261,7 @@ function Document() {
     // doc.addPage();
     // doc.addImage(image3, 'SVG', 10, 10, imgWidth, imgHeight + 25);
 
-    doc.save('download.pdf')
+    doc.save('download.pdf');
 
     // setTimeout(async () => {
     //   html2canvas(content, { scale: 3, allowTaint: true, useCORS: true }).then((canvas) => {
@@ -263,7 +286,7 @@ function Document() {
     //     setLoader(false);
     //   });
 
-      // doc.save();
+    // doc.save();
   }, [pdfRef]);
 
   // state for document
@@ -322,6 +345,13 @@ function Document() {
         setStartingPrice(res.data?.starting_price);
         setFinalPrice(res.data?.final_price);
         setStatus(res.data?.status[0]);
+
+        let _currency = res.data?.currency_info?.currency_code.toLowerCase();
+
+        setInitialCurrency(_currency);
+        setSwitchCurrency(_currency);
+        if (_currency === 'usd') setBoolSwitch(true);
+        if (_currency === 'idr') setBoolSwitch(false);
       });
     } catch (error) {
       alert('error');
@@ -470,6 +500,14 @@ function Document() {
           </div>
         </SpaceBetween>
       </FloatingBox>
+      <div>
+        <FormControlLabel
+          control={
+            <CurrencySwitch defaultChecked={false} onChange={handleSwitchChange} sx={{ m: 1 }} />
+          }
+          label="Currency Switch"
+        />
+      </div>
       <PaperStyled elevation={2} sx={{}}>
         {/* Product Info */}
         <div ref={pdfRef}>
@@ -578,6 +616,8 @@ function Document() {
              * Table Primary
              */}
             <Table
+              initialCurrency={initialCurrency}
+              switchCurrency={switchCurrency}
               payload={rest}
               approval={approve}
               review={review}
@@ -635,7 +675,12 @@ function Document() {
             </Typography>
           </Grid>
           <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-            <TableComponent payload={items} tax={data.tax} />
+            <TableComponent
+              initialCurrency={initialCurrency}
+              switchCurrency={switchCurrency}
+              payload={items}
+              tax={data.tax}
+            />
           </GridItemX>
         </div>
         <Divider fullWidth />
@@ -681,7 +726,13 @@ function Document() {
             </Typography>
           </Grid>
           <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-            <TableService payload={service} qty={data?.qty} tax={data.tax} />
+            <TableService
+              initialCurrency={initialCurrency}
+              switchCurrency={switchCurrency}
+              payload={service}
+              qty={data?.qty}
+              tax={data.tax}
+            />
           </GridItemX>
 
           <Grid item>
@@ -690,7 +741,13 @@ function Document() {
             </Typography>
           </Grid>
           <GridItemX sx={{ marginTop: 3, marginBottom: 4 }}>
-            <TableCM payload={op} qty={data?.qty} tax={data.tax} />
+            <TableCM
+              initialCurrency={initialCurrency}
+              switchCurrency={switchCurrency}
+              payload={op}
+              qty={data?.qty}
+              tax={data.tax}
+            />
           </GridItemX>
         </div>
         <Divider fullWidth />

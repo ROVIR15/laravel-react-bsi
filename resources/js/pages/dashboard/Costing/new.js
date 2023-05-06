@@ -2,16 +2,20 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Page from '../../../components/Page';
 import {
   Box,
+  Button,
   Card,
   CardHeader,
   CardContent,
   Container,
+  FormControl,
+  InputLabel,
   Grid,
+  MenuItem,
   InputAdornment,
   TextField,
   Tab,
-  Button,
   Typography,
+  Select,
   Stack
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -171,6 +175,7 @@ function BillofMaterial() {
 
   const formik = useFormik({
     initialValues: {
+      currency_id: 2,
       name: '',
       party_id: '',
       product_id: '',
@@ -541,9 +546,9 @@ function BillofMaterial() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={4}>
-                <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
+            <Grid container direction="column" spacing={3}>
+              {/* <Grid item xs={4}>
+                <Card>
                   <CardContent>
                     <ColumnBox>
                       <SpaceBetweenBox>
@@ -565,14 +570,49 @@ function BillofMaterial() {
                     </ColumnBox>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Grid> */}
 
-              <Grid item xs={8}>
+              <Grid item xs={12}>
                 <Card>
                   <CardHeader title="Costing Information" />
                   <CardContent>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
+                        <ColumnBox>
+                          <SpaceBetweenBox>
+                            <Typography variant="h6"> Buyer </Typography>
+                            <Button onClick={() => setOpenSH(true)}>Select</Button>
+                          </SpaceBetweenBox>
+                          <div>
+                            <Typography variant="body1">{selectedValueSH?.name}</Typography>
+                          </div>
+                          <DialogBoxParty
+                            options={optionParty}
+                            loading={loadingSH}
+                            // error={Boolean(touched.facility_id && errors.facility_id)}
+                            // helperText={touched.facility_id && errors.facility_id}
+                            // selectedValue={values.facility_id}
+                            open={openSH}
+                            onClose={(value) => handleCloseDialogParty(value)}
+                          />
+                        </ColumnBox>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                          <Select
+                            label="Currency"
+                            // onChange={handleChange}
+                            {...getFieldProps('currency_id')}
+                            error={Boolean(touched.currency_id && errors.currency_id)}
+                            helperText={touched.currency_id && errors.currency_id}
+                          >
+                            <MenuItem value={1}>USD</MenuItem>
+                            <MenuItem value={2}>IDR</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={10}>
                         <TextField
                           fullWidth
                           autoComplete="name"
@@ -655,116 +695,121 @@ function BillofMaterial() {
                           helperText={touched.company_name && errors.company_name}
                         />
                       </Grid>
+
+                      <Grid item xs={12}>
+                        <Box
+                          sx={{
+                            width: '100%',
+                            border: '1px dashed #b8b8b8',
+                            padding: '0.5em 0.25em',
+                            borderRadius: '5px'
+                          }}
+                        >
+                          <TabContext value={valueTab}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                              <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                                <Tab label="Initial Price" value="1" />
+                                <Tab label="Work" value="2" />
+                                <Tab label="Material" value="3" />
+                                <Tab label="Service" value="4" />
+                                <Tab label="Tax" value="5" />
+                              </TabList>
+                            </Box>
+                            <TabPanel value="1">
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography variant="body1">Starting Price</Typography>
+                                <TextField
+                                  autoComplete="starting_price"
+                                  type="number"
+                                  {...getFieldProps('starting_price')}
+                                  error={Boolean(touched.starting_price && errors.starting_price)}
+                                  helperText={touched.starting_price && errors.starting_price}
+                                  InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">Rp</InputAdornment>
+                                    )
+                                  }}
+                                  sx={{
+                                    '& .MuiInputBase-input': {
+                                      textAlign: 'right'
+                                    }
+                                  }}
+                                />
+                              </Stack>
+                            </TabPanel>
+                            <TabPanel value="2">
+                              <DataGrid
+                                columns={operationColumns}
+                                rows={operation}
+                                handleAddRow={handleOpenModalO}
+                                onEditRowsModelChange={handleEditOperationRowsModelChange}
+                                handleResetRows={handleResetOperationRows}
+                              />
+                            </TabPanel>
+                            <TabPanel value="3">
+                              <DataGrid
+                                columns={goodsColumns}
+                                rows={component}
+                                handleAddRow={handleOpenModal}
+                                onEditRowsModelChange={handleEditComponentRowsModelChange}
+                                handleResetRows={handleResetComponentRows}
+                                handleDuplicate={handleOpenModalDuplicate}
+                                duplicateMaterial={true}
+                              />
+                            </TabPanel>
+                            <TabPanel value="4">
+                              <DataGrid
+                                columns={serviceColumns}
+                                rows={service}
+                                handleAddRow={handleOpenModalS}
+                                onEditRowsModelChange={handleEditServiceRowsModelChange}
+                                handleResetRows={handleResetComponentRows}
+                              />
+                            </TabPanel>
+                            <TabPanel value="5">
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography variant="body1">Tax</Typography>
+                                <TextField
+                                  autoComplete="tax"
+                                  type="number"
+                                  {...getFieldProps('tax')}
+                                  error={Boolean(touched.tax && errors.tax)}
+                                  helperText={touched.tax && errors.tax}
+                                  InputProps={{
+                                    endAdornment: <InputAdornment position="end">%</InputAdornment>
+                                  }}
+                                  sx={{
+                                    '& .MuiInputBase-input': {
+                                      textAlign: 'right'
+                                    }
+                                  }}
+                                />
+                              </Stack>
+                            </TabPanel>
+                          </TabContext>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}>
+                          <LoadingButton
+                            size="large"
+                            type="submit"
+                            variant="contained"
+                            loading={isSubmitting}
+                            sx={{ m: 1 }}
+                          >
+                            Save
+                          </LoadingButton>
+                          <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                            Cancel
+                          </Button>
+                        </Box>
+                      </Grid>
                     </Grid>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <Box sx={{ width: '100%', typography: 'body1' }}>
-                      <TabContext value={valueTab}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                          <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                            <Tab label="Initial Price" value="1" />
-                            <Tab label="Work" value="2" />
-                            <Tab label="Material" value="3" />
-                            <Tab label="Service" value="4" />
-                            <Tab label="Tax" value="5" />
-                          </TabList>
-                        </Box>
-                        <TabPanel value="1">
-                          <Stack direction="row" spacing={2} alignItems="center">
-                            <Typography variant="body1">Starting Price</Typography>
-                            <TextField
-                              autoComplete="starting_price"
-                              type="number"
-                              {...getFieldProps('starting_price')}
-                              error={Boolean(touched.starting_price && errors.starting_price)}
-                              helperText={touched.starting_price && errors.starting_price}
-                              InputProps={{
-                                startAdornment: <InputAdornment position="start">Rp</InputAdornment>
-                              }}
-                              sx={{
-                                '& .MuiInputBase-input': {
-                                  textAlign: 'right'
-                                }
-                              }}
-                            />
-                          </Stack>
-                        </TabPanel>
-                        <TabPanel value="2">
-                          <DataGrid
-                            columns={operationColumns}
-                            rows={operation}
-                            handleAddRow={handleOpenModalO}
-                            onEditRowsModelChange={handleEditOperationRowsModelChange}
-                            handleResetRows={handleResetOperationRows}
-                          />
-                        </TabPanel>
-                        <TabPanel value="3">
-                          <DataGrid
-                            columns={goodsColumns}
-                            rows={component}
-                            handleAddRow={handleOpenModal}
-                            onEditRowsModelChange={handleEditComponentRowsModelChange}
-                            handleResetRows={handleResetComponentRows}
-                            handleDuplicate={handleOpenModalDuplicate}
-                            duplicateMaterial={true}
-                          />
-                        </TabPanel>
-                        <TabPanel value="4">
-                          <DataGrid
-                            columns={serviceColumns}
-                            rows={service}
-                            handleAddRow={handleOpenModalS}
-                            onEditRowsModelChange={handleEditServiceRowsModelChange}
-                            handleResetRows={handleResetComponentRows}
-                          />
-                        </TabPanel>
-                        <TabPanel value="5">
-                          <Stack direction="row" spacing={2} alignItems="center">
-                            <Typography variant="body1">Tax</Typography>
-                            <TextField
-                              autoComplete="tax"
-                              type="number"
-                              {...getFieldProps('tax')}
-                              error={Boolean(touched.tax && errors.tax)}
-                              helperText={touched.tax && errors.tax}
-                              InputProps={{
-                                endAdornment: <InputAdornment position="end">%</InputAdornment>
-                              }}
-                              sx={{
-                                '& .MuiInputBase-input': {
-                                  textAlign: 'right'
-                                }
-                              }}
-                            />
-                          </Stack>
-                        </TabPanel>
-                      </TabContext>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
             </Grid>
           </Form>
         </FormikProvider>

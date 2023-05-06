@@ -14,43 +14,47 @@ import { SnackbarProvider } from 'notistack';
 
 // Transition
 import Slide from '@mui/material/Slide';
-import { styled } from "@mui/material";
+import { styled } from '@mui/material';
 
-import { AuthProvider } from './context'
+import { AuthProvider } from './context';
+import { CurrencyProvider } from './context/currency';
 
 const StyledSnackbarProvider = styled(SnackbarProvider)`
-  &.SnackbarItem-contentRoot, &.SnackbarItem-variantSuccess {
+  &.SnackbarItem-contentRoot,
+  &.SnackbarItem-variantSuccess {
     background-color: white;
     color: black;
   }
 `;
 
-function MainApp(){  
+function MainApp() {
   return (
     <HelmetProvider>
       <BrowserRouter>
         <AuthProvider>
-          <ThemeConfig>
-            <ScrollToTop/>
-              <GlobalStyles/>
+          <CurrencyProvider>
+            <ThemeConfig>
+              <ScrollToTop />
+              <GlobalStyles />
               <StyledSnackbarProvider
                 anchorOrigin={{
-                     vertical: 'top',
-                     horizontal: 'right',
+                  vertical: 'top',
+                  horizontal: 'right'
                 }}
-                TransitionComponent={Slide}      
+                TransitionComponent={Slide}
               >
-              <DashboardRouter />
-            </StyledSnackbarProvider>
-          </ThemeConfig>
+                <DashboardRouter />
+              </StyledSnackbarProvider>
+            </ThemeConfig>
+          </CurrencyProvider>
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>
-  )
+  );
 }
 
 export default MainApp;
 
-if (document.getElementById('test-dashboard-app')){
-  ReactDOM.render(<MainApp/>, document.getElementById('test-dashboard-app'));
+if (document.getElementById('test-dashboard-app')) {
+  ReactDOM.render(<MainApp />, document.getElementById('test-dashboard-app'));
 }

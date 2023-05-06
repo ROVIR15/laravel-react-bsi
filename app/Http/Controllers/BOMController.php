@@ -2,7 +2,6 @@
   
   namespace App\Http\Controllers;
   
-  
   use Carbon\Carbon;
 
   use DB;
@@ -50,7 +49,7 @@
       switch ($level) {
         case 'approve':
           # code...
-          $query = BOM::with('party')->whereHas('status', function($query3){
+          $query = BOM::with('currency_info', 'party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Approve', 'Review', 'Reject Approve', 'Reject Review']);
           })
           ->whereYear('created_at', '=', $year)
@@ -60,7 +59,7 @@
 
         case 'review':
           # code...
-          $query = BOM::with('party')->whereHas('status', function($query3){
+          $query = BOM::with('currency_info', 'party')->whereHas('status', function($query3){
               $query3->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
           })
           ->whereYear('created_at', '=', $year)
@@ -70,7 +69,7 @@
         
         default:
           # code...
-          $query = BOM::with('status', 'party')
+          $query = BOM::with('status', 'currency_info', 'party')
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
           ->get();
@@ -149,6 +148,7 @@
         try {
             //BOM Creation
             $billOfMaterial = BOM::create([
+              'currency_id' => $param['currency_id'],
               'product_id' => $param['product_id'],
               'product_feature_id' => $param['product_feature_id'],
               'party_id' => $param['party_id'],
@@ -246,6 +246,7 @@
         try {
             //code...
             $query = BOM::with(
+              'currency_info',
               'bom_items', 
               'bom_services', 
               'operation', 
