@@ -39,16 +39,16 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, q
   const sumSubTotal = () => {
     var sub = 0;
     sub = payload.reduce((prev, next) => {
-      return prev + Math.floor(qty * next.unit_price);
+      return prev + (qty * next.unit_price);
     }, 0);
-    return Math.floor(sub);
+    return sub;
   };
 
   const total = () => {
     var sub = payload.reduce((prev, next) => {
       return prev + next.unit_price;
     }, 0);
-    return Math.floor(sub);
+    return (sub);
   };
 
   return (
@@ -76,7 +76,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, q
               </TableCell>
               <TableCell align="right">
                 {fCurrency(
-                  exchanger(Math.floor(qty * row.unit_price), initialCurrency, switchCurrency), switchCurrency
+                  exchanger((qty * row.unit_price), initialCurrency, switchCurrency), switchCurrency
                 )}
               </TableCell>
             </TableRow>
