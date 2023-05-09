@@ -141,6 +141,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
     Route::post('post-material-transfer-status', 'MaterialTransferController@new_material_transfer_update_status');
 
+    Route::resource('adjustment-item', 'AdjustmentItemController')->only(['store', 'update', 'destroy']);
+    Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);
+
     //Finance
     Route::resource('financial-account', 'FinancialAccountController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::get('finance-account-type', 'FinancialAccountController@getFinanceAccountType');
@@ -239,7 +242,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 });
 
-Route::get('bom-listv1', 'BOMController@bomList');
+Route::get('costing-listv1', 'BOMController@bomList');
 Route::get('purchase-order-list', 'PurchaseOrderController@getPurchaseOrderList');
 Route::get('sales-order-list', 'SalesOrderController@getSalesOrderList');
 
@@ -277,3 +280,13 @@ Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');
 Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
 
 Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::get('material-status-with-stock', 'ProductFeatureController@checkInventoryItemWithStock');
+
+Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);
+
+Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+
+Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
+Route::get('outbound-material-report', 'InventoryController@regIncomingMaterial');
+Route::get('wip-material-report', 'InventoryController@repWIP');
+Route::get('mutasi-report', 'InventoryController@repMaterialTransfer');
