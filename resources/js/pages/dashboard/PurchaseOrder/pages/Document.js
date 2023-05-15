@@ -386,7 +386,7 @@ function FirstPage() {
         </div>
       </SpaceBetween>
       <RootStyle>
-        <PaperStyled sx={{ width: '210mm', height: '279mm', margin: 'auto' }}>
+        <PaperStyled sx={{ width: '210mm', margin: 'auto' }}>
           <div ref={pdfRef}>
             {/* Header Info */}
             <Grid
