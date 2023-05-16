@@ -49,10 +49,9 @@ export default function DashboardLayout() {
   mqttSubscribe('general');
   
   useEffect(() => {
-    console.log(isEmpty(payload), payload.message)
 
     if(isEmpty(payload)) return;
-    enqueueSnackbar(payload?.message);
+    // enqueueSnackbar(payload?.message);
     new Notification(payload?.message);
 
   }, [payload])
