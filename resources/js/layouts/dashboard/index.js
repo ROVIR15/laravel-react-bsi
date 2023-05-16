@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 // material
@@ -8,7 +8,10 @@ import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import useAuth from '../../context';
 import Welcoming from './Welcoming';
-
+import useRealtime from '../../context/testing-realtime';
+import { parseJSON } from 'date-fns';
+import { useSnackbar } from 'notistack';
+import { isEmpty } from 'lodash';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -40,6 +43,27 @@ export default function DashboardLayout() {
   const { loadingInitial } = useAuth();
   const { pathname } = useLocation();
 
+  const { payload, isConnected, mqttSubscribe } = useRealtime();
+  const { enqueueSnackbar } = useSnackbar();
+
+  mqttSubscribe('general');
+  
+  useEffect(() => {
+    console.log(isEmpty(payload), payload.message)
+
+    if(isEmpty(payload)) return;
+    enqueueSnackbar(payload?.message);
+    new Notification(payload?.message);
+
+  }, [payload])
+
+  useEffect(() => {
+    if (!("Notification" in window)) {
+      console.log("Browser does not support desktop notification");
+    } else {
+      Notification.requestPermission();
+    }
+  }, [])
 
   function isWelcoming(){
     if(pathname.split('/').length === 2){

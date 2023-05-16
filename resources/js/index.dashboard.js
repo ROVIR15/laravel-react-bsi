@@ -18,6 +18,7 @@ import { styled } from '@mui/material';
 
 import { AuthProvider } from './context';
 import { CurrencyProvider } from './context/currency';
+import { RealtimeProvider } from './context/testing-realtime';
 
 const StyledSnackbarProvider = styled(SnackbarProvider)`
   &.SnackbarItem-contentRoot,
@@ -33,19 +34,21 @@ function MainApp() {
       <BrowserRouter>
         <AuthProvider>
           <CurrencyProvider>
-            <ThemeConfig>
-              <ScrollToTop />
-              <GlobalStyles />
-              <StyledSnackbarProvider
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                TransitionComponent={Slide}
-              >
-                <DashboardRouter />
-              </StyledSnackbarProvider>
-            </ThemeConfig>
+            <RealtimeProvider>
+              <ThemeConfig>
+                <ScrollToTop />
+                <GlobalStyles />
+                <StyledSnackbarProvider
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
+                  TransitionComponent={Slide}
+                >
+                  <DashboardRouter />
+                </StyledSnackbarProvider>
+              </ThemeConfig>
+            </RealtimeProvider>
           </CurrencyProvider>
         </AuthProvider>
       </BrowserRouter>
