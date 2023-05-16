@@ -485,29 +485,32 @@ function OutboundDelivery() {
                     </Box>
                     {/* Item Overview */}
                     <TabPanel value="1" sx={{ padding: '10px 0' }}>
-                      <DataGrid
-                        columns={columns}
-                        rows={items}
-                        onEditRowsModelChange={handleEditRowsModelChange}
-                        handleAddRow={handleOpenModal}
-                        addItemActive={false}
-                        updateActive={false}
-                        handleReset={handleResetRows}
-                      />
-
-                      <Box>
-                        <TextField
-                          variant="outlined"
-                          type="text"
-                          multiline
-                          rows={3}
-                          fullWidth
-                          autoComplete="comment"
-                          {...getFieldProps('comment')}
-                          error={Boolean(touched.comment && errors.comment)}
-                          helperText={touched.comment && errors.comment}
+                      <Stack direction="column" spacing={2}>
+                        <DataGrid
+                          columns={columns}
+                          rows={items}
+                          onEditRowsModelChange={handleEditRowsModelChange}
+                          handleAddRow={handleOpenModal}
+                          addItemActive={false}
+                          updateActive={false}
+                          handleReset={handleResetRows}
                         />
-                      </Box>
+
+                        <Box>
+                          <TextField
+                            sx={{ marginTop: '3.5em' }}
+                            variant="outlined"
+                            type="text"
+                            multiline
+                            rows={3}
+                            fullWidth
+                            autoComplete="comment"
+                            {...getFieldProps('comment')}
+                            error={Boolean(touched.comment && errors.comment)}
+                            helperText={touched.comment && errors.comment}
+                          />
+                        </Box>
+                      </Stack>
                     </TabPanel>
                     {/* Status of Shipment */}
                     <TabPanel value="2">
