@@ -967,8 +967,14 @@ export function _shipmentItem(array) {
   if (isEmpty(array)) return undefined;
   return array.map((x) => {
     const { id, order_item, qty_shipped, description } = x;
+
+    let item_name = `${
+      order_item?.product_feature?.product?.goods ? order_item?.product_feature?.product?.goods?.name : order_item?.product_feature?.product?.service?.name
+    } - ${order_item?.product_feature?.size} -  ${order_item?.product_feature?.color}`;
+    
     return {
       id,
+      item_name,
       name: order_item?.product_feature?.product?.goods?.name,
       size: order_item?.product_feature?.size,
       color: order_item?.product_feature?.color,

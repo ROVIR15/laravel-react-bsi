@@ -207,8 +207,7 @@ function OutboundDelivery() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', width: 350, editable: false },
-      { field: 'color', headerName: 'Color', editable: false },
+      { field: 'item_name', headerName: 'Name', width: 450, editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
       { field: 'satuan', headerName: 'Satuan', editable: false },
       { field: 'qty_shipped', headerName: 'Qty Delivery', editable: true },
@@ -251,13 +250,17 @@ function OutboundDelivery() {
 
         // update on shipment item
         try {
-          API.updateShipmentItem(editedIds, { [editedColumnName]: editRowData[editedColumnName].value}, function(res){
-            if(!res) return;
-            if(!res.success) throw new Error('failed');
-            else alert('done')
-          })            
+          API.updateShipmentItem(
+            editedIds,
+            { [editedColumnName]: editRowData[editedColumnName].value },
+            function (res) {
+              if (!res) return;
+              if (!res.success) throw new Error('failed');
+              else alert('done');
+            }
+          );
         } catch (error) {
-          alert(error)
+          alert(error);
         }
         //update items state
         setItems((prevItems) => {
@@ -525,9 +528,24 @@ function OutboundDelivery() {
                         {...getFieldProps('comment')}
                         error={Boolean(touched.comment && errors.comment)}
                         helperText={touched.comment && errors.comment}
-                      ></TextField>
+                      />
                     </TabPanel>
                   </TabContext>
+                </Box>
+              </CardContent>
+              <CardContent>
+                <Box>
+                  <TextField
+                    variant="outlined"
+                    type="text"
+                    multiline
+                    rows={3}
+                    fullWidth
+                    autoComplete="comment"
+                    {...getFieldProps('comment')}
+                    error={Boolean(touched.comment && errors.comment)}
+                    helperText={touched.comment && errors.comment}
+                  ></TextField>
                 </Box>
               </CardContent>
             </Card>
