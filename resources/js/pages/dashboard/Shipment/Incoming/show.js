@@ -494,6 +494,20 @@ function OutboundDelivery() {
                         updateActive={false}
                         handleReset={handleResetRows}
                       />
+
+                      <Box>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          multiline
+                          rows={3}
+                          fullWidth
+                          autoComplete="comment"
+                          {...getFieldProps('comment')}
+                          error={Boolean(touched.comment && errors.comment)}
+                          helperText={touched.comment && errors.comment}
+                        />
+                      </Box>
                     </TabPanel>
                     {/* Status of Shipment */}
                     <TabPanel value="2">
@@ -531,21 +545,6 @@ function OutboundDelivery() {
                       />
                     </TabPanel>
                   </TabContext>
-                </Box>
-              </CardContent>
-              <CardContent>
-                <Box>
-                  <TextField
-                    variant="outlined"
-                    type="text"
-                    multiline
-                    rows={3}
-                    fullWidth
-                    autoComplete="comment"
-                    {...getFieldProps('comment')}
-                    error={Boolean(touched.comment && errors.comment)}
-                    helperText={touched.comment && errors.comment}
-                  ></TextField>
                 </Box>
               </CardContent>
             </Card>
