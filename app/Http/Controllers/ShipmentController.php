@@ -220,7 +220,8 @@ class ShipmentController extends Controller
           'est_delivery_date' => $purchaseOrder[0]['purchase_order']['delivery_date'],
           'delivery_date' => date('Y-m-d'),
           'order_id' => $orderId,
-          'imageUrl' => NULL
+          'imageUrl' => NULL,
+          'comment' => $purchaseOrder[0]['description']
         ];
 
         $shipment_creation = Shipment::create($payloadShipment);
