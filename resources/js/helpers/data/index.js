@@ -318,6 +318,59 @@ export function itemNameV1(data) {
   };
 }
 
+export function inventoryItemWithStock(array, filter) {
+  if (isEmpty(array)) return;
+  let arranged = array.map((x) => {
+    const {
+      id,
+      product_id,
+      color,
+      size,
+      product,
+      product_category: {
+        category: { sub, ...category }
+      },
+      stock_in,
+      stock_shipped_out
+    } = x;
+
+    let item_name = `${
+      product?.goods ? product?.goods?.name : product?.service?.name
+    } ${size} - ${color}`;
+
+    let _stock_in = !isEmpty(stock_in);
+    let _stock_out = !isEmpty(stock_shipped_out);
+
+    let current_qty = _stock_in && _stock_out ? (stock_in[0]?.qty - stock_shipped_out[0]?.qty) : 0
+    let counted_qty = 0
+
+
+    return {
+      id,
+      product_id,
+      name: product?.goods ? product?.goods?.name : product?.service?.name,
+      color,
+      size,
+      item_name,
+      satuan: product?.goods ? product?.goods?.satuan : product?.service?.satuan,
+      value: product?.goods ? product?.goods?.value : product?.service?.value,
+      brand: product?.goods ? product?.goods?.brand : product?.service?.brand,
+      category_id: category?.id,
+      category: category?.name,
+      sub_category: sub?.name,
+      created_at: product?.goods?.created_at,
+      updated_at: product?.goods?.updated_at,
+      imageUrl: product?.goods?.imageUrl,
+      stock_in: _stock_in ? stock_in[0]?.qty : 0,
+      stock_out: _stock_out ? stock_shipped_out[0]?.qty : 0,
+      current_qty,
+      counted_qty
+    };
+  });
+
+  if (filter) return arranged.filter((x) => x.sub_category === filter);
+  return arranged;
+}
 
 export function optionProductFeature(array, filter) {
   if (isEmpty(array)) return;
@@ -980,7 +1033,7 @@ export function _shipmentItem(array) {
       color: order_item?.product_feature?.color,
       satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
-      deliv_qty: qty_shipped,
+      qty_shipped: qty_shipped,
       description: description
     };
   });
