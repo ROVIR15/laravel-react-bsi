@@ -1033,7 +1033,8 @@ export function _shipmentItem(array) {
       color: order_item?.product_feature?.color,
       satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
-      qty_shipped: qty_shipped,
+      deliv_qty: qty_shipped,
+      qty_shipped,
       description: description
     };
   });
