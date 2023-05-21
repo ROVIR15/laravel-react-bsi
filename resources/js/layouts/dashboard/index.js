@@ -51,8 +51,10 @@ export default function DashboardLayout() {
   useEffect(() => {
 
     if(isEmpty(payload)) return;
-    // enqueueSnackbar(payload?.message);
-    new Notification(payload?.message);
+    enqueueSnackbar(payload?.message);
+    navigator.serviceWorker.ready.then(function(registration) {
+      registration.showNotification(payload?.message);
+    });
 
   }, [payload])
 
