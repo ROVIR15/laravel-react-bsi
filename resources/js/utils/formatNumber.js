@@ -4,7 +4,7 @@ import numeral from 'numeral';
 // ----------------------------------------------------------------------
 
 export function fCurrency(number, currency='idr') {
-  let res = numeral(number).format(Number.isInteger(number) ? 'IDR 0,0' : 'IDR 0,0.00');
+  let res = numeral(number).format(Number.isInteger(number) ? 'IDR 0,0' : 'IDR 0,0.000');
   // console.log(`$ ${res}`)
 
   if(currency?.toLowerCase() === 'idr') return `Rp. ${res}`;
