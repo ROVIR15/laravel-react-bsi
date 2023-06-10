@@ -3,12 +3,19 @@ import numeral from 'numeral';
 
 // ----------------------------------------------------------------------
 
-export function fCurrency(number, currency='idr') {
-  let res = numeral(number).format(Number.isInteger(number) ? 'IDR 0,0' : 'IDR 0,0.000');
-  // console.log(`$ ${res}`)
+export function fCurrency(number, currency = 'idr') {
+  let hasDecimalPlaces = number % 1 !== 0;
+  let formatPattern = hasDecimalPlaces ? '0,0.000' : '0,0';
+  let res = numeral(number).format(`${formatPattern}`);
 
-  if(currency?.toLowerCase() === 'idr') return `Rp. ${res}`;
-  if(currency?.toLowerCase() === 'usd') return `$ ${res}`;
+  if (currency?.toLowerCase() === 'idr') {
+    // Remove decimal places if they are zero
+    if (!hasDecimalPlaces) {
+      res = res.replace(/\.0+$/, '');
+    }
+    return `Rp. ${res}`;
+  }
+  if (currency?.toLowerCase() === 'usd') return `$ ${res}`;
   else return res;
 }
 

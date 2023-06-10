@@ -116,10 +116,10 @@ export default function BasicTable({ payload, tax, currency }) {
                 </td>
               </tr>
               <tr className="wk_border_top wk_border_bottom">
-                <td className="wk_width_3 wk_border_top_0 wk_bold wk_f16 wk_primary_color">
-                  Grand Total{' '}
+                <td className="wk_width_3 wk_border_top_0 wk_bold wk_primary_color">
+                  Grand Total
                 </td>
-                <td className="wk_width_3 wk_border_top_0 wk_bold wk_f16 wk_primary_color wk_text_right">
+                <td className="wk_width_3 wk_border_top_0 wk_bold wk_primary_color wk_text_right">
                   {total()}
                 </td>
               </tr>
