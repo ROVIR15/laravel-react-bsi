@@ -48,6 +48,7 @@ import { partyArrangedData, productItemArrangedData } from '../../../helpers/dat
 import { QuotationSchema } from '../../../helpers/FormerSchema';
 import { isArray, isEmpty } from 'lodash';
 import { findTotalAmountOfQuotation, findTotalQty } from '../../../helpers/data/calculation';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -116,10 +117,15 @@ function Quotation() {
         ...values,
         party_id: values.sold_to
       };
-      API.updateQuote(id, _data, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+
+      try {
+        API.updateQuote(id, _data, function (res) {
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
       setSubmitting(false);
     }
   });
@@ -227,9 +233,15 @@ function Quotation() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        API.updateQuoteItem(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updateQuoteItem(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
+
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -351,11 +363,11 @@ function Quotation() {
   const handleRadioChange = (event) => {
     setFieldValue('currency_id', event.target.value);
     try {
-      API.updateQuote(id, { currency_id: event.target.value }, function(res) {
-        if(!res) return;
-        if(!res.success) throw new Error('failed to update quote');
+      API.updateQuote(id, { currency_id: event.target.value }, function (res) {
+        if (!res) return;
+        if (!res.success) throw new Error('failed to update quote');
         else throw new Error('success');
-      })
+      });
     } catch (error) {
       alert(error);
     }
@@ -364,15 +376,15 @@ function Quotation() {
   const handleTaxChange = (event) => {
     setFieldValue('tax', event.target.value);
     try {
-      API.updateQuote(id, { tax: values.tax }, function(res) {
-        if(!res) return;
-        if(!res.success) throw new Error('failed to update quote');
+      API.updateQuote(id, { tax: values.tax }, function (res) {
+        if (!res) return;
+        if (!res.success) throw new Error('failed to update quote');
         else throw new Error('success');
-      })
+      });
     } catch (error) {
       alert(error);
     }
-  }
+  };
 
   return (
     <Page>

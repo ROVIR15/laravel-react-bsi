@@ -43,6 +43,7 @@ import DialogBox from './components/DialogBox';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -116,10 +117,14 @@ function Quotation() {
         quote_items: items,
         quote_type: 'SO'
       };
-      API.insertQuote(_data, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+      try {
+        API.insertQuote(_data, function (res) {
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert'});
+          else enqueueSnackbar('', { variant: 'failedAlert'});
+        });          
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert'});
+      }
       setSubmitting(false);
     }
   });
