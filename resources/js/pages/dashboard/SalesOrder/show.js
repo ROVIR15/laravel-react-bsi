@@ -57,6 +57,7 @@ import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { _partyAddress } from '../../../helpers/data';
 import { isEmpty } from 'lodash';
 import { fCurrency } from '../../../utils/formatNumber';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -142,10 +143,10 @@ function SalesOrder() {
         API.updateSalesOrder(id, values, function (res) {
           if (!res) return undefined;
           if (!res.success) throw new Error('failed');
-          else alert('update success');
+          else enqueueSnackbar('', { variant: 'successAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
       setSubmitting(false);
     }
@@ -228,15 +229,18 @@ function SalesOrder() {
 
     // simplify the data into desired Array Object
     const _inv = load.invoice?.map(function (item) {
+      const payment_history = item.payment_history?.reduce(
+        function (initial, next) {
+          return {
+            paid_amount: initial.paid_amount + parseFloat(next.amount),
+            payment_number: initial.payment_number++
+          };
+        },
+        { paid_amount: 0, payment_number: 0 }
+      );
 
-      const payment_history = item.payment_history?.reduce(function(initial, next) {
-        return {
-          paid_amount: initial.paid_amount + parseFloat(next.amount),
-          payment_number: initial.payment_number++
-        }
-      }, { paid_amount: 0, payment_number: 0})
-
-      let status_of_inv = (payment_history.paid_amount >= item?.sum[0]?.total_amount) ? 'Paid' : 'Unpaid';
+      let status_of_inv =
+        payment_history.paid_amount >= item?.sum[0]?.total_amount ? 'Paid' : 'Unpaid';
 
       return {
         id: item.id, // invoice_id
@@ -256,14 +260,18 @@ function SalesOrder() {
     let active = true;
 
     (async () => {
-      API.getProductFeature((res) => {
-        if (!res) return;
-        if (!res.data) {
-          setOptionsP([]);
-        } else {
-          setOptionsP(res.data);
-        }
-      });
+      try {
+        API.getProductFeature((res) => {
+          if (!res) return;
+          if (!res.data) {
+            setOptionsP([]);
+          } else {
+            setOptionsP(res.data);
+          }
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
     })();
 
     return () => {
@@ -292,12 +300,12 @@ function SalesOrder() {
           completion_status_id: status
         },
         function (res) {
-          if (!res.success) alert('Failed');
-          alert('done');
+          if (!res.success) throw new Error('failed');
+          enqueueSnackbar('', { variant: 'successAlert' });
         }
       );
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -315,23 +323,19 @@ function SalesOrder() {
       API.deleteSalesOrderItem(id, (res) => {
         if (!res) return;
         if (!res.success) throw new Error('Failed to delete order item');
-        else alert('succesfully delete');
+        else enqueueSnackbar('', { variant: 'successAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
 
     handleUpdateAllRows();
   });
 
-  useEffect(() => {
-    var orderItem;
-  }, [items]);
-
   const handleEditRowsModelChange = React.useCallback(
     (model) => {
       const editedIds = Object.keys(model);
-      // user stops editing when the edit model is empty
+      // User stops editing when the edit model is empty
       if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
@@ -352,57 +356,69 @@ function SalesOrder() {
 
         switch (editedColumnName) {
           case 'shipment_estimated':
+            // Format the date value before updating the data
             let date = formatDate(editRowData[editedColumnName].value);
             data[editedColumnName] = date;
             break;
 
           default:
+            // Copy the edited column value to the data object
             data[editedColumnName] = editRowData[editedColumnName].value;
             break;
         }
-        // update on firebase
-        API.updateSalesOrderItem(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+
+        try {
+          // Call the API to update the sales order item
+          API.updateSalesOrderItem(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else throw new Error('failed');
+          });
+        } catch (error) {
+          // Show error notification if the API call fails
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
+        // Update the edit row data with the current model
         setEditRowData(model[editedIds[0]]);
       }
 
+      // Update the edit rows model
       setEditRowsModel(model);
     },
     [editRowData]
   );
 
   const handleUpdateAllRows = async () => {
-    const load2 = await axios
-      .get(process.env.MIX_API_URL + '/order-item' + `/${values.order_id}`)
-      .then(function ({ data: { data } }) {
-        return data;
+    try {
+      const response = await axios.get(`${process.env.MIX_API_URL}/order-item/${values.order_id}`);
+      const data = response.data.data;
+
+      const updatedItems = data.map((item) => {
+        const { product_feature } = item;
+        const productName =
+          product_feature?.product?.goods?.name || product_feature?.product?.service?.name;
+        const item_name = `${productName} ${product_feature?.size} - ${product_feature?.color}`;
+        const shipment_estimated = new Date(item.shipment_estimated);
+        const total_shipped = item.shipment_item[0]?.total_qty_received;
+
+        return {
+          ...product_feature,
+          product_feature_id: product_feature.id,
+          id: item.id,
+          name: productName,
+          item_name,
+          shipment_estimated,
+          total_shipped,
+          description: item.description,
+          ...item
+        };
       });
 
-    var c = load2.map((key) => {
-      const { product_feature } = key;
-      return {
-        ...product_feature,
-        product_feature_id: product_feature.id,
-        id: key.id,
-        name: product_feature?.product?.goods
-          ? product_feature?.product?.goods?.name
-          : product_feature?.product?.service?.name,
-        item_name: `${
-          product_feature?.product?.goods
-            ? product_feature?.product?.goods?.name
-            : product_feature?.product?.service?.name
-        } ${product_feature?.size} - ${product_feature?.color}`,
-        shipment_estimated: new Date(key.shipment_estimated),
-        total_shipped: key.shipment_item[0]?.total_qty_received,
-        description: key.description,
-        ...key
-      };
-    });
-    setItems(c);
+      setItems(updatedItems);
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
   };
-
   const columns = useMemo(
     () => [
       { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
@@ -439,41 +455,60 @@ function SalesOrder() {
   ]);
 
   const [populateState, setPopulateState] = useState({ y: '', z: 0, aa: 0, bb: 0 });
+
+  // Handle the populate action based on the populateState values
   const handlePopulate = () => {
     const { y, z, aa, bb } = populateState;
+
+    // If any of the fields are empty or zero, return early
     if (y === '' && z === 0) return;
-    const res = items.map(function (x) {
+
+    // Map over the items and update the relevant fields based on the populateState values
+    const updatedItems = items.map(function (x) {
       if (y !== '') x = { ...x, shipment_estimated: y };
       if (z !== 0) x = { ...x, qty: z };
       if (bb !== 0) x = { ...x, cm_price: bb };
       if (aa !== 0) x = { ...x, unit_price: aa };
       return x;
     });
-    setItems(res);
+
+    setItems(updatedItems);
   };
 
+  // Handle changes in the populateState based on the input field name
   const handleChangePopulate = (e) => {
     const { name, value } = e.target;
+
+    // Update the populateState based on the input field name
     if (name === 'z') setPopulateState({ ...populateState, z: value });
-    if (name === 'y') setPopulateState({ ...populateState, y: value });
-    if (name === 'aa') setPopulateState({ ...populateState, aa: value });
-    if (name === 'bb') setPopulateState({ ...populateState, bb: value });
-    else return;
+    else if (name === 'y') setPopulateState({ ...populateState, y: value });
+    else if (name === 'aa') setPopulateState({ ...populateState, aa: value });
+    else if (name === 'bb') setPopulateState({ ...populateState, bb: value });
   };
 
   /**
-   * description
+   * Description
    */
 
   const [description, setDescription] = useState('');
 
   const handleUpdateDesc = () => {
     try {
-      if (isEmpty(description)) throw new Error('description is zero');
+      // Check if the description is empty
+      if (isEmpty(description)) {
+        throw new Error('Description is empty');
+      }
+
+      // Call the API to update the order description
       API.updateOrder(values.order_id, { description }, function (res) {
         if (!res) return;
-        if (res.success) alert('success');
-        else throw new Error('error occured failed store data');
+
+        // Check if the API call was successful
+        if (res.success) {
+          enqueueSnackbar('', { variant: 'successAlert' });
+        } else {
+          throw new Error('Failed to store data');
+        }
       });
     } catch (error) {
       alert(error);
@@ -489,20 +524,32 @@ function SalesOrder() {
 
   const handleUpdateTax = () => {
     try {
+      // Call the API to update the order tax and currency
       API.updateOrder(values.order_id, { tax, currency_id: values.currency_id }, function (res) {
         if (!res) return;
-        if (res.success) alert('success');
-        else throw new Error('error occured failed store data');
+
+        // Check if the API call was successful
+        if (res.success) {
+          enqueueSnackbar('', { variant: 'successAlert' });
+        } else {
+          throw new Error('Failed to store data');
+        }
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
   // Radio
   const handleRadioChange = (event) => {
-    if (event.target.value === 1) setCurrency('usd');
-    else setCurrency('idr');
+    // Update the currency based on the selected radio value
+    if (event.target.value === 1) {
+      setCurrency('usd');
+    } else {
+      setCurrency('idr');
+    }
+
+    // Update the currency ID field value
     setFieldValue('currency_id', event.target.value);
   };
 
@@ -804,12 +851,20 @@ function SalesOrder() {
                                   <TableCell variant="subtitle">
                                     {moment(item.effective_date).format('LL')}
                                   </TableCell>
-                                  <TableCell variant="subtitle" component={RouterLink} to={`/dashboard/finance/invoice/${item.id}`} >{item.serial_number}</TableCell>
+                                  <TableCell
+                                    variant="subtitle"
+                                    component={RouterLink}
+                                    to={`/dashboard/finance/invoice/${item.id}`}
+                                  >
+                                    {item.serial_number}
+                                  </TableCell>
                                   <TableCell variant="subtitle">{item.qty}</TableCell>
                                   <TableCell variant="subtitle">
                                     {fCurrency(item.total_amount * 1.11, 'idr')}
                                   </TableCell>
-                                  <TableCell>{fCurrency(item.payment_history?.paid_amount)}</TableCell>
+                                  <TableCell>
+                                    {fCurrency(item.payment_history?.paid_amount)}
+                                  </TableCell>
                                 </TableRow>
                               );
                             })}

@@ -43,6 +43,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 //Helpers
 import { _partyAddress, productItemArrangedData } from '../../../helpers/data';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -120,10 +121,15 @@ function SalesOrder() {
         ...values,
         order_items: items
       };
-      API.insertSalesOrder(_data, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+
+      try {
+        API.insertSalesOrder(_data, function (res) {
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
       setSubmitting(false);
     }
   });
@@ -131,7 +137,7 @@ function SalesOrder() {
   useEffect(() => {
     let active = true;
 
-    (async () => {
+    try {
       API.getQuoteBySO('', (res) => {
         if (!res) return;
         if (!res.data) {
@@ -149,7 +155,9 @@ function SalesOrder() {
           setOptionsP(res.data);
         }
       });
-    })();
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
 
     return () => {
       active = false;
@@ -449,7 +457,15 @@ function SalesOrder() {
                         </TabList>
                       </Box>
 
-                      <TabPanel value="1" sx={{ paddingBottom: 'unset', paddingLeft: 'unset', paddingRight: 'unset', paddingTop: '12px' }}>
+                      <TabPanel
+                        value="1"
+                        sx={{
+                          paddingBottom: 'unset',
+                          paddingLeft: 'unset',
+                          paddingRight: 'unset',
+                          paddingTop: '12px'
+                        }}
+                      >
                         <Stack direction="row" spacing={4}>
                           <TextField
                             type="number"
@@ -489,7 +505,7 @@ function SalesOrder() {
                           onEditRowsModelChange={handleEditRowsModelChange}
                           handleUpdateAllRows={handleUpdateAllRows}
                           handleAddRow={handleOpenModal}
-                          sx={{marginTop: '12px'}}
+                          sx={{ marginTop: '12px' }}
                         />
                       </TabPanel>
 

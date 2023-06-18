@@ -120,7 +120,7 @@ function Quotation() {
       try {
         API.insertQuote(_data, function (res) {
           if (res.success) enqueueSnackbar('', { variant: 'successAlert'});
-          else enqueueSnackbar('', { variant: 'failedAlert'});
+          else throw new Error('failed')
         });          
       } catch (error) {
         enqueueSnackbar('', { variant: 'failedAlert'});
