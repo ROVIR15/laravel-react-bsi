@@ -300,39 +300,48 @@ function Quotation() {
 
   useEffect(() => {
     if (!id) return;
-    API.getAQuote(id, function (res) {
-      if (!res.data) alert('Something went wrong!');
-      const quoteItem = res.data.quote_items.map(function (key, index) {
-        const { id, product_id, name, size, color } = productItemArrangedData(key.product);
-        return {
-          id: key.id,
-          product_id: product_id,
-          product_feature_id: key.product_feature_id,
-          name: name,
-          size: size,
-          color: color,
-          qty: key.qty,
-          unit_price: key.unit_price
-        };
-      });
 
-      setValues({
-        id: res.data.id,
-        po_number: res.data.po_number,
-        sold_to: res.data.sold_to,
-        ship_to: res.data.ship_to,
-        issue_date: res.data.issue_date,
-        delivery_date: res.data.delivery_date,
-        tax: res.data.tax,
-        currency_id: res.data.currency_id,
-        valid_thru: res.data.valid_thru
-      });
+    try {
+      API.getAQuote(id, function (res) {
+        if(!res) return
+        if (!res.data) throw new Error('Error');
+        else {
+          const quoteItem = res.data.quote_items.map(function (key, index) {
+            const { id, product_id, name, size, color } = productItemArrangedData(key.product);
+            return {
+              id: key.id,
+              product_id: product_id,
+              product_feature_id: key.product_feature_id,
+              name: name,
+              size: size,
+              color: color,
+              qty: key.qty,
+              unit_price: key.unit_price
+            };
+          });
+    
+          setValues({
+            id: res.data.id,
+            po_number: res.data.po_number,
+            sold_to: res.data.sold_to,
+            ship_to: res.data.ship_to,
+            issue_date: res.data.issue_date,
+            delivery_date: res.data.delivery_date,
+            tax: res.data.tax,
+            currency_id: res.data.currency_id,
+            valid_thru: res.data.valid_thru
+          });
+    
+          setSelectedValueSO(res.data.party);
+          setSelectedValueSH(res.data.ship);
+    
+          setItems(quoteItem);  
+        }
+      });      
+    } catch (error) {
+      alert(error)
+    }
 
-      setSelectedValueSO(res.data.party);
-      setSelectedValueSH(res.data.ship);
-
-      setItems(quoteItem);
-    });
   }, [id]);
 
   // Populate

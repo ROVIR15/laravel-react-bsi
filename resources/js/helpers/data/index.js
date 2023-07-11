@@ -424,16 +424,16 @@ export function productItemArrangedData(x) {
     }
   } = x;
   return {
-    id,
-    product_id,
-    name,
-    color,
-    size,
-    satuan,
-    value,
-    brand,
-    created_at,
-    updated_at
+    id: x?.id,
+    product_id: x?.product_id,
+    name: x?.product?.goods?.name,
+    color: x?.color,
+    size: x?.size,
+    satuan: x?.product?.goods?.satuan,
+    value: x?.product?.goods?.value,
+    brand: x?.product?.goods?.brand,
+    created_at: x?.product?.goods?.created_at,
+    updated_at: x?.product?.goods?.updated_at
   };
 }
 
