@@ -564,7 +564,7 @@ class InventoryController extends Controller
           'product_id' => $item->product_id,
           'item_name' => $goods ? $goods->name . ' - ' . $item->color . ' ' . $item->size : null,
           'category_name' => $item->product_category ? $item->product_category->category->name . ' - ' . $item->product_category->category->sub->name : null,
-          'unit_measurement' => $goods->satuan,
+          'unit_measurement' => $goods ? $goods->satuan : null,
           // 'movement' => $item->product_category,
           'incoming_qty' => count($item->in) ? $item->in[0]->qty : 0,
           'outbound_qty' => count($item->out) ? $item->out[0]->qty : 0,
