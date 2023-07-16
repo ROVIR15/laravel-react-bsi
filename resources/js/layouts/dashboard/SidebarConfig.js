@@ -133,23 +133,23 @@ const sidebarConfig = [
       },
       {
         title: 'Laporan Mutasi Bahan Baku',
-        path: '/dashboard/inventory/laporan-mutasi-barang?cat=bahan_baku'
+        path: '/dashboard/laporan-kite/laporan-mutasi-barang?cat=bahan_baku'
       },
       {
         title: 'Laporan Mutasi Barang Hasil Produksi',
-        path: '/dashboard/inventory/laporan-mutasi-barang-jadi?cat=bahan_jadi'
+        path: '/dashboard/laporan-kite/laporan-mutasi-barang-jadi?cat=bahan_jadi'
       },
       {
         title: 'Laporan terkait Barang dalam Proses (WIP)',
-        path: '/dashboard/inventory/laporan-barang-wip'
+        path: '/dashboard/laporan-kite/laporan-barang-wip'
       },
       {
         title: 'Laporan Pengeluaran Barang Hasil Produksi',
-        path: '/dashboard/inventory/laporan-barang-keluar'
+        path: '/dashboard/laporan-kite/laporan-barang-keluar'
       },
       {
         title: 'Laporan Penyelesaian Barang Berfasilitas KITE',
-        path: '/dashboard/inventory/laporan-skrap-barang'
+        path: '/dashboard/laporan-kite/laporan-skrap-barang'
       }
     ]
 
