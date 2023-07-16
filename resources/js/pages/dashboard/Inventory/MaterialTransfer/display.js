@@ -289,7 +289,7 @@ function Invoice({ placeHolder }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={invoice.length}
+          count={invoice?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
