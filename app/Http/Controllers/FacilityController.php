@@ -94,7 +94,7 @@ class FacilityController extends Controller
       try {
         Facility::create([
           'name' => $param['name'],
-          'facility_type_id' => $param['type'],
+          'facility_type_id' => $param['facility_type_id']
         ]);
       } catch (Exception $th) {
         //throw $th;

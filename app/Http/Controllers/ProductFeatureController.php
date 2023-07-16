@@ -26,6 +26,37 @@ class ProductFeatureController extends Controller
       ]);
     }
 
+    /**
+     * Display resourcec of product feature include information of stock tranfer
+     * 
+     * @param 
+     * @return \Illuminate\Http\Response
+     */
+    public function checkInventoryItemWithStock()
+    {
+      
+      try {
+        $query = ProductFeature::with('product', 'product_category', 'stock_in', 'stock_shipped_out', 'stock_transfer_out')->get();
+
+      } catch (\Throwable $th) {
+        //throw $th;
+
+        return response()->json([
+          'success' => false,
+          'error' => $th->getMessage()
+        ]);
+      }
+
+      return response()->json([
+        'success' => true,
+        'data' => $query
+      ]);
+
+    }
+
+    /**
+     * Display Fabric Type Material
+     */
     public function showFabric(){
       try {
         //code...
@@ -98,7 +129,7 @@ class ProductFeatureController extends Controller
     public function show($id)
     {
       try {
-        $productFeature = ProductFeature::with('product')->where("product_id", $id)->get();
+        $productFeature = ProductFeature::with('product')->where("id", $id)->get();
         return new ProductFeatureCollection($productFeature);
       } catch (Exception $th) {
         return response()->json([
