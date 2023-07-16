@@ -2,8 +2,8 @@ import { initial, isEmpty, isUndefined } from 'lodash';
 import moment from 'moment';
 
 export function bomitem_data_alt(array, filter) {
-  console.log(array);
-  if (isEmpty(array)) return;
+
+  if (isEmpty(array)) return [];
   let arranged = array.map((x) => {
     const { id, consumption, allowance, unit_price, bom_id, product_feature } = x;
 
@@ -33,7 +33,7 @@ export function bomitem_data_alt(array, filter) {
 }
 
 export function material_transfer_items(array, filter) {
-  if (isEmpty(array)) return;
+  if (isEmpty(array)) return [];
   let arranged = array.map((x) => {
     const { id, material_transfer_id, transfer_qty, product_feature, product, transferred } = x;
     const transferred_qty = isEmpty(transferred) || isUndefined(transferred) ? 0 : transferred.reduce((initial, next) => initial + parseFloat(next.transferred_qty), 0);
@@ -63,7 +63,7 @@ export function material_transfer_items(array, filter) {
 }
 
 export function display_all_stock_adjustment_resources(array) {
-  if (isEmpty(array)) return;
+  if (isEmpty(array)) return [];
   let arranged = array.map((x, index) => {
     const { id, date, change_type, facility, user } = x;
 
@@ -85,7 +85,7 @@ export function display_all_stock_adjustment_resources(array) {
 }
 
 export function display_material_transfer_resources(array) {
-  if (isEmpty(array)) return;
+  if (isEmpty(array)) return [];
   let arranged = array.map((x, index) => {
     const { facility, est_transfer_date, created_at, items, status, id } = x;
 
@@ -108,7 +108,7 @@ export function display_material_transfer_resources(array) {
 }
 
 export function adjustment_data_prep(array) {
-  if (isEmpty(array)) return;
+  if (isEmpty(array)) return [];
   let arranged = array.map((x, index) => {
     const {
       id,
