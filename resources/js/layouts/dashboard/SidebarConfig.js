@@ -119,6 +119,42 @@ const sidebarConfig = [
     ]
   },
   {
+    title: 'Laporan Pertanggungjawaban Penerima Fasilitas KITE',
+    name: 'laporan-kite',
+    icon: getIcon("fluent-emoji-high-contrast:customs"),
+    children: [
+      {
+        title: 'Laporan Pemasukan Barang dan Bahan',
+        path: '/dashboard/inventory/laporan-barang-masuk'
+      },
+      {
+        title: 'UNFINISHED Laporan Pemakaian Bahan Baku',
+        path: '/dashboard/bea-cukai-1'
+      },
+      {
+        title: 'Laporan Mutasi Bahan Baku',
+        path: '/dashboard/inventory/laporan-mutasi-barang?cat=bahan_baku'
+      },
+      {
+        title: 'Laporan Mutasi Barang Hasil Produksi',
+        path: '/dashboard/inventory/laporan-mutasi-barang-jadi?cat=bahan_jadi'
+      },
+      {
+        title: 'Laporan terkait Barang dalam Proses (WIP)',
+        path: '/dashboard/inventory/laporan-barang-wip'
+      },
+      {
+        title: 'Laporan Pengeluaran Barang Hasil Produksi',
+        path: '/dashboard/inventory/laporan-barang-keluar'
+      },
+      {
+        title: 'Laporan Penyelesaian Barang Berfasilitas KITE',
+        path: '/dashboard/inventory/laporan-skrap-barang'
+      }
+    ]
+
+  },
+  {
     title: 'Inventory Management',
     name: 'inventory',
     icon: getIcon(archiveFill),
