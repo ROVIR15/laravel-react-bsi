@@ -136,6 +136,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('goods-receipt-item', 'GRItemsController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('inventory', 'InventoryController')->only(['index', 'store']);
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
+    Route::post('scrap-insert', 'InventoryController@scrap_insert');
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
     Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
@@ -287,6 +288,12 @@ Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', '
 Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
 Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
-Route::get('outbound-material-report', 'InventoryController@regIncomingMaterial');
+Route::get('outbound-material-report', 'InventoryController@regOutboundMaterial');
 Route::get('wip-material-report', 'InventoryController@repWIP');
 Route::get('mutasi-report', 'InventoryController@repMaterialTransfer');
+Route::get('current-stock', 'InventoryController@InventoryStock');
+
+
+// jangan lupa dihapus
+Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
+Route::get('stock-scrap', 'InventoryController@get_scrap');
