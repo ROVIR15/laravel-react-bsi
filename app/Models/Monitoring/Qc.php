@@ -57,4 +57,7 @@ class Qc extends Model
         ->with('detail');
     }
 
+    public function wip_fg(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'order_item_id', 'order_item_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
+    }
 }

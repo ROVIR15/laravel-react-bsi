@@ -42,4 +42,9 @@ class Cutting extends Model
     public function sewing(){
         return $this->hasMany('App\Models\Monitoring\Sewing', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id');
     }
+
+    public function wip_sewing(){
+        return $this->hasMany('App\Models\Monitoring\Sewing', 'order_item_id', 'order_item_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
+    }
+
 }

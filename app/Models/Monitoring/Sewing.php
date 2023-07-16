@@ -71,4 +71,7 @@ class Sewing extends Model
         return $this->hasMany('App\Models\Order\Order', 'id', 'order_id')->with('avg_value');
     }
 
+    public function wip_qc(){
+        return $this->hasMany('App\Models\Monitoring\Qc', 'order_item_id', 'order_item_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
+    }
 }
