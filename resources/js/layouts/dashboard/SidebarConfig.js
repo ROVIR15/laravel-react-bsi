@@ -163,13 +163,21 @@ const sidebarConfig = [
         title: 'Inventory Item',
         path: '/dashboard/inventory/inventory-items'
       },
+      // {
+      //   title: 'Vendor',
+      //   path: '/dashboard/purchasing/vendor'
+      // },
+      // {
+      //   title: 'Goods Receipt',
+      //   path: '/dashboard/inventory/goods-receipt'
+      // },
       {
-        title: 'Vendor',
-        path: '/dashboard/purchasing/vendor'
+        title: 'Material Transfer',
+        path: '/dashboard/inventory/material-transfer'
       },
       {
-        title: 'Goods Receipt',
-        path: '/dashboard/inventory/goods-receipt'
+        title: 'Stock Adjustment',
+        path: '/dashboard/inventory/adjustment'
       }
     ]
   },
