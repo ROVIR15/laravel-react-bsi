@@ -406,6 +406,30 @@ export default function TestRouter() {
             { path: 'display', element: <DisplayVendor />},
           ]
         },
+        {
+          path: 'laporan-kite/laporan-barang-masuk',
+          element: <Inbound/>
+        },
+        {
+          path: 'laporan-kite/laporan-barang-keluar',
+          element: <Outbound/>
+        },
+        {
+          path: 'laporan-kite/laporan-barang-wip',
+          element: <WIPReport/>
+        },
+        {
+          path: 'laporan-kite/laporan-mutasi-barang',
+          element: <MaterialTransferReport />
+        },
+        {
+          path: 'laporan-kite/laporan-mutasi-barang-jadi',
+          element: <MaterialTransferReport />
+        },
+        {
+          path: 'laporan-kite/laporan-skrap-barang',
+          element: <MaterialSkrapReport />
+        },
         { 
           path: 'purchasing/purchase-requisition', 
           element: <PurchaseRequisitionLayout />,
