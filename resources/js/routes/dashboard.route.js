@@ -10,6 +10,7 @@ import {
   SalesOrderLayout,
   GoodsLayout,
   InventoryLayout,
+  StockAdjustmentLayout,
   WorkCenterLayout,
   RoutingLayout,
   BillofMaterialLayout,
@@ -62,6 +63,8 @@ import AddBillofMaterial from '../pages/dashboard/BillofMaterial/new';
 import AddRouting from '../pages/dashboard/Routing/new';
 import AddWorkCenter from '../pages/dashboard/WorkCenter/new';
 import AddInventory from '../pages/dashboard/Inventory/new';
+import AddStockAdjustment from '../pages/dashboard/Inventory/StockOpname/new';
+import AddMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/new';
 import AddGoods from '../pages/dashboard/Goods/add';
 import AddService from '../pages/dashboard/Service/add';
 import AddVendor from '../pages/dashboard/Vendor/new';
@@ -111,6 +114,8 @@ import DisplaySS from '../pages/dashboard/IndustrialEngineeringStudy/SamplingStu
 import DisplayLabor from '../pages/dashboard/Labor/display';
 
 import DisplayInventoryItem from '../pages/dashboard/Inventory/display';
+import DisplayStockAjustment from '../pages/dashboard/Inventory/StockOpname/display';
+import DisplayMaterialTranfer from '../pages/dashboard/Inventory/MaterialTransfer/display';
 import DisplayMO from '../pages/dashboard/ManufactureOrder/display';
 
 import DisplayInv from '../pages/dashboard/Finance/Invoice/display';
@@ -156,6 +161,7 @@ import ShowMachine from '../pages/dashboard/Machine/show';
 import ShowLineTarget from '../pages/dashboard/LineTarget/show';
 import ShowFacility from '../pages/dashboard/Facility/show';
 import ShowFactory from '../pages/dashboard/Factory/show';
+import ShowStockAdjustment from '../pages/dashboard/Inventory/StockOpname/show';
 
 import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
 import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
@@ -164,6 +170,8 @@ import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
 // import ShowFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/show';
 import ShowPayment from '../pages/dashboard/Finance/Payment/show';
+
+import ShowMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/show';
 
 //Document
 import DocumentCosting from '../pages/dashboard/Costing/pages/Document';
@@ -175,6 +183,7 @@ import DocumentPO from '../pages/dashboard/PurchaseOrder/pages/Document';
 import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document';
+import DocumentMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/document';
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
@@ -234,7 +243,17 @@ import { Typography } from '@mui/material';
 import ValuationTable from '../pages/dashboard/ValuationAnalysis';
 import NewFeatureUnamed from '../pages/dashboard/NewFeatureUnamed';
 import Capacity from '../pages/dashboard/CapacityAnalysis';
-import MaterialTransferNew from '../pages/dashboard/Inventory/MaterialTransfer/new';
+
+import NotifMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/check';
+
+// Berikat
+import Inbound from '../pages/dashboard/Inventory/Reports/Inbound';
+import Outbound from '../pages/dashboard/Inventory/Reports/LaporanBarangKeluar';
+import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
+import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
+import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkrap';
+
+import InventoryAdjustment from '../pages/dashboard/Inventory/StockOpname';
 
 export default function TestRouter() {
 
@@ -319,8 +338,27 @@ export default function TestRouter() {
           children: [
             { path: ':id', element: <p>show</p>},
             { path: 'add', element: <AddInventory/>},
-            { path: 'display', element: <DisplayInventoryItem />},
-            { path: 'edit', element: <p>edit</p>}
+            { path: 'display', element: <DisplayInventoryItem />}
+          ]
+        },
+        { 
+          path: 'inventory/adjustment', 
+          element: <StockAdjustmentLayout />,
+          children: [
+            { path: ':id', element: <ShowStockAdjustment/>},
+            { path: 'add', element: <AddStockAdjustment/>},
+            { path: 'display', element: <DisplayStockAjustment />}
+          ]
+        },
+        {
+          path: 'inventory/material-transfer',
+          element: <MaterialTransferLayout/>,
+          children: [
+            { path: ':id', element: <ShowMaterialTransfer />},
+            { path: 'new', element: <AddMaterialTransfer />},
+            { path: 'display', element: <DisplayMaterialTranfer />},
+            { path: 'notif', element: <NotifMaterialTransfer/>},
+            { path: 'document/:id', element: <DocumentMaterialTransfer/>}
           ]
         },
         { 
@@ -467,13 +505,6 @@ export default function TestRouter() {
             { path: 'add', element: <AddGR />},
             { path: 'display', element: <DisplayGR />},
             { path: 'document/:id', element: <DocumentGR/>}
-          ]
-        },
-        {
-          path: 'inventory/material-transfer',
-          element: <MaterialTransferLayout/>,
-          children: [
-            { path: 'new', element: <MaterialTransferNew/>}
           ]
         },
         { 
