@@ -17,7 +17,7 @@ class Facility extends Model
 
     protected $fillable = [
         'name',
-        'type'
+        'facility_type_id'
     ];
 
     public function type(){

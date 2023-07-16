@@ -30,4 +30,13 @@ class Product extends Model
     public function productCategory(){
         return $this->hasOne('App\Models\Product\ProductHasCategory')->with('category');
     }
+
+    public function check_finished_goods(){
+        return $this->hasManyThrough('App\Models\Monitoring\FinishedGoods', 'App\Models\Product\ProductFeature', 'product_id', 'product_feature_id', 'id');
+    }
+
+    public function check_shipment()
+    {
+        return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Product\ProductFeature', 'id', 'product_feature_id', 'id');
+    }
 }
