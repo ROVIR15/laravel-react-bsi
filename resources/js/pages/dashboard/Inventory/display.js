@@ -1,53 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import {
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
-//components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../components/Table';
-//
-import INVENTORYLIST from '../../../_mocks_/inventory'
-
-//API
-import API from '../../../helpers';
-
-//Helper
-
-import { inventoryItemArrangedItem } from '../../../helpers/data'
-
-const uri = process.env.MIX_API_URL;
-
-// ----------------------------------------------------------------------
+import { ListHead, ListToolbar } from '../../../components/Table';
+import MoreMenu from './components/MoreMenu';
+import ScrapModal from './components/ScrapCard';
+import API from '../../../helpers'; // Assume API methods are defined in helpers/api.js
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false},
-  { id: 'product_name', label: 'Name', alignRight: false },
-  { id: 'color', label: 'Warna', alignRight: false },
-  { id: 'size', label: 'Ukuran', alignRight: false },
-  { id: 'category', label: 'Kategori', alignRight: false},
-  { id: 'sub_category', label: 'Sub Kategori', alignRight: false},
-  { id: 'facility_name', label: 'Gudang', alignRight: false},
-  { id: 'qty_on_hand', label: 'Qty', alignRight: false},
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'item_name', label: 'Item Name', alignRight: false },
+  { id: 'stock_in', label: 'Stock In', alignRight: false },
+  { id: 'stock_out', label: 'Stock Out', alignRight: false },
+  { id: 'current_stock', label: 'Current Stock', alignRight: false }
 ];
 
-// ----------------------------------------------------------------------
-
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+  return b[orderBy] - a[orderBy];
 }
 
 function getComparator(order, orderBy) {
@@ -57,55 +34,46 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
+  const filteredArray = array.filter((item) => {
+    const itemName = item.item_name && item.item_name.toString().toLowerCase();
+    return itemName && itemName.indexOf(query.toLowerCase()) !== -1;
   });
-  if (query) {
-    return filter(array, (_b) => _b.product_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+  filteredArray.sort(comparator);
+  return filteredArray;
 }
 
 function DisplayInventory({ placeHolder }) {
-
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
+  const [selectedData, setSelectedData] = useState(null);
+  const [orderBy, setOrderBy] = useState('item_name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [modalManageScrap, setModalManageScrap] = useState(false);
 
-  // GET Data Inventory Item
-
-  useEffect(async () => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
-      return !array.length;
-    }
-
-    if(isEmpty(data)) {
+  useEffect(() => {
+    const fetchData = () => {
       try {
-        API.getInventoryItem(async (res) => {
-          if(isEmpty(res.data)) return undefined;
-          else {
-            let ras = await inventoryItemArrangedItem(res.data);
-            setData(ras)
-          }
-        })  
-
-      } catch(e) {
-        alert('error');
+        API.getInventoryStock_alt((res) => {
+          if(!res) return
+          if(!res.data) throw new Error('failed')
+          else setData(res.data)
+        })
+      } catch (error) {
+        alert('Error fetching inventory data:', error);
+        console.error('Error fetching inventory data:', error);
+        // Handle error
       }
+    };
 
+    if (data.length === 0) {
+      fetchData();
     }
+  }, [data]);
 
-  }, [])
-
-  const handleRequestSort = (event, property) => {
+  const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -113,28 +81,27 @@ function DisplayInventory({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+      const newSelected = data.map((item) => item.id);
+      setSelected(newSelected);
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
+
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = [...selected, id];
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
+      newSelected = selected.slice(1);
     } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelected = selected.slice(0, -1);
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = [...selected.slice(0, selectedIndex), ...selected.slice(selectedIndex + 1)];
     }
+
     setSelected(newSelected);
   };
 
@@ -149,16 +116,29 @@ function DisplayInventory({ placeHolder }) {
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
+    setPage(0);
+  };
+
+  const handleOpenModal = (id) => {
+    console.log(id)
+    setSelectedData(id);
+    setModalManageScrap(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedData(null);
+    setModalManageScrap(false);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const filteredData = applySortFilter(data, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
+      <ScrapModal id={selectedData} modalOpen={modalManageScrap} onCloseModal={handleCloseModal} />
       <ListToolbar
         numSelected={selected.length}
         filterName={filterName}
@@ -169,6 +149,7 @@ function DisplayInventory({ placeHolder }) {
         <TableContainer sx={{ minWidth: 800 }}>
           <Table size="small">
             <ListHead
+              active={false}
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
@@ -181,9 +162,10 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, info: { product: {goods}, color, size}, qty_on_hand, facility_name} = row;
+                  const { id, item_name, stock_in, stock_out, current_stock } = row;
 
-                  const isItemSelected = selected.indexOf(id) !== -1;
+                  const isItemSelected = selected.includes(id);
+
                   return (
                     <TableRow
                       hover
@@ -192,23 +174,15 @@ function DisplayInventory({ placeHolder }) {
                       role="checkbox"
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
+                      onClick={(event) => handleClick(event, id)}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, name)}
-                        />
-                      </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{goods.name}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{''}</TableCell>
-                      <TableCell align="left">{''}</TableCell>
-                      <TableCell align="left">{facility_name}</TableCell>
-                      <TableCell align="left">{qty_on_hand}</TableCell>
+                      <TableCell align="left">{item_name}</TableCell>
+                      <TableCell align="left">{stock_in}</TableCell>
+                      <TableCell align="left">{stock_out}</TableCell>
+                      <TableCell align="left">{current_stock}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu />
+                        <MoreMenu scrapActive={true} handleOpenModalForScrap={() => handleOpenModal(id)} />
                       </TableCell>
                     </TableRow>
                   );
@@ -218,16 +192,14 @@ function DisplayInventory({ placeHolder }) {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
-            </TableBody>
-            {isDataNotFound && (
-              <TableBody>
+              {isDataNotFound && (
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                     <SearchNotFound searchQuery={filterName} />
                   </TableCell>
                 </TableRow>
-              </TableBody>
-            )}
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
       </Scrollbar>
@@ -241,7 +213,7 @@ function DisplayInventory({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
 export default DisplayInventory;

@@ -33,22 +33,6 @@ function InventoryLayout() {
         Inventory
       </Typography>
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-        <Button
-          variant="contained"
-          component={RouterLink}
-          to={getPathname(pathname.split('/')) + '/add'}
-          startIcon={<Icon icon={plusFill} />}
-        >
-          New
-        </Button>
-        <Button
-          variant="contained"
-          component={RouterLink}
-          to={getPathname(pathname.split('/')) + '/display'}
-          startIcon={<Icon icon={hardDriveFill} />}
-        >
-          Display
-        </Button>
       </Stack>
     </Stack>
     {isBeginning()}

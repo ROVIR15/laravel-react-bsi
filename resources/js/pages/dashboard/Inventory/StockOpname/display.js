@@ -21,7 +21,7 @@ import moment from 'moment';
 
 // api
 import API from '../../../../helpers';
-import { display_material_transfer_resources } from '../utils';
+import { display_all_stock_adjustment_resources } from '../utils';
 
 // ----------------------------------------------------------------------
 
@@ -29,12 +29,11 @@ moment.locale('id');
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: 'mt_id', label: 'Nomor Permintaan MT', alignRight: false },
+  { id: 'Submitter', label: 'Status', alignRight: false },
+  { id: '_serial_number', label: 'Opname SN', alignRight: false },
   { id: 'date', label: 'Tanggal Buat', alignRight: false },
-  { id: 'est_transfer_date', label: 'Tanggal Terproses', alignRight: false },
-  { id: 'qty', label: 'Qty Minta', alignRight: false },
-  { id: 'transferred_qty', label: 'Terkirim', alignRight: false }
+  { id: 'change_tpe', label: 'Tipe Penyesuaian', alignRight: false },
+  { id: 'facility_id', label: 'Daerah Penyimpanan', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -79,7 +78,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 function Invoice({ placeHolder }) {
-  const [invoice, setInvoice] = useState([]);
+  const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -110,13 +109,14 @@ function Invoice({ placeHolder }) {
 
   const handleUpdateData = () => {
     try {
-      API.getMaterialTransfer(``, (res) => {
+      API.getAdjustment(``, (res) => {
         if (!res) return;
         if (!res.data) {
-          setInvoice([]);
+          setItems([]);
         } else {
-          let item = display_material_transfer_resources(res.data);
-          setInvoice(item)
+          console.log(res.data)
+          let item = display_all_stock_adjustment_resources(res.data);
+          setItems(item)
         }
       });
     } catch (error) {
@@ -132,7 +132,7 @@ function Invoice({ placeHolder }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = invoice.map((n) => n.name);
+      const newSelecteds = items.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -174,13 +174,7 @@ function Invoice({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteMaterialTransfer(id, function(res){
-        if(!res) return;
-        if(!res.success) throw new Error('error');
-        else {
-          alert(`data is deleted on id ${id}`)
-        }
-      })
+
     } catch (error) {
       alert(error);
     }
@@ -188,9 +182,9 @@ function Invoice({ placeHolder }) {
     handleUpdateData();
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - invoice.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - items.length) : 0;
 
-  const filteredData = applySortFilter(invoice, getComparator(order, orderBy), [
+  const filteredData = applySortFilter(items, getComparator(order, orderBy), [
     filterName,
     filterBuyer
   ]);
@@ -217,7 +211,7 @@ function Invoice({ placeHolder }) {
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={invoice.length}
+                rowCount={items.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
@@ -228,12 +222,13 @@ function Invoice({ placeHolder }) {
                   .map((row) => {
                     const {
                       id,
-                      status,
-                      mt_id,
+                      _serial_number,
                       date,
-                      est_transfer_date,
-                      qty,
-                      transferred_qty
+                      change_type,
+                      facility_name,
+                      facility_id,
+                      user_id,
+                      user_name
                     } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
                     return (
@@ -246,23 +241,16 @@ function Invoice({ placeHolder }) {
                         aria-checked={isItemSelected}
                       >
                         <TableCell align="left">{id}</TableCell>
-                        <TableCell align="left">
-                          {status}
-                          {/* <PinStatus
-                            status={status.status}
-                            style={{ color: status.color, backgroundColor: status.backgroundColor }}
-                          /> */}
-                        </TableCell>
-                        <TableCell align="left">{mt_id}</TableCell>
+                        <TableCell align="left">{user_name}</TableCell>
+                        <TableCell align="left">{_serial_number}</TableCell>
                         <TableCell align="left">{moment(date).format('LL')}</TableCell>
-                        <TableCell align="left">{moment(est_transfer_date).format('LL')}</TableCell>
-                        <TableCell align="left">{`${fNumber(qty)} pcs`}</TableCell>
-                        <TableCell align="left">{fNumber(transferred_qty)}</TableCell>
+                        <TableCell align="left">{change_type}</TableCell>
+                        <TableCell align="left">{`${facility_name}`}</TableCell>
                         <TableCell align="right">
                           <MoreMenu
-                            id={mt_id}
+                            id={id}
                             document={true}
-                            handleDelete={(event) => handleDeleteData(event, mt_id)}
+                            handleDelete={(event) => handleDeleteData(event, id)}
                           />
                         </TableCell>
                       </TableRow>
@@ -289,7 +277,7 @@ function Invoice({ placeHolder }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={invoice.length}
+          count={items.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

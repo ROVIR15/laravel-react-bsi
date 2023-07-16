@@ -10,10 +10,10 @@ import closeCircle from '@iconify/icons-eva/close-outline';
 // Components
 import API from '../../../../../helpers';
 import Table from './Table';
-import { bomitem_data_alt } from '../../utils'
+import { bomitem_data_alt } from '../../utils';
 
 // Helpers
-import { optionProductFeature, productItemArrangedData } from '../../../../../helpers/data';
+import { inventoryItemWithStock } from '../../../../../helpers/data';
 import { isEmpty } from 'lodash';
 
 const style = {
@@ -44,26 +44,6 @@ export default function BasicModal({
   // loading
   const loading = open && options.length === 0;
 
-  // handle storing data for bom selection
-  // gonna be used to get material item based on bom
-  const [optionBom, setOptionBOm] = React.useState([]);
-
-  const handleBOMFilter = (event) => {
-    if(event.target.value === 0 && !isEmpty(options)) {
-      console.log(options.length)
-      setSelectionOptions(options)
-    } else {
-      // console.log(event.target.value)
-      const selected = optionBom.find((x) => x.id === event.target.value);
-      if(isEmpty(selected)) return;
-      if(isEmpty(selected?.items)) setSelectionOptions([]);
-      else {
-        const _items_converted = bomitem_data_alt(selected?.items);
-        setSelectionOptions(_items_converted);
-      }
-  }
-  };
-
   React.useEffect(() => {
     let active = true;
 
@@ -72,23 +52,13 @@ export default function BasicModal({
     }
 
     // get productFeature
-    API.getProductFeature(async (res) => {
+    API.getCheckInventoryItem((res) => {
       if (!res) return;
       if (!res.data) {
         setOptions([]);
       } else {
-        let data = await optionProductFeature(res.data);
+        let data = inventoryItemWithStock(res.data);
         setOptions(data);
-      }
-    });
-
-    // get bom_alt
-    API.getBOM_alt('', (res) => {
-      if (!res) return;
-      if (!res.data) {
-        setOptionBOm([]);
-      } else {
-        setOptionBOm(res.data);
       }
     });
 
@@ -118,18 +88,7 @@ export default function BasicModal({
             </IconButton>
           </Stack>
 
-          <FormControl fullWidth>
-            <InputLabel>Select BOM</InputLabel>
-            <Select onChange={handleBOMFilter}>
-              <MenuItem value={0}>{'Semua Item'}</MenuItem>
-              {optionBom?.map((item) => {
-                const item_name = `${item.product_feature?.product?.goods?.name} ${item.product_feature?.color} - ${item.product_feature?.size}`
-                return (<MenuItem value={item.id}>{item_name}</MenuItem>);
-              })}
-            </Select>
-          </FormControl>
-
-          <Table list={selectionOptions} update={update} selected={items} setSelected={setItems} />
+          <Table list={options} update={update} selected={items} setSelected={setItems} />
         </Card>
       </Modal>
     </div>

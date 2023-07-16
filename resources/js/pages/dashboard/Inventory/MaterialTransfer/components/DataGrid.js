@@ -20,7 +20,6 @@ export default function ValidateRowModelControlGrid({
       sx={{
         height: 400,
         backgroundColor: 'white',
-        padding: 1,
         width: 1,
         '& .MuiDataGrid-cell--editing': {
           bgcolor: 'rgb(255,215,115, 0.19)',
@@ -29,6 +28,9 @@ export default function ValidateRowModelControlGrid({
             height: '100%'
           }
         },
+        '& .MuiDataGrid-virtualScrollerContent': {
+          backgroundColor: '#f5f6fa'
+        },
         '& .Mui-error': {
           bgcolor: (theme) => `rgb(126,10,15, ${theme.palette.mode === 'dark' ? 0 : 0.1})`,
           color: (theme) => (theme.palette.mode === 'dark' ? '#ff4343' : '#750f0f')
@@ -36,11 +38,8 @@ export default function ValidateRowModelControlGrid({
       }}
     >
       <Stack sx={{ width: '100%', mb: 1 }} direction="row" alignItems="flex-start" columnGap={1}>
-        <Button size="small" onClick={handleUpdateAllRows} disabled={!handleUpdateAllRows ? true : false}>
+        <Button size="small" onClick={handleUpdateAllRows} disabled={!handleUpdateAllRows ? true : false} sx={ !handleUpdateAllRows ? { display: 'none'} : {}}>
           Update
-        </Button>
-        <Button size="small" onClick={handleAddRow} disabled={!handleAddRow ? true : false}>
-          Add Data
         </Button>
       </Stack>
       <DataGrid
