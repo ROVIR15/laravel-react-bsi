@@ -533,7 +533,6 @@ class InventoryController extends Controller
           return $query
           ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date]);
         })
-        ->where('id', 119)
         ->get();
 
       $convert = $query->map(function($item){
