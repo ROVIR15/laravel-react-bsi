@@ -516,7 +516,7 @@ class InventoryController extends Controller
             return $query
                     ->select('id', 'product_id', 'product_feature_id', 'goods_id', 'material_transfer_id', 'type_movement', 'material_transfer_item_id', 'material_transfer_item_realisation_id', 'date', DB::raw('sum(qty) as final_qty'))
                     ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date])
-                    ->groupBy('type_movement');
+                    ->groupBy('product_feature_id', 'type_movement');
           },
           'last_movement' => function($query) use ($from_date){
             return $query
