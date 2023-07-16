@@ -125,7 +125,7 @@ const sidebarConfig = [
     children: [
       {
         title: 'Laporan Pemasukan Barang dan Bahan',
-        path: '/dashboard/inventory/laporan-barang-masuk'
+        path: '/dashboard/laporan-kite/laporan-barang-masuk'
       },
       {
         title: 'UNFINISHED Laporan Pemakaian Bahan Baku',
