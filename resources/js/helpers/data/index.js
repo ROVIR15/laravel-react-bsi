@@ -414,15 +414,6 @@ export function optionProductFeature(array, filter) {
 }
 
 export function productItemArrangedData(x) {
-  const {
-    id,
-    product_id,
-    color,
-    size,
-    product: {
-      goods: { name, satuan, imageUrl, value, brand, created_at, updated_at }
-    }
-  } = x;
   return {
     id: x?.id,
     product_id: x?.product_id,

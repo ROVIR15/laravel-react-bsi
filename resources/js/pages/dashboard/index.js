@@ -40,3 +40,6 @@ export { default as PaymentLayout } from './Finance/Payment';
 export { default as FinanceAccountLayout } from './Finance/FinanceAccount';
 export { default as FinanceAccountTransactionLayout } from './Finance/FinanceAccountTransaction';
 export { default as OrderPLAnalysisLayout } from './OrderPLAnalysis';
+
+// Inventory
+export { default as StockAdjustmentLayout } from './Inventory/StockOpname';

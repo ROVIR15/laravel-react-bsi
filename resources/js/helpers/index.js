@@ -1217,6 +1217,17 @@ const main = {
         cb(err.response);
       });
   },
+  getAProductFeature(id, cb) {
+    if (!id) return;
+    axios
+      .get(uri + '/product-feature/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   //BOM_alt
   insertBOM_alt(_data, cb) {
     if (!_data) {
@@ -3018,7 +3029,73 @@ const main = {
         cb(err.response);
       });
   },
+  // Incoming Goods
+  getIncomingMaterial(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/incoming-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getOutboundMaterial(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/outbound-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getScrapReport(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/stock-scrap' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getReportMutasi_alt(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/mutasi-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getReportWIP_beta(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/wip-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   // Material Transfer
+  postMaterialTransferIssue(params, cb) {
+    axios
+      .post(uri + '/material-transfer-realisation', { payload: params })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getMaterialTransfer(params, cb) {
     axios
       .get(uri + '/material-transfer' + params)
@@ -3075,7 +3152,50 @@ const main = {
       });
   },
   //Inventory
-  getInventoryItem(cb) {
+  insertScrap(_data, cb) {
+    if (!_data) return;
+    axios
+      .post(uri + '/scrap-insert', { payload: _data })
+      .then(function (res) {
+        c(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getReportMutasi(params, cb) {
+    if (!params) throw new Error('params needs');
+    axios
+      .get(uri + '/material-transfer/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getCheckInventoryItem(cb) {
+    axios
+      .get(uri + '/material-status-with-stock')
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getInventoryStock_alt(cb) {
+    axios
+      .get(uri + '/current-stock')
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getInventoryItem(params, cb) {
+    if (!params) throw new Error('Should add params!');
     axios
       .get(uri + '/inventory')
       .then(function (res) {
@@ -3101,6 +3221,96 @@ const main = {
     }
     axios
       .post(uri + '/inventory', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  //Adjustment
+  getAdjustment(params, cb) {
+    axios
+      .get(uri + '/adjustment' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertAdjustment(_data, cb) {
+    if (isEmpty(_data)) throw new Error('data is required');
+    axios
+      .post(uri + '/adjustment', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertAdjustmentItem(_data, cb) {
+    if (isEmpty(_data)) throw new Error('data is required');
+    axios
+      .post(uri + '/adjustment-item', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateAdjustment(id, _data, cb) {
+    if (!id) throw new Error('ID is required');
+    if (!_data) throw new Error('data is required');
+    axios
+      .put(uri + '/adjustment/' + id, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateAdjustmentItem(id, _data, cb) {
+    if (!id) throw new Error('ID is required');
+    if (!_data) throw new Error('data is required');
+    axios
+      .put(uri + '/adjustment-item/' + id, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  deleteAdjustment(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .delete(uri + '/adjustment/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  deleteAdjustmentItem(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .delete(uri + '/adjustment-item/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getAnAdjustment(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .get(uri + '/adjustment/' + id)
       .then(function (res) {
         cb(res.data);
       })
@@ -3184,6 +3394,17 @@ const main = {
   getFacility(params = null, cb) {
     axios
       .get(uri + '/facility' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertFacility(_data, cb) {
+    if (!_data) return;
+    axios
+      .post(uri + '/facility', { payload: _data })
       .then(function (res) {
         cb(res.data);
       })
