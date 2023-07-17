@@ -128,8 +128,8 @@ const sidebarConfig = [
         path: '/dashboard/laporan-kite/laporan-barang-masuk'
       },
       {
-        title: 'UNFINISHED Laporan Pemakaian Bahan Baku',
-        path: '/dashboard/bea-cukai-1'
+        title: 'Laporan Pemakaian Bahan Baku',
+        path: '/dashboard/laporan-kite/laporan-pemakaian'
       },
       {
         title: 'Laporan Mutasi Bahan Baku',

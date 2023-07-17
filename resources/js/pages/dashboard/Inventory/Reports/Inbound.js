@@ -25,7 +25,7 @@ import downloadIcon from '@iconify/icons-eva/download-fill';
 import { fCurrency } from '../../../../utils/formatNumber';
 import { firstLetterUpperCase, titleCase } from '../../../../utils/formatCase';
 
-import { __payload } from './data';
+import { __payload } from '../data-testing/penerimaan_barang';
 import { StyledTableCell as TableCell } from './components/TableCell';
 
 import API from '../../../../helpers';
@@ -33,21 +33,15 @@ import { isEmpty } from 'lodash';
 
 import { rearrange_data_in } from './utils';
 
-const names = [
-  'Bahan Baku',
-  'Barang Jadi',
-  'Skrap',
-  'WIP',
-  'Mesin & Alat Tulis'
-];
+const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
 function Inbound() {
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState(__payload);
-  
+
   // get pathname
   const { pathname } = useLocation();
-  const pagename = pathname.split('/')[3].replaceAll('-', ' ')
+  const pagename = pathname.split('/')[3].replaceAll('-', ' ');
 
   const [valueOfSelect, setValueofSelect] = React.useState('');
 
@@ -119,19 +113,19 @@ function Inbound() {
     }
   }, [xlsRef]);
 
-  // 
+  //
   function getData() {
-    if(isEmpty(rangeDate.start_date) && isEmpty(rangeData.end_date)) return;
-    let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`
+    if (isEmpty(rangeDate.start_date) && isEmpty(rangeData.end_date)) return;
+    let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
     try {
-      API.getIncomingMaterial(param, (res) => {
-        if(!res) return;
-        if(isEmpty(res.data)) throw new Error('Request error!')
-        else {
-          let _res = rearrange_data_in(res.data);
-          setPayloadData(_res);
-        }
-      })
+      // API.getIncomingMaterial(param, (res) => {
+      //   if (!res) return;
+      //   if (isEmpty(res.data)) throw new Error('Request error!');
+      //   else {
+      //     let _res = rearrange_data_in(res.data);
+      //     setPayloadData(_res);
+      //   }
+      // });
     } catch (error) {
       alert(error);
     }
@@ -139,9 +133,11 @@ function Inbound() {
 
   /** Handle Date Changes */
   const handleChangeDate = (e) => {
-    const { target: { name, value}} = e;
-    setRangeDate({...rangeDate, [name] : value});
-  }
+    const {
+      target: { name, value }
+    } = e;
+    setRangeDate({ ...rangeDate, [name]: value });
+  };
   /** Handle Pagination */
 
   const [page, setPage] = useState(0);
@@ -158,7 +154,7 @@ function Inbound() {
 
   useEffect(() => {
     getData();
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -168,7 +164,14 @@ function Inbound() {
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
               <Typography variant="h5">{titleCase(pagename)}</Typography>
-              <Button variant="contained" onClick={handleDownload} startIcon={<Icon icon={downloadIcon} />}> Download </Button>
+              <Button
+                variant="contained"
+                onClick={handleDownload}
+                startIcon={<Icon icon={downloadIcon} />}
+              >
+                {' '}
+                Download{' '}
+              </Button>
             </Stack>
           </Grid>
 
@@ -241,10 +244,16 @@ function Inbound() {
 
           <TableContainer sx={{ minWidth: 800 }}>
             <Table size="small">
-              <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)'}}>
+              <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell align='center' colSpan={4}> Bea Cukai</TableCell>
-                  <TableCell align='center' colSpan={2}> Purchase Order</TableCell>
+                  <TableCell align="center" colSpan={4}>
+                    {' '}
+                    Bea Cukai
+                  </TableCell>
+                  <TableCell align="center" colSpan={2}>
+                    {' '}
+                    Purchase Order
+                  </TableCell>
                   <TableCell colSpan={7}> </TableCell>
                 </TableRow>
                 <TableRow>
@@ -269,20 +278,20 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell> 12/12/2023 </TableCell>
-                      <TableCell> {`BC 3.0`} </TableCell>
-                      <TableCell> {`199999`} </TableCell>
-                      <TableCell> {1999+2} </TableCell>
+                      <TableCell> {row.tanggal_dokumen_cukai_keluar} </TableCell>
+                      <TableCell> {row.jenis_dokumen} </TableCell>
+                      <TableCell> {row.nomor_surat_cukai} </TableCell>
+                      <TableCell> {row.nomor_seri_barang}</TableCell>
                       <TableCell> {row?.po_date} </TableCell>
-                      <TableCell> {row?.po_serial} </TableCell>
-                      <TableCell>{row.material_code}</TableCell>
+                      <TableCell> {row?.nomor_purchase_order} </TableCell>
+                      <TableCell>{row.sku_barang}</TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.category}</TableCell>
                       <TableCell>{row.qty}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
                       <TableCell>{fCurrency(Math.floor(row.qty * row.unit_price), 'id')}</TableCell>
-                      <TableCell>{ firstLetterUpperCase(row.country) }</TableCell>
+                      <TableCell>{firstLetterUpperCase(row.country)}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

@@ -252,6 +252,7 @@ import Outbound from '../pages/dashboard/Inventory/Reports/LaporanBarangKeluar';
 import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
 import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
 import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkrap';
+import UsageReport from '../pages/dashboard/Inventory/Reports/LaporanPemakaian';
 
 import InventoryAdjustment from '../pages/dashboard/Inventory/StockOpname';
 
@@ -467,6 +468,10 @@ export default function TestRouter() {
         {
           path: 'laporan-kite/laporan-skrap-barang',
           element: <MaterialSkrapReport />
+        },
+        {
+          path: 'laporan-kite/laporan-pemakaian',
+          element: <UsageReport/>
         },
         { 
           path: 'purchasing/purchase-requisition', 

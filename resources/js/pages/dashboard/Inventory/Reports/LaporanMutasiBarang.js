@@ -29,7 +29,8 @@ import { titleCase } from '../../../../utils/formatCase';
 import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
 
-import { _mutasi_barang as __payload } from './data';
+import { __payload1 } from '../data-testing/mutasi_bahan';
+import { __payload2 } from '../data-testing/mutasi_barang_hasil_produksi';
 import { isEmpty, values } from 'lodash';
 
 import API from '../../../../helpers';
@@ -41,7 +42,6 @@ const names = ['Bahan Baku', 'Skrap'];
 function Inbound() {
   const [searchParams] = useSearchParams();
 
-  console.log(searchParams.get('cat'), 'herex');
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState([]);
 
@@ -162,7 +162,13 @@ function Inbound() {
   };
 
   useEffect(() => {
-    handleGo();
+
+    if(searchParams.get('cat') === 'bahan_jadi'){
+      setPayloadData(__payload2)
+    } else {
+      setPayloadData(__payload1)
+    }
+    // handleGo();
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
@@ -247,7 +253,7 @@ function Inbound() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={__payload?.length}
+            count={payloadData?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -282,7 +288,8 @@ function Inbound() {
                   ?.map((row, index) => (
                     <TableRow>
                       <TableCell>
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                        {row.sku_barang}
+                        {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.category_name}</TableCell>

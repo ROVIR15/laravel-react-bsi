@@ -29,7 +29,7 @@ import { titleCase } from '../../../../utils/formatCase';
 import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
 
-import { _mutasi_barang as __payload } from './data';
+import { __payload } from '../data-testing/scrap';
 import { isEmpty, values } from 'lodash';
 
 import API from '../../../../helpers';
@@ -65,14 +65,14 @@ function Inbound() {
 
       let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
 
-      API.getScrapReport(param, function (res) {
-        if (!res) return;
-        if (!res.data) new Error('Error processing request');
-        else {
-          // let _res = rearrange_data_material_transfer(res.data);
-          setPayloadData(res.data);
-        }
-      });
+      // API.getScrapReport(param, function (res) {
+      //   if (!res) return;
+      //   if (!res.data) new Error('Error processing request');
+      //   else {
+      //     // let _res = rearrange_data_material_transfer(res.data);
+      //     setPayloadData(res.data);
+      //   }
+      // });
 
     } catch (error) {
       alert(error);
@@ -259,10 +259,11 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell>{row.nomor_pendaftaran}</TableCell>
+                      <TableCell>{row.nomor_pendaftaran_dokumen_penyelesaian}</TableCell>
                       <TableCell>{row.tanggal_dokumen}</TableCell>
                       <TableCell>
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                        {row?.sku_barang}
+                        {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.category_name}</TableCell>

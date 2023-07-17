@@ -27,7 +27,7 @@ import { titleCase } from '../../../../utils/formatCase';
 import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
 
-import { __payload } from './data';
+import { __payload } from '../data-testing/pengeluaran_barang';
 import { StyledTableCell as TableCell } from './components/TableCell';
 
 import API from '../../../../helpers';
@@ -115,14 +115,14 @@ function Inbound() {
     if (isEmpty(rangeDate.start_date) && isEmpty(rangeData.end_date)) return;
     let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
     try {
-      API.getOutboundMaterial(param, (res) => {
-        if (!res) return;
-        if (isEmpty(res.data)) throw new Error('Request error!');
-        else {
-          let _res = rearrange_data_out(res.data);
-          setPayloadData(_res);
-        }
-      });
+      // API.getOutboundMaterial(param, (res) => {
+      //   if (!res) return;
+      //   if (isEmpty(res.data)) throw new Error('Request error!');
+      //   else {
+      //     let _res = rearrange_data_out(res.data);
+      //     setPayloadData(_res);
+      //   }
+      // });
     } catch (error) {
       alert(error);
     }
@@ -258,8 +258,8 @@ function Inbound() {
                   <TableCell colSpan={7}> </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Tanggal</TableCell>
-                  <TableCell>No Bea</TableCell>
+                  <TableCell>Tanggal bukti pengeluaran barang</TableCell>
+                  <TableCell>Nomor bukti pengeluaran barang</TableCell>
                   <TableCell>Tanggal</TableCell>
                   <TableCell>No SO</TableCell>
                   <TableCell>Penerima</TableCell>
@@ -278,10 +278,10 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell> 12/12/2023 </TableCell>
-                      <TableCell> {`BC ${12389 + index}`} </TableCell>
-                      <TableCell> {row?.po_date} </TableCell>
-                      <TableCell> {row?.po_serial} </TableCell>
+                      <TableCell>{row?.tanggal_bukti_pengeluaran_barang}</TableCell>
+                      <TableCell>{row?.nomor_bukti_pengeluaran_barang}</TableCell>
+                      <TableCell>{row?.sales_order_date} </TableCell>
+                      <TableCell>{row?.serial_number_sales_order} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>
                       <TableCell>{row.material_code}</TableCell>
