@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Manufacture\ManufacturePlanning;
 use App\Models\Manufacture\ManufacturePlanningItems;
+use DateTime;
 use DB;
+
 class ManufacturePlanningController extends Controller
 {
     /**
@@ -43,6 +45,8 @@ class ManufacturePlanningController extends Controller
     {
       $param = $request->all()['payload'];
 
+      DB::beginTransaction();
+
       try {
 
         $plan = ManufacturePlanning::create([
@@ -57,19 +61,30 @@ class ManufacturePlanningController extends Controller
         $list = [];
 
         foreach ($param['items'] as $key) {
+
+            $_start_date = new DateTime($key['line_start_date']);
+            $_end_date = new DateTime($key['line_end_date']);
             array_push($list, [
                 'facility_id' => $key['facility_id'],
                 'bom_id' => $key['costing_id'],
                 'manufacture_planning_id' => $plan['id'],
                 'sales_order_id' => $key['id'],
-                'expected_output' => $key['expected_output'],
+                'number_of_machines' => $key['number_of_machines'],
+                'line_start_date' => $_start_date,
+                'line_end_date' => $_end_date,
+                'anticipated_pcs_per_line_output' => $key['anticipated_pcs_per_line_output'],
+                'expected_output' => $key['expected_total_output'],
                 'work_days' => $key['work_days']    
             ]);
         }
 
         ManufacturePlanningItems::insert($list);
 
+        DB::commit();
+
       } catch (Exception $e) {
+
+        DB::rollback();
         //throw $th;
         return response()->json(
           [

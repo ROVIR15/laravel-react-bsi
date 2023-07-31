@@ -21,6 +21,10 @@ class ManufacturePlanningItems extends Model
         'bom_id',
         'manufacture_planning_id',
         'sales_order_id',
+        'number_of_machines',
+        'line_start_date',
+        'line_end_date',
+        'anticipated_pcs_per_line_output',
         'expected_output',
         'work_days'
     ];

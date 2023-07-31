@@ -91,7 +91,7 @@ function DisplayBuyer({ placeHolder }) {
           let data = res.map(function(payloadPerMonth){
             let info = payloadPerMonth.items_with_price.reduce(function(initial, payloadEachOrder) {
               // calculate expected pieces of good garment produced
-              let total_expected_output = (parseFloat(payloadEachOrder?.expected_output) * parseFloat(payloadEachOrder?.work_days));
+              let total_expected_output = parseFloat(payloadEachOrder?.expected_output);
 
               // calculate expected pieces of good garment valuation
               let total_expected_valuation = total_expected_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
