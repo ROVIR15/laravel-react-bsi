@@ -531,11 +531,15 @@ function BillofMaterial() {
         },
         ...rest
       } = key;
+
+      let item_name = `${goods?.name} ${color} ${size}`;
+
       return {
         ...goods,
         ...rest,
         size,
         color,
+        item_name,
         product_feature_id: key.product_feature_id,
         bom_id: key.bom_id,
         qty: key.qty,
