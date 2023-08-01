@@ -171,6 +171,7 @@
             foreach($param['components'] as $key){
               array_push($bomItemsCreation, [
                 'bom_id' => $billOfMaterial['id'],
+                'product_id' => $key['product_id'],
                 'product_feature_id' => $key['product_feature_id'],
                 'qty' => floatval($key['consumption']) + floatval($key['allowance']),
                 'consumption' => $key['consumption'],
@@ -215,7 +216,6 @@
             }
 
             Operation::insert($operationsCreation);
-
             
           } catch (Exception $e) {
             //throw $th;

@@ -16,7 +16,9 @@ import {
   Tab,
   Typography,
   Select,
-  Stack
+  Stack,
+  Paper,
+  LinearProgress
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
@@ -50,12 +52,16 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { optionProductFeature, partyArrangedData, serviceList } from '../../../helpers/data';
 import { gt, isUndefined } from 'lodash';
 
+// Snackbar
+import { enqueueSnackbar } from 'notistack';
+import LoadingPage from './components/LoadingPage';
+
 function isEmpty(data) {
   return !gt(data, 0);
 }
 
 function totalConsumption(params) {
-  return (parseFloat(params.row.allowance) / 100 + 1) * parseFloat(params.row.consumption);
+  return parseFloat(params.row.unit_price) * parseFloat(params.row.consumption);
 }
 
 function totalMoney(params) {
@@ -190,14 +196,20 @@ function BillofMaterial() {
     },
     validationSchema: BOMSchema,
     onSubmit: (values) => {
-      const _data = { ...values, components: component, operations: operation, services: service };
-      API.insertBOM(_data, (res) => {
-        if (!res.success) {
-          alert('Failed');
-        } else {
-          alert('Success');
-        }
-      });
+      try {
+        const _data = {
+          ...values,
+          components: component,
+          operations: operation,
+          services: service
+        };
+        API.insertBOM(_data, (res) => {
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
       setSubmitting(false);
     }
   });
@@ -286,14 +298,14 @@ function BillofMaterial() {
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-      { field: 'name', width: 300, headerName: 'Name', editable: false },
-      { field: 'size', headerName: 'Size', editable: true },
-      { field: 'color', headerName: 'Color', editable: true },
+      { field: 'item_name', width: 300, headerName: 'Name', editable: false },
+      // { field: 'size', headerName: 'Size', editable: true },
+      // { field: 'color', headerName: 'Color', editable: true },
       { field: 'brand', headerName: 'Brand', editable: false },
-      { field: 'consumption', headerName: 'Konsumsi', editable: true },
-      { field: 'allowance', headerName: 'Allowance %', editable: true },
+      { field: 'consumption', headerName: 'YY', editable: true },
+      // { field: 'allowance', headerName: 'Allowance %', editable: true },
       { field: 'unit_price', headerName: 'Harga', editable: true },
-      { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
+      { field: 'qty', headerName: 'Biaya Unit', editable: true, valueGetter: totalConsumption },
       {
         field: 'actions',
         type: 'actions',
@@ -546,8 +558,11 @@ function BillofMaterial() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container direction="column" spacing={3}>
-              {/* <Grid item xs={4}>
+            {isSubmitting ? (
+              <LoadingPage/>
+            ) : (
+              <Grid container direction="column" spacing={3}>
+                {/* <Grid item xs={4}>
                 <Card>
                   <CardContent>
                     <ColumnBox>
@@ -572,245 +587,253 @@ function BillofMaterial() {
                 </Card>
               </Grid> */}
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader title="Costing Information" />
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Buyer </Typography>
-                            <Button onClick={() => setOpenSH(true)}>Select</Button>
-                          </SpaceBetweenBox>
-                          <div>
-                            <Typography variant="body1">{selectedValueSH?.name}</Typography>
-                          </div>
-                          <DialogBoxParty
-                            options={optionParty}
-                            loading={loadingSH}
-                            // error={Boolean(touched.facility_id && errors.facility_id)}
-                            // helperText={touched.facility_id && errors.facility_id}
-                            // selectedValue={values.facility_id}
-                            open={openSH}
-                            onClose={(value) => handleCloseDialogParty(value)}
+                <Grid item xs={12}>
+                  <Card>
+                    <CardHeader title="Costing Information" />
+                    <CardContent>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <ColumnBox>
+                            <SpaceBetweenBox>
+                              <Typography variant="h6"> Buyer </Typography>
+                              <Button onClick={() => setOpenSH(true)}>Select</Button>
+                            </SpaceBetweenBox>
+                            <div>
+                              <Typography variant="body1">{selectedValueSH?.name}</Typography>
+                            </div>
+                            <DialogBoxParty
+                              options={optionParty}
+                              loading={loadingSH}
+                              // error={Boolean(touched.facility_id && errors.facility_id)}
+                              // helperText={touched.facility_id && errors.facility_id}
+                              // selectedValue={values.facility_id}
+                              open={openSH}
+                              onClose={(value) => handleCloseDialogParty(value)}
+                            />
+                          </ColumnBox>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                            <Select
+                              label="Currency"
+                              // onChange={handleChange}
+                              {...getFieldProps('currency_id')}
+                              error={Boolean(touched.currency_id && errors.currency_id)}
+                              helperText={touched.currency_id && errors.currency_id}
+                            >
+                              <MenuItem value={1}>USD</MenuItem>
+                              <MenuItem value={2}>IDR</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={10}>
+                          <TextField
+                            fullWidth
+                            autoComplete="name"
+                            type="text"
+                            label="Costing Name"
+                            {...getFieldProps('name')}
+                            error={Boolean(touched.name && errors.name)}
+                            helperText={touched.name && errors.name}
                           />
-                        </ColumnBox>
-                      </Grid>
-                      <Grid item xs={2}>
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                          <Select
-                            label="Currency"
-                            // onChange={handleChange}
-                            {...getFieldProps('currency_id')}
-                            error={Boolean(touched.currency_id && errors.currency_id)}
-                            helperText={touched.currency_id && errors.currency_id}
-                          >
-                            <MenuItem value={1}>USD</MenuItem>
-                            <MenuItem value={2}>IDR</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={10}>
-                        <TextField
-                          fullWidth
-                          autoComplete="name"
-                          type="text"
-                          label="Costing Name"
-                          {...getFieldProps('name')}
-                          error={Boolean(touched.name && errors.name)}
-                          helperText={touched.name && errors.name}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <AutoCompleteP
-                          fullWidth
-                          autoComplete="product_id"
-                          type="text"
-                          label="Product Id"
-                          error={Boolean(touched.product_id && errors.product_id)}
-                          helperText={touched.product_id && errors.product_id}
-                          options={options3}
-                          setOpen={setOpen}
-                          loading={loading}
-                          changeData={setFieldValue}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <AutoComplete
-                          fullWidth
-                          autoComplete="product_feature_id"
-                          type="text"
-                          label="Product Variant Id"
-                          error={Boolean(touched.product_feature_id && errors.product_feature_id)}
-                          helperText={touched.product_feature_id && errors.product_feature_id}
-                          options={options}
-                          setOpen={setOpen}
-                          loading={loading}
-                          changeData={setFieldValue}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          autoComplete="start_date"
-                          type="date"
-                          label="Start Date"
-                          {...getFieldProps('start_date')}
-                          error={Boolean(touched.start_date && errors.start_date)}
-                          helperText={touched.start_date && errors.start_date}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          autoComplete="end_date"
-                          type="date"
-                          label="End Date"
-                          {...getFieldProps('end_date')}
-                          error={Boolean(touched.end_date && errors.end_date)}
-                          helperText={touched.end_date && errors.end_date}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          autoComplete="qty"
-                          type="text"
-                          label="Quantity"
-                          {...getFieldProps('qty')}
-                          error={Boolean(touched.qty && errors.qty)}
-                          helperText={touched.qty && errors.qty}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          autoComplete="company_name"
-                          type="text"
-                          label="Company Name"
-                          {...getFieldProps('company_name')}
-                          error={Boolean(touched.company_name && errors.company_name)}
-                          helperText={touched.company_name && errors.company_name}
-                        />
-                      </Grid>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <AutoCompleteP
+                            fullWidth
+                            autoComplete="product_id"
+                            type="text"
+                            label="Product Id"
+                            error={Boolean(touched.product_id && errors.product_id)}
+                            helperText={touched.product_id && errors.product_id}
+                            options={options3}
+                            setOpen={setOpen}
+                            loading={loading}
+                            changeData={setFieldValue}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <AutoComplete
+                            fullWidth
+                            autoComplete="product_feature_id"
+                            type="text"
+                            label="Product Variant Id"
+                            error={Boolean(touched.product_feature_id && errors.product_feature_id)}
+                            helperText={touched.product_feature_id && errors.product_feature_id}
+                            options={options}
+                            setOpen={setOpen}
+                            loading={loading}
+                            changeData={setFieldValue}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            autoComplete="start_date"
+                            type="date"
+                            label="Start Date"
+                            {...getFieldProps('start_date')}
+                            error={Boolean(touched.start_date && errors.start_date)}
+                            helperText={touched.start_date && errors.start_date}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            autoComplete="end_date"
+                            type="date"
+                            label="End Date"
+                            {...getFieldProps('end_date')}
+                            error={Boolean(touched.end_date && errors.end_date)}
+                            helperText={touched.end_date && errors.end_date}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            autoComplete="qty"
+                            type="text"
+                            label="Quantity"
+                            {...getFieldProps('qty')}
+                            error={Boolean(touched.qty && errors.qty)}
+                            helperText={touched.qty && errors.qty}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            autoComplete="company_name"
+                            type="text"
+                            label="Company Name"
+                            {...getFieldProps('company_name')}
+                            error={Boolean(touched.company_name && errors.company_name)}
+                            helperText={touched.company_name && errors.company_name}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12}>
-                        <Box
-                          sx={{
-                            width: '100%',
-                            border: '1px dashed #b8b8b8',
-                            padding: '0.5em 0.25em',
-                            borderRadius: '5px'
-                          }}
-                        >
-                          <TabContext value={valueTab}>
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                              <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                                <Tab label="Initial Price" value="1" />
-                                <Tab label="Work" value="2" />
-                                <Tab label="Material" value="3" />
-                                <Tab label="Service" value="4" />
-                                <Tab label="Tax" value="5" />
-                              </TabList>
-                            </Box>
-                            <TabPanel value="1">
-                              <Stack direction="row" spacing={2} alignItems="center">
-                                <Typography variant="body1">Starting Price</Typography>
-                                <TextField
-                                  autoComplete="starting_price"
-                                  type="number"
-                                  {...getFieldProps('starting_price')}
-                                  error={Boolean(touched.starting_price && errors.starting_price)}
-                                  helperText={touched.starting_price && errors.starting_price}
-                                  InputProps={{
-                                    startAdornment: (
-                                      <InputAdornment position="start">Rp</InputAdornment>
-                                    )
-                                  }}
-                                  sx={{
-                                    '& .MuiInputBase-input': {
-                                      textAlign: 'right'
-                                    }
-                                  }}
-                                />
-                              </Stack>
-                            </TabPanel>
-                            <TabPanel value="2">
-                              <DataGrid
-                                columns={operationColumns}
-                                rows={operation}
-                                handleAddRow={handleOpenModalO}
-                                onEditRowsModelChange={handleEditOperationRowsModelChange}
-                                handleResetRows={handleResetOperationRows}
-                              />
-                            </TabPanel>
-                            <TabPanel value="3">
-                              <DataGrid
-                                columns={goodsColumns}
-                                rows={component}
-                                handleAddRow={handleOpenModal}
-                                onEditRowsModelChange={handleEditComponentRowsModelChange}
-                                handleResetRows={handleResetComponentRows}
-                                handleDuplicate={handleOpenModalDuplicate}
-                                duplicateMaterial={true}
-                              />
-                            </TabPanel>
-                            <TabPanel value="4">
-                              <DataGrid
-                                columns={serviceColumns}
-                                rows={service}
-                                handleAddRow={handleOpenModalS}
-                                onEditRowsModelChange={handleEditServiceRowsModelChange}
-                                handleResetRows={handleResetComponentRows}
-                              />
-                            </TabPanel>
-                            <TabPanel value="5">
-                              <Stack direction="row" spacing={2} alignItems="center">
-                                <Typography variant="body1">Tax</Typography>
-                                <TextField
-                                  autoComplete="tax"
-                                  type="number"
-                                  {...getFieldProps('tax')}
-                                  error={Boolean(touched.tax && errors.tax)}
-                                  helperText={touched.tax && errors.tax}
-                                  InputProps={{
-                                    endAdornment: <InputAdornment position="end">%</InputAdornment>
-                                  }}
-                                  sx={{
-                                    '& .MuiInputBase-input': {
-                                      textAlign: 'right'
-                                    }
-                                  }}
-                                />
-                              </Stack>
-                            </TabPanel>
-                          </TabContext>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}>
-                          <LoadingButton
-                            size="large"
-                            type="submit"
-                            variant="contained"
-                            loading={isSubmitting}
-                            sx={{ m: 1 }}
+                        <Grid item xs={12}>
+                          <Box
+                            sx={{
+                              width: '100%',
+                              border: '1px dashed #b8b8b8',
+                              padding: '0.5em 0.25em',
+                              borderRadius: '5px',
+                              minHeight: '42em'
+                            }}
                           >
-                            Save
-                          </LoadingButton>
-                          <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                            Cancel
-                          </Button>
-                        </Box>
+                            <TabContext value={valueTab}>
+                              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList
+                                  onChange={handleChangeTab}
+                                  aria-label="lab API tabs example"
+                                >
+                                  <Tab label="Initial Price" value="1" />
+                                  <Tab label="Work" value="2" />
+                                  <Tab label="Material" value="3" />
+                                  <Tab label="Service" value="4" />
+                                  <Tab label="Tax" value="5" />
+                                </TabList>
+                              </Box>
+                              <TabPanel value="1">
+                                <Stack direction="row" spacing={2} alignItems="center">
+                                  <Typography variant="body1">Starting Price</Typography>
+                                  <TextField
+                                    autoComplete="starting_price"
+                                    type="number"
+                                    {...getFieldProps('starting_price')}
+                                    error={Boolean(touched.starting_price && errors.starting_price)}
+                                    helperText={touched.starting_price && errors.starting_price}
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">Rp</InputAdornment>
+                                      )
+                                    }}
+                                    sx={{
+                                      '& .MuiInputBase-input': {
+                                        textAlign: 'right'
+                                      }
+                                    }}
+                                  />
+                                </Stack>
+                              </TabPanel>
+                              <TabPanel value="2">
+                                <DataGrid
+                                  columns={operationColumns}
+                                  rows={operation}
+                                  handleAddRow={handleOpenModalO}
+                                  onEditRowsModelChange={handleEditOperationRowsModelChange}
+                                  handleResetRows={handleResetOperationRows}
+                                />
+                              </TabPanel>
+                              <TabPanel value="3">
+                                <DataGrid
+                                  columns={goodsColumns}
+                                  rows={component}
+                                  handleAddRow={handleOpenModal}
+                                  onEditRowsModelChange={handleEditComponentRowsModelChange}
+                                  handleResetRows={handleResetComponentRows}
+                                  handleDuplicate={handleOpenModalDuplicate}
+                                  duplicateMaterial={true}
+                                />
+                              </TabPanel>
+                              <TabPanel value="4">
+                                <DataGrid
+                                  columns={serviceColumns}
+                                  rows={service}
+                                  handleAddRow={handleOpenModalS}
+                                  onEditRowsModelChange={handleEditServiceRowsModelChange}
+                                  handleResetRows={handleResetComponentRows}
+                                />
+                              </TabPanel>
+                              <TabPanel value="5">
+                                <Stack direction="row" spacing={2} alignItems="center">
+                                  <Typography variant="body1">Tax</Typography>
+                                  <TextField
+                                    autoComplete="tax"
+                                    type="number"
+                                    {...getFieldProps('tax')}
+                                    error={Boolean(touched.tax && errors.tax)}
+                                    helperText={touched.tax && errors.tax}
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">%</InputAdornment>
+                                      )
+                                    }}
+                                    sx={{
+                                      '& .MuiInputBase-input': {
+                                        textAlign: 'right'
+                                      }
+                                    }}
+                                  />
+                                </Stack>
+                              </TabPanel>
+                            </TabContext>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Box
+                            sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}
+                          >
+                            <LoadingButton
+                              size="large"
+                              type="submit"
+                              variant="contained"
+                              loading={isSubmitting}
+                              sx={{ m: 1 }}
+                            >
+                              Save
+                            </LoadingButton>
+                            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                              Cancel
+                            </Button>
+                          </Box>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Grid>
               </Grid>
-
-            </Grid>
+            )}
           </Form>
         </FormikProvider>
       </Container>
