@@ -15,6 +15,7 @@
 
     protected $fillable = [
         'id',
+        'import_flag',
         'order_id',
         'po_number',
         'bought_from',
@@ -33,7 +34,7 @@
     }
 
     public function order_item(){
-      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature', 'check_shipment');
+      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->with('product_feature', 'check_shipment', 'import_info');
     }
 
     public function sum(){
@@ -62,6 +63,10 @@
 
     public function invoice(){
       return $this->hasMany('App\Models\Invoice\Invoice', 'order_id', 'order_id')->with('purchase_order', 'sum', 'terms', 'payment_history');
+    }
+
+    public function import_doc(){
+      return $this->belongsTo('App\Models\KITE\ImportDoc', 'id', 'purchase_order_id');
     }
 
   }

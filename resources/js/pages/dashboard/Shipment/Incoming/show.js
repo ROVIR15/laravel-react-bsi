@@ -6,6 +6,9 @@ import {
   CardHeader,
   CardContent,
   Container,
+  Divider,
+  FormLabel,
+  FormControlLabel,
   Grid,
   Tab,
   TextField,
@@ -13,12 +16,13 @@ import {
   Button,
   FormControl,
   InputLabel,
-  Paper,
+  RadioGroup,
+  Radio,
   Stack,
   Select,
+  Paper,
   MenuItem
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
+} from '@mui/material';import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -41,6 +45,9 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { useParams } from 'react-router-dom';
 import useAuth from '../../../../context';
+
+// Snackbar
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -120,6 +127,7 @@ function OutboundDelivery() {
           let _items = _shipmentItem(items);
           setItems(_items);
           setFile(info?.imageUrl);
+          setIsSubcontract(Boolean(res.data?.subcontract_flag));
         }
       });
     } catch (error) {
@@ -180,12 +188,11 @@ function OutboundDelivery() {
 
       try {
         API.updateShipment(id, _data, (res) => {
-          if (!res) return undefined;
-          if (!res.success) throw new Error('failed');
-          else alert('success');
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
       setSubmitting(false);
     }
@@ -308,12 +315,12 @@ function OutboundDelivery() {
           shipment_type_status_id: status
         },
         function (res) {
-          if (!res.success) alert('Failed');
-          alert('done');
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         }
       );
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -373,15 +380,31 @@ function OutboundDelivery() {
     // Update the formData object
     formData.append('file', event.target.files[0], event.target.files[0].name);
 
-    API.uploadShipmentReceiptProof(formData, function (res) {
-      if (res.success) {
-        setFile(res.path);
-        alert(JSON.stringify(res));
-      } else {
-        alert('error');
-      }
-    });
+    try {
+      API.uploadShipmentReceiptProof(formData, function (res) {
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
   };
+
+  // Radio Import Activity
+  // ----------------------------------------------------------------- //
+  const [isSubcontract, setIsSubcontract] = useState(false);
+
+  const handleRadioSubcontractCheck = (e) => {
+    if (e.target.value === 'true') {
+      setIsSubcontract(true);
+      setFieldValue('subcontract_flag', true);
+    } else {
+      setIsSubcontract(false);
+      setFieldValue('subcontract_flag', false);
+      if (valueTab === '4') setValueTab('1');
+    }
+  };
+  // ----------------------------------------------------------------- //
 
   return (
     <Page>
@@ -431,11 +454,11 @@ function OutboundDelivery() {
                   <CardHeader title="Delivery Information" />
                   <CardContent>
                     <Grid container direction="row" spacing={2}>
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={5} sx={{ padding: 'unset' }}>
                         <TextField fullWidth label="PO Number" value={po_number} disabled />
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={5} sx={{ padding: 'unset' }}>
                         <TextField
                           variant="outlined"
                           type="text"
@@ -447,6 +470,21 @@ function OutboundDelivery() {
                           error={Boolean(touched.serial_number && errors.serial_number)}
                           helperText={touched.serial_number && errors.serial_number}
                         />
+                      </Grid>
+
+                      <Grid item xs={2}>
+                        <FormControl>
+                          <FormLabel id="Improt">Subkontrak?</FormLabel>
+                          <RadioGroup
+                            row
+                            value={isSubcontract}
+                            name="import-activity-check"
+                            onChange={handleRadioSubcontractCheck}
+                          >
+                            <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
+                            <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
+                          </RadioGroup>
+                        </FormControl>
                       </Grid>
 
                       <Grid item xs={12}>

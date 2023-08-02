@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useRoutes, Routes, Route } from 'react-router-dom';
+import { Navigate, useRoutes, Routes, Route, Link } from 'react-router-dom';
 
 // Layout
 import DashboardLayout from '../layouts/dashboard';
@@ -472,6 +472,10 @@ export default function TestRouter() {
         {
           path: 'laporan-kite/laporan-pemakaian',
           element: <UsageReport/>
+        },
+        {
+          path: 'laporan-kite/cctv-factory',
+          // element: <> {window.open('http://192.168.30.10/doc/page/login.asp?_168956862511', '_blank')} </>
         },
         { 
           path: 'purchasing/purchase-requisition', 

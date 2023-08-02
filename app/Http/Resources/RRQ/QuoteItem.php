@@ -20,6 +20,7 @@ class QuoteItem extends JsonResource
             'quote_id' => $this->quote_id,
             'request_item_id' => $this->request_item_id,
             'product_feature_id' => $this->product_feature_id,
+            'costing_item_id' => $this->costing_item_id,
             'qty' => $this->qty,
             'unit_price' => $this->unit_price,
             'product' => $this->product_feature

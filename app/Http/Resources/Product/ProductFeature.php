@@ -18,21 +18,23 @@ class ProductFeature extends JsonResource
         $cat = ProductCategory::join('product_sub_category', 'sub_cat', '=', 'product_sub_category.id')
         ->select('product_category.id', 'product_category.name as cat_name', 'product_sub_category.name as sub_cat_name')
         ->find($this->product_category->product_category_id);
+
+        $item_name = $this->product->goods['name'] . ' ' . $this->color . ' ' . $this->size;
+
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
             'product_category_id' => $this->product_category->product_category_id,
             'goods_id' => $this->product->goods_id,
-            'name' => $this->product->goods['name'],
+            'uom' => $this->product->goods->satuan,
+            'item_name' => $item_name,
             'brand' => $this->product->goods['brand'],
             'value' => $this->product->goods['value'],
             'imageUrl' => $this->product->goods['imageUrl'],
-            'color' => $this->color,
-            'size' => $this->size,
             'category' => $cat->cat_name,
             'sub_category' => $cat->sub_cat_name,
             'price_component_id' => $this->price_component_id,
-            'facility_id' => $this->inventory->facility_id
+            // 'facility_id' => $this->inventory->facility_id
         ];
     }
 }

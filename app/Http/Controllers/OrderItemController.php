@@ -50,9 +50,10 @@
   
         foreach($param as $key){
           array_push($salesItemsCreation, [
-            
             'order_id' => $key['order_id'],
             'product_feature_id' => $key['product_feature_id'],
+            'product_id' => $key['product_id'],
+            'costing_item_id' => $key['costing_item_id'],
             'qty' => $key['qty'],
             'unit_price' => $key['unit_price'],
             'cm_price' => $key['cm_price'],

@@ -440,9 +440,9 @@ function Quotation() {
                             <div>
                               <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
                               <Typography component="span" variant="caption">
-                                {selectedValueSO?.street}
+                                {selectedValueSO?.address?.street}
                               </Typography>
-                              <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
+                              <Typography variant="body2">{`${selectedValueSO?.address?.city}, ${selectedValueSO?.address?.province}, ${selectedValueSO.address?.country}`}</Typography>
                             </div>
                           ) : null}
                           <DialogBox
@@ -465,9 +465,9 @@ function Quotation() {
                             <div>
                               <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
                               <Typography component="span" variant="caption">
-                                {selectedValueSH?.street}
+                                {selectedValueSH?.address?.street}
                               </Typography>
-                              <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
+                              <Typography variant="body2">{`${selectedValueSH?.address?.city}, ${selectedValueSH?.address?.province}, ${selectedValueSH.address?.country}`}</Typography>
                             </div>
                           ) : null}
                           <DialogBox

@@ -8,13 +8,13 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
-import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
-
+import { ListHead, MoreMenu } from '../../../../components/Table';
+import ListToolbar from './ListToolbar';
 // api
 import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
@@ -23,13 +23,11 @@ import { isEditCondition } from '../../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
-    { id: 'category', label: 'Kategori', alignRight: false },
-    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'satuan', label: 'Satuan', alignRight: false },
-    { id: 'brand', label: 'Brand', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Style', alignRight: false },
+  { id: 'category', label: 'Kategori', alignRight: false },
+  { id: 'satuan', label: 'Satuan', alignRight: false },
+];
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +48,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,24 +59,21 @@ function applySortFilter(array, comparator, query) {
   if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
       return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-        && _b.category_id === query[1]
-      )
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+        _b.category_id === query[1]
+      );
     });
   } else {
     return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-      )
+      return _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1;
     });
   }
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
-
+function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-//   const [selected, setSelected] = useState([]);
+  //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -96,7 +91,11 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredData.map((n, index) => ({...n, product_feature_id: n.id, id: index+1}));
+      const newSelecteds = filteredData.map((n, index) => ({
+        ...n,
+        product_feature_id: n.id,
+        id: index + 1
+      }));
       setSelected(newSelecteds);
       return;
     }
@@ -104,18 +103,20 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id}
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
+    name = { ...name, product_feature_id: name.id };
+    const selectedIndex = selected
+      .map((e) => e.product_feature_id)
+      .indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      if(isEditCondition(pathname.split('/'), id)) {
+      if (isEditCondition(pathname.split('/'), id)) {
         try {
-          API.insertQuoteItem([name], function(res){
-            if(res.success) alert('success');
-            else alert('failed')
-          })
+          API.insertQuoteItem([name], function (res) {
+            if (res.success) alert('success');
+            else alert('failed');
+          });
           update();
-        } catch(e) {
+        } catch (e) {
           alert(e);
         }
       } else {
@@ -148,8 +149,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleFilterCategoryAndSub = (event) => {
-    setFilterCategory(event.target.value)
-  }
+    setFilterCategory(event.target.value);
+  };
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
@@ -159,17 +160,20 @@ function TableD({ list, placeHolder, selected, setSelected}) {
     // }).catch(function(error){
     //   alert('error')
     // });
-  }
+  };
 
   const handleDeleteSelected = () => {
-    setSelected([])
-  }
+    setSelected([]);
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list.length) : 0;
 
-  const filteredData = applySortFilter(list, getComparator(order, orderBy), [filterName, filterCategory]);
+  const filteredData = applySortFilter(list, getComparator(order, orderBy), [
+    filterName,
+    filterCategory
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <div>
@@ -199,18 +203,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
-                  const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
-                  const {
-                    id,
-                    name,
-                    size,
-                    color,
-                    category,
-                    sub_category,
-                    satuan,
-                    brand
-                  } = row;
+                  const isItemSelected =
+                    selected.map((e) => e.product_feature_id).indexOf(row.id) !== -1;
+                  const disabled = isItemSelected && isEditCondition(pathname.split('/'), paramsId);
+                  const { id, item_name, category, unit_measurement } = row;
                   return (
                     <TableRow
                       hover
@@ -228,13 +224,9 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">
-                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
-                      </TableCell>
+                      <TableCell align="left">{item_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
-                      <TableCell align="left">{brand}</TableCell>
+                      <TableCell align="left">{unit_measurement}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -266,7 +258,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </div>
-  )
+  );
 }
 
 export default TableD;

@@ -18,6 +18,7 @@
     {
       return [
         'id' => $this->id,
+        'import_flag' => $this->import_flag,
         'order_id' => $this->order_id,
         'po_number' => $this->po_number,
         'issue_date' => $this->issue_date,
@@ -29,6 +30,7 @@
         'order_item' => new OrderItemCollection($this->order_item),
         'status' => $this->status,
         'invoice' => $this->invoice,
+        'import_doc' => $this->import_doc
       ];
     }
   }

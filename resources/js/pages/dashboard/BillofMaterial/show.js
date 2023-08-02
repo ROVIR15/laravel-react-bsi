@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import AutoComplete from './components/AutoComplete';
 import { LoadingButton } from '@mui/lab';
-import { Button, Card, Grid, Paper, Stack, TextField } from '@mui/material';
+import { Button, Card, Grid, Paper, Stack, TextField, Typography } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { isEmpty, isUndefined, update } from 'lodash';
@@ -283,19 +283,7 @@ function BillofMaterial() {
               <Grid item xs={8}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <AutoComplete
-                      fullWidth
-                      autoComplete="product_feature_id"
-                      type="text"
-                      label="Product Variant Id"
-                      error={Boolean(touched.product_feature_id && errors.product_feature_id)}
-                      helperText={touched.product_feature_id && errors.product_feature_id}
-                      options={optionsAC}
-                      choosen={values?.choosen}
-                      setOpen={setOpen}
-                      loading={loading}
-                      changeData={handleAutoComplete}
-                    />
+                    <Typography variant="h6">{values?.choosen}</Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <StyledTextField

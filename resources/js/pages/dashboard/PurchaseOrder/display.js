@@ -73,6 +73,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
 
+  // Check the query filters
   if (query[1] !== 'All') {
     if (query[2] !== 0) {
       return filter(
@@ -163,8 +164,7 @@ function PurchaseOrder({ placeHolder }) {
         if (!res.data) {
           setpurchaseOrderData([]);
         } else {
-          let buyer = res?.data
-            .filter(function (item, index, arr) {
+          let buyer = res?.data?.filter(function (item, index, arr) {
               return !isNull(item.party);
             })
             .map(function (obj) {
@@ -300,7 +300,7 @@ function PurchaseOrder({ placeHolder }) {
 
   return (
     <>
-      <Test2 data={filteredData} type='purchase' />
+      <Test2 data={filteredData} type="purchase" />
       <Card>
         <ListToolbar
           numSelected={selected.length}
@@ -363,25 +363,25 @@ function PurchaseOrder({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{id}</TableCell>
-                        <TableCell align="left">{po_number}</TableCell>
-                        <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>
+                        <TableCell align="left">{row?.id}</TableCell>
+                        <TableCell align="left">{row?.po_number}</TableCell>
+                        <TableCell align="left">{ChipStatus(row?.status[0]?.status_type)}</TableCell>
                         <TableCell align="left">
-                          {ChipStatusProduction(completion_status[0]?.status?.name)}
+                          {ChipStatusProduction(row?.completion_status[0]?.status?.name)}
                         </TableCell>
-                        <TableCell align="left">{bought_from}</TableCell>
-                        <TableCell align="left">{sum?.length ? sum[0].total_qty : null}</TableCell>
+                        <TableCell align="left">{row?.bought_from}</TableCell>
+                        <TableCell align="left">{row?.sum?.length ? sum[0].total_qty : null}</TableCell>
                         <TableCell align="left">
-                          {sum?.length ? fCurrency(sum[0].total_money, currency) : null}
+                          {sum?.length ? fCurrency(row?.sum[0].total_money, currency) : null}
                         </TableCell>
-                        <TableCell align="left">{moment(issue_date).format('ll')}</TableCell>
-                        <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
-                        <TableCell align="left">{moment(valid_thru).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(row?.issue_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(row?.delivery_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(row?.valid_thru).format('ll')}</TableCell>
                         <TableCell align="right">
                           <MoreMenu
-                            id={id}
+                            id={row?.id}
                             document={true}
-                            handleDelete={(event) => handleDeleteData(event, id)}
+                            handleDelete={(event) => handleDeleteData(event, row?.id)}
                           />
                         </TableCell>
                       </TableRow>

@@ -22,6 +22,7 @@ use DB;
         'shipment_estimated',
         'product_id',
         'product_feature_id',
+        'costing_item_id',
         'description'
     ];
 
@@ -80,6 +81,10 @@ use DB;
 
     public function wip_fg(){
       return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
+    }
+
+    public function import_info(){
+      return $this->belongsTo('App\Models\KITE\ImportDocItem', 'id', 'order_item_id');
     }
 
   }

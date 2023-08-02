@@ -245,7 +245,7 @@ function FirstPage() {
         if (isEmpty(res.data)) throw new Error('failed to load data');
         else {
           const quoteItem = res.data.order_item.map(function (key, index) {
-            const { id, product_id, name, size, color } = productItemArrangedData(
+            const { id, product_id, name, size, color, satuan } = productItemArrangedData(
               key.product_feature
             );
             return {
@@ -257,6 +257,7 @@ function FirstPage() {
               color: color,
               qty: key.qty,
               unit_price: key.unit_price,
+              unit_measurement: satuan,
               description: key.description
             };
           });

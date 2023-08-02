@@ -1,8 +1,16 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import { IconButton, Stack } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import {
+  Card,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+  styled,
+  Typography,
+  Modal
+} from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import closeCircle from '@iconify/icons-eva/close-outline';
@@ -43,19 +51,51 @@ export default function BasicModal({
       return undefined;
     }
 
-    API.getProductFeature(async (res) => {
-      if (!res) return;
-      if (!res.data) {
-        setOptions([]);
-      } else {
-        let data = await optionProductFeature(res.data);
-        setOptions(data);
-      }
-    });
+    try {
+      API.getCostingV2((res) => {
+        if (!res) return;
+        if (!res.data) {
+          setCostingData([]);
+        } else {
+          setCostingData(res.data);
+        }
+      });
+    } catch (error) {
+      alert('error');
+    }
+
     return () => {
       active = false;
     };
   }, [loading]);
+
+  // --------------------------------------------------------------- //
+  const [selectedCosting, setSelectedCosting] = React.useState(0);
+  const [dataCosting, setCostingData] = React.useState([]);
+
+  const handleSelect = (e) => {
+    setSelectedCosting(e.target.value);
+  };
+
+  React.useEffect(() => {
+    // console.log(selectedCosting)
+    if (selectedCosting !== 0) {
+      try {
+        API.getBOMItemV3(selectedCosting, (res) => {
+          if (!res) return;
+          if (!res.data) {
+            setOptions([]);
+          } else {
+            // console.log(data);
+            setOptions(res.data);
+          }
+        });
+      } catch (error) {
+        alert('error');
+      }
+    }
+  }, [selectedCosting]);
+  // --------------------------------------------------------------- //
 
   return (
     <div>
@@ -73,6 +113,23 @@ export default function BasicModal({
               <Icon icon={closeCircle} />
             </IconButton>
           </Stack>
+
+          <div>
+            <InputLabel id="costing_name">Pilih Costing</InputLabel>
+            <Select
+              onChange={handleSelect}
+              value={selectedCosting}
+              input={<OutlinedInput label="Name" />}
+              size="small"
+              fullWidth
+            >
+              <MenuItem value={0}>None</MenuItem>;
+              {dataCosting?.map(function (item) {
+                return <MenuItem value={item.id}>{item.name}</MenuItem>;
+              })}
+            </Select>
+          </div>
+
           <Table
             list={options}
             order_id={order_id}

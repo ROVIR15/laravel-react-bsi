@@ -20,16 +20,16 @@ import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
 import { isEditCondition } from '../../../../helpers/data';
 
+import { enqueueSnackbar } from 'notistack';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
-    { id: 'category', label: 'Kategori', alignRight: false },
-    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'satuan', label: 'Satuan', alignRight: false },
-    { id: 'brand', label: 'Brand', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'Style', alignRight: false },
+  { id: 'category', label: 'Kategori', alignRight: false },
+  { id: 'satuan', label: 'Satuan', alignRight: false },
+];
 
 // ----------------------------------------------------------------------
 
@@ -105,6 +105,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
 
   const handleClick = (event, name) => {
     name = {...name, product_feature_id: name.id}
+    console.log(name)
     const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -112,17 +113,24 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
         try {
           const { id } = name;
           let payload = {
+            product_id: name?.product_id,
             product_feature_id: id,
+            costing_item_id : name?.costing_item_id,
             order_id,
             qty: 0,
             unit_price: 0,
             cm_price: 0,
             shipment_estimated: '2022-09-03'
           };
-          API.insertPurchaseOrderItem([payload], function (res) {
-            if (res.success) alert('success');
-            else throw new Error('failed to update order item')
-          });
+
+          try {
+            API.insertPurchaseOrderItem([payload], function (res) {
+              if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+              else enqueueSnackbar('', { variant: 'failedAlert' });
+            });
+          } catch (error) {
+            enqueueSnackbar('', { variant: 'failedAlert' });
+          }
           update();
         } catch(e) {
           alert(e);
@@ -163,11 +171,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
   const handleDeleteData = (event, id) => {
     event.preventDefault();
     alert(id);
-    API.deleteSalesOrder(id, function(res){
-      if(res.success) setSalesOrderData([]);
-    }).catch(function(error){
-      alert('error')
-    });
+
   }
 
   const handleDeleteSelected = () => {
@@ -210,16 +214,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                 .map((row) => {
                   const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
                   const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
-                  const {
-                    id,
-                    name,
-                    size,
-                    color,
-                    category,
-                    sub_category,
-                    satuan,
-                    brand
-                  } = row;
+                  const { id, item_name, category, unit_measurement } = row;
                   return (
                     <TableRow
                       hover
@@ -237,13 +232,9 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">
-                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
-                      </TableCell>
+                      <TableCell align="left">{item_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
-                      <TableCell align="left">{brand}</TableCell>
+                      <TableCell align="left">{unit_measurement}</TableCell>
                     </TableRow>
                   );
                 })}

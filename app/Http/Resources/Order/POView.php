@@ -17,7 +17,7 @@ class POView extends JsonResource
       return [
         'id' => $this->id,
         'order_id' => $this->order_id,
-        'currency_id' => $this->order->currency_id,
+        'currency_id' => $this->order->currency_id ,
         'po_number' => $this->po_number,
         'party' => $this->party,
         'bought_from' => $this->party->name,

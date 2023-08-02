@@ -7,6 +7,8 @@ import {
   CardContent,
   Container,
   Divider,
+  FormLabel,
+  FormControlLabel,
   Grid,
   Tab,
   TextField,
@@ -14,7 +16,10 @@ import {
   Button,
   FormControl,
   InputLabel,
+  RadioGroup,
+  Radio,
   Stack,
+  Paper,
   Select,
   MenuItem
 } from '@mui/material';
@@ -40,6 +45,10 @@ import AutoComplete from './components/AutoComplete';
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import useAuth from '../../../../context';
+
+// Snackbar
+import { enqueueSnackbar } from 'notistack';
+
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -128,7 +137,8 @@ function OutboundDelivery() {
       serial_number: '',
       delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       est_delivery_date: moment(new Date()).format('YYYY-MM-DD'),
-      comment: 'nothing'
+      comment: 'nothing',
+      subcontract_flag: false
     },
     validationSchema: OutboundDeliverySchema,
     onSubmit: (values) => {
@@ -141,16 +151,16 @@ function OutboundDelivery() {
       try {
         API.insertShipment(_data, (res) => {
           if (!res) return;
-          if (!res.success) throw new Error('failed');
+          if (!res.success) enqueueSnackbar('', { variant: 'failedAlert' });
           else {
             handleReset();
             setSelectedValueSO({});
             setItems([]);
-            alert('done');
+            enqueueSnackbar('', { variant: 'successAlert' });
           }
         });
       } catch (error) {
-        alert(`error occured ${error}`);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
       setSubmitting(false);
     }
@@ -172,12 +182,14 @@ function OutboundDelivery() {
   function changeData(data) {
     setValues({
       order_id: data.order_id,
+      subcontract_flag: Boolean(data.subcontract_flag),
       delivery_date: values.delivery_date
     });
 
     let _party = _partyAddress(data.party);
 
     setSelectedValueSO(_party);
+    setIsSubcontract(Boolean(data.subcontract_flag));
   }
 
   const columns = useMemo(
@@ -271,18 +283,33 @@ function OutboundDelivery() {
           completion_status_id: status
         },
         function (res) {
-          if (!res.success) alert('Failed');
-          alert('done');
-        }
-      );
-    } catch (error) {
-      alert(error);
-    }
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }  
   };
 
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
   };
+
+  // Radio Import Activity
+  // ----------------------------------------------------------------- //
+  const [isSubcontract, setIsSubcontract] = useState(false);
+
+  const handleRadioSubcontractCheck = (e) => {
+    if (e.target.value === 'true') {
+      setIsSubcontract(true);
+      setFieldValue('subcontract_flag', true);
+    } else {
+      setIsSubcontract(false);
+      setFieldValue('subcontract_flag', false);
+      if (valueTab === '4') setValueTab('1');
+    }
+  };
+  // ----------------------------------------------------------------- //
 
   return (
     <Page>
@@ -331,7 +358,7 @@ function OutboundDelivery() {
                   <CardHeader title="Delivery Information" />
                   <CardContent>
                     <Grid container direction="row" spacing={2}>
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={5} sx={{ padding: 'unset' }}>
                         <AutoComplete
                           fullWidth
                           autoComplete="sales_order_id"
@@ -346,7 +373,7 @@ function OutboundDelivery() {
                         />
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={5} sx={{ padding: 'unset' }}>
                         <TextField
                           variant="outlined"
                           type="text"
@@ -357,6 +384,21 @@ function OutboundDelivery() {
                           error={Boolean(touched.serial_number && errors.serial_number)}
                           helperText={touched.serial_number && errors.serial_number}
                         />
+                      </Grid>
+
+                      <Grid item xs={2}>
+                        <FormControl>
+                          <FormLabel id="Improt">Subkontrak?</FormLabel>
+                          <RadioGroup
+                            row
+                            value={isSubcontract}
+                            name="import-activity-check"
+                            onChange={handleRadioSubcontractCheck}
+                          >
+                            <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
+                            <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
+                          </RadioGroup>
+                        </FormControl>
                       </Grid>
 
                       <Grid item xs={12}>

@@ -168,10 +168,11 @@ function Row(props) {
                     <TableCell>PO Number</TableCell>
                     <TableCell>Product Name</TableCell>
                     <TableCell>Total Qty Order</TableCell>
-                    <TableCell align="right">Total Pengerjaan *sewing (pcs)</TableCell>
-                    <TableCell align="right">Total Pengerjaan Sebelumnya *sewing (pcs)</TableCell>
-                    <TableCell align="right">Kekurangan Pengerjaan *sewing (pcs)</TableCell>
-                    <TableCell align="right">Total Uang</TableCell>
+                    <TableCell align="left">Total Output Bulan Ini (pcs)</TableCell>
+                    <TableCell align="left">Total Output Bulan sebelumnya (pcs)</TableCell>
+                    <TableCell align="left">Balance (pcs)</TableCell>
+                    <TableCell align="left">Harga Per Unit</TableCell>
+                    <TableCell align="left">Total</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -191,12 +192,13 @@ function Row(props) {
                         {historyRow.product_name}
                       </TableCell>
                       <TableCell>{fNumber(historyRow.total_qty)}</TableCell>
-                      <TableCell align="right">{fNumber(historyRow.total_output_sewing)}</TableCell>
-                      <TableCell align="right">
+                      <TableCell align="left">{fNumber(historyRow.total_output_sewing)}</TableCell>
+                      <TableCell align="left">
                         {fNumber(historyRow.last_total_output_sewing)}
                       </TableCell>
-                      <TableCell align="right">{fNumber(historyRow.left_qty)}</TableCell>
-                      <TableCell align="right">
+                      <TableCell align="left">{fNumber(historyRow.left_qty)}</TableCell>
+                      <TableCell align="left">{fNumber(historyRow.cm_price_avg)}</TableCell>
+                      <TableCell align="left">
                         {fCurrency(Math.round(historyRow.total_money))}
                       </TableCell>
                     </TableRow>
@@ -244,13 +246,13 @@ const columns = [
     name: 'Banyaknya Order'
   },
   {
-    name: 'Output Pengerjaan (sewing)'
+    name: 'Output Pengerjaan Sewing - Bulan Ini'
   },
   {
-    name: 'Output Pengerjaan Sebelumnya (sewing)'
+    name: 'Output Pengerjaan Sewing - Bulan Sebelumnya'
   },
   {
-    name: 'Total Qty Buyer'
+    name: 'Total Order'
   },
   {
     name: 'Jumlah Uang'

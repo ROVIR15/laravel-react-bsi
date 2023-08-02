@@ -19,6 +19,7 @@ protected $table = 'quote_item';
         'request_item_id',
         'product_id',
         'product_feature_id',
+        'costing_item_id',
         'unit_price',
         'qty'
     ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\Monitoring\FinishedGoods;
+use App\Models\Product\Product;
 
 class MonitoringFinishedGoodsController extends Controller
 {
@@ -119,6 +120,33 @@ class MonitoringFinishedGoodsController extends Controller
 
       try 
       {
+
+        $query_alt = Product::with('goods')
+                      ->with(['check_finished_goods' => function ($query) use ($month, $year) {
+                        return $query
+                                ->select('date', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))
+                                ->whereHas('check_shipment', function ($query) use ($month, $year) {
+                                  return $query->whereHas('shipment', function($query) use ($month, $year){
+                                    return $query
+                                            ->whereYear('delivery_date', $year)
+                                            ->whereMonth('delivery_date', $month);
+                                  });
+                                })
+                                ->whereMonth('date', $month)
+                                ->whereYear('date', $year)
+                                ->groupBy('order_item_id');
+                      }])
+                      ->whereHas('check_finished_goods', function ($query) use ($month, $year){
+                        return $query
+                                ->whereMonth('date', $month)
+                                ->whereYear('date', $year);
+                      })
+                      ->with(['check_shipment' => function($query) use ($month, $year) {
+                        return $query
+                                ->whereMonth('date', $month)
+                                ->whereYear('date', $year);
+                      }])
+                      ->get();
         $query = FinishedGoods::select('id', 'date', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))
                   ->with(['check_shipment' => function($query) use ($month, $year){
                     return $query->whereHas('shipment', function($query) use ($month, $year){
@@ -153,7 +181,7 @@ class MonitoringFinishedGoodsController extends Controller
         ]);
       }
       return response()->json([
-        'data' => $query
+        'data' => $query_alt
       ]);
     }
 }

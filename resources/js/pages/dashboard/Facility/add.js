@@ -22,20 +22,20 @@ const UploadPaper = styled(Button)(({theme}) => ({
     height: '100%'
 }));
 
-function Goods() {
+function Facility() {
   const [cat, setCat] = useState([]);
   const loading = cat.length === 0;
   const [file, setFile] = useState(null);
 
   const GoodsSchema = Yup.object().shape({
     name: Yup.string().required('Date is required'),
-    type: Yup.number().required('Line is required')
+    facility_type_id: Yup.number().required('Line is required')
   });
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      type: 0
+      facility_type_id: 0
     },
     validationSchema: GoodsSchema,
     onSubmit: (values) => {
@@ -48,7 +48,7 @@ function Goods() {
         })
           
       } catch (error) {
-        alert('error')        
+        alert(error)        
       }
       setSubmitting(false);
     }
@@ -79,6 +79,12 @@ function Goods() {
       active= false
     }
   }, [loading])
+
+  const handleChangSelection = (event) => {
+    const { target: { value }} = event;
+
+    setFieldValue('facility_type_id', value);
+  }
 
   return (
     <Page>
@@ -111,8 +117,7 @@ function Goods() {
                       <InputLabel>Facility Type</InputLabel>
                       <Select
                         autoComplete="facility_type_id"
-                        type="number"
-                        {...getFieldProps('facility_type_id')}
+                        onChange={handleChangSelection}
                         error={Boolean(touched.facility_type_id && errors.facility_type_id)}
                         helperText={touched.facility_type_id && errors.facility_type_id}
                       >
@@ -163,4 +168,4 @@ function Goods() {
   )
 }
 
-export default Goods
+export default Facility

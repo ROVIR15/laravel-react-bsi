@@ -15,7 +15,8 @@
   use App\Http\Resources\Order\SalesOrderCollection;
   use App\Http\Resources\Order\SOView as oneSalesOrderView;
   use App\Http\Resources\Order\SOViewCollection;
-  use Illuminate\Http\Request;
+use App\Models\KITE\ExportDoc;
+use Illuminate\Http\Request;
 
   class SalesOrderController extends Controller
    {
@@ -140,6 +141,7 @@
         $salesOrder = SalesOrder::create([
           'order_id' => $order->id,
           'quote_id' => $param['quote_id'],
+          'export_flag' => $param['export_flag'],
           'po_number' => $param['po_number'],
           'sold_to' => $param['sold_to'],
           'ship_to' => $param['ship_to'],
@@ -147,6 +149,15 @@
           'issue_date' => $param['issue_date'],
           'valid_thru' => $param['valid_thru']
         ]);
+
+        if($param['export_flag'] === true){
+          ExportDoc::create([
+            'sales_order_id' => $salesOrder->id,
+            'order_id' => $order->id,
+            'document_number' => $param['document_number'],
+            'date' => $param['date']
+          ]);
+        }
 
         //Update order_id on Sales Order Resource
         $order->find($order->id)->update([ 'sales_order_id' => $salesOrder->id]);
@@ -195,7 +206,7 @@
     public function show($id)
     {
       try {
-        $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order')->find($id);
+        $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order', 'export_doc')->find($id);
         return new oneSalesOrder($salesOrder);
       } catch (Exception $th) {
         return response()->json([

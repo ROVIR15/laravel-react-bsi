@@ -136,6 +136,7 @@ class ShipmentController extends Controller
           'est_delivery_date'=> $param['est_delivery_date'],
           'delivery_date'=> $param['delivery_date'],
           'shipment_type_id'=> $param['shipment_type_id'],
+          'subcontract_flag'=> $param['subcontract_flag'],
           'order_id'=> $param['order_id']
         ]);
 

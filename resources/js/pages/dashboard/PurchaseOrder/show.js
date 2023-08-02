@@ -11,6 +11,7 @@ import {
   FormControlLabel,
   FormLabel,
   InputAdornment,
+  MenuItem,
   Table,
   TableRow,
   TableCell,
@@ -20,6 +21,7 @@ import {
   Paper,
   Radio,
   RadioGroup,
+  Select,
   Stack,
   Button,
   Grid
@@ -53,6 +55,10 @@ import { _partyAddress } from '../../../helpers/data';
 import { isEmpty } from 'lodash';
 import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { fCurrency } from '../../../utils/formatNumber';
+import LoadingPage from '../../../components/LoadingPage';
+
+// Snackbar
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -110,7 +116,10 @@ function SalesOrder() {
       po_number: '',
       issue_date: '',
       valid_thru: '',
-      delivery_date: ''
+      delivery_date: '',
+      document_number: 0,
+      customs_document_date: '',
+      customs_document_type: 0
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
@@ -148,9 +157,15 @@ function SalesOrder() {
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
       delivery_date: load.delivery_date,
-      currency_id: load.order.currency_id
+      import_flag: Boolean(load?.import_flag),
+      currency_id: load.order.currency_id,
+      document_number: load?.import_doc?.document_number,
+      customs_document_date: load?.import_doc?.date,
+      customs_document_type: load?.import_doc?.type,
+      import_flag: load?.import_flag
     });
 
+    setIsImport(Boolean(load?.import_flag));
     setDescription(load.order.description);
     setTax(load.order.tax);
 
@@ -168,6 +183,8 @@ function SalesOrder() {
       const { product_feature } = key;
       return {
         ...product_feature,
+        costing_item_id: key.costing_item_id,
+        product_id: product_feature.product_id,
         product_feature_id: product_feature.id,
         id: key.id,
         name: product_feature?.product?.goods
@@ -181,6 +198,8 @@ function SalesOrder() {
         shipment_estimated: new Date(key.shipment_estimated),
         total_shipped: key.shipment_item[0]?.total_qty_received,
         description: key.description,
+        hs_code: key?.import_info?.hs_code,
+        item_serial_number: key?.import_info?.item_serial_number,
         ...key
       };
     });
@@ -189,9 +208,8 @@ function SalesOrder() {
 
     // simplify the data into desired Array Object
     const _inv = load.invoice?.map(function (item) {
-
-      let payment_history = {}
-      if(isEmpty(item.payment_history)) payment_history = { paid_amount: 0, payment_number: 0}
+      let payment_history = {};
+      if (isEmpty(item.payment_history)) payment_history = { paid_amount: 0, payment_number: 0 };
       payment_history = item.payment_history?.reduce(
         function (initial, next) {
           return {
@@ -222,7 +240,7 @@ function SalesOrder() {
   useEffect(() => {
     let active = true;
 
-    (async () => {
+    try {
       API.getProductFeature((res) => {
         if (!res) return;
         if (!res.data) {
@@ -231,7 +249,9 @@ function SalesOrder() {
           setOptionsP(res.data);
         }
       });
-    })();
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
 
     return () => {
       active = false;
@@ -257,12 +277,11 @@ function SalesOrder() {
 
     try {
       API.deleteSalesOrderItem(id, (res) => {
-        if (!res) return;
-        if (!res.success) throw new Error('Failed to delete order item');
-        else alert('succesfully delete');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
 
     handleUpdateAllRows();
@@ -275,16 +294,11 @@ function SalesOrder() {
   const postIncomingGoods = (order_id) => {
     try {
       API.postIncomingGoods({ id: order_id, user_id: user?.id }, function (res) {
-        if (!res) return;
-        if (!res.success) {
-          alert(res.message);
-          throw new Error(res.message);
-        } else {
-          alert(res.message);
-        }
+        if (res.success) enqueueSnackbar('Successfully created incoming shipment!', { variant: 'successAlert' });
+        else enqueueSnackbar('WTF', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -345,6 +359,7 @@ function SalesOrder() {
       return {
         ...product_feature,
         product_feature_id: product_feature.id,
+        costing_item_id: key?.costing_item_id,
         id: key.id,
         name: product_feature?.product?.goods
           ? product_feature?.product?.goods?.name
@@ -388,6 +403,18 @@ function SalesOrder() {
     ],
     [deleteData]
   );
+
+  const columnsBC = useMemo(() => [
+    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+    { field: 'hs_code', headerName: 'Kode HS', editable: true },
+    {
+      field: 'item_serial_number',
+      headerName: 'Nomor Seri Barang',
+      editable: true,
+      width: '200'
+    },
+    { field: 'item_name', headerName: 'Name', width: 350, align: 'left' }
+  ]);
 
   const columnShipment = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
@@ -451,7 +478,6 @@ function SalesOrder() {
   /**
    * Tax
    */
-
   const [tax, setTax] = useState('');
   const [currency, setCurrency] = useState('');
 
@@ -468,16 +494,33 @@ function SalesOrder() {
   };
 
   // Radio
+  //-------------------------------------------------------//
   const handleRadioChange = (event) => {
     if (event.target.value === 1) setCurrency('usd');
     else setCurrency('idr');
     setFieldValue('currency_id', event.target.value);
   };
+  //-------------------------------------------------------//
+
+  // Radio Import Activity
+  //-------------------------------------------------------//
+  const [isImport, setIsImport] = useState(false);
+
+  const handleRadioImportCheck = (e) => {
+    if (e.target.value === 'true') {
+      setIsImport(true);
+    } else {
+      setIsImport(false);
+      if (valueTab === '6') setValueTab('1');
+    }
+  };
+  //-------------------------------------------------------//
 
   //-------------------------------------------------------//
   const [orderId, setOrderId] = useState(0);
   const [openGenerateVendorBillsModal, setOpenGenerateVendorBillsModal] = useState(false);
   //-------------------------------------------------------//
+
   return (
     <Page>
       <Container>
@@ -497,306 +540,420 @@ function SalesOrder() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Card>
-                  <CardHeader title="Choose Quotation" />
-                  <CardContent sx={{ paddingBottom: '6px' }}>
-                    <Stack direction="column" spacing={1}>
-                      <TextField
-                        fullWidth
-                        autoComplete="po_number"
-                        type="text"
-                        label="Referenced Quote"
-                        {...getFieldProps('po_number')}
-                        error={Boolean(touched.po_number && errors.po_number)}
-                        helperText={touched.po_number && errors.po_number}
-                        disabled={false}
-                      />
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={8}>
-                <Card>
-                  <CardContent>
-                    <Paper>
-                      <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Supplier </Typography>
-                            <Button disabled>Select</Button>
-                          </SpaceBetweenBox>
-                          {selectedValueSO?.name ? (
-                            <div>
-                              <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                              <Typography component="span" variant="caption">
-                                {selectedValueSO?.street}
-                              </Typography>
-                              <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
-                            </div>
-                          ) : null}
-                        </ColumnBox>
-                        <Divider orientation="vertical" variant="middle" flexItem />
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Penerima </Typography>
-                            <Button disabled>Select</Button>
-                          </SpaceBetweenBox>
-                          {selectedValueSH?.name ? (
-                            <div>
-                              <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
-                              <Typography component="span" variant="caption">
-                                {selectedValueSH?.street}
-                              </Typography>
-                              <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
-                            </div>
-                          ) : null}
-                        </ColumnBox>
-                      </Stack>
-                    </Paper>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <Stack direction="row" spacing={2}>
-                      <TextField
-                        fullWidth
-                        autoComplete="issue_date"
-                        type="date"
-                        placeholder="valid"
-                        label="PO Date"
-                        {...getFieldProps('issue_date')}
-                        error={Boolean(touched.issue_date && errors.issue_date)}
-                        helperText={touched.issue_date && errors.issue_date}
-                      />
-                      <TextField
-                        fullWidth
-                        autoComplete="valid_thru"
-                        type="date"
-                        label="Valid to"
-                        placeholder="valid"
-                        {...getFieldProps('valid_thru')}
-                        error={Boolean(touched.valid_thru && errors.valid_thru)}
-                        helperText={touched.valid_thru && errors.valid_thru}
-                      />
-                      <TextField
-                        fullWidth
-                        autoComplete="delivery_date"
-                        type="date"
-                        label="Tanggal Pengiriman"
-                        {...getFieldProps('delivery_date')}
-                        error={Boolean(touched.delivery_date && errors.delivery_date)}
-                        helperText={touched.delivery_date && errors.delivery_date}
-                      />
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
-                  <CardContent>
-                    <TabContext value={valueTab}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                          <Tab label="Overview" value="1" />
-                          <Tab label="Description" value="2" />
-                          <Tab label="Shipment Tracking" value="3" />
-                          <Tab label="Finance" value="4" />
-                          <Tab label="Invoice List" value="5" />
-                        </TabList>
-                      </Box>
-
-                      <TabPanel value="1">
-                        <Stack direction="column" spacing={2}>
-                          <Stack direction="row">
-                            <TextField
-                              type="number"
-                              label="Qty"
-                              name="z"
-                              value={populateState.z}
-                              onChange={handleChangePopulate}
-                            />
-                            <TextField
-                              type="number"
-                              label="Harga Barang"
-                              name="aa"
-                              value={populateState.aa}
-                              onChange={handleChangePopulate}
-                            />
-                            <TextField
-                              type="date"
-                              label="Tanggal Kirim"
-                              name="y"
-                              value={populateState.y}
-                              onChange={handleChangePopulate}
-                            />
-                            <Button onClick={handlePopulate}>Populate</Button>
-                          </Stack>
-                        </Stack>
-
-                        <DataGrid
-                          columns={columns}
-                          rows={items}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleUpdateAllRows={handleUpdateAllRows}
-                          handleAddRow={handleOpenModal}
-                        />
-                      </TabPanel>
-
-                      <TabPanel value="2">
-                        <Stack direction="row" alignItems="center">
+            {
+              isSubmitting ? (<LoadingPage/>) : (
+                <Grid container column spacing={1}>
+                {/* New */}
+                <Grid item xs={12}>
+                  <Card>
+                    <CardHeader title="Purchase Order" />
+                    <CardContent>
+                      {/* Quotation List and "Pembeli and Penerima Selection" */}
+                      <Grid container direction="row" spacing={2}>
+                        <Grid item xs={4}>
+                          {/* Quotation */}
                           <TextField
                             fullWidth
-                            multiline
-                            value={description}
-                            onChange={(event) => setDescription(event.target.value)}
-                            rows={6}
+                            autoComplete="po_number"
                             type="text"
+                            label="Referenced Quote"
+                            {...getFieldProps('po_number')}
+                            error={Boolean(touched.po_number && errors.po_number)}
+                            helperText={touched.po_number && errors.po_number}
+                            disabled={false}
                           />
-                        </Stack>
-                        <Button onClick={handleUpdateDesc} variant="outlined">
-                          Save
-                        </Button>
-                      </TabPanel>
-
-                      <TabPanel value="3">
-                        <DataGrid columns={columnShipment} rows={items} />
-                      </TabPanel>
-
-                      <TabPanel value="4">
-                        <Stack direction="column" spacing={2}>
-                          <Stack direction="row" spacing={4} alignItems="center">
-                            <Typography variant="body1">Tax</Typography>
-                            <TextField
-                              autoComplete="tax"
-                              type="number"
-                              value={tax}
-                              onChange={(event) => setTax(event.target.value)}
-                              InputProps={{
-                                endAdornment: <InputAdornment position="end">%</InputAdornment>
-                              }}
-                            />
+                        </Grid>
+  
+                        {/* Pembeli dan Penerima */}
+                        <Grid item xs={8}>
+                          <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                            <ColumnBox>
+                              <SpaceBetweenBox>
+                                <Typography variant="h6"> Supplier </Typography>
+                                <Button disabled>Select</Button>
+                              </SpaceBetweenBox>
+                              {selectedValueSO?.name ? (
+                                <div>
+                                  <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                                  <Typography component="span" variant="caption">
+                                    {selectedValueSO?.street}
+                                  </Typography>
+                                  <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
+                                </div>
+                              ) : null}
+                            </ColumnBox>
+                            <Divider orientation="vertical" variant="middle" flexItem />
+                            <ColumnBox>
+                              <SpaceBetweenBox>
+                                <Typography variant="h6"> Penerima </Typography>
+                                <Button disabled>Select</Button>
+                              </SpaceBetweenBox>
+                              {selectedValueSH?.name ? (
+                                <div>
+                                  <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                                  <Typography component="span" variant="caption">
+                                    {selectedValueSH?.street}
+                                  </Typography>
+                                  <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
+                                </div>
+                              ) : null}
+                            </ColumnBox>
                           </Stack>
-
+                        </Grid>
+                        {/* End of Quotation and "Pembeli and Penerima" Section */}
+                        <Divider variant="middle" style={{ width: 'inherit', margin: 0 }} />
+  
+                        <Grid item xs={10}>
+                          {/* Issue Date, Valid Thru and Delivery Date */}
+                          <ColumnBox
+                            style={{
+                              padding: '1em 0.75em',
+                              border: '1px dashed #b8b8b8',
+                              borderRadius: '8px',
+                              background: '#b6b6b62b'
+                            }}
+                          >
+                            <Stack direction="row" spacing={2}>
+                              <TextField
+                                fullWidth
+                                autoComplete="issue_date"
+                                type="date"
+                                placeholder="valid"
+                                label="Diterbitkan"
+                                {...getFieldProps('issue_date')}
+                                error={Boolean(touched.issue_date && errors.issue_date)}
+                                helperText={touched.issue_date && errors.issue_date}
+                              />
+                              <TextField
+                                fullWidth
+                                autoComplete="valid_thru"
+                                type="date"
+                                label="Valid to"
+                                placeholder="valid"
+                                {...getFieldProps('valid_thru')}
+                                error={Boolean(touched.valid_thru && errors.valid_thru)}
+                                helperText={touched.valid_thru && errors.valid_thru}
+                              />
+                              <TextField
+                                fullWidth
+                                autoComplete="delivery_date"
+                                type="date"
+                                label="Tanggal Pengiriman"
+                                {...getFieldProps('delivery_date')}
+                                error={Boolean(touched.delivery_date && errors.delivery_date)}
+                                helperText={touched.delivery_date && errors.delivery_date}
+                              />
+                            </Stack>
+                          </ColumnBox>
+                        </Grid>
+  
+                        <Grid item xs={2}>
                           <FormControl>
-                            <FormLabel id="demo-row-radio-buttons-group-label">
-                              Select Currency
-                            </FormLabel>
+                            <FormLabel id="Improt">Import</FormLabel>
                             <RadioGroup
                               row
-                              aria-labelledby="demo-row-radio-buttons-group-label"
-                              name="row-radio-buttons-group"
-                              onChange={handleRadioChange}
-                              value={values.currency_id}
+                              value={isImport}
+                              name="import-activity-check"
+                              onChange={handleRadioImportCheck}
                             >
-                              <FormControlLabel value={1} control={<Radio />} label="USD" />
-                              <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
+                              <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
+                              <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
                             </RadioGroup>
                           </FormControl>
-
-                          <Button
-                            onClick={handleUpdateTax}
-                            variant="outlined"
-                            sx={{ width: '25ch' }}
+                        </Grid>
+  
+                        <Grid item xs={12}>
+                          <ColumnBox
+                            style={{
+                              padding: '1em 0.75em',
+                              border: '1px dashed #b8b8b8',
+                              borderRadius: '8px'
+                            }}
                           >
-                            Save
-                          </Button>
-                        </Stack>
-                      </TabPanel>
-
-                      <TabPanel value="5">
-                        <Table>
-                          <TableRow>
-                            <TableCell>
-                              <Typography variant="h6">Tanggal</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="h6">Nomor Invoice</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="h6">Qty</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="h6">Jumlah Uang</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="h6">Jumlah Bayar</Typography>
-                            </TableCell>
-                          </TableRow>
-                          {generatedInvoice.map(function (item) {
-                            return (
-                              <TableRow>
-                                <TableCell variant="subtitle">
-                                  {moment(item.effective_date).format('LL')}
-                                </TableCell>
-                                <TableCell
-                                  variant="subtitle"
-                                  component={RouterLink}
-                                  to={`/dashboard/finance/vendor-bills/${item.id}`}
-                                >
-                                  {item.serial_number}
-                                </TableCell>
-                                <TableCell variant="subtitle">{item.qty}</TableCell>
-                                <TableCell variant="subtitle">
-                                  {fCurrency(item.total_amount * 1.11, 'idr')}
-                                </TableCell>
-                                <TableCell>
-                                  {fCurrency(item.payment_history?.paid_amount)}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </Table>
-                      </TabPanel>
-                    </TabContext>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <Button
-                    size="large"
-                    color="grey"
-                    variant="contained"
-                    sx={{ m: 1 }}
-                    onClick={() => {
-                      setOrderId(values?.order_id);
-                      setOpenGenerateVendorBillsModal(true);
-                    }}
-                  >
-                    Post Vendor Bills{' '}
-                  </Button>
-                  <Button
-                    size="large"
-                    color="grey"
-                    variant="contained"
-                    sx={{ m: 1 }}
-                    onClick={() => postIncomingGoods(values?.order_id)}
-                  >
-                    {' '}
-                    Post Incoming Goods{' '}
-                  </Button>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" type="submit" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
-            </Grid>
+                            <TabContext value={valueTab}>
+                              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                                  <Tab label="Overview" value="1" />
+                                  <Tab label="Description" value="2" />
+                                  <Tab label="Shipment Tracking" value="3" />
+                                  <Tab label="Finance" value="4" />
+                                  <Tab label="Invoice List" value="5" />
+                                  <Tab label="Customs" value="6" disabled={!isImport} />
+                                </TabList>
+                              </Box>
+  
+                              <TabPanel value="1">
+                                <Stack direction="column" spacing={2}>
+                                  <Stack direction="row">
+                                    <TextField
+                                      type="number"
+                                      label="Qty"
+                                      name="z"
+                                      value={populateState.z}
+                                      onChange={handleChangePopulate}
+                                    />
+                                    <TextField
+                                      type="number"
+                                      label="Harga Barang"
+                                      name="aa"
+                                      value={populateState.aa}
+                                      onChange={handleChangePopulate}
+                                    />
+                                    <TextField
+                                      type="date"
+                                      label="Tanggal Kirim"
+                                      name="y"
+                                      value={populateState.y}
+                                      onChange={handleChangePopulate}
+                                    />
+                                    <Button onClick={handlePopulate}>Populate</Button>
+                                  </Stack>
+                                </Stack>
+  
+                                <DataGrid
+                                  columns={columns}
+                                  rows={items}
+                                  onEditRowsModelChange={handleEditRowsModelChange}
+                                  handleUpdateAllRows={handleUpdateAllRows}
+                                  handleAddRow={handleOpenModal}
+                                />
+                              </TabPanel>
+  
+                              <TabPanel value="2">
+                                <Stack direction="row" alignItems="center">
+                                  <TextField
+                                    fullWidth
+                                    multiline
+                                    value={description}
+                                    onChange={(event) => setDescription(event.target.value)}
+                                    rows={6}
+                                    type="text"
+                                  />
+                                </Stack>
+                                <Button onClick={handleUpdateDesc} variant="outlined">
+                                  Save
+                                </Button>
+                              </TabPanel>
+  
+                              <TabPanel value="3">
+                                <DataGrid columns={columnShipment} rows={items} />
+                              </TabPanel>
+  
+                              <TabPanel value="4">
+                                <Stack direction="column" spacing={2}>
+                                  <Stack direction="row" spacing={4} alignItems="center">
+                                    <Typography variant="body1">Tax</Typography>
+                                    <TextField
+                                      autoComplete="tax"
+                                      type="number"
+                                      value={tax}
+                                      onChange={(event) => setTax(event.target.value)}
+                                      InputProps={{
+                                        endAdornment: (
+                                          <InputAdornment position="end">%</InputAdornment>
+                                        )
+                                      }}
+                                    />
+                                  </Stack>
+  
+                                  <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">
+                                      Select Currency
+                                    </FormLabel>
+                                    <RadioGroup
+                                      row
+                                      aria-labelledby="demo-row-radio-buttons-group-label"
+                                      name="row-radio-buttons-group"
+                                      onChange={handleRadioChange}
+                                      value={values.currency_id}
+                                    >
+                                      <FormControlLabel value={1} control={<Radio />} label="USD" />
+                                      <FormControlLabel
+                                        value={2}
+                                        control={<Radio />}
+                                        label="Rupiah"
+                                      />
+                                    </RadioGroup>
+                                  </FormControl>
+  
+                                  <Button
+                                    onClick={handleUpdateTax}
+                                    variant="outlined"
+                                    sx={{ width: '25ch' }}
+                                  >
+                                    Save
+                                  </Button>
+                                </Stack>
+                              </TabPanel>
+  
+                              <TabPanel value="5">
+                                <Table>
+                                  <TableRow>
+                                    <TableCell>
+                                      <Typography variant="h6">Tanggal</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor Invoice</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Qty</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Jumlah Uang</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Jumlah Bayar</Typography>
+                                    </TableCell>
+                                  </TableRow>
+                                  {generatedInvoice.map(function (item) {
+                                    return (
+                                      <TableRow>
+                                        <TableCell variant="subtitle">
+                                          {moment(item.effective_date).format('LL')}
+                                        </TableCell>
+                                        <TableCell
+                                          variant="subtitle"
+                                          component={RouterLink}
+                                          to={`/dashboard/finance/vendor-bills/${item.id}`}
+                                        >
+                                          {item.serial_number}
+                                        </TableCell>
+                                        <TableCell variant="subtitle">{item.qty}</TableCell>
+                                        <TableCell variant="subtitle">
+                                          {fCurrency(item.total_amount * 1.11, 'idr')}
+                                        </TableCell>
+                                        <TableCell>
+                                          {fCurrency(item.payment_history?.paid_amount)}
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  })}
+                                </Table>
+                              </TabPanel>
+  
+                              <TabPanel value="6">
+                                <Grid container direction="row" spacing={2}>
+                                  <Grid item xs={4}>
+                                    <FormControl>
+                                      <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
+                                      <TextField
+                                        placeholder="13223XX"
+                                        fullWidth
+                                        autoComplete="document_number"
+                                        type="text"
+                                        {...getFieldProps('document_number')}
+                                        error={Boolean(
+                                          touched.document_number && errors.document_number
+                                        )}
+                                        helperText={touched.document_number && errors.document_number}
+                                      />
+                                    </FormControl>
+                                  </Grid>
+  
+                                  <Grid item xs={4}>
+                                    <FormControl>
+                                      <FormLabel id="xx">Tanggal Dokumen Kepabean</FormLabel>
+                                      <TextField
+                                        type="date"
+                                        placeholder="26-03-2023"
+                                        fullWidth
+                                        autoComplete="customs_document_date"
+                                        {...getFieldProps('customs_document_date')}
+                                        error={Boolean(
+                                          touched.customs_document_date &&
+                                            errors.customs_document_date
+                                        )}
+                                        helperText={
+                                          touched.customs_document_date &&
+                                          errors.customs_document_date
+                                        }
+                                      />
+                                    </FormControl>
+                                  </Grid>
+  
+                                  <Grid item xs={4}>
+                                    <FormControl>
+                                      <FormLabel id="xx">Jenis Dokumen Kepabean</FormLabel>
+                                      <Select
+                                        {...getFieldProps('customs_document_type')}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        error={Boolean(
+                                          touched.customs_document_type &&
+                                            errors.customs_document_type
+                                        )}
+                                        helperText={
+                                          touched.customs_document_type &&
+                                          errors.customs_document_type
+                                        }
+                                      >
+                                        <MenuItem value="">
+                                          <em>None</em>
+                                        </MenuItem>
+                                        <MenuItem value={1}>BC 2.0</MenuItem>
+                                        <MenuItem value={2}>BC 2.4</MenuItem>
+                                        <MenuItem value={3}>BC 2.5</MenuItem>
+                                        <MenuItem value={4}>BC 2.8</MenuItem>
+                                      </Select>
+                                    </FormControl>
+                                  </Grid>
+  
+                                  <Grid item xs={12}>
+                                    <DataGrid columns={columnsBC} rows={items} />
+                                  </Grid>
+                                </Grid>
+                              </TabPanel>
+                            </TabContext>
+                          </ColumnBox>
+                        </Grid>
+                        {/* END Tab */}
+  
+                        {/* Button */}
+                        <Grid item xs={12}>
+                          <Box sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}>
+                            <Button
+                              size="large"
+                              color="grey"
+                              variant="contained"
+                              sx={{ m: 1 }}
+                              onClick={() => {
+                                setOrderId(values?.order_id);
+                                setOpenGenerateVendorBillsModal(true);
+                              }}
+                            >
+                              Post Vendor Bills{' '}
+                            </Button>
+                            <Button
+                              size="large"
+                              color="grey"
+                              variant="contained"
+                              sx={{ m: 1 }}
+                              onClick={() => postIncomingGoods(values?.order_id)}
+                            >
+                              {' '}
+                              Post Incoming Goods{' '}
+                            </Button>
+                            <LoadingButton
+                              size="large"
+                              type="submit"
+                              variant="contained"
+                              loading={isSubmitting}
+                              sx={{ m: 1 }}
+                            >
+                              Save
+                            </LoadingButton>
+                            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                              Cancel
+                            </Button>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>  
+              )
+            }
           </Form>
         </FormikProvider>
       </Container>

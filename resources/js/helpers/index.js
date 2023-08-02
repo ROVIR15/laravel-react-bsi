@@ -1300,6 +1300,19 @@ const main = {
         cb(err.response);
       });
   },
+  getBOMItemV3(costing_id, cb) {
+    if (!costing_id) {
+      return;
+    }
+
+    axios.get(uri + `/bom-item-alt-v3/${costing_id}`)
+    .then(function(res){
+      cb(res.data)
+    })
+    .catch(function (err){
+      cb(err.response)
+    })
+  },
   updateABOMItem_alt(bom_altId, _data, cb) {
     axios
       .put(uri + '/bom-item-alt-v2/' + bom_altId, { payload: _data })
@@ -1332,6 +1345,15 @@ const main = {
   },
 
   //BOM
+  getCostingV2(cb) {
+    axios.get(uri + '/get-costing')
+    .then(function (res) {
+      cb(res.data);
+    })
+    .catch(function (err) {
+      cb(err);
+    });
+  },
   insertBOM(_data, cb) {
     if (!_data) {
       console.error('data not found');

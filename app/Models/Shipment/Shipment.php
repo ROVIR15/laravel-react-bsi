@@ -22,6 +22,7 @@ class Shipment extends Model
         'delivery_date',
         'est_delivery_date',
         'order_id',
+        'subcontract_flag',
         'imageUrl'
     ];
 

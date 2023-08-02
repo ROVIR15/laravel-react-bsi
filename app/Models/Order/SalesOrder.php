@@ -18,6 +18,7 @@
 
     protected $fillable = [
         'id',
+        'export_flag',
         'order_id',
         'sold_to',
         'ship_to',
@@ -101,6 +102,10 @@
 
     public function invoice(){
       return $this->hasMany('App\Models\Invoice\Invoice', 'order_id', 'order_id')->with('sales_order', 'sum', 'terms', 'payment_history');
+    }
+
+    public function export_doc(){
+      return $this->belongsTo('App\Models\Order\SalesOrder', 'id');
     }
 
   }

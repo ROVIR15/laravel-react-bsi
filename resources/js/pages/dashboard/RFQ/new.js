@@ -43,6 +43,9 @@ import { partyArrangedData } from '../../../helpers/data';
 import { RFQSchema } from '../../../helpers/FormerSchema';
 import { isEmpty } from 'lodash';
 
+// Loading Page
+import LoadingPage from '../../../components/LoadingPage';
+
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -118,9 +121,8 @@ function RFQ() {
           if (res.success) alert('success');
           else alert('failed');
         });
-          
       } catch (error) {
-        alert(error);        
+        alert(error);
       }
       setSubmitting(false);
     }
@@ -261,7 +263,8 @@ function RFQ() {
       { field: 'id', headerName: 'Purchase Re Item ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
-      { field: 'unit_price', headerName: 'Unit Price', editable: true },
+      { field: 'unit_measurement', headerName: 'Satuan', editable: true },
+      { field: 'unit_price', headerName: 'Unit Price', editable: false },
       {
         field: 'actions',
         type: 'actions',
@@ -317,218 +320,222 @@ function RFQ() {
 
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container direction="row" spacing={2}>
-              <Grid item xs={4}>
-                <Card>
-                  <CardHeader title="Choose Quotation" />
-                  <CardContent sx={{ paddingBottom: '6px' }}>
-                    <TextField
-                      fullWidth
-                      autoComplete="po_number"
-                      type="text"
-                      label="No PO"
-                      {...getFieldProps('po_number')}
-                      error={Boolean(touched.po_number && errors.po_number)}
-                      helperText={touched.po_number && errors.po_number}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={8}>
-                <Card>
-                  <CardHeader title="Quotation Information" />
-                  <CardContent>
-                    <Paper>
-                      <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Pembeli </Typography>
-                            <Button onClick={() => setOpenSO(true)}>Select</Button>
-                          </SpaceBetweenBox>
-                          {selectedValueSO?.name ? (
-                            <div>
-                              <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                              <Typography component="span" variant="caption">
-                                {selectedValueSO?.street}
-                              </Typography>
-                              <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
-                            </div>
-                          ) : null}
-                          <DialogBox
-                            options={options}
-                            loading={loading}
-                        error={Boolean(touched.bought_from && errors.bought_from)}
-                        helperText={touched.bought_from && errors.bought_from}
-                            selectedValue={selectedValueSO}
-                            open={openSO}
-                        onClose={(value) => handleClose('bought_from', value)}
-                          />
-                        </ColumnBox>
-                        <Divider orientation="vertical" variant="middle" flexItem />
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Penerima </Typography>
-                            <Button onClick={() => setOpenSH(true)}>Select</Button>
-                          </SpaceBetweenBox>
-                          {selectedValueSH?.name ? (
-                            <div>
-                              <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
-                              <Typography component="span" variant="caption">
-                                {selectedValueSH?.street}
-                              </Typography>
-                              <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
-                            </div>
-                          ) : null}
-                          <DialogBox
-                            options={options2}
-                            loading={loading}
-                            error={Boolean(touched.ship_to && errors.ship_to)}
-                            helperText={touched.ship_to && errors.ship_to}
-                            selectedValue={selectedValueSH}
-                            open={openSH}
-                            onClose={(value) => handleClose('ship_to', value)}
-                          />
-                        </ColumnBox>
-                      </Stack>
-                    </Paper>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <Stack direction="row" spacing={2}>
+            {isSubmitting ? (
+              <LoadingPage />
+            ) : (
+              <Grid container direction="row" spacing={2}>
+                <Grid item xs={4}>
+                  <Card>
+                    <CardHeader title="Choose Quotation" />
+                    <CardContent sx={{ paddingBottom: '6px' }}>
                       <TextField
                         fullWidth
-                        autoComplete="issue_date"
-                        type="date"
-                        placeholder="valid"
-                        label="PO Date"
-                        {...getFieldProps('issue_date')}
-                        error={Boolean(touched.issue_date && errors.issue_date)}
-                        helperText={touched.issue_date && errors.issue_date}
+                        autoComplete="po_number"
+                        type="text"
+                        label="No PO"
+                        {...getFieldProps('po_number')}
+                        error={Boolean(touched.po_number && errors.po_number)}
+                        helperText={touched.po_number && errors.po_number}
                       />
-                      <TextField
-                        fullWidth
-                        autoComplete="valid_thru"
-                        type="date"
-                        label="Valid to"
-                        placeholder="valid"
-                        {...getFieldProps('valid_thru')}
-                        error={Boolean(touched.valid_thru && errors.valid_thru)}
-                        helperText={touched.valid_thru && errors.valid_thru}
-                      />
-                      <TextField
-                        fullWidth
-                        autoComplete="delivery_date"
-                        type="date"
-                        label="Tanggal Pengiriman"
-                        {...getFieldProps('delivery_date')}
-                        error={Boolean(touched.delivery_date && errors.delivery_date)}
-                        helperText={touched.delivery_date && errors.delivery_date}
-                      />
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12}>
-                <Card>
-                  <TabContext value={valueTab}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }} pt={2} pl={2} pr={2}>
-                      <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                        <Tab label="Overview" value="1" />
-                        <Tab label="Finance" value="2" />
-                      </TabList>
-                    </Box>
-
-                    <TabPanel value="1" sx={{ paddingTop: 'unset' }}>
-                      <CardContent sx={{ paddingBottom: 'unset' }}>
-                        <Stack direction="row" spacing={1}>
-                          <TextField
-                            type="number"
-                            label="Qty"
-                            name="z"
-                            value={populateState.z}
-                            onChange={handleChangePopulate}
-                          />
-                          <TextField
-                            type="number"
-                            label="Harga Barang"
-                            name="aa"
-                            value={populateState.aa}
-                            onChange={handleChangePopulate}
-                          />
-                          <Button onClick={handlePopulate}>Populate</Button>
-                        </Stack>
-                      </CardContent>
-
-                      <DataGrid
-                        columns={columns}
-                        rows={items}
-                        onEditRowsModelChange={handleEditRowsModelChange}
-                        handleAddRow={handleOpenModal}
-                        handleReset={handleResetRows}
-                        handleUpdateAllRows={false}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value="2" sx={{ paddingTop: 'unset' }}>
-                      <CardContent>
-                        <Stack direction="column" spacing={4}>
-                          <FormControl sx={{ width: '25ch' }}>
-                            <FormLabel>Tax</FormLabel>
-                            <TextField
-                              autoComplete="tax"
-                              type="number"
-                              {...getFieldProps('tax')}
-                              error={Boolean(touched.tax && errors.tax)}
-                              helperText={touched.tax && errors.tax}
-                              InputProps={{
-                                endAdornment: <InputAdornment position="end">%</InputAdornment>
-                              }}
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={8}>
+                  <Card>
+                    <CardHeader title="Quotation Information" />
+                    <CardContent>
+                      <Paper>
+                        <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                          <ColumnBox>
+                            <SpaceBetweenBox>
+                              <Typography variant="h6"> Supplier </Typography>
+                              <Button onClick={() => setOpenSO(true)}>Select</Button>
+                            </SpaceBetweenBox>
+                            {selectedValueSO?.name ? (
+                              <div>
+                                <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                                <Typography component="span" variant="caption">
+                                  {selectedValueSO?.street}
+                                </Typography>
+                                <Typography variant="body2">{`${selectedValueSO?.city}, ${selectedValueSO?.province}, ${selectedValueSO.country}`}</Typography>
+                              </div>
+                            ) : null}
+                            <DialogBox
+                              options={options}
+                              loading={loading}
+                              error={Boolean(touched.bought_from && errors.bought_from)}
+                              helperText={touched.bought_from && errors.bought_from}
+                              selectedValue={selectedValueSO}
+                              open={openSO}
+                              onClose={(value) => handleClose('bought_from', value)}
                             />
-                          </FormControl>
-
-                          <FormControl>
-                            <FormLabel id="demo-row-radio-buttons-group-label">
-                              Select Currency
-                            </FormLabel>
-                            <RadioGroup
-                              row
-                              aria-labelledby="demo-row-radio-buttons-group-label"
-                              name="row-radio-buttons-group"
-                              onChange={handleRadioChange}
-                              value={values.currency_id}
-                            >
-                              <FormControlLabel value={1} control={<Radio />} label="USD" />
-                              <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
-                            </RadioGroup>
-                          </FormControl>
+                          </ColumnBox>
+                          <Divider orientation="vertical" variant="middle" flexItem />
+                          <ColumnBox>
+                            <SpaceBetweenBox>
+                              <Typography variant="h6"> Penerima </Typography>
+                              <Button onClick={() => setOpenSH(true)}>Select</Button>
+                            </SpaceBetweenBox>
+                            {selectedValueSH?.name ? (
+                              <div>
+                                <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                                <Typography component="span" variant="caption">
+                                  {selectedValueSH?.street}
+                                </Typography>
+                                <Typography variant="body2">{`${selectedValueSH?.city}, ${selectedValueSH?.province}, ${selectedValueSH.country}`}</Typography>
+                              </div>
+                            ) : null}
+                            <DialogBox
+                              options={options2}
+                              loading={loading}
+                              error={Boolean(touched.ship_to && errors.ship_to)}
+                              helperText={touched.ship_to && errors.ship_to}
+                              selectedValue={selectedValueSH}
+                              open={openSH}
+                              onClose={(value) => handleClose('ship_to', value)}
+                            />
+                          </ColumnBox>
                         </Stack>
-                      </CardContent>
-                    </TabPanel>
-                  </TabContext>
-                </Card>
-              </Grid>
+                      </Paper>
+                    </CardContent>
+                  </Card>
+                </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
+                <Grid item xs={12}>
+                  <Card>
+                    <CardContent>
+                      <Stack direction="row" spacing={2}>
+                        <TextField
+                          fullWidth
+                          autoComplete="issue_date"
+                          type="date"
+                          placeholder="valid"
+                          label="PO Date"
+                          {...getFieldProps('issue_date')}
+                          error={Boolean(touched.issue_date && errors.issue_date)}
+                          helperText={touched.issue_date && errors.issue_date}
+                        />
+                        <TextField
+                          fullWidth
+                          autoComplete="valid_thru"
+                          type="date"
+                          label="Valid to"
+                          placeholder="valid"
+                          {...getFieldProps('valid_thru')}
+                          error={Boolean(touched.valid_thru && errors.valid_thru)}
+                          helperText={touched.valid_thru && errors.valid_thru}
+                        />
+                        <TextField
+                          fullWidth
+                          autoComplete="delivery_date"
+                          type="date"
+                          label="Tanggal Pengiriman"
+                          {...getFieldProps('delivery_date')}
+                          error={Boolean(touched.delivery_date && errors.delivery_date)}
+                          helperText={touched.delivery_date && errors.delivery_date}
+                        />
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={12}>
+                  <Card>
+                    <TabContext value={valueTab}>
+                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} pt={2} pl={2} pr={2}>
+                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                          <Tab label="Overview" value="1" />
+                          <Tab label="Finance" value="2" />
+                        </TabList>
+                      </Box>
+
+                      <TabPanel value="1" sx={{ paddingTop: 'unset' }}>
+                        <CardContent sx={{ paddingBottom: 'unset' }}>
+                          <Stack direction="row" spacing={1}>
+                            <TextField
+                              type="number"
+                              label="Qty"
+                              name="z"
+                              value={populateState.z}
+                              onChange={handleChangePopulate}
+                            />
+                            <TextField
+                              type="number"
+                              label="Harga Barang"
+                              name="aa"
+                              value={populateState.aa}
+                              onChange={handleChangePopulate}
+                            />
+                            <Button onClick={handlePopulate}>Populate</Button>
+                          </Stack>
+                        </CardContent>
+
+                        <DataGrid
+                          columns={columns}
+                          rows={items}
+                          onEditRowsModelChange={handleEditRowsModelChange}
+                          handleAddRow={handleOpenModal}
+                          handleReset={handleResetRows}
+                          handleUpdateAllRows={false}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value="2" sx={{ paddingTop: 'unset' }}>
+                        <CardContent>
+                          <Stack direction="column" spacing={4}>
+                            <FormControl sx={{ width: '25ch' }}>
+                              <FormLabel>Tax</FormLabel>
+                              <TextField
+                                autoComplete="tax"
+                                type="number"
+                                {...getFieldProps('tax')}
+                                error={Boolean(touched.tax && errors.tax)}
+                                helperText={touched.tax && errors.tax}
+                                InputProps={{
+                                  endAdornment: <InputAdornment position="end">%</InputAdornment>
+                                }}
+                              />
+                            </FormControl>
+
+                            <FormControl>
+                              <FormLabel id="demo-row-radio-buttons-group-label">
+                                Select Currency
+                              </FormLabel>
+                              <RadioGroup
+                                row
+                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                name="row-radio-buttons-group"
+                                onChange={handleRadioChange}
+                                value={values.currency_id}
+                              >
+                                <FormControlLabel value={1} control={<Radio />} label="USD" />
+                                <FormControlLabel value={2} control={<Radio />} label="Rupiah" />
+                              </RadioGroup>
+                            </FormControl>
+                          </Stack>
+                        </CardContent>
+                      </TabPanel>
+                    </TabContext>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Card>
+                    <LoadingButton
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      loading={isSubmitting}
+                      sx={{ m: 1 }}
+                    >
+                      Save
+                    </LoadingButton>
+                    <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                      Cancel
+                    </Button>
+                  </Card>
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Form>
         </FormikProvider>
       </Container>

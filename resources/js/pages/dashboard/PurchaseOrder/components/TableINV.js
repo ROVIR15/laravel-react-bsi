@@ -49,6 +49,7 @@ export default function BasicTable({ payload, tax, currency }) {
     if(tax < 1) return fCurrency(Math.floor(sub), currency);
     else return fCurrency(Math.floor(sub) * (1+(tax/100)), currency);
   };
+
   return (
     <>
       <div className="wk_table wk_style1">
@@ -76,7 +77,7 @@ export default function BasicTable({ payload, tax, currency }) {
                         row.size === '1' ? '' : `- ${row.size}`
                       }`}
                     </td>
-                    <td className="wk_width_1">{row.qty}</td>
+                    <td className="wk_width_1">{`${row.qty} ${row.unit_measurement}`}</td>
                     <td className="wk_width_2">{fCurrency(row.unit_price, currency)}</td>
                     <td className="wk_width_2 wk_text_right">
                       {fCurrency(Math.floor(row.qty * row.unit_price), currency)}

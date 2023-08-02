@@ -29,10 +29,12 @@ class SalesOrder extends JsonResource
             'party' => new Party($this->party),
             'ship' => new Party($this->ship),
             'po_number' => $this->po_number,
+            'export_flag' => $this->export_flag,
             'issue_date' => $this->issue_date,
             'delivery_date' => $this->delivery_date,
             'valid_thru' => $this->valid_thru,
             'order_item' => new OrderItemCollection($this->order_item),
+            'export_doc' => $this->export_doc,
             'completion_status' => $this->completion_status,
             'status' => $this->status
         ];
