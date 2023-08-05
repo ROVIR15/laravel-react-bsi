@@ -254,10 +254,8 @@ function Inbound() {
                   <TableCell>Nomor Bukti Pengeluaran dan/atau Penerimaan</TableCell>
                   <TableCell>Tanggal Bukti Pengeluaran dan/atau Penerimaan</TableCell>
                   <TableCell>Kode Barang</TableCell>
-                  <TableCell>Item Name</TableCell>
-                  <TableCell>Category Name</TableCell>
-                  <TableCell>Satuan</TableCell>
-                  <TableCell>Jumlah Barang</TableCell>
+                  <TableCell>Nama Barang</TableCell>
+                  {/* <TableCell>Category Name</TableCell> */}
                   <TableCell>Perusahaan Sub Kontrak</TableCell>
                   <TableCell>Lokasi Gudang</TableCell>
                 </TableRow>
@@ -282,7 +280,7 @@ function Inbound() {
                         <TableCell>{`WIP-00${row.id}`}</TableCell>
                         <TableCell>{row.item_name}</TableCell>
                         {/* <TableCell>{convertedString}</TableCell> */}
-                        <TableCell>{row.category_name}</TableCell>
+                        {/* <TableCell>{row.category_name}</TableCell> */}
                         <TableCell>{row.unit_measurement}</TableCell>
                         <TableCell>{row.total_output}</TableCell>
                         <TableCell>{row.sub_kontrak}</TableCell>

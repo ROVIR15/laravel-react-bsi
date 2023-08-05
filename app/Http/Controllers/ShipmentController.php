@@ -43,13 +43,23 @@ class ShipmentController extends Controller
           $year = date_format($monthYear, 'Y');
     
           if(isset($type)){
-            $query = Shipment::with('order', 'type', 'status', 'sum')
-            ->whereHas('type', function($query) use ($type){
-              $query->where('id', $type);
-            })
-            ->whereYear('delivery_date', '=', $year)
-            ->whereMonth('delivery_date', '=', $month)
-            ->get();
+            if($type === "34") {
+              $query = Shipment::with('order', 'type', 'status', 'sum', 'ship_to')
+              ->whereHas('type', function($query){
+                $query->whereIn('id', [3,4]);
+              })
+              ->whereYear('delivery_date', '=', $year)
+              ->whereMonth('delivery_date', '=', $month)
+              ->get();
+            } else {
+              $query = Shipment::with('order', 'type', 'status', 'sum')
+              ->whereHas('type', function($query) use ($type){
+                $query->where('id', $type);
+              })
+              ->whereYear('delivery_date', '=', $year)
+              ->whereMonth('delivery_date', '=', $month)
+              ->get();    
+            }
           } else {
             $query = Shipment::with('order', 'type', 'status', 'sum')
             ->whereYear('delivery_date', '=', $year)
@@ -129,6 +139,8 @@ class ShipmentController extends Controller
     public function store(Request $request)
     {
       $param = $request->all()['payload'];
+
+      $__ship_to = $param['shipment_type_id'] === 3 || $param['shipment_type_id'] === 4 ? $param['ship_to'] : 0;
       try {
         $shipment = Shipment::create([
           'comment'=> $param['comment'] ,
@@ -137,7 +149,8 @@ class ShipmentController extends Controller
           'delivery_date'=> $param['delivery_date'],
           'shipment_type_id'=> $param['shipment_type_id'],
           'subcontract_flag'=> $param['subcontract_flag'],
-          'order_id'=> $param['order_id']
+          'order_id'=> $param['order_id'],
+          'ship_to' => $__ship_to
         ]);
 
         //shipment item variable
@@ -164,7 +177,7 @@ class ShipmentController extends Controller
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
+          'errors' => $th->getMessage()
         ],500);
       }
       return response()->json([
@@ -181,12 +194,12 @@ class ShipmentController extends Controller
     public function show($id)
     {
       try {
-        $query = Shipment::with('items', 'order', 'type', 'status')->find($id);
+        $query = Shipment::with('items', 'order', 'type', 'status', 'ship_to')->find($id);
         return response()->json(['data' => $query]);
       } catch (Exception $th) {
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
+          'errors' => $th->getMessage()
         ],500);
       }
     }

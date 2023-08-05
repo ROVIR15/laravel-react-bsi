@@ -41,7 +41,7 @@
     }
 
     public function sum(){
-      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->groupBy('order_id')->select(DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money'));
+      return $this->hasManyThrough('App\Models\Order\OrderItem', 'App\Models\Order\Order', 'id', 'order_id', 'order_id', 'id')->groupBy('order_id')->select(DB::raw('sum(qty) as total_qty, sum(qty*unit_price) as total_money, avg(unit_price) as avg_unit_price, product_feature_id'))->with('product_feature');
     }
     
     public function avg_price(){

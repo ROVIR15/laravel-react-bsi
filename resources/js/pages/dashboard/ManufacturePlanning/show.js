@@ -33,6 +33,7 @@ import SelectEdit from './components/SelectEdit';
 import AutoComplete from './components/AutoComplete';
 
 import { isArray, isEmpty } from 'lodash';
+
 //API
 import API from '../../../helpers';
 import { useParams } from 'react-router-dom';
@@ -233,8 +234,24 @@ function Goods() {
                     row?.expected_total_output / editRowData[editedColumnName].value
                   ).toFixed(2)
                 };
+              } else if (
+                editedColumnName === 'line_start_date' ||
+                editedColumnName === 'line_end_date'
+              ) {
+
+                let date = moment(new Date(editRowData[editedColumnName].value)).format('YYYY-MM-DD');
+                _payloadToBePosted = {
+                  [editedColumnName]: date
+                };
+
+                return {
+                  ...row,
+                  [editedColumnName]: moment(date).format('YYYY-MM-DD'),
+                };
               } else {
-                _payloadToBePosted = { [editedColumnName]: editRowData[editedColumnName].value };
+                _payloadToBePosted = {
+                  [editedColumnName]: editRowData[editedColumnName].value
+                }
                 return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
               }
             } else {
@@ -245,11 +262,11 @@ function Goods() {
 
         try {
           API.updateManufacturePlanningItems(editedIds, _payloadToBePosted, function (res) {
-            if (res.success) alert('success');
-            else throw new Error('failed');
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
           });
-        } catch {
-          alert('error');
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
         }
       } else {
         setEditRowData(model[editedIds[0]]);
@@ -319,8 +336,7 @@ function Goods() {
               ),
               total_plan_qty: Math.floor(item?.expected_output * item?.work_days),
               total_plan_amount: Math.floor(
-                item?.expected_output *
-                  parseFloat(item?.info?.avg_price[0]?.cm_price_avg)
+                item?.expected_output * parseFloat(item?.info?.avg_price[0]?.cm_price_avg)
               ),
               line_start_date: item?.line_start_date,
               line_end_date: item?.line_end_date,
@@ -347,7 +363,7 @@ function Goods() {
 
           let monthYear = `${res?.year}-${res?.month}`;
           monthYear = moment(monthYear).format('YYYY-MM');
-          console.log(monthYear)
+          console.log(monthYear);
           setFieldValue('monthYear', monthYear);
         }
       });

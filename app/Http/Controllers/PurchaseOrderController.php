@@ -98,6 +98,32 @@ class PurchaseOrderController extends Controller
     return new POViewCollection($query);
   }
 
+  public function get_purchse_order()
+  {
+    try {
+      $query = PurchaseOrder::get()->map(function ($query) {
+        return [
+          'id' => $query['id'],
+          'order_id' => $query['order_id'],
+          'purchase_order_id' => $query['id'],
+          'po_number' => $query['po_number']
+        ];
+      });
+    } catch (\Throwable $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ], 500);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ], 200);
+  }
+
+
   public function getPurchaseOrderList()
   {
     try {

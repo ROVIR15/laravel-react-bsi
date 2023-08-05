@@ -123,7 +123,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     //Shipment
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-status', 'ShipmentStatusController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -297,3 +296,12 @@ Route::get('current-stock', 'InventoryController@InventoryStock');
 // jangan lupa dihapus
 Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
 Route::get('stock-scrap', 'InventoryController@get_scrap');
+
+Route::get('bom-item-alt-v3/{costing_id}', 'BOMItemController@findItemsByCostingId');
+Route::get('get-costing', 'BOMItemController@getCostingId');
+Route::get('sales-order-v2', 'SalesOrderController@get_sales_order');
+Route::get('purchase-order-v2', 'PurchaseOrderController@get_purchse_order');
+Route::get('sales-order-item-v2/{order_id}', 'SalesOrderController@get_sales_order_items');
+Route::resource('scrap', 'ScrapController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
+Route::get('report-osr-ppic', 'OSRController@get_osr_ppic_report');

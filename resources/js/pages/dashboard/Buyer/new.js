@@ -78,6 +78,8 @@ function Buyer() {
       } catch (error) {
         enqueueSnackbar('', { variant: 'failedAlert'});
       }
+
+      handleReset();
       setSubmitting(false);
     }
   });

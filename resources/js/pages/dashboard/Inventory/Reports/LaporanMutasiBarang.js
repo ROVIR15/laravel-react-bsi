@@ -273,13 +273,14 @@ function Inbound() {
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
                   <TableCell>Kode Barang</TableCell>
-                  <TableCell>Nama Item</TableCell>
-                  <TableCell>Kategori Barang</TableCell>
+                  <TableCell>Nama Barang</TableCell>
+                  {/* <TableCell>Kategori Barang</TableCell> */}
                   <TableCell>Satuan</TableCell>
                   <TableCell>Saldo Awal</TableCell>
-                  <TableCell>Jumlah Pemasukan Barang</TableCell>
-                  <TableCell>Jumlah Pengeluaran Barang</TableCell>
+                  <TableCell>Pemasukan</TableCell>
+                  <TableCell>Pengeluaran</TableCell>
                   <TableCell>Saldo Akhir</TableCell>
+                  <TableCell>Gudang</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -292,12 +293,13 @@ function Inbound() {
                         {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.category_name}</TableCell>
+                      {/* <TableCell>{row.category_name}</TableCell> */}
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.initial_stock}</TableCell>
                       <TableCell>{row.qty_pemasukan}</TableCell>
                       <TableCell>{row.qty_pengeluaran}</TableCell>
                       <TableCell>{row.final_stock}</TableCell>
+                      <TableCell>{'Gudang X'}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

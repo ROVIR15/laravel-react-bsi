@@ -23,7 +23,8 @@ class Shipment extends Model
         'est_delivery_date',
         'order_id',
         'subcontract_flag',
-        'imageUrl'
+        'imageUrl',
+        'ship_to'
     ];
 
     public function items(){
@@ -50,5 +51,9 @@ class Shipment extends Model
 
     public function hasInvoice(){
         return $this->belongsTo('App\Modes\Invoice\InvoiceHasShipment', 'id');
+    }
+
+    public function ship_to(){
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
     }
 }

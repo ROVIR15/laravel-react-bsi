@@ -37,7 +37,7 @@ function Welcoming() {
           </Typography>
 
           <Typography variant="body1">
-            Sekarang kamu berada di halaman paling depan. Kamu bisa memilih menu dengan memilih menu disamping kanan ini atau jika kamu kesulitan bisa menekan tombol ikon garis tiga di pojok kanan atas
+            Sekarang kamu berada di halaman paling depan. Kamu bisa memilih menu dengan memilih menu disamping kiri ini atau jika kamu kesulitan bisa menekan tombol ikon garis tiga di pojok kanan atas
           </Typography>
           
         </Stack>

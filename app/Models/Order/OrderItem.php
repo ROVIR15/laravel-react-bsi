@@ -27,7 +27,7 @@ use DB;
     ];
 
     public function product_feature(){
-      return $this->belongsTo('App\Models\Product\ProductFeature')->with('product');
+      return $this->belongsTo('App\Models\Product\ProductFeature')->with('product', 'product_category');
     }
 
     public function check_shipment(){

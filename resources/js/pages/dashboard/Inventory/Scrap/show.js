@@ -2,7 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import { Button, Card, CardContent, CardHeader, Container, Grid, TextField } from '@mui/material';
 
 import { Form, FormikProvider, useFormik } from 'formik';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import Page from '../../../../components/Page';
 import Modal from './components/Modal';
 import DataGrid from './components/DataGrid';
@@ -14,8 +14,11 @@ import { enqueueSnackbar } from 'notistack';
 
 // api
 import API from '../../../../helpers';
+import { useParams } from 'react-router-dom';
 
 function Scrap() {
+
+  const {id} = useParams();
   const formik = useFormik({
     initialValues: {
       document_number: 0,
@@ -143,7 +146,25 @@ function Scrap() {
   const handleCloseModal = () => setOpenM(false);
   // --------------------------------------------------------------------- //
 
-  console.log(items);
+  useEffect(() => {
+    try {
+      API.getAScrapV2(id, function(res){
+        if(!res) return;
+        if(!res.success) alert('error');
+
+        setValues({
+          ...values,
+          document_number: res.data.document_number,
+          date: res.data.date
+        });
+
+        setItems(res.items);
+      })
+    } catch (error) {
+      alert(error);
+    }
+  }, id)
+
   return (
     <Page>
       <Container>

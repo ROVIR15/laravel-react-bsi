@@ -73,7 +73,6 @@ function Inbound() {
       //     setPayloadData(res.data);
       //   }
       // });
-
     } catch (error) {
       alert(error);
     }
@@ -244,14 +243,19 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell>Nomor Pendaftaran dokumen penyelesaian</TableCell>
-                  <TableCell>Tanggal document kepabean</TableCell>
+                  <TableCell align="center" colSpan={2}>
+                    BC 2.4
+                  </TableCell>
+                  <TableCell colSpan={5}></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Nomor</TableCell>
+                  <TableCell>Tanggal</TableCell>
                   <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Item</TableCell>
-                  <TableCell>Kategori Barang</TableCell>
                   <TableCell>Satuan</TableCell>
-                  <TableCell>Nilai Barang</TableCell>
-                  <TableCell>Jumlah Barang</TableCell>
+                  <TableCell>Jumlah</TableCell>
+                  <TableCell>Nilai</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

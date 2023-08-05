@@ -1047,6 +1047,29 @@ const main = {
       });
   },
   // SalesOrder
+  getSalesOrderV2(params = null, cb) {
+    axios
+      .get(uri + '/sales-order-v2' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getSalesOrderItemV2(order_id, params = null, cb) {
+    if (!order_id) {
+      return;
+    }
+    axios
+      .get(uri + `/sales-order-item-v2/${order_id}` + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   insertSalesOrder(_data, cb) {
     if (!_data) {
       console.error('data not found');
@@ -1305,13 +1328,14 @@ const main = {
       return;
     }
 
-    axios.get(uri + `/bom-item-alt-v3/${costing_id}`)
-    .then(function(res){
-      cb(res.data)
-    })
-    .catch(function (err){
-      cb(err.response)
-    })
+    axios
+      .get(uri + `/bom-item-alt-v3/${costing_id}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
   },
   updateABOMItem_alt(bom_altId, _data, cb) {
     axios
@@ -1346,13 +1370,14 @@ const main = {
 
   //BOM
   getCostingV2(cb) {
-    axios.get(uri + '/get-costing')
-    .then(function (res) {
-      cb(res.data);
-    })
-    .catch(function (err) {
-      cb(err);
-    });
+    axios
+      .get(uri + '/get-costing')
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err);
+      });
   },
   insertBOM(_data, cb) {
     if (!_data) {
@@ -2503,6 +2528,16 @@ const main = {
         cb(err.response);
       });
   },
+  getPurchaseOrderV2(params = null, cb) {
+    axios
+      .get(uri + '/purchase-order-v2' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getPurchaseOrder(params = null, cb) {
     axios
       .get(uri + '/purchase-order' + params)
@@ -3067,6 +3102,64 @@ const main = {
     if (!params) return;
     axios
       .get(uri + '/outbound-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  //
+  updateScrapV2(id, _data, cb) {
+    if (!id) throw new Error('ID is required');
+    if (!_data) throw new Error('data is required');
+    axios
+      .put(uri + '/scrap/' + id, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  deleteScrapV2(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .delete(uri + '/scrap/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getAScrapV2(id, cb) {
+    axios
+      .get(uri + '/scrap/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getScrapV2(params = '', cb) {
+    axios
+      .get(uri + '/scrap' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertScrapV2(_data, cb) {
+    if (!_data) {
+      return;
+    }
+
+    axios
+      .post(uri + '/scrap', { payload: _data })
       .then(function (res) {
         cb(res.data);
       })
@@ -4419,6 +4512,16 @@ const main = {
   getReadyMadeGarmentValuation(params = null, cb) {
     axios
       .get(uri + '/finished-garment-valuation' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getOSRPPIC(params = null, cb) {
+    axios
+      .get(uri + '/report-osr-ppic' + params)
       .then(function (res) {
         cb(res.data);
       })

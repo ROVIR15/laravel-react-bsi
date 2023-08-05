@@ -124,32 +124,43 @@ const sidebarConfig = [
     icon: getIcon("fluent-emoji-high-contrast:customs"),
     children: [
       {
+        // done completing columns per 5 tabel nomor 1
         title: 'Laporan Pemasukan Barang dan Bahan',
         path: '/dashboard/laporan-kite/laporan-barang-masuk'
       },
       {
+        // done completing columns per 5 table nomor 2
         title: 'Laporan Pemakaian Bahan Baku',
         path: '/dashboard/laporan-kite/laporan-pemakaian'
       },
       {
-        title: 'Laporan Mutasi Bahan Baku',
-        path: '/dashboard/laporan-kite/laporan-mutasi-barang?cat=bahan_baku'
-      },
-      {
-        title: 'Laporan Mutasi Barang Hasil Produksi',
-        path: '/dashboard/laporan-kite/laporan-mutasi-barang-jadi?cat=bahan_jadi'
-      },
-      {
+        // done completing columns per 5 table nomor 3
         title: 'Laporan terkait Barang dalam Proses (WIP)',
         path: '/dashboard/laporan-kite/laporan-barang-wip'
       },
       {
+        // done completing columns per 5 table nomor 5
         title: 'Laporan Pengeluaran Barang Hasil Produksi',
         path: '/dashboard/laporan-kite/laporan-barang-keluar'
       },
       {
-        title: 'Laporan Penyelesaian Barang Berfasilitas KITE',
+        // done completing columns per 5 table nomor 6
+        title: 'Laporan Mutasi Bahan Baku',
+        path: '/dashboard/laporan-kite/laporan-mutasi-barang?cat=bahan_baku'
+      },
+      {
+        // done completing columns per 5 tabel nomor 7
+        title: 'Laporan Mutasi Hasil Produksi',
+        path: '/dashboard/laporan-kite/laporan-mutasi-barang-jadi?cat=bahan_jadi'
+      },
+      {
+        // done completing columns per 5 table nomo 8
+        title: 'Laporan Waste/Scrap',
         path: '/dashboard/laporan-kite/laporan-skrap-barang'
+      },
+      {
+        title: 'CCTV Pengawasan',
+        path: '/dashboard/laporan-kite/cctv-factory'
       }
     ]
 
@@ -174,6 +185,10 @@ const sidebarConfig = [
       {
         title: 'Material Transfer',
         path: '/dashboard/inventory/material-transfer'
+      },
+      {
+        title: 'Scrap/AVAL/Waste',
+        path: '/dashboard/inventory/scrap-management'
       },
       {
         title: 'Stock Adjustment',
@@ -227,6 +242,10 @@ const sidebarConfig = [
       {
         title: 'Outgoing Shipment',
         path: '/dashboard/shipment/outgoing'
+      },
+      {
+        title: 'Subcontract Shipment',
+        path: '/dashboard/shipment/subcontract'
       },
       {
         title: 'Shipment Status',
@@ -329,6 +348,10 @@ const sidebarConfig = [
       {
         title: 'Good Garment Valuation',
         path: '/dashboard/goods-valuation'
+      },
+      {
+        title: 'OSR Line PPIC',
+        path: '/dashboard/osr-ppic-p'
       }
     ]
   },

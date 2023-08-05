@@ -41,7 +41,9 @@ import {
   FinanceAccountTransactionLayout,
   OrderPLAnalysisLayout,
   MaterialTransferLayout,
-  CostingLayout
+  CostingLayout,
+  ScrapLayout,
+  SubcontractLayout
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -87,10 +89,12 @@ import AddFacility from '../pages/dashboard/Facility/add';
 import AddFactory from '../pages/dashboard/Factory/add';
 import AddOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/new';
 import AddIncomingShipment from '../pages/dashboard/Shipment/Incoming/new';
+import AddSubcontractShipment from '../pages/dashboard/Shipment/Subcontract/new';
 import AddMP from '../pages/dashboard/ManufacturePlanning/add';
 import AddFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/new';
 import AddFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/new';
 import AddPayment from '../pages/dashboard/Finance/Payment/new';
+import AddScrap from '../pages/dashboard/Inventory/Scrap/add';
 
 // Display Pages
 import DisplayBuyer from '../pages/dashboard/Buyer/display';
@@ -128,11 +132,12 @@ import DisplayFacility from '../pages/dashboard/Facility/display';
 import DisplayFactory from '../pages/dashboard/Factory/display';
 import DisplayOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/display';
 import DisplayIncomingShipment from '../pages/dashboard/Shipment/Incoming/display';
+import DisplaySubcontractShipment from '../pages/dashboard/Shipment/Subcontract/display';
 import DisplayMP from '../pages/dashboard/ManufacturePlanning/display';
 import DisplayFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/display';
 import DisplayFinanceAccountTransaction from '../pages/dashboard/Finance/FinanceAccountTransaction/display';
 import DisplayPayment from '../pages/dashboard/Finance/Payment/display';
-
+import DispayScrap from '../pages/dashboard/Inventory/Scrap/display';
 import DisplayOrderPLAnalysis from '../pages/dashboard/OrderPLAnalysis/display';
 
 // Show Pages
@@ -165,6 +170,7 @@ import ShowStockAdjustment from '../pages/dashboard/Inventory/StockOpname/show';
 
 import ShowOutgoingShipment from '../pages/dashboard/Shipment/Outgoing/show';
 import ShowIncomingShipment from '../pages/dashboard/Shipment/Incoming/show';
+import ShowSubcontractShipment from '../pages/dashboard/Shipment/Subcontract/show';
 
 import ShowMP from '../pages/dashboard/ManufacturePlanning/show';
 import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
@@ -172,6 +178,7 @@ import ShowFinanceAccount from '../pages/dashboard/Finance/FinanceAccount/show';
 import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 
 import ShowMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/show';
+import ShowScrap from '../pages/dashboard/Inventory/Scrap/show';
 
 //Document
 import DocumentCosting from '../pages/dashboard/Costing/pages/Document';
@@ -255,6 +262,8 @@ import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkr
 import UsageReport from '../pages/dashboard/Inventory/Reports/LaporanPemakaian';
 
 import InventoryAdjustment from '../pages/dashboard/Inventory/StockOpname';
+
+import PPICChart from '../pages/dashboard/OSR/PPIC';
 
 export default function TestRouter() {
 
@@ -349,6 +358,15 @@ export default function TestRouter() {
             { path: ':id', element: <ShowStockAdjustment/>},
             { path: 'add', element: <AddStockAdjustment/>},
             { path: 'display', element: <DisplayStockAjustment />}
+          ]
+        },
+        {
+          path: 'inventory/scrap-management',
+          element: <ScrapLayout />,
+          children: [
+            { path: ':id', element: <ShowScrap/>},
+            { path: 'new', element: <AddScrap/>},
+            { path: 'display', element: <DispayScrap/>},
           ]
         },
         {
@@ -782,6 +800,16 @@ export default function TestRouter() {
           ]
         },
         {
+          path: 'shipment/subcontract',
+          element: <SubcontractLayout/>,
+          children: [
+            { path: 'add', element: <AddSubcontractShipment /> },
+            { path: ':id', element: <ShowSubcontractShipment /> },
+            { path: 'display', element: <DisplaySubcontractShipment /> },
+            // { path: 'document/:id', element: <DocumentShipment /> }
+          ]
+        },
+        {
           path: 'shipment/status',
           element: <StatusLayout/>,
           children: [
@@ -821,6 +849,10 @@ export default function TestRouter() {
         {
           path: 'capacity',
           element: <Capacity />
+        },
+        {
+          path: 'osr-ppic-p',
+          element: <PPICChart />
         },
         {
           path: 'goods-valuation',

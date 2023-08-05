@@ -1,5 +1,17 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Button, Chip, Grid, Stack, Tab, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Grid,
+  Stack,
+  Tab,
+  TextField,
+  Typography
+} from '@mui/material';
 import { styled } from '@mui/styles';
 import { isArray, isEmpty, isUndefined, isNull, isEqual } from 'lodash';
 import moment from 'moment';
@@ -14,7 +26,7 @@ import TableProblemLog from './components/TableProblemLog';
 import TableWorkDetail from './components/TableWorkDetail';
 import API from '../../../../helpers';
 import { fPercent } from '../../../../utils/formatNumber';
-
+import { countWorkingDays } from '../../ManufacturePlanning/utils';
 
 const CHART_DATA = [
   {
@@ -99,14 +111,29 @@ function Dashboard() {
   };
 
   function _sljeir8(data) {
-    const { id, sales_order, expected_output, work_days, ckckck } = data;
+    const {
+      id,
+      sales_order,
+      line_start_date,
+      line_end_date,
+      anticipated_pcs_per_line_output,
+      work_days,
+      ckckck
+    } = data;
     return {
       id,
       sales_order_id: sales_order.id,
       po_number: sales_order.po_number,
       buyer_name: sales_order?.party?.name,
-      target: expected_output * work_days,
-      output: ckckck[0]?.total_output
+      target_in_total:
+        anticipated_pcs_per_line_output * countWorkingDays(line_start_date, line_end_date),
+      output: ckckck[0]?.total_output,
+      avg_output: ckckck[0]?.average_output,
+      target_output: anticipated_pcs_per_line_output,
+      line_start_date,
+      line_end_date,
+      real_start_date: ckckck[0]?.real_start_date,
+      real_end_date: ckckck[0]?.real_end_date
     };
   }
 
@@ -123,7 +150,7 @@ function Dashboard() {
   }
 
   function _ewjrbjwe19(data) {
-    const { sewing, bom } = data;
+    const { sewing, bom, anticipated_pcs_per_line_output, line_start_date, line_end_date } = data;
     if (isArray(sewing)) {
       let output = sewing.map(function (item) {
         return parseInt(item.total_output);
@@ -134,11 +161,11 @@ function Dashboard() {
       });
 
       let data_of_target = sewing.map(function () {
-        return bom.get_target_output.work_center.prod_capacity;
+        return anticipated_pcs_per_line_output;
       });
 
       setDate(date);
-      setTarget(bom.get_target_output.work_center.prod_capacity);
+      setTarget(anticipated_pcs_per_line_output);
 
       let a = { ...graphData[0], data: output };
       let b = { ...graphData[1], data: data_of_target };
@@ -229,9 +256,9 @@ function Dashboard() {
         }
       });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
-  }
+  };
 
   const chartOptions = {
     stroke: { width: [3, 3] },
@@ -271,106 +298,123 @@ function Dashboard() {
   const handleClose = () => setIsModalOpen(false);
   const handleOpen = () => setIsModalOpen(true);
 
-  const average = graphData[0]?.data?.reduce((initial, next) => initial + (next/graphData[0]?.data?.length), 0);
-  const _p = (average/target).toFixed(3) * 100;
-  const average_ystrdy = graphData[0]?.data?.slice(0, graphData[0]?.data.length-1).reduce((initial, next) => initial + (next/graphData[0]?.data?.slice(0, graphData[0]?.data.length-1).length), 0)
-  const _p2 = ((average-average_ystrdy)/average_ystrdy)*100
+  const average = graphData[0]?.data?.reduce(
+    (initial, next) => initial + next / graphData[0]?.data?.length,
+    0
+  );
+  const _p = (average / target).toFixed(3) * 100;
+  const average_ystrdy = graphData[0]?.data
+    ?.slice(0, graphData[0]?.data.length - 1)
+    .reduce(
+      (initial, next) =>
+        initial + next / graphData[0]?.data?.slice(0, graphData[0]?.data.length - 1).length,
+      0
+    );
+  const _p2 = ((average - average_ystrdy) / average_ystrdy) * 100;
 
   return (
     <Layout>
       <Modal open={isModalOpen} handleClose={handleClose} facility_id={lineSelected?.id} />
-      <Grid container direction="row" spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            autoComplete="monthYear"
-            type="month"
-            label="Month and Year"
-            value={filterMonthYear}
-            onChange={handleMonthYearChanges}
-          />
-        </Grid>
-
-        {/* Title */}
-        <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h3">{lineSelected?.name}</Typography>
-        </Grid>
-
-        <Grid item xs={8}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'left',
-              flexWrap: 'wrap',
-              listStyle: 'none',
-              p: 0.5
-            }}
-          >
-            {isEmpty(data)
-              ? null
-              : data.map((item) => (
-                  <Button
-                    variant="outlined"
-                    name={item.id}
-                    id={item.id}
-                    disabled={item.id === lineSelected?.id}
-                    onClick={(event, item) => handleClick(event, item)}
-                    sx={{ margin: '0.25em' }}
-                  >
-                    {item.name}
-                  </Button>
-                ))}
-          </Box>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography variant="body2">{`Rata-rata            = ${average}`}</Typography>
-          <Typography variant="body2">{`Rata-rate (%) = ${fPercent(_p)}`}</Typography>
-          <Typography variant="body2">{`Kenaikan dari hari sebelumnya = ${average-average_ystrdy}`}</Typography>
-          <Typography variant="body2">{`Kenaikan (%) = ${fPercent(_p2)}`}</Typography>
-
-        </Grid>
-
-        {/* Graph */}
-        <Grid item xs={12}>
-          <ReactApexChart type="line" series={graphData} options={chartOptions} height={400} />
-        </Grid>
-
-        {/* Tab Panel */}
-        <Grid item xs={12}>
-          <TabContext value={valueTab}>
-            <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-              <Tab label="Per Order" value="1" />
-              <Tab label="Work Detail" value="2" />
-              <Tab label="Log" value="3" />
-            </TabList>
-
-            <TabPanel value="1">
-              <TableOrder
-                list={orderData}
-                selected={selectedGraph}
-                setSelected={setSelectedGraph}
+      <Card>
+        <CardHeader title="Realtime Output - OSR PPIC Line"/>
+        <CardContent>
+          <Grid container direction="row" spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="monthYear"
+                type="month"
+                label="Month and Year"
+                value={filterMonthYear}
+                onChange={handleMonthYearChanges}
               />
-            </TabPanel>
+            </Grid>
 
-            <TabPanel value="2">
-              <TableWorkDetail list={workDetail} />
-            </TabPanel>
+            {/* Title */}
+            <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h3">{lineSelected?.name}</Typography>
+            </Grid>
 
-            <TabPanel value="3">
-              <Stack direction="column" spacing={2}>
-                <div>
-                  <Button onClick={handleUpdateProductionLog} size="small">Update</Button>
-                  <Button onClick={handleOpen} size="small">
-                    Add Data
-                  </Button>
-                </div>
+            <Grid item xs={8}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'left',
+                  flexWrap: 'wrap',
+                  listStyle: 'none',
+                  p: 0.5
+                }}
+              >
+                {isEmpty(data)
+                  ? null
+                  : data.map((item) => (
+                      <Button
+                        variant="outlined"
+                        name={item.id}
+                        id={item.id}
+                        disabled={item.id === lineSelected?.id}
+                        onClick={(event, item) => handleClick(event, item)}
+                        sx={{ margin: '0.25em' }}
+                      >
+                        {item.name}
+                      </Button>
+                    ))}
+              </Box>
+            </Grid>
 
-                <TableProblemLog list={log} />
-              </Stack>
-            </TabPanel>
-          </TabContext>
-        </Grid>
-      </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">{`Rata-rata            = ${average}`}</Typography>
+              <Typography variant="body2">{`Rata-rate (%) = ${fPercent(_p)}`}</Typography>
+              <Typography variant="body2">{`Kenaikan dari hari sebelumnya = ${
+                average - average_ystrdy
+              }`}</Typography>
+              <Typography variant="body2">{`Kenaikan (%) = ${fPercent(_p2)}`}</Typography>
+            </Grid>
+
+            {/* Graph */}
+            <Grid item xs={12}>
+              <ReactApexChart type="line" series={graphData} options={chartOptions} height={400} />
+            </Grid>
+
+            {/* Tab Panel */}
+            <Grid item xs={12}>
+              <TabContext value={valueTab}>
+                <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                  <Tab label="Per Order" value="1" />
+                  <Tab label="Work Detail" value="2" />
+                  <Tab label="Log" value="3" />
+                </TabList>
+
+                <TabPanel value="1">
+                  <TableOrder
+                    list={orderData}
+                    selected={selectedGraph}
+                    setSelected={setSelectedGraph}
+                  />
+                </TabPanel>
+
+                <TabPanel value="2">
+                  <TableWorkDetail list={workDetail} />
+                </TabPanel>
+
+                <TabPanel value="3">
+                  <Stack direction="column" spacing={2}>
+                    <div>
+                      <Button onClick={handleUpdateProductionLog} size="small">
+                        Update
+                      </Button>
+                      <Button onClick={handleOpen} size="small">
+                        Add Data
+                      </Button>
+                    </div>
+
+                    <TableProblemLog list={log} />
+                  </Stack>
+                </TabPanel>
+              </TabContext>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </Layout>
   );
 }

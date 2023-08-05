@@ -15,16 +15,24 @@ import {
 import Scrollbar from '../../../../../components/Scrollbar';
 import SearchNotFound from '../../../../../components/SearchNotFound';
 import { ListHead, ListRadioHead, ListToolbar, MoreMenu } from '../../../../../components/Table';
+import moment from 'moment';
 
+moment.locale('id');
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    { id: 'po_number', label: 'Sales Order', alignRight: false },
-    { id: 'buyer_name', label: 'Buyer Name', alignRight: false },
-    { id: 'output', label: 'Output', alignRight: false },
-    { id: 'target', label: 'Target', alignRight: false },
-  ];
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'po_number', label: 'Sales Order', alignRight: false },
+  { id: 'buyer_name', label: 'Buyer Name', alignRight: false },
+  { id: 'real_start_date', label: 'Rencana Mulai Produksi', alignRight: false },
+  { id: 'line_start_date', label: 'Realisasi Mulai Produksi', alignRight: false },
+  { id: 'real_start_date', label: 'Rencana Selesai Produksi', alignRight: false },
+  { id: 'line_start_date', label: 'Realisasi Selesai Produksi', alignRight: false },
+  { id: 'target_in_total', label: 'Jumlah Realisasi Output', alignRight: false },
+  { id: 'output', label: 'Akumulasi Target Output', alignRight: false },
+  { id: 'avg_output', label: 'Rata-rata Harian', alignRight: false },
+  { id: 'target_output', label: 'Target Harian ', alignRight: false }
+];
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +53,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -58,11 +66,10 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function TableD({ list, placeHolder, selected, setSelected}) {
-
+function TableD({ list, placeHolder, selected, setSelected }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-//   const [selected, setSelected] = useState([]);
+  //   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -74,7 +81,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    setSelected({...selected, id: name.id, sales_order_id: name.sales_order_id})
+    setSelected({ ...selected, id: name.id, sales_order_id: name.sales_order_id });
   };
 
   const handleChangePage = (event, newPage) => {
@@ -90,15 +97,13 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData?.length === 0;  
+  const isDataNotFound = filteredData?.length === 0;
 
   return (
     <div>
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
-          <Table
-            size="small"
-          > 
+          <Table size="small">
             <ListRadioHead
               order={order}
               orderBy={orderBy}
@@ -108,42 +113,54 @@ function TableD({ list, placeHolder, selected, setSelected}) {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {
-                isEmpty(list) ? null : (
-                filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  let isItemSelected = selected.id === row.id
-                  const {
-                    id,
-                    po_number,
-                    buyer_name,
-                    output,
-                    target
-                  } = row;
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="radio"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
-                    >
-                      <TableCell padding="none">
-                        <Radio
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, row)}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{buyer_name}</TableCell>
-                      <TableCell align="left">{output}</TableCell>
-                      <TableCell align="left">{target}</TableCell>
-                    </TableRow>
-                  );
-                }))}
+              {isEmpty(list)
+                ? null
+                : filteredData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      let isItemSelected = selected.id === row.id;
+                      const {
+                        id,
+                        po_number,
+                        buyer_name,
+                        output,
+                        target_in_total,
+                        avg_output,
+                        target_output,
+                        real_start_date,
+                        line_start_date,
+                        real_end_date,
+                        line_end_date
+                      } = row;
+                      return (
+                        <TableRow
+                          hover
+                          key={id}
+                          tabIndex={-1}
+                          role="radio"
+                          selected={isItemSelected}
+                          aria-checked={isItemSelected}
+                        >
+                          <TableCell padding="none">
+                            <Radio
+                              checked={isItemSelected}
+                              onChange={(event) => handleClick(event, row)}
+                            />
+                          </TableCell>
+                          <TableCell align="left">{id}</TableCell>
+                          <TableCell align="left">{po_number}</TableCell>
+                          <TableCell align="left">{buyer_name}</TableCell>
+                          <TableCell align="left">{moment(real_start_date).format('LL')}</TableCell>
+                          <TableCell align="left">{moment(line_start_date).format('LL')}</TableCell>
+                          <TableCell align="left">{moment(real_end_date).format('LL')}</TableCell>
+                          <TableCell align="left">{moment(line_end_date).format('LL')}</TableCell>
+                          <TableCell align="left">{`${target_in_total} pcs`}</TableCell>
+                          <TableCell align="left">{`${output} pcs`}</TableCell>
+                          <TableCell align="left">{`${parseFloat(avg_output).toFixed(2)} pcs`}</TableCell>
+                          <TableCell align="left">{`${target_output} pcs`}</TableCell>
+                        </TableRow>
+                      );
+                    })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -172,7 +189,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </div>
-  )
+  );
 }
 
 export default TableD;

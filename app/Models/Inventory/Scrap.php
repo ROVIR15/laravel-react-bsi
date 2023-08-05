@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Scrap extends Model
 {
@@ -14,20 +15,12 @@ class Scrap extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'product_id',
-        'product_feature_id',
-        'order_id',
-        'order_item_id',
-        'qty',
-        'from_facility_id',
-        'to_facility_id'
+        'document_number',
+        'date'
     ];
 
-    public function product_feature() {
-        return $this->belongsTo('App\Models\Product\ProductFeature', 'product_feature_id');
+    public function items() {
+        return $this->hasMany('App\Models\Inventory\ScrapItem', 'scrap_id', 'id');
     }
 
-    public function product() {
-        return $this->belongsTo('App\Models\Product\Product', 'product_id')->with('productCategory', 'goods');
-    }
 }

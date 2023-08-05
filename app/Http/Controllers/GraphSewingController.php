@@ -197,7 +197,7 @@ class GraphSewingController extends Controller
       try {
         $mp = ManufacturePlanningItems::with(['sewing' => function($query) use ($year, $month, $facility, $sales_order_id){
           $query
-          ->select('date', 'sales_order_id', 'facility_id', DB::raw('sum(output) as total_output'))
+          ->select('date', 'sales_order_id', 'facility_id', DB::raw('sum(output) as total_output, MIN(date) as real_start_date, MAX(date) as real_end_date'))
           ->where('facility_id', $facility)
           ->where('sales_order_id', $sales_order_id)
           ->whereYear('date', $year)

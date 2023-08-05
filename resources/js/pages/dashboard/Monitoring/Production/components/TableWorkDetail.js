@@ -20,11 +20,8 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../../components/Table
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'po_number', label: 'Sales Order', alignRight: false },
-    { id: 'product_name', label: 'Product Name', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
+    { id: 'product_name', label: 'Nama Pesanan', alignRight: false },
     { id: 'output', label: 'Output', alignRight: true },
-    { id: 'target', label: 'Target', alignRight: true },
   ];
 
 // ----------------------------------------------------------------------
@@ -131,9 +128,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       >
                         <TableCell align="left">{id}</TableCell>
                         <TableCell align="left">{po_number}</TableCell>
-                        <TableCell align="left">{product_name}</TableCell>
-                        <TableCell align="left">{size}</TableCell>
-                        <TableCell align="left">{color}</TableCell>
+                        <TableCell align="left">{`${product_name} ${color} - ${size}`}</TableCell>
                         <TableCell align="left">{output}</TableCell>
                         {/* <TableCell align="left">{target}</TableCell> */}
                       </TableRow>

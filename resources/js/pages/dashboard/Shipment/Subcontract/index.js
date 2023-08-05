@@ -1,25 +1,24 @@
 import React from 'react';
-import { Breadcrumbs, Button, Container, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
-//icons
-import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
-import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
+
+// icons
+import plusFill from '@iconify/icons-eva/plus-fill';
+import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 
 // components
 import Display from './display';
-import Layout from '../../../../layouts/Layout';
-
 import Breadcumbs from '../../../../components/Breadcumbs';
+import Layout from '../../../../layouts/Layout';
 
 function getPathname(array) {
   if (!array.length) console.error('Require an Array type');
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
 }
 
-function MaterialTransfer() {
+function Outgoing() {
   const { pathname } = useLocation();
-
   const isBeginning = () => {
     if (pathname.split('/').length === 4) {
       return <Display />;
@@ -31,9 +30,9 @@ function MaterialTransfer() {
   return (
     <Layout>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <div style ={{ display: 'flex', flexDirection: 'column'}}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h4" gutterBottom>
-            Scrap/AVAL/Waste
+            Subcontract Shipment
           </Typography>
           <Breadcumbs />
         </div>
@@ -41,7 +40,7 @@ function MaterialTransfer() {
           <Button
             variant="contained"
             component={RouterLink}
-            to={getPathname(pathname.split('/')) + '/new'}
+            to={getPathname(pathname.split('/')) + '/add'}
             startIcon={<Icon icon={plusFill} />}
           >
             New
@@ -61,4 +60,4 @@ function MaterialTransfer() {
   );
 }
 
-export default MaterialTransfer;
+export default Outgoing;

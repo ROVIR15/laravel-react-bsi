@@ -64,12 +64,9 @@ function Inbound() {
   const handleGo = () => {
     try {
       // let cat = searchParams.get('cat');
-
       // if (isEmpty(values.start_date) || isEmpty(values.start_date))
       //   new Error('Error processing your request!');
-
       // let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
-
       // API.getReportMutasi_alt(param, function (res) {
       //   if (!res) return;
       //   if (!res.data) new Error('Error processing request');
@@ -248,13 +245,20 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell align="center" colSpan={2}>
+                    Bukti Pengeluaran 
+                  </TableCell>
+                  <TableCell colSpan={3}>{' '}</TableCell>
+                  <TableCell colSpan={2}>Jumlah</TableCell>
+                </TableRow>
+                <TableRow>
                   <TableCell>Nomor Bukti Pengeluaran Barang</TableCell>
                   <TableCell>Tanggal Bukti Pengeluaran</TableCell>
                   <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
-                  <TableCell>Jumlah Pemakaian Barang</TableCell>
-                  <TableCell>Jumlah Barang yang di subkontrakan</TableCell>
+                  <TableCell>Digunakan</TableCell>
+                  <TableCell>Disubkontrakan</TableCell>
                   <TableCell>Nama Penerima Subkrontrak</TableCell>
                 </TableRow>
               </TableHead>

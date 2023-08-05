@@ -49,6 +49,9 @@ export default function ValidateRowModelControlGrid({
           Update
         </Button>
 
+				<Button size="small" onClick={handleAddRow} disabled={!addItemActive}>
+          Add Items
+        </Button>
       </Stack>
       <DataGrid rows={rows ? rows : mrows } columns={columns ? columns : estColumns} {...rest}/>
     </Box>

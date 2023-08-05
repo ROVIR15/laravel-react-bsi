@@ -31,7 +31,7 @@ export default function ListHead({
   };
 
   return (
-    <TableHead>
+    <TableHead style={{backgroundColor: '#c5c5c5'}}>
       <TableRow>
         <TableCell padding='none'>
           <Radio

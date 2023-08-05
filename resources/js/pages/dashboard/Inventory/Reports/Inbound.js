@@ -246,31 +246,34 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell align="center" colSpan={4}>
+                  <TableCell align="center" colspan>
                     {' '}
-                    Bea Cukai
+                  </TableCell>
+                  <TableCell align="center" colSpan={4}>
+                    Dokumen Kepabean
                   </TableCell>
                   <TableCell align="center" colSpan={2}>
-                    {' '}
                     Purchase Order
                   </TableCell>
-                  <TableCell colSpan={7}> </TableCell>
+                  <TableCell colSpan={8}> </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Tanggal</TableCell>
+                  <TableCell>Tanggal Rekam</TableCell>
+                  <TableCell>Nomor</TableCell>
                   <TableCell>Jenis Dokumen</TableCell>
-                  <TableCell>Nomor Bea Cukai</TableCell>
+                  <TableCell>Tanggal</TableCell>
+                  <TableCell>Kode HS</TableCell>
                   <TableCell>Nomor Seri Barang</TableCell>
                   <TableCell>Tanggal</TableCell>
                   <TableCell>No PO</TableCell>
                   <TableCell>Kode Barang</TableCell>
-                  <TableCell>Item Name</TableCell>
-                  <TableCell>Category Name</TableCell>
-                  <TableCell>Qty</TableCell>
+                  <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
-                  <TableCell>Nilai</TableCell>
-                  <TableCell>Total</TableCell>
-                  <TableCell>Country</TableCell>
+                  <TableCell>Jumlah</TableCell>
+                  <TableCell>Mata Uang</TableCell>
+                  <TableCell>Nilai Barang</TableCell>
+                  <TableCell>Penerima Subkontrak</TableCell>
+                  <TableCell>Negara Asal BB</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

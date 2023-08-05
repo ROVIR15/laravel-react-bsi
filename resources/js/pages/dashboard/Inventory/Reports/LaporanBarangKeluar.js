@@ -250,27 +250,30 @@ function Inbound() {
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
                   <TableCell align="center" colSpan={2}>
-                    Bea Cukai
+                    PEB
                   </TableCell>
                   <TableCell align="center" colSpan={2}>
-                    Sales Order
+                    Bukti Pengeluaran Barang
                   </TableCell>
                   <TableCell colSpan={7}> </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Tanggal bukti pengeluaran barang</TableCell>
-                  <TableCell>Nomor bukti pengeluaran barang</TableCell>
+                  {/*  */}
+                  <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
-                  <TableCell>No SO</TableCell>
+                  {/*  */}
+                  <TableCell>Nomor</TableCell>
+                  <TableCell>Tanggal</TableCell>
+                  {/*  */}
                   <TableCell>Penerima</TableCell>
-                  <TableCell>Negara</TableCell>
+                  <TableCell>Negara Tujuan</TableCell>
                   <TableCell>Kode Barang</TableCell>
-                  <TableCell>Item Name</TableCell>
-                  <TableCell>Category Name</TableCell>
-                  <TableCell>Qty</TableCell>
+                  <TableCell>Nama Barang</TableCell>
+                  {/* <TableCell>Category Name</TableCell> */}
                   <TableCell>Satuan</TableCell>
-                  <TableCell>Nilai</TableCell>
-                  <TableCell>Total</TableCell>
+                  <TableCell>Jumlah</TableCell>
+                  <TableCell>Mata Uang</TableCell>
+                  <TableCell>Nilai Barang</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
