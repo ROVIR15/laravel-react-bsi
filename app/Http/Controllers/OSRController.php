@@ -103,26 +103,4 @@ class OSRController extends Controller
             'data' => $transformedData
         ]);
     }
-
-    public function get_osr_ppic_report(Request $request)
-    {
-        $fromDate = $request->query('fromDate');
-        $thruDate = $request->query('thruDate');
-
-        try {
-            //code...
-            if (empty($fromDate) || empty($thruDate)) {
-                $thruDate = date('Y-m-d');
-                $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("8 days"));
-                $fromDate = date_format($fromDate, 'Y-m-d');
-            }
-            
-            Sewing::with('sales_order', 'facility')
-            ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
-            ->get();
-
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    }
 }
