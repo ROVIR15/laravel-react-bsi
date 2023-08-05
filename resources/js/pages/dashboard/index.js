@@ -43,3 +43,8 @@ export { default as OrderPLAnalysisLayout } from './OrderPLAnalysis';
 
 // Inventory
 export { default as StockAdjustmentLayout } from './Inventory/StockOpname';
+export { default as ScrapLayout } from './Inventory/Scrap';
+
+
+//Shipment 
+export { default as SubcontractLayout } from './Shipment/Subcontract';
