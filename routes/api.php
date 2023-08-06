@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Costing
     Route::get('costing-list', 'ManufacturePlanningItemsController@getCosting');
-    Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');    
+    Route::get('costing-list/{id}', 'ManufacturePlanningItemsController@getACosting');
 
     //Party
     Route::resource('vendor', 'VendorController')->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -85,7 +85,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('production-record', 'ProductionRecorderController')->only(['store']);
     Route::resource('manufacture-planning', 'ManufacturePlanningController')->only(['store', 'index', 'show', 'destroy']);
     Route::resource('manufacture-planning-item', 'ManufacturePlanningItemsController')->only(['update', 'destroy', 'store']);
-    
+
     //Operation
     Route::resource('operation', 'OperationController')->only(['index', 'store', 'show', 'update', 'destroy']);
 
@@ -122,7 +122,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('price-component', 'PriceComponentController')->only(['index']);
 
     //Shipment
-    Route::resource('shipment', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-status', 'ShipmentStatusController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -203,7 +203,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Consume
     Route::resource('consume', 'ConsumeInventoryController')->only(['store', 'show']);
-    
+
     // sampling study
     Route::resource('sample-study', 'SamplingStudyController')->only(['store', 'show', 'index', 'update', 'destroy']);
     Route::resource('sample-process', 'SampleProcessStudyController')->only(['store', 'update', 'destroy']);
@@ -224,7 +224,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('pages', 'PagesController')->only('index', 'store', 'destroy', 'update', 'show');
     Route::resource('pages-access', 'PagesAccessController')->only('index', 'store', 'destroy', 'update', 'show');
     Route::resource('submission', 'ApprovalController')->only('index', 'store', 'destroy', 'update', 'show', 'showByUserId');
-    
+
     //Agre
 
     Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
@@ -237,10 +237,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('graph-api', 'GraphSewingController')->only(['index']);
     Route::get('new-api-test', 'GraphSewingController@testingAPI1');
     Route::get('new-api-test-2', 'GraphSewingController@testingAPI2');
-    Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');    
+    Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
     Route::resource('invoice-submission', 'InvoiceSubmissionController')->only(['index', 'store', 'update', 'destroy', 'show']);
-
 });
 
 Route::get('costing-listv1', 'BOMController@bomList');
