@@ -295,22 +295,6 @@ function OutboundDelivery() {
     setStatus(event.target.value);
   };
 
-  // Radio Import Activity
-  // ----------------------------------------------------------------- //
-  const [isSubcontract, setIsSubcontract] = useState(false);
-
-  const handleRadioSubcontractCheck = (e) => {
-    if (e.target.value === 'true') {
-      setIsSubcontract(true);
-      setFieldValue('subcontract_flag', true);
-    } else {
-      setIsSubcontract(false);
-      setFieldValue('subcontract_flag', false);
-      if (valueTab === '4') setValueTab('1');
-    }
-  };
-  // ----------------------------------------------------------------- //
-
   return (
     <Page>
       <Container>
@@ -358,7 +342,7 @@ function OutboundDelivery() {
                   <CardHeader title="Delivery Information" />
                   <CardContent>
                     <Grid container direction="row" spacing={2}>
-                      <Grid item xs={5} sx={{ padding: 'unset' }}>
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
                         <AutoComplete
                           fullWidth
                           autoComplete="sales_order_id"
@@ -373,7 +357,7 @@ function OutboundDelivery() {
                         />
                       </Grid>
 
-                      <Grid item xs={5} sx={{ padding: 'unset' }}>
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
                         <TextField
                           variant="outlined"
                           type="text"
@@ -384,21 +368,6 @@ function OutboundDelivery() {
                           error={Boolean(touched.serial_number && errors.serial_number)}
                           helperText={touched.serial_number && errors.serial_number}
                         />
-                      </Grid>
-
-                      <Grid item xs={2}>
-                        <FormControl>
-                          <FormLabel id="Improt">Subkontrak?</FormLabel>
-                          <RadioGroup
-                            row
-                            value={isSubcontract}
-                            name="import-activity-check"
-                            onChange={handleRadioSubcontractCheck}
-                          >
-                            <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
-                            <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
-                          </RadioGroup>
-                        </FormControl>
                       </Grid>
 
                       <Grid item xs={12}>
