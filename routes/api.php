@@ -122,6 +122,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('price-component', 'PriceComponentController')->only(['index']);
 
     //Shipment
+    Route::resource('shipment', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-status', 'ShipmentStatusController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
