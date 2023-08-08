@@ -122,9 +122,10 @@ function Dashboard() {
       ckckck
     } = data;
 
-    console.log(ckckck.length, isEmpty(ckckck));
-
-    let avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+    let avg_output = 0
+    if(!isEmpty(ckckck)){
+      avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+    }
 
     // let isAlreadyEnd = (output >= expected_output ? ' ' : ckckck[0]?.real_end_date)
 
