@@ -138,7 +138,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                         real_end_date,
                         line_end_date
                       } = row;
-
+                      
                       return (
                         <TableRow
                           hover
