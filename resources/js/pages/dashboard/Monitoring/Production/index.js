@@ -126,7 +126,7 @@ function Dashboard() {
     if(!isEmpty(ckckck)){
       avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
     }
-    
+
     return {
       id,
       imageUrl: ckckck[0]?.order_item?.product_feature?.product?.goods?.imageUrl,
@@ -134,13 +134,13 @@ function Dashboard() {
       po_number: sales_order.po_number,
       buyer_name: sales_order?.party?.name,
       target_in_total: expected_output,
-      output: isEmpty(ckckck) ? ckckck[0]?.total_output : 0,
+      output: !isEmpty(ckckck) ? ckckck[0]?.total_output : 0,
       avg_output: avg_output,
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
-      real_start_date: isEmpty(ckckck) ? ckckck[0].real_start_date : null,
-      real_end_date: isEmpty(ckckck) ? ckckck[0].real_end_date : null
+      real_start_date: !isEmpty(ckckck) ? ckckck[0].real_start_date : null,
+      real_end_date: !isEmpty(ckckck) ? ckckck[0].real_end_date : null
     };
   }
 
