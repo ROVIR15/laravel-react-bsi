@@ -139,8 +139,6 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                         line_end_date
                       } = row;
                       
-                      console.log(isAvailableQty(output, target_in_total));
-                      
                       return (
                         <TableRow
                           hover
