@@ -104,6 +104,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
 
   const isDataNotFound = filteredData?.length === 0;
 
+  console.log(list);
   return (
     <div>
       <Scrollbar>

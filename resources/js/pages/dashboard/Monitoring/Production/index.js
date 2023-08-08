@@ -126,9 +126,7 @@ function Dashboard() {
     if(!isEmpty(ckckck)){
       avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
     }
-
-    // let isAlreadyEnd = (output >= expected_output ? ' ' : ckckck[0]?.real_end_date)
-
+    
     return {
       id,
       imageUrl: ckckck[0]?.order_item?.product_feature?.product?.goods?.imageUrl,
