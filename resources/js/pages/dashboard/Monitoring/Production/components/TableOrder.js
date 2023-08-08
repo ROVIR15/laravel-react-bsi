@@ -138,6 +138,8 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                         real_end_date,
                         line_end_date
                       } = row;
+
+                      console.log(isAvailableQty(output, target_in_total));
                       
                       return (
                         <TableRow

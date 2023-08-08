@@ -119,7 +119,6 @@ function Dashboard() {
       anticipated_pcs_per_line_output,
       work_days,
       expected_output,
-      order_item,
       ckckck
     } = data;
 
@@ -129,7 +128,7 @@ function Dashboard() {
 
     return {
       id,
-      imageUrl: order_item?.product_feature?.product?.goods?.imageUrl,
+      imageUrl: ckckck[0]?.order_item?.product_feature?.product?.goods?.imageUrl,
       sales_order_id: sales_order.id,
       po_number: sales_order.po_number,
       buyer_name: sales_order?.party?.name,
@@ -140,7 +139,7 @@ function Dashboard() {
       line_start_date,
       line_end_date,
       real_start_date: ckckck[0]?.real_start_date,
-      real_end_date: ckckck[0]?.emd_date
+      real_end_date: ckckck[0]?.real_end_date
     };
   }
 
