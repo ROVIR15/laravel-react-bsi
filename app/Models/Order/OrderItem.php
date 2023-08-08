@@ -26,6 +26,15 @@ use DB;
         'description'
     ];
 
+    public function image_url(){
+      return $this->belongsTo('App\Models\Product\ProductFeature')->select('id', 'product_feature_id')
+              ->with(['product', function($query){
+                return $query->with(['goods' => function($query) {
+                  return $query->select('imageUrl');
+                }]);
+              }]);
+    }
+
     public function product_feature(){
       return $this->belongsTo('App\Models\Product\ProductFeature')->with('product', 'product_category');
     }

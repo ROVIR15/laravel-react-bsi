@@ -105,7 +105,11 @@
     }
 
     public function export_doc(){
-      return $this->belongsTo('App\Models\Order\SalesOrder', 'id');
+      return $this->belongsTo('App\Models\KITE\ExportDoc', 'id', 'sales_order_id');
+    }
+
+    public function order_info(){
+      return $this->belongsTo('App\Models\Order\Order', 'order_id', 'id')->with('order_item_img');
     }
 
   }

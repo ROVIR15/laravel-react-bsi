@@ -113,7 +113,7 @@ function Dashboard() {
   function _sljeir8(data) {
     const {
       id,
-      sales_order,
+      sales_order_img,
       line_start_date,
       line_end_date,
       anticipated_pcs_per_line_output,
@@ -123,24 +123,26 @@ function Dashboard() {
     } = data;
 
     let avg_output = 0
+    let imageUrl = ''
     if(!isEmpty(ckckck)){
       avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+      imageUrl = sales_order_img?.order_info?.order_item_img?.product_feature?.product?.goods?.imageUrl
     }
 
     return {
       id,
-      imageUrl: ckckck[0]?.order_item?.product_feature?.product?.goods?.imageUrl,
-      sales_order_id: sales_order.id,
-      po_number: sales_order.po_number,
-      buyer_name: sales_order?.party?.name,
+      imageUrl: imageUrl,
+      sales_order_id: sales_order_img.id,
+      po_number: sales_order_img.po_number,
+      buyer_name: sales_order_img?.party?.name,
       target_in_total: expected_output,
-      output: !isEmpty(ckckck) ? ckckck[0]?.total_output : 0,
+      output: 0,
       avg_output: avg_output,
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
-      real_start_date: !isEmpty(ckckck) ? ckckck[0].real_start_date : null,
-      real_end_date: !isEmpty(ckckck) ? ckckck[0].real_end_date : null
+      real_start_date:  null,
+      real_end_date: null
     };
   }
 

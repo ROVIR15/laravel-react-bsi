@@ -27,6 +27,10 @@
       return $this->hasMany('App\Models\Order\OrderItem');
     }
 
+    public function order_item_img(){
+      return $this->belongsTo('App\Models\Order\OrderItem', 'id', 'order_id')->with('product_feature');
+    }
+
     public function sales_order(){
       return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('party', 'ship');
     }
