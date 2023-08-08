@@ -119,7 +119,6 @@ function Dashboard() {
       anticipated_pcs_per_line_output,
       work_days,
       expected_output,
-      sewing,
       ckckck
     } = data;
 
