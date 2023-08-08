@@ -126,6 +126,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                       let isItemSelected = selected.id === row.id;
                       const {
                         id,
+                        imageUrl,
                         po_number,
                         buyer_name,
                         output,
@@ -154,6 +155,9 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                             />
                           </TableCell>
                           <TableCell align="left">{id}</TableCell>
+                          <TableCell align="left">
+                            <img src={imageUrl}/>
+                          </TableCell>
                           <TableCell align="left">{po_number}</TableCell>
                           <TableCell align="left">{buyer_name}</TableCell>
                           <TableCell align="left">{moment(real_start_date).format('LL')}</TableCell>
