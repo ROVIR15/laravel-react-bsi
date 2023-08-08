@@ -138,8 +138,8 @@ function Dashboard() {
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
-      real_start_date: isEmpty(ckckck) ? ckckck[0].real_start_date : '',
-      real_end_date: isEmpty(ckckck) ? ckckck[0].real_end_date : ''
+      real_start_date: isEmpty(ckckck) ? ckckck[0].real_start_date : null,
+      real_end_date: isEmpty(ckckck) ? ckckck[0].real_end_date : null
     };
   }
 

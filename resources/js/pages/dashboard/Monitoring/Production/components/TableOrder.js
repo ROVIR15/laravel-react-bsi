@@ -160,7 +160,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                           </TableCell>
                           <TableCell align="left">{po_number}</TableCell>
                           <TableCell align="left">{buyer_name}</TableCell>
-                          <TableCell align="left">{moment(real_start_date).format('LL')}</TableCell>
+                          <TableCell align="left">{!isEmpty(real_start_date) ? moment(real_start_date).format('LL') : 'Belum Mulai'}</TableCell>
                           <TableCell align="left">{moment(line_start_date).format('LL')}</TableCell>
                           <TableCell align="left">{(!isAvailableQty(output, target_in_total) ? moment(real_end_date).format('LL') : 'Masih berjalan')}</TableCell>
                           <TableCell align="left">{moment(line_end_date).format('LL')}</TableCell>
