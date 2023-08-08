@@ -141,6 +141,8 @@ function Dashboard() {
       real_start_date: ckckck[0]?.real_start_date,
       real_end_date: ckckck[0]?.real_end_date
     };
+
+    console.log(ckckck[0]?.real_end_date);
   }
 
   function _ljskfwe9(data) {
