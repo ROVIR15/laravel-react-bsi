@@ -28,7 +28,7 @@ const TABLE_HEAD = [
   { id: 'line_start_date', label: 'Realisasi Mulai Produksi', alignRight: false },
   { id: 'real_start_date', label: 'Rencana Selesai Produksi', alignRight: false },
   { id: 'line_start_date', label: 'Realisasi Selesai Produksi', alignRight: false },
-  { id: 'target_in_total', label: 'Jumlah Realisasi Output', alignRight: false },
+  { id: 'target_in_total', label: 'Jumlah Rencana Output', alignRight: false },
   { id: 'output', label: 'Akumulasi Target Output', alignRight: false },
   { id: 'avg_output', label: 'Rata-rata Harian', alignRight: false },
   { id: 'target_output', label: 'Target Harian ', alignRight: false }

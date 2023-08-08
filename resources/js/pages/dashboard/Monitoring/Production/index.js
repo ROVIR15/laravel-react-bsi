@@ -118,22 +118,28 @@ function Dashboard() {
       line_end_date,
       anticipated_pcs_per_line_output,
       work_days,
+      expected_output,
+      sewing,
       ckckck
     } = data;
+
+    let avg_output = countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+
+    let isAlreadyEnd = output >= expected_output ? ' ' : ckckck[0]?.real_end_date
+
     return {
       id,
       sales_order_id: sales_order.id,
       po_number: sales_order.po_number,
       buyer_name: sales_order?.party?.name,
-      target_in_total:
-        anticipated_pcs_per_line_output * countWorkingDays(line_start_date, line_end_date),
+      target_in_total: expected_output,
       output: ckckck[0]?.total_output,
-      avg_output: ckckck[0]?.average_output,
+      avg_output: avg_output,
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
       real_start_date: ckckck[0]?.real_start_date,
-      real_end_date: ckckck[0]?.real_end_date
+      real_end_date: isAlreadyEnd
     };
   }
 
