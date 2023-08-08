@@ -134,7 +134,7 @@ function Dashboard() {
       imageUrl: imageUrl,
       sales_order_id: sales_order_img.id,
       po_number: sales_order_img.po_number,
-      buyer_name: sales_order_img?.party?.name,
+      buyer_name: sales_order_img?.order_info?.party?.name,
       target_in_total: expected_output,
       output: 0,
       avg_output: avg_output,
