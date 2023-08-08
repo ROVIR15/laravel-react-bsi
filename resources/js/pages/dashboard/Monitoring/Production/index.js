@@ -119,15 +119,17 @@ function Dashboard() {
       anticipated_pcs_per_line_output,
       work_days,
       expected_output,
+      order_item,
       ckckck
     } = data;
 
-    let avg_output = countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+    let avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
 
-    let isAlreadyEnd = output >= expected_output ? ' ' : ckckck[0]?.real_end_date
+    // let isAlreadyEnd = (output >= expected_output ? ' ' : ckckck[0]?.real_end_date)
 
     return {
       id,
+      imageUrl: order_item?.product_feature?.product?.goods?.imageUrl,
       sales_order_id: sales_order.id,
       po_number: sales_order.po_number,
       buyer_name: sales_order?.party?.name,
@@ -138,7 +140,7 @@ function Dashboard() {
       line_start_date,
       line_end_date,
       real_start_date: ckckck[0]?.real_start_date,
-      real_end_date: isAlreadyEnd
+      real_end_date: ckckck[0]?.emd_date
     };
   }
 

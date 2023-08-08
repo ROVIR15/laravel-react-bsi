@@ -47,7 +47,8 @@ class ManufacturePlanningItems extends Model
 
     public function ckckck(){
         return $this->hasMany('App\Models\Monitoring\Sewing', 'sales_order_id', 'sales_order_id')
-        ->select('sales_order_id', 'facility_id', 'date', DB::raw('sum(output) as total_output, avg(output) as average_output, min(date) as real_start_date, max(date) as real_end_date'))
+        ->select('sales_order_id', 'order_item_id', 'facility_id', 'date', DB::raw('sum(output) as total_output, avg(output) as average_output, min(date) as real_start_date, max(date) as real_end_date'))
+        ->with('order_item')
         ->groupBy('facility_id', 'sales_order_id');
         // ->where('facility_id', '=', $this->facility);
     }

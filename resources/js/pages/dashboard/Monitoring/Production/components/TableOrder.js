@@ -22,6 +22,7 @@ moment.locale('id');
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'imageUrl', label: 'Gambar', alignRight: false },
   { id: 'po_number', label: 'Sales Order', alignRight: false },
   { id: 'buyer_name', label: 'Buyer Name', alignRight: false },
   { id: 'real_start_date', label: 'Rencana Mulai Produksi', alignRight: false },
@@ -93,6 +94,10 @@ function TableD({ list, placeHolder, selected, setSelected }) {
     setPage(0);
   };
 
+  const isAvailableQty = (current_output, plan_output) => {
+    return current_output < plan_output;
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - list?.length) : 0;
 
   const filteredData = applySortFilter(list, getComparator(order, orderBy), filterName);
@@ -132,6 +137,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                         real_end_date,
                         line_end_date
                       } = row;
+                      
                       return (
                         <TableRow
                           hover
@@ -152,7 +158,7 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                           <TableCell align="left">{buyer_name}</TableCell>
                           <TableCell align="left">{moment(real_start_date).format('LL')}</TableCell>
                           <TableCell align="left">{moment(line_start_date).format('LL')}</TableCell>
-                          <TableCell align="left">{moment(real_end_date).format('LL')}</TableCell>
+                          <TableCell align="left">{(!isAvailableQty(output, target_in_total) ? moment(real_end_date).format('LL') : 'Masih berjalan')}</TableCell>
                           <TableCell align="left">{moment(line_end_date).format('LL')}</TableCell>
                           <TableCell align="left">{`${target_in_total} pcs`}</TableCell>
                           <TableCell align="left">{`${output} pcs`}</TableCell>
