@@ -34,7 +34,7 @@ class ManufacturePlanningItems extends Model
     }
 
     public function sales_order_img() {
-        return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('order_info');
+        return $this->belongsTo('App\Models\Order\SalesOrder', 'sales_order_id')->with('order_info', 'party');
     }
 
     public function info() {
