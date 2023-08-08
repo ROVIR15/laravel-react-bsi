@@ -189,7 +189,7 @@ class QuoteController extends Controller
               'quote_id' => $quoteCreation['id'],
               'product_id' => $key['product_id'],
               'product_feature_id' => $key['product_feature_id'],
-              'costing_item_id' => $key['costing_item_id'],
+              'costing_item_id' => $key['costing_item_id'] ? $key['costing_item_id'] : 0,
               'qty' => $key['qty'],
               'unit_price' => $key['unit_price']
             ]);
