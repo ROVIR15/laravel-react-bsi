@@ -123,7 +123,7 @@ function RFQ() {
           else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        enqueueSnackbar('', { variant: 'failedAlert'});
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
       setSubmitting(false);
     }
@@ -238,8 +238,11 @@ function RFQ() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              if (editRowData[editedColumnName].value > row.unit_price) {
-                enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' })
+              if (
+                editedColumnName === 'unit_price' &&
+                editRowData[editedColumnName].value > row.unit_price
+              ) {
+                enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' });
                 return row;
               }
               return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
