@@ -45,6 +45,7 @@ import { isEmpty } from 'lodash';
 
 // Loading Page
 import LoadingPage from '../../../components/LoadingPage';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -118,11 +119,11 @@ function RFQ() {
 
       try {
         API.insertRFQ(_data, function (res) {
-          if (res.success) alert('success');
-          else alert('failed');
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert'});
       }
       setSubmitting(false);
     }
@@ -237,6 +238,10 @@ function RFQ() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
+              if (editRowData[editedColumnName].value > row.unit_price) {
+                enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' })
+                return row;
+              }
               return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
               return row;

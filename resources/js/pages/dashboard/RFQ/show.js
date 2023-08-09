@@ -47,6 +47,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 //helpers
 import { _partyAddress, partyArrangedData, productItemArrangedData } from '../../../helpers/data';
 import { RFQSchema } from '../../../helpers/FormerSchema';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -113,10 +114,14 @@ function RFQ() {
         ...values,
         party_id: values.bought_from
       };
-      API.updateQuote(id, _data, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+      try {
+        API.updateQuote(id, _data, function (res) {
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
       setSubmitting(false);
     }
   });
@@ -225,9 +230,14 @@ function RFQ() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        API.updateQuoteItem(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updateQuoteItem(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
