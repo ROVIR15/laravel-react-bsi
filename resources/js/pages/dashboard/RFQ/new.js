@@ -240,7 +240,7 @@ function RFQ() {
             if (row.id === parseInt(itemToUpdateIndex)) {
               if (
                 editedColumnName === 'unit_price' &&
-                editRowData[editedColumnName].value > row.unit_price
+                editRowData[editedColumnName].value > parseFloat(row.unit_price)
               ) {
                 enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' });
                 return row;
