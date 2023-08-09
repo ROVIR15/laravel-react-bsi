@@ -384,7 +384,7 @@ function SalesOrder() {
       { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
-      { field: 'unit_price', headerName: 'Unit Price', editable: true },
+      { field: 'unit_price', headerName: 'Unit Price', editable: false },
       { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
       { field: 'description', headerName: 'Description', type: 'text', width: 400, editable: true },
       {

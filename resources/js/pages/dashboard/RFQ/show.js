@@ -276,7 +276,7 @@ function RFQ() {
       { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
       { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
-      { field: 'qty', headerName: 'Quantity', editable: true },
+      { field: 'qty', headerName: 'Quantity', editable: false },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
       {
         field: 'actions',
