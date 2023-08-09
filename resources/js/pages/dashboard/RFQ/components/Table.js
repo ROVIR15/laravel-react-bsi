@@ -19,6 +19,7 @@ import ListToolbar from './ListToolbar';
 import API from '../../../../helpers';
 import { useLocation, useParams } from 'react-router-dom';
 import { isEditCondition } from '../../../../helpers/data';
+import { enqueueSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -59,13 +60,13 @@ function applySortFilter(array, comparator, query) {
   if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
       return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+        _b.item_name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
         _b.category_id === query[1]
       );
     });
   } else {
     return filter(array, (_b) => {
-      return _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1;
+      return _b.item_name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1;
     });
   }
 }
@@ -112,12 +113,11 @@ function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
       if (isEditCondition(pathname.split('/'), id)) {
         try {
           API.insertQuoteItem([name], function (res) {
-            if (res.success) alert('success');
-            else alert('failed');
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
           });
-          update();
-        } catch (e) {
-          alert(e);
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert'});
         }
       } else {
         newSelected = newSelected.concat(selected, name);
