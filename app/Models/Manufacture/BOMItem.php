@@ -15,6 +15,7 @@ class BOMItem extends Model
     protected $fillable = [
         'id',
         'bom_id',
+        'product_id',
         'product_feature_id',
         'qty',
         'consumption',

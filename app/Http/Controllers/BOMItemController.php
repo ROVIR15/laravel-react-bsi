@@ -125,6 +125,7 @@ class BOMItemController extends Controller
             foreach ($param as $key) {
                 array_push($bomItemsCreation, [
                     'bom_id' => $key['bom_id'],
+                    'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'qty' => $key['qty'],
                     'created_at' => $current_date_time
