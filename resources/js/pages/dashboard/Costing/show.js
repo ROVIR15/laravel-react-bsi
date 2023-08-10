@@ -55,6 +55,7 @@ import {
 } from '../../../helpers/data';
 import { gt } from 'lodash';
 import LoadingPage from './components/LoadingPage';
+import useAuth from '../../../context';
 
 function getPathname(array) {
   if (!array.length) console.error('Require an Array type');
@@ -76,6 +77,7 @@ function totalMoney(params) {
 function BillofMaterial() {
   const { pathname } = useLocation();
   const { id } = useParams();
+  const userAuth = useAuth();
 
   const [items, setItems] = useState([]);
 
@@ -281,6 +283,8 @@ function BillofMaterial() {
     };
   }, [loading]);
 
+  const editableUser = userAuth.id === 2 ? true : false;
+
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
@@ -288,11 +292,11 @@ function BillofMaterial() {
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },
       // { field: 'brand', headerName: 'Brand', editable: false },
-      { field: 'consumption', headerName: 'Konsumsi', editable: true },
+      { field: 'consumption', headerName: 'Konsumsi', editable: editableUser },
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
-      { field: 'unit_price', headerName: 'Harga', editable: true },
+      { field: 'unit_price', headerName: 'Harga', editable: editableUser },
       // { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
-      { field: 'jumlah', headerName: 'Biaya Unit', editable: true, valueGetter: totalMoney },
+      { field: 'jumlah', headerName: 'Biaya Unit', editable: editableUser, valueGetter: totalMoney },
       {
         field: 'actions',
         type: 'actions',
@@ -495,6 +499,7 @@ function BillofMaterial() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
+        if(!editableUser) return;
         try {
           API.updateABOMItem(editedIds, data, function (res) {
             if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
