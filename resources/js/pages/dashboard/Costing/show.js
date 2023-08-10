@@ -77,7 +77,7 @@ function totalMoney(params) {
 function BillofMaterial() {
   const { pathname } = useLocation();
   const { id } = useParams();
-  const userAuth = useAuth();
+  const { user } = useAuth();
 
   const [items, setItems] = useState([]);
 
@@ -283,7 +283,7 @@ function BillofMaterial() {
     };
   }, [loading]);
 
-  const editableUser = userAuth.id === 2 ? true : false;
+  const editableUser = user.id === 2 ? true : false;
 
   const goodsColumns = useMemo(
     () => [
