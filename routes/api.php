@@ -62,13 +62,13 @@ Route::group(['middleware' => ['auth:api']], function () {
     //BOM
     Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
     Route::resource('bom-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store']);
+    Route::resource('bom-item', 'BOMItemController')->only(['index', 'show', 'store', 'update']);
     Route::resource('bom-service', 'BOMServiceController')->only(['index', 'show', 'store']);
     Route::resource('bom-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
     Route::resource('costing', 'BOMController')->only(['index', 'store', 'show', 'update']);
     Route::resource('costing-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store']);
+    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store', 'update']);
     Route::resource('costing-service', 'BOMServiceController')->only(['index', 'show', 'store']);
     Route::resource('costing-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
@@ -288,10 +288,12 @@ Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'stor
 
 Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
 Route::get('outbound-material-report', 'InventoryController@regOutboundMaterial');
-Route::get('wip-material-report', 'InventoryController@repWIP');
-Route::get('mutasi-report', 'InventoryController@repMaterialTransfer');
+Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
+Route::get('raw-material-report', 'InventoryController@repRawMaterialMovement');
+Route::get('fg-material-report', 'InventoryController@repFGoods');
+Route::get('mutasi-report', 'InventoryController@repMutasiV2');
+Route::get('report-scrap', 'ScrapController@reportScrap');
 Route::get('current-stock', 'InventoryController@InventoryStock');
-
 
 // jangan lupa dihapus
 Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
