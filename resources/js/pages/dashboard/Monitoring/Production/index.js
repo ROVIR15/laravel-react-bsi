@@ -136,13 +136,13 @@ function Dashboard() {
       po_number: sales_order_img.po_number,
       buyer_name: sales_order_img?.party?.name,
       target_in_total: expected_output,
-      output: 0,
+      output: ckckck[0]?.total_output,
       avg_output: avg_output,
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
-      real_start_date:  null,
-      real_end_date: null
+      real_start_date:  ckckck[0]?.real_start_date,
+      real_end_date: ckckck[0]?.real_end_date
     };
   }
 
