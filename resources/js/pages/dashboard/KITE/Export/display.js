@@ -187,7 +187,7 @@ function OutboundDelivery({ placeHolder }) {
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{document_number}</TableCell>
                       <TableCell align="left">{moment(date).format('LL')}</TableCell>
-                      <TableCell align="left"><a href={`../../order/sales-order/${sales_order_id}`}>{`PO-${sales_order_id}`}</a></TableCell>
+                      <TableCell align="left"><a href={`../order/sales-order/${sales_order_id}`}>{`PO-${sales_order_id}`}</a></TableCell>
                       <TableCell align="left">{moment(created_at).format('LL')}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
