@@ -90,7 +90,7 @@ class ScrapController extends Controller
                         'order_item_id' => $item->order_item_id,
                         'unit_measurement' => $goods ? $goods->satuan : null,
                         'category' => 'Finished Goods',
-                        'unit_price' => $item->order_item->unit_price,
+                        'unit_price' => $item->order_item ? $item->order_item->unit_price : 0,
                         'qty' => $item->qty
                     ];
                 });
