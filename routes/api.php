@@ -23,7 +23,7 @@ Route::post('register', 'AuthController@register');
 Route::put('reset-password/{id}', 'AuthController@reset');
 Route::resource('user', 'UsersController')->only(['index', 'show']);
 
-Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api', 'record.api.transactions']], function () {
     Route::post('logout', 'AuthController@logout');
 
     Route::resource('upload', 'UploadController')->only(['store']);
