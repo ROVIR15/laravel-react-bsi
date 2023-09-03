@@ -586,7 +586,11 @@ class InventoryController extends Controller
       $query = GoodsMovement::with('product', 'product_feature', 'goods', 'material_transfer')
         ->where('facility_id', $type)
         ->whereHas('material_transfer', function ($query) {
-          return $query->whereHas('relation_to_shipment');
+          return $query->whereHas('relation_to_shipment', function ($query) {
+            return $query->whereHas('shipment', function ($query) {
+              return $query->where('subcontract_flag', 1);
+            });
+          });
         })
         // ->whereHas('relations_with_shipment', function($query) {
         //   return $query->whereHas('shipment', function($query) {
