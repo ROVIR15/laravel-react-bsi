@@ -31,7 +31,8 @@ import { StyledTableCell as TableCell } from './components/TableCell';
 import API from '../../../../helpers';
 import { isEmpty } from 'lodash';
 
-import { rearrange_data_in } from './utils';
+import { generalizeSKU, rearrange_data_in } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
@@ -46,8 +47,8 @@ function Inbound() {
   const [valueOfSelect, setValueofSelect] = React.useState('');
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: '2023-01-01',
-    end_date: '2023-01-15'
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD')
   });
 
   function exportToExcel(tableID, filename = '') {
@@ -118,14 +119,14 @@ function Inbound() {
     if (isEmpty(rangeDate.start_date) && isEmpty(rangeData.end_date)) return;
     let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
     try {
-      // API.getIncomingMaterial(param, (res) => {
-      //   if (!res) return;
-      //   if (isEmpty(res.data)) throw new Error('Request error!');
-      //   else {
-      //     let _res = rearrange_data_in(res.data);
-      //     setPayloadData(_res);
-      //   }
-      // });
+      API.getIncomingMaterial(param, (res) => {
+        if (!res) return;
+        if (isEmpty(res.data)) throw new Error('Request error!');
+        else {
+          // let _res = rearrange_data_in(res.data);
+          setPayloadData(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
     }
@@ -163,14 +164,13 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{titleCase(pagename)}</Typography>
+              <Typography variant="h5">{titleCase("Laporan Pemasukan Bahan Baku")}</Typography>
               <Button
                 variant="contained"
                 onClick={handleDownload}
                 startIcon={<Icon icon={downloadIcon} />}
               >
-                {' '}
-                Download{' '}
+                Download
               </Button>
             </Stack>
           </Grid>
@@ -249,29 +249,37 @@ function Inbound() {
                   <TableCell align="center" colspan>
                     {' '}
                   </TableCell>
+                  <TableCell align="center" colSpan={1}>
+                    Jenis Dokumen
+                  </TableCell>
                   <TableCell align="center" colSpan={4}>
-                    Dokumen Kepabean
+                    Dokumen Pabean
                   </TableCell>
                   <TableCell align="center" colSpan={2}>
-                    Purchase Order
+                    Bukti Penerimaan Barang
                   </TableCell>
-                  <TableCell colSpan={8}> </TableCell>
+                  <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Tanggal Rekam</TableCell>
-                  <TableCell>Nomor</TableCell>
+
                   <TableCell>Jenis Dokumen</TableCell>
+
+                  <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
                   <TableCell>Kode HS</TableCell>
                   <TableCell>Nomor Seri Barang</TableCell>
+
+                  <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
-                  <TableCell>No PO</TableCell>
-                  <TableCell>Kode Barang</TableCell>
+
+                  <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Jumlah</TableCell>
                   <TableCell>Mata Uang</TableCell>
                   <TableCell>Nilai Barang</TableCell>
+                  <TableCell>Gudang</TableCell>
                   <TableCell>Penerima Subkontrak</TableCell>
                   <TableCell>Negara Asal BB</TableCell>
                 </TableRow>
@@ -281,19 +289,26 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell> {row.tanggal_dokumen_cukai_keluar} </TableCell>
-                      <TableCell> {row.jenis_dokumen} </TableCell>
-                      <TableCell> {row.nomor_surat_cukai} </TableCell>
-                      <TableCell> {row.nomor_seri_barang}</TableCell>
-                      <TableCell> {row?.po_date} </TableCell>
-                      <TableCell> {row?.nomor_purchase_order} </TableCell>
-                      <TableCell>{row.sku_barang}</TableCell>
+                      <TableCell> {row.recoded_date} </TableCell>
+
+                      <TableCell> {row.customs_doc} </TableCell>
+
+                      <TableCell> {row.customs_document_number} </TableCell>
+                      <TableCell> {row.customs_document_date}</TableCell>
+                      <TableCell> {row?.hs_code_item} </TableCell>
+                      <TableCell> {row?.customs_item_number} </TableCell>
+
+                      <TableCell> {row.serial_number} </TableCell>
+                      <TableCell> {row.shipment_date}</TableCell>
+
+                      <TableCell> {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.category}</TableCell>
-                      <TableCell>{row.qty}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
+                      <TableCell>{row.qty}</TableCell>
+                      <TableCell>{(row.currency === 2 ? 'Rupiah' : 'Dollar US')}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
-                      <TableCell>{fCurrency(Math.floor(row.qty * row.unit_price), 'id')}</TableCell>
+                      <TableCell>{"Gudang"}</TableCell>
+                      <TableCell>{firstLetterUpperCase(row.buyer_name)}</TableCell>
                       <TableCell>{firstLetterUpperCase(row.country)}</TableCell>
                     </TableRow>
                   ))}
@@ -306,7 +321,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">{titleCase(pagename)}</Typography>
+            <Typography variant="h3">{titleCase("Laporan Pemasukan Bahan Baku ")}</Typography>
           </Grid>
           <Grid item xs={12}>
             <Stack direction="column" spacing={2}>

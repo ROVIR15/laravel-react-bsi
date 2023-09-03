@@ -31,4 +31,8 @@ class ShipmentItem extends Model
     public function shipment(){
       return $this->belongsTo('App\Models\Shipment\Shipment', 'shipment_id');
     }
+
+    public function import_info(){
+      return $this->belongsTo('App\Models\KITE\ImportDocItem', 'order_item_id', 'order_item_id')->with('doc');
+    }
 }

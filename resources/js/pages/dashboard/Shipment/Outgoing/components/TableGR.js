@@ -36,21 +36,7 @@ export default function BasicTable({ payload }) {
     return total;
   };
 
-  const rejected = () => {
-    var total = 0;
-    payload.map(function ({ qty_on_receipt, qty_received }) {
-      total = total + (qty_on_receipt - qty_received);
-    });
-    return total;
-  };
-
-  const total_received = () => {
-    var total = 0;
-    payload.map(function ({ qty_received }) {
-      total = total + qty_received;
-    });
-    return total;
-  };
+  console.log(payload);
 
   return (
     <div className="wk_table wk_style1">
@@ -68,7 +54,7 @@ export default function BasicTable({ payload }) {
               {payload.map((row, index) => (
                 <tr>
                   <td className="wk_width_1">{index+1}</td>
-                  <td className="wk_width_8">{`${row.name} ${row.color} - ${row.size}`}</td>
+                  <td className="wk_width_8">{`${row?.item_name}`}</td>
                   <td className="wk_width_2 wk_text_right">{row.deliv_qty}</td>
                 </tr>
               ))}

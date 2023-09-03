@@ -341,7 +341,7 @@ const main = {
       });
   },
 
-  // Goods
+  // Service
   insertService(_data, cb) {
     if (!_data) {
       console.error('data not found');
@@ -1070,6 +1070,29 @@ const main = {
         cb(err.response);
       });
   },
+  updatePOBuyerProof(id, _data, cb) {
+    if (!id) throw new Error('ID is required');
+    if (!_data) throw new Error('data is required');
+    axios
+      .put(uri + '/po-buyer-proof/' + id, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  uploadSalesOrderImage(_formData, cb) {
+    if (!_formData) return undefined;
+    axios
+      .post(uri + '/upload-sales-order', _formData)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   insertSalesOrder(_data, cb) {
     if (!_data) {
       console.error('data not found');
@@ -1187,7 +1210,7 @@ const main = {
   getASalesOrderItem(id, cb) {
     if (!id) console.error('ID not found');
     axios
-      .get(uri + '/order-item' + `/${id}`)
+      .get(uri + '/get-sales-order-item' + `/${id}`)
       .then(function (res) {
         cb(res.data);
       })
@@ -1330,6 +1353,20 @@ const main = {
 
     axios
       .get(uri + `/bom-item-alt-v3/${costing_id}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getBOMItemV4(costing_id, cb) {
+    if (!costing_id) {
+      return;
+    }
+
+    axios
+      .get(uri + `/bom-item-alt-v4/${costing_id}`)
       .then(function (res) {
         cb(res.data);
       })
@@ -3170,7 +3207,7 @@ const main = {
   getScrapReport(params, cb) {
     if (!params) return;
     axios
-      .get(uri + '/stock-scrap' + params)
+      .get(uri + '/report-scrap' + params)
       .then(function (res) {
         cb(res.data);
       })
@@ -3200,6 +3237,30 @@ const main = {
         cb(err.response);
       });
   },
+  getReportRawMaterial(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/raw-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+
+  getReportFG(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/fg-material-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+
   // Material Transfer
   postMaterialTransferIssue(params, cb) {
     axios
@@ -4542,6 +4603,167 @@ const main = {
   getUninvoicedPurchaseOrder(params = null, cb) {
     axios
       .get(uri + '/uninvoiced-purchase-order' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  //KITE Import
+  getImportedPO(params = null, cb) {
+    axios
+      .get(uri + '/get-import-po' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertKiteImport(_data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .post(uri + '/kite-import', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getKiteImport(params = null, cb) {
+    axios
+      .get(uri + '/kite-import' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getAKiteImport(id, cb) {
+    if (!id) console.error('ID not found');
+    axios
+      .get(uri + '/kite-import' + `/${id}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateKiteImport(id, _data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .put(uri + '/kite-import' + `/${id}`, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateAKiteImportItem(id, _data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .put(uri + '/kite-import-item' + `/${id}`, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  deleteKiteImport(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .delete(uri + '/kite-import/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  //KITE Export
+  getExportedSO(params = null, cb) {
+    axios
+      .get(uri + '/get-export-so' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  insertKiteExport(_data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .post(uri + '/kite-export', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getKiteExport(params = null, cb) {
+    axios
+      .get(uri + '/kite-export' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getAKiteExport(id, cb) {
+    if (!id) console.error('ID not found');
+    axios
+      .get(uri + '/kite-export' + `/${id}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateKiteExport(id, _data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .put(uri + '/kite-export' + `/${id}`, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  deleteKiteExport(id, cb) {
+    if (!id) throw new Error('ID is required');
+    axios
+      .delete(uri + '/kite-export/' + id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getLogs(cb) {
+    axios
+      .get(uri + '/logs')
       .then(function (res) {
         cb(res.data);
       })

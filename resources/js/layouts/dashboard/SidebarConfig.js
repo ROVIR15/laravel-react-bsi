@@ -119,9 +119,23 @@ const sidebarConfig = [
     ]
   },
   {
+    title: 'KITE',
+    name: 'kite',
+    children: [
+      {
+        title: 'PEB',
+        path: '/dashboard/kite/export'
+      },
+      {
+        title: 'PIB',
+        path: '/dashboard/kite/import'
+      }
+    ]
+  },
+  {
     title: 'Laporan Pertanggungjawaban Penerima Fasilitas KITE',
     name: 'laporan-kite',
-    icon: getIcon("fluent-emoji-high-contrast:customs"),
+    icon: getIcon('fluent-emoji-high-contrast:customs'),
     children: [
       {
         // done completing columns per 5 tabel nomor 1
@@ -135,23 +149,28 @@ const sidebarConfig = [
       },
       {
         // done completing columns per 5 table nomor 3
-        title: 'Laporan terkait Barang dalam Proses (WIP)',
+        title: 'Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak',
         path: '/dashboard/laporan-kite/laporan-barang-wip'
+      },
+      {
+        // done completing columns per 5 table nomor 4
+        title: 'Laporan Pemasukan Hasil Produksi',
+        path: '/dashboard/laporan-kite/laporan-pemasukan-hasil-produksi'
       },
       {
         // done completing columns per 5 table nomor 5
         title: 'Laporan Pengeluaran Barang Hasil Produksi',
-        path: '/dashboard/laporan-kite/laporan-barang-keluar'
-      },
-      {
-        // done completing columns per 5 table nomor 6
-        title: 'Laporan Mutasi Bahan Baku',
-        path: '/dashboard/laporan-kite/laporan-mutasi-barang?cat=bahan_baku'
+        path: '/dashboard/laporan-kite/laporan-pengeluaran-barang-hasil-produksi'
       },
       {
         // done completing columns per 5 tabel nomor 7
+        title: 'Laporan Mutasi Bahan Baku',
+        path: '/dashboard/laporan-kite/laporan-mutasi-bahan-baku'
+      },
+      {
+        // done completing columns per 5 table nomor 6
         title: 'Laporan Mutasi Hasil Produksi',
-        path: '/dashboard/laporan-kite/laporan-mutasi-barang-jadi?cat=bahan_jadi'
+        path: '/dashboard/laporan-kite/laporan-mutasi-hasil-produksi'
       },
       {
         // done completing columns per 5 table nomo 8
@@ -159,11 +178,15 @@ const sidebarConfig = [
         path: '/dashboard/laporan-kite/laporan-skrap-barang'
       },
       {
+        // done completing columns per 5 table nomo 8
+        title: 'Laporan Mutasi Waste/Scrap',
+        path: '/dashboard/laporan-kite/laporan-mutasi-skrap'
+      },
+      {
         title: 'CCTV Pengawasan',
         path: '/dashboard/laporan-kite/cctv-factory'
       }
     ]
-
   },
   {
     title: 'Inventory Management',
@@ -374,6 +397,11 @@ const sidebarConfig = [
     title: 'Line Target',
     name: 'line-target',
     path: '/dashboard/facility-target'
+  },
+  {
+    title: 'Logs',
+    name: 'logs',
+    path: '/dashboard/logs'
   }
 ];
 

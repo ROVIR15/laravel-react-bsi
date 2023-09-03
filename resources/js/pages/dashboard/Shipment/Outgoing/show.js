@@ -75,6 +75,7 @@ function OutboundDelivery() {
   const loading = open && options.length === 0;
   const [open, setOpen] = useState(false);
   const [po_number, setPONumber] = useState('');
+  const [SOID, setSOID] = useState(0);
 
   // Option for Product Items
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
@@ -108,6 +109,7 @@ function OutboundDelivery() {
           const { order, items, type, status, ...info } = res.data;
           setValues(info);
           setPONumber(order?.sales_order?.po_number);
+          setSOID(order?.sales_order?.id);
           setSelectedValueSO(order?.sales_order?.ship);
           setStatus(status[0]?.shipment_type_status_id);
           let _items = _shipmentItem(items);
@@ -201,9 +203,7 @@ function OutboundDelivery() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', width: 350, editable: false },
-      { field: 'size', headerName: 'Size', editable: false },
-      { field: 'color', headerName: 'Color', editable: false },
+      { field: 'item_name', headerName: 'Name', width: 500, editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
       { field: 'deliv_qty', headerName: 'Delivery Qty', editable: false },
       {
@@ -301,6 +301,32 @@ function OutboundDelivery() {
     setStatus(event.target.value);
   };
 
+  /**
+   * Handle item issuance
+   */
+  // -----------------------------------------------------------//
+  const handleItemIssuance = () => {
+    try {
+      let _obj = {
+        user_id: user?.id,
+        description: values.comment,
+        shipment_id: id,
+        items: items,
+        from_facility_id: 2,
+        to_facility_id: 17
+      };
+
+      API.insertItemIssuance(_obj, function (res) {
+        if (res.success)
+          enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
+        else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
+  };
+  // -----------------------------------------------------------//
+
   return (
     <Page>
       <Container>
@@ -315,39 +341,44 @@ function OutboundDelivery() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={1} direction="row">
-              <Grid item xs={4}>
-                <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                  <CardHeader title="Delivery Date" />
-                  <CardContent>
-                    <TextField
-                      fullWidth
-                      autoComplete="delivery_date"
-                      type="date"
-                      label="Delivery Date"
-                      {...getFieldProps('delivery_date')}
-                      error={Boolean(touched.delivery_date && errors.delivery_date)}
-                      helperText={touched.delivery_date && errors.delivery_date}
-                    />
-                    <TextField
-                      fullWidth
-                      autoComplete="est_delivery_date"
-                      type="date"
-                      label="Estimated Delivery Date"
-                      {...getFieldProps('est_delivery_date')}
-                      error={Boolean(touched.est_delivery_date && errors.est_delivery_date)}
-                      helperText={touched.est_delivery_date && errors.est_delivery_date}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={8}>
-                <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                  <CardHeader title="Delivery Information" />
-                  <CardContent>
+            <Card>
+              <CardContent>
+                <Grid container spacing={2} direction="row">
+                  <Grid item xs={4}>
+                    <Stack direction="column" spacing={2}>
+                      <TextField
+                        fullWidth
+                        autoComplete="delivery_date"
+                        type="date"
+                        label="Delivery Date"
+                        {...getFieldProps('delivery_date')}
+                        error={Boolean(touched.delivery_date && errors.delivery_date)}
+                        helperText={touched.delivery_date && errors.delivery_date}
+                      />
+                      <TextField
+                        fullWidth
+                        disabled
+                        autoComplete="est_delivery_date"
+                        type="date"
+                        label="Estimated Delivery Date"
+                        {...getFieldProps('est_delivery_date')}
+                        error={Boolean(touched.est_delivery_date && errors.est_delivery_date)}
+                        helperText={touched.est_delivery_date && errors.est_delivery_date}
+                      />
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={8}>
                     <Grid container direction="row" spacing={2}>
                       <Grid item xs={6} sx={{ padding: 'unset' }}>
                         <TextField fullWidth label="PO Number" value={po_number} disabled />
+
+                        <Typography
+                          variant="body1"
+                          href={`../../order/sales-order/${SOID}`}
+                          component="a"
+                        >
+                          {`SO-0${SOID}`}
+                        </Typography>
                       </Grid>
 
                       <Grid item xs={6} sx={{ padding: 'unset' }}>
@@ -376,80 +407,88 @@ function OutboundDelivery() {
                         </ColumnBox>
                       </Grid>
                     </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-            <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-              <CardContent>
-                <Box sx={{ width: '100%', typography: 'body1' }}>
-                  <TabContext value={valueTab}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                      <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                        <Tab label="Item Overview" value="1" />
-                        <Tab label="Status" value="2" />
-                        <Tab label="Comments" value="3" />
-                      </TabList>
-                    </Box>
-                    {/* Item Overview */}
-                    <TabPanel value="1" sx={{ padding: '10px 0' }}>
-                      <DataGrid
-                        columns={columns}
-                        rows={items}
-                        onEditRowsModelChange={handleEditRowsModelChange}
-                        handleAddRow={handleOpenModal}
-                        handleReset={handleResetRows}
-                        handleUpdateAllRows={false}
-                      />
-                    </TabPanel>
-                    {/* Status of Shipment */}
-                    <TabPanel value="2">
-                      <Stack direction="row" spacing={4} alignItems="center">
-                        <FormControl fullWidth>
-                          <InputLabel>Selet Status</InputLabel>
-                          <Select value={status} label="Status" onChange={handleChangeStatus}>
-                            <MenuItem value={5}>Scheduled</MenuItem>
-                            <MenuItem value={1}>Shipped</MenuItem>
-                            <MenuItem value={2}>On Going</MenuItem>
-                            <MenuItem value={3}>Cancelled</MenuItem>
-                            <MenuItem value={4}>Delivered</MenuItem>
-                          </Select>
-                        </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ width: '100%', typography: 'body1' }}>
+                      <TabContext value={valueTab}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                          <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                            <Tab label="Item Overview" value="1" />
+                            <Tab label="Status" value="2" />
+                            <Tab label="Comments" value="3" />
+                          </TabList>
+                        </Box>
+                        {/* Item Overview */}
+                        <TabPanel value="1" sx={{ padding: '10px 0' }}>
+                          <DataGrid
+                            columns={columns}
+                            rows={items}
+                            onEditRowsModelChange={handleEditRowsModelChange}
+                            handleReset={handleResetRows}
+                            handleUpdateAllRows={false}
+                          />
+                        </TabPanel>
+                        {/* Status of Shipment */}
+                        <TabPanel value="2">
+                          <Stack direction="row" spacing={4} alignItems="center">
+                            <FormControl fullWidth>
+                              <InputLabel>Selet Status</InputLabel>
+                              <Select value={status} label="Status" onChange={handleChangeStatus}>
+                                <MenuItem value={5}>Scheduled</MenuItem>
+                                <MenuItem value={1}>Shipped</MenuItem>
+                                <MenuItem value={2}>On Going</MenuItem>
+                                <MenuItem value={3}>Cancelled</MenuItem>
+                                <MenuItem value={4}>Delivered</MenuItem>
+                              </Select>
+                            </FormControl>
 
-                        <Button onClick={handleSubmitCompletionStatus}> Update </Button>
-                      </Stack>
-                    </TabPanel>
-                    {/* Comments */}
-                    <TabPanel value="3">
-                      <TextField
-                        variant="outlined"
-                        type="text"
-                        multiline
-                        rows={3}
-                        fullWidth
-                        autoComplete="comment"
-                        {...getFieldProps('comment')}
-                        error={Boolean(touched.comment && errors.comment)}
-                        helperText={touched.comment && errors.comment}
-                      ></TextField>
-                    </TabPanel>
-                  </TabContext>
-                </Box>
+                            <Button onClick={handleSubmitCompletionStatus}> Update </Button>
+                          </Stack>
+                        </TabPanel>
+                        {/* Comments */}
+                        <TabPanel value="3">
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            multiline
+                            rows={3}
+                            fullWidth
+                            autoComplete="comment"
+                            {...getFieldProps('comment')}
+                            error={Boolean(touched.comment && errors.comment)}
+                            helperText={touched.comment && errors.comment}
+                          ></TextField>
+                        </TabPanel>
+                      </TabContext>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+                      <Button
+                        size="large"
+                        color="primary"
+                        variant="contained"
+                        onClick={handleItemIssuance}
+                        sx={{ m: 1 }}
+                      >
+                        Issue from Warehouse
+                      </Button>
+                      <LoadingButton
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                        loading={isSubmitting}
+                        sx={{ m: 1 }}
+                      >
+                        Save
+                      </LoadingButton>
+                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
               </CardContent>
-            </Card>
-            <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
             </Card>
           </Form>
         </FormikProvider>

@@ -40,8 +40,7 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         if(!res.data.length) {
             setValue([]);
         } else {
-          let ras = _orderItem(res.data, so_id);
-          setValue(ras)
+          setValue(res.data);
         }
       });
       // API.getMonitoringSupermarket(`?sales-order=${order_id}`, (res) => {

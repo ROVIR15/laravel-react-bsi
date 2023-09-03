@@ -89,9 +89,9 @@ export function display_material_transfer_resources(array) {
   let arranged = array.map((x, index) => {
     const { facility, est_transfer_date, created_at, items, status, id } = x;
 
-    let total_req_qty = items.reduce((initial, next) => {
-      return initial + parseFloat(next?.transfer_qty);
-    }, 0);
+    let objj = items.reduce((initial, next) => {
+      return {...initial, req_qty: initial.req_qty + parseFloat(next?.transfer_qty), moved_qty: initial.moved_qty + parseFloat(next?.transfer_qty).toFixed(2)};
+    }, {req_qty: 0, moved_qty: 0});
 
     return {
       id: index + 1,
@@ -99,8 +99,8 @@ export function display_material_transfer_resources(array) {
       mt_id: id,
       date: created_at,
       est_transfer_date: est_transfer_date,
-      qty: total_req_qty?.toFixed(2),
-      transferred_qty: 0
+      qty: objj?.req_qty,
+      transferred_qty: objj?.moved_qty
     };
   });
 

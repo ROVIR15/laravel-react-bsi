@@ -23,6 +23,35 @@ use App\Http\Resources\Order\POView as onePurchaseOrderView;
 
 class PurchaseOrderController extends Controller
 {
+
+  public function get_import_po(Request $request)
+  {
+    $import_flag = $request->query('import_flag');
+    $completion_status = $request->query('completion_status');
+
+    if (!empty($completion_status) && $completion_status = 2) {
+      $query = PurchaseOrder::with('completion_status')
+        // ->whereHas('completion_status', function ($query2) {
+        //   $query2->where('completion_status_id', 2);
+        // })
+        ->where('import_flag', $import_flag)
+        ->get();
+    } else {
+      $query = PurchaseOrder::with('completion_status')->get();
+    }
+
+    if (isset($query) && is_array($query)) {
+      $query = $query->map(function ($item) {
+        return [
+          'id' => $item->id,
+          'po_number' => $item->po_number
+        ];
+      });
+    }
+
+    return new POViewCollection($query);
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -208,26 +237,11 @@ class PurchaseOrderController extends Controller
 
       if (!isset($purchaseOrder)) throw new Exception("Not found");
 
-      if ($param['import_flag'] === true) {
-        $kite = ImportDoc::create([
-          'date' => $param['customs_document_date'],
-          'document_number' => $param['document_number'],
-          'type' => $param['customs_document_type'],
-          'order_id' => $order->id,
-          'purchase_order_id' => $purchaseOrder->id
-        ]);
-      }
-
-      // return response()->json(['import_flag' => $request->import_flag]);
-
       //Update order_id on Sales Order Resource
       $order->find($order->id)->update(['purchase_order_id' => $purchaseOrder->id]);
 
       //Create purchase order item
       $purchaseItemsCreation = [];
-
-      //Create KITE item
-      $KITEItem = [];
 
       foreach ($param['order_items'] as $key) {
         array_push($purchaseItemsCreation, [
@@ -240,40 +254,10 @@ class PurchaseOrderController extends Controller
           'shipment_estimated' => date('Y-m-d', strtotime($key['shipment_estimated'])),
           'description' => $key['description']
         ]);
-
-        if ($param['import_flag']) {
-          array_push($KITEItem, [
-            'kite_import_doc_id' => $kite['id'],
-            'product_id' => $key['product_id'],
-            'product_feature_id' => $key['product_feature_id'],
-            'hs_code' => $key['hs_code'],
-            'item_serial_number' => $key['item_serial_number']
-          ]);
-        }
       }
 
-      ImportDocItem::insert($KITEItem);
       OrderItem::insert($purchaseItemsCreation);
 
-      //get data from stored order_item;
-      $_item_stored = OrderItem::where('order_id', $order->id)->get();
-
-      if ($param['import_flag'] === true) {
-        $_kite_item = ImportDocItem::where('kite_import_doc_id', $kite->id)->get();
-
-        // update data
-        foreach ($_kite_item as $kiteItem) {
-          // Get the corresponding OrderItem based on product_id and product_feature_id
-          $matchingOrderItem = $_item_stored
-            ->where('product_id', $kiteItem->product_id)
-            ->where('product_feature_id', $kiteItem->product_feature_id)
-            ->first();
-
-          if ($matchingOrderItem) {
-            ImportDocItem::find($kiteItem->id)->update(['order_item_id' => $matchingOrderItem->id]);
-          }
-        }
-      }
     } catch (Exception $e) {
       //throw $th;
       return response()->json(

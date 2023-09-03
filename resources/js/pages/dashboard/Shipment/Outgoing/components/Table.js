@@ -23,9 +23,7 @@ import API from '../../../../../helpers';
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
-    { id: 'qty_order', label: 'Qty Order', alignRight: false },
+    { id: 'current_stock', label: 'Available Stock', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -163,10 +161,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                   const {
                     id,
                     order_item_id,
-                    name,
-                    size,
-                    color,
-                    qty_order
+                    item_name,
+                    current_stock
 		    // qty_loading,
 		    // numbering
                   } = row;
@@ -186,10 +182,8 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{qty_order}</TableCell>
+                      <TableCell align="left">{item_name}</TableCell>
+                      <TableCell align="left">{current_stock}</TableCell>
 		      {/* <TableCell align="left">{numbering}</TableCell>
 		      <TableCell align="left">{qty_loading}</TableCell> */}
                     </TableRow>

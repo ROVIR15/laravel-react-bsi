@@ -16,10 +16,41 @@ use App\Http\Resources\Order\SalesOrderCollection;
 use App\Http\Resources\Order\SOView as oneSalesOrderView;
 use App\Http\Resources\Order\SOViewCollection;
 use App\Models\KITE\ExportDoc;
+use App\Models\Order\POBuyerProof;
 use Illuminate\Http\Request;
 
 class SalesOrderController extends Controller
 {
+
+  public function get_export_so(Request $request)
+  {
+    $export_flag = $request->query('export_flag');
+    $completion_status = $request->query('completion_status');
+
+    if (!empty($completion_status) && $completion_status = 2) {
+      $query = SalesOrder::with('completion_status')
+        // ->whereHas('completion_status', function ($query2) {
+        //   $query2->where('completion_status_id', 2);
+        // })
+        ->where('export_flag', $export_flag)
+        ->get();
+    } else {
+      $query = SalesOrder::with('completion_status')
+      ->where('export_flag', $export_flag)
+      ->get();
+    }
+
+    if (isset($query) && is_array($query)) {
+      $query = $query->map(function ($item) {
+        return [
+          'id' => $item->id,
+          'po_number' => $item->po_number
+        ];
+      });
+    }
+
+    return new SOViewCollection($query);
+  }
 
   /**
    * Display a listing of the resource.
@@ -150,15 +181,6 @@ class SalesOrderController extends Controller
         'valid_thru' => $param['valid_thru']
       ]);
 
-      if ($param['export_flag'] === true) {
-        ExportDoc::create([
-          'sales_order_id' => $salesOrder->id,
-          'order_id' => $order->id,
-          'document_number' => $param['document_number'],
-          'date' => $param['date']
-        ]);
-      }
-
       //Update order_id on Sales Order Resource
       $order->find($order->id)->update(['sales_order_id' => $salesOrder->id]);
 
@@ -177,6 +199,17 @@ class SalesOrderController extends Controller
       }
 
       OrderItem::insert($salesItemsCreation);
+
+      $imageUrl = $param['imageUrl'] ? $param['imageUrl'] : null;
+
+      POBuyerProof::create([
+        'tanggal_po' => $param['tanggal_po'],
+        'nomor_po' => $param['nomor_po'],
+        'sales_order_id' => $salesOrder->id,
+        'order_id' => $order->id,
+        'imageUrl' => $imageUrl
+      ]);
+
     } catch (Exception $e) {
       //throw $th;
       return response()->json(
@@ -209,7 +242,8 @@ class SalesOrderController extends Controller
           'id' => $query['id'],
           'order_id' => $query['order_id'],
           'sales_order_id' => $query['id'],
-          'po_number' => $query['po_number']
+          'po_number' => $query['po_number'],
+          'name' => $query['po_number']
         ];
       });
     } catch (\Throwable $th) {
@@ -251,8 +285,11 @@ class SalesOrderController extends Controller
           'unit_measurement' => $goods ? $goods->satuan : null,
           'category_id' => $productCategory ? $productCategory->category->id : null,
           'category_name' => $productCategory ? $productCategory->category->name . ' - ' . $productCategory->category->sub->name : null,
-          'category_id' => $productCategory ? $productCategory->category->id : null,
+          'category' => $productCategory ? $productCategory->category->name . ' - ' . $productCategory->category->sub->name : null,
           'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+          'name' => $goods ? $goods->name : null,
+          'size' => $productFeature ? $productFeature->size : null,
+          'color' => $productFeature ? $productFeature->color : null
         ];
       });
     } catch (\Throwable $th) {
@@ -278,7 +315,7 @@ class SalesOrderController extends Controller
   public function show($id)
   {
     try {
-      $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order', 'export_doc')->find($id);
+      $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order', 'export_doc', 'order_proof')->find($id);
       return new oneSalesOrder($salesOrder);
     } catch (Exception $th) {
       return response()->json([

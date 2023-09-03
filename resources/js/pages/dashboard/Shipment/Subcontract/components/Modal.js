@@ -8,7 +8,7 @@ import {
   OutlinedInput,
   InputLabel,
   styled
-} from '@mui/material'
+} from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
@@ -18,9 +18,10 @@ import CheckSquareOutline from '@iconify/icons-eva/checkmark-square-2-outline';
 import API from '../../../../../helpers';
 
 import Table from './Table';
-import { _orderItem } from '../../../../../helpers/data';
+import { optionProductFeatureV3, _orderItem } from '../../../../../helpers/data';
 import { IconButton, Stack } from '@mui/material';
 import closeCircle from '@iconify/icons-eva/close-outline';
+import { isEmpty } from 'lodash';
 
 const style = {
   position: 'absolute',
@@ -76,7 +77,6 @@ export default function BasicModal({
           }
         });
       } else {
-        alert('no option');
       }
     } catch (error) {
       alert(error);
@@ -93,29 +93,38 @@ export default function BasicModal({
   const [loadingData, setLoadingData] = React.useState(false);
   const handleSelect = (e) => {
     setSelectedCosting(e.target.value);
-  }
+  };
 
   React.useEffect(() => {
     // console.log(selectedCosting)
     setLoadingData(true);
-    if (selectedCosting !== 0) {
-      try {
+    try {
+      if (selectedCosting !== 0) {
         API.getSalesOrderItemV2(selectedCosting, '', function (res) {
           if (!res) return;
           if (res.success) {
-            let listed = res.data.map(function(item) {
-              return {...item, deliv_qty: 0};
-            })
-            setValue(listed)
+            let listed = res.data.map(function (item) {
+              return { ...item, deliv_qty: 0 };
+            });
+            setValue(listed);
           }
         });
-      } catch (error) {
-        alert(error);
+      } else {
+        // API.getProductFeature((res) => {
+        //   if (!res) return;
+        //   if (!res.data) {
+        //     setCostingData([]);
+        //   } else {
+        //     const dataAC = optionProductFeatureV3(res.data);
+        //     setValue(listed);
+        //   }
+        // });
       }
+    } catch (error) {
+      alert(error);
     }
 
     setLoadingData(false);
-
   }, [selectedCosting]);
   // --------------------------------------------------------------- //
 
@@ -136,21 +145,22 @@ export default function BasicModal({
             </IconButton>
           </Stack>
 
-            <div>
-              <InputLabel id="costing_name">Pilih Order</InputLabel>
-              <Select
-                onChange={handleSelect}
-                value={selectedCosting}
-                input={<OutlinedInput label="Name" />}
-
-                fullWidth
-              >
-                <MenuItem value={0}>None</MenuItem>;
-                {dataCosting?.map(function (item) {
-                  return <MenuItem value={item.id}>{item.po_number}</MenuItem>;
-                })}
-              </Select>
-            </div>
+          <div>
+            <InputLabel id="costing_name">Pilih Order</InputLabel>
+            <Select
+              onChange={handleSelect}
+              value={selectedCosting}
+              input={<OutlinedInput label="Name" />}
+              fullWidth
+            >
+              <MenuItem value={0}>None</MenuItem>;
+              {!isEmpty(dataCosting)
+                ? dataCosting?.map(function (item) {
+                    return <MenuItem value={item?.order_id}>{item?.po_number}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </div>
           <Table list={value} selected={selected} setSelected={setSelected} />
         </StyledCard>
       </Modal>

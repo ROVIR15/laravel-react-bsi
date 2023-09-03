@@ -22,7 +22,8 @@ import {
   Select,
   Paper,
   MenuItem
-} from '@mui/material';import { styled } from '@mui/material/styles';
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -84,6 +85,7 @@ function OutboundDelivery() {
   const loading = open && options.length === 0;
   const [open, setOpen] = useState(false);
   const [po_number, setPONumber] = useState('');
+  const [POID, setPOID] = useState(null);
 
   // Option for Product Items
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
@@ -121,13 +123,13 @@ function OutboundDelivery() {
           const { order, items, type, status, ...info } = res.data;
           setValues(info);
           setPONumber(order?.purchase_order?.po_number);
+          setPOID(order?.purchase_order?.id);
           let _ship = _partyAddress(order?.purchase_order?.ship);
           setSelectedValueSO(_ship);
           setStatus(status[0]?.shipment_type_status_id);
           let _items = _shipmentItem(items);
           setItems(_items);
           setFile(info?.imageUrl);
-          setIsSubcontract(Boolean(res.data?.subcontract_flag));
         }
       });
     } catch (error) {
@@ -256,33 +258,36 @@ function OutboundDelivery() {
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
         // update on shipment item
-        try {
-          API.updateShipmentItem(
-            editedIds,
-            { [editedColumnName]: editRowData[editedColumnName].value },
-            function (res) {
-              if (!res) return;
-              if (!res.success) throw new Error('failed');
-              else alert('done');
-            }
-          );
-        } catch (error) {
-          alert(error);
-        }
-        //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+              if (editRowData[editedColumnName].value > row.qty_order) {
+                alert('You trying to do something wrong! please check your input');
+                return row;
+              } else {
+                try {
+                  API.updateShipmentItem(
+                    editedIds,
+                    { [editedColumnName]: editRowData[editedColumnName].value },
+                    function (res) {
+                      if (res.success) {
+                        enqueueSnackbar('', { variant: 'successAlert' });
+                      } else enqueueSnackbar('', { variant: 'failedAlert' });
+                    }
+                  );
+                } catch (error) {
+                  console.error(error);
+                  enqueueSnackbar('', { variant: 'failedAlert' });
+                } //update items state
+                return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+              }
             } else {
               return row;
             }
           });
         });
-
-        // update on field value
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -390,6 +395,32 @@ function OutboundDelivery() {
     }
   };
 
+  /**
+   * Handle item issuance
+   */
+  // -----------------------------------------------------------//
+  const handleItemIssuance = () => {
+    try {
+      let _obj = {
+        user_id: user?.id,
+        description: values.comment,
+        shipment_id: id,
+        items: items,
+        to_facility_id: 3,
+        from_facility_id: 16
+      };
+
+      API.insertItemIssuance(_obj, function (res) {
+        if (res.success)
+          enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
+        else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
+    // -----------------------------------------------------------//
+  };
+
   return (
     <Page>
       <Container>
@@ -404,11 +435,10 @@ function OutboundDelivery() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={1} direction="row">
-              <Grid item xs={4}>
-                <Card>
-                  <CardHeader title="Delivery Date" />
-                  <CardContent>
+            <Card>
+              <CardContent>
+                <Grid container spacing={2} direction="row">
+                  <Grid item xs={3}>
                     <Stack direction="column" spacing={2}>
                       <TextField
                         fullWidth
@@ -430,34 +460,42 @@ function OutboundDelivery() {
                         helperText={touched.est_delivery_date && errors.est_delivery_date}
                       />
                     </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={8}>
-                <Card>
-                  <CardHeader title="Delivery Information" />
-                  <CardContent>
-                    <Grid container direction="row" spacing={2}>
-                      <Grid item xs={5} sx={{ padding: 'unset' }}>
-                        <TextField fullWidth label="PO Number" value={po_number} disabled />
-                      </Grid>
+                  </Grid>
 
-                      <Grid item xs={5} sx={{ padding: 'unset' }}>
-                        <TextField
-                          variant="outlined"
-                          type="text"
-                          fullWidth
-                          disabled
-                          autoComplete="serial_number"
-                          placeholder="Delivery Serial Number"
-                          {...getFieldProps('serial_number')}
-                          error={Boolean(touched.serial_number && errors.serial_number)}
-                          helperText={touched.serial_number && errors.serial_number}
-                        />
-                      </Grid>
+                  <Grid item xs={9}>
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px'
+                      }}
+                    >
+                      <Grid container direction="row" spacing={2}>
+                        <Grid item xs={5} sx={{ padding: 'unset' }}>
+                          <TextField fullWidth label="PO Number" value={po_number} disabled />
+                          <Typography
+                            variant="body1"
+                            href={`../../purchasing/purchase-order/${POID}`}
+                            component="a"
+                          >
+                            {`PO-0${POID}`}
+                          </Typography>
+                        </Grid>
 
-                      <Grid item xs={12}>
-                        <ColumnBox>
+                        <Grid item xs={5} sx={{ padding: 'unset' }}>
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            disabled
+                            autoComplete="serial_number"
+                            placeholder="Delivery Serial Number"
+                            {...getFieldProps('serial_number')}
+                            error={Boolean(touched.serial_number && errors.serial_number)}
+                            helperText={touched.serial_number && errors.serial_number}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
                           <SpaceBetweenBox>
                             <Typography variant="h6"> Buyer </Typography>
                             <Button disabled>Select</Button>
@@ -471,41 +509,84 @@ function OutboundDelivery() {
                               <Typography variant="body2">{`${selectedValueSO.city}, ${selectedValueSO.province}, ${selectedValueSO.country}`}</Typography>
                             </div>
                           ) : null}
-                        </ColumnBox>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-            <Card sx={{ mt: 2, mb: 2 }}>
-              <CardContent>
-                <Box sx={{ width: '100%', typography: 'body1' }}>
-                  <TabContext value={valueTab}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                      <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                        <Tab label="Item Overview" value="1" />
-                        <Tab label="Status" value="2" />
-                        <Tab label="Shipment Receipt" value="3" />
-                        <Tab label="Comments" value="4" />
-                      </TabList>
-                    </Box>
-                    {/* Item Overview */}
-                    <TabPanel value="1" sx={{ padding: '10px 0' }}>
-                      <Stack direction="column" spacing={2}>
-                        <DataGrid
-                          columns={columns}
-                          rows={items}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleAddRow={handleOpenModal}
-                          addItemActive={false}
-                          updateActive={false}
-                          handleReset={handleResetRows}
-                        />
+                    </ColumnBox>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider orientation="horizontal" variant="middle" flexItem />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px',
+                        typography: 'body1'
+                      }}
+                    >
+                      <TabContext value={valueTab}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                          <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                            <Tab label="Item Overview" value="1" />
+                            <Tab label="Status" value="2" />
+                            <Tab label="Shipment Receipt" value="3" />
+                            <Tab label="Comments" value="4" />
+                          </TabList>
+                        </Box>
+                        {/* Item Overview */}
+                        <TabPanel value="1" sx={{ padding: '10px 0' }}>
+                          <Stack direction="column" spacing={2}>
+                            <DataGrid
+                              columns={columns}
+                              rows={items}
+                              onEditRowsModelChange={handleEditRowsModelChange}
+                              handleAddRow={handleOpenModal}
+                              addItemActive={false}
+                              updateActive={false}
+                              handleReset={handleResetRows}
+                            />
 
-                        <Box>
+                            <Box>
+                              <TextField
+                                sx={{ marginTop: '3.5em' }}
+                                variant="outlined"
+                                type="text"
+                                multiline
+                                rows={3}
+                                fullWidth
+                                autoComplete="comment"
+                                {...getFieldProps('comment')}
+                                error={Boolean(touched.comment && errors.comment)}
+                                helperText={touched.comment && errors.comment}
+                              />
+                            </Box>
+                          </Stack>
+                        </TabPanel>
+                        {/* Status of Shipment */}
+                        <TabPanel value="2">
+                          <Stack direction="row" spacing={4} alignItems="center">
+                            <FormControl fullWidth>
+                              <InputLabel>Selet Status</InputLabel>
+                              <Select value={status} label="Status" onChange={handleChangeStatus}>
+                                <MenuItem value={5}>Scheduled</MenuItem>
+                                <MenuItem value={1}>Shipped</MenuItem>
+                                <MenuItem value={2}>On Going</MenuItem>
+                                <MenuItem value={3}>Cancelled</MenuItem>
+                                <MenuItem value={4}>Delivered</MenuItem>
+                              </Select>
+                            </FormControl>
+
+                            <Button onClick={handleSubmitCompletionStatus}> Update </Button>
+                          </Stack>
+                        </TabPanel>
+                        {/* Proof of Receipt */}
+                        <TabPanel value="3">
+                          <ShowImageWhenItsUploaded />
+                        </TabPanel>
+                        {/* Comments */}
+                        <TabPanel value="4">
                           <TextField
-                            sx={{ marginTop: '3.5em' }}
                             variant="outlined"
                             type="text"
                             multiline
@@ -516,61 +597,37 @@ function OutboundDelivery() {
                             error={Boolean(touched.comment && errors.comment)}
                             helperText={touched.comment && errors.comment}
                           />
-                        </Box>
-                      </Stack>
-                    </TabPanel>
-                    {/* Status of Shipment */}
-                    <TabPanel value="2">
-                      <Stack direction="row" spacing={4} alignItems="center">
-                        <FormControl fullWidth>
-                          <InputLabel>Selet Status</InputLabel>
-                          <Select value={status} label="Status" onChange={handleChangeStatus}>
-                            <MenuItem value={5}>Scheduled</MenuItem>
-                            <MenuItem value={1}>Shipped</MenuItem>
-                            <MenuItem value={2}>On Going</MenuItem>
-                            <MenuItem value={3}>Cancelled</MenuItem>
-                            <MenuItem value={4}>Delivered</MenuItem>
-                          </Select>
-                        </FormControl>
-
-                        <Button onClick={handleSubmitCompletionStatus}> Update </Button>
-                      </Stack>
-                    </TabPanel>
-                    {/* Proof of Receipt */}
-                    <TabPanel value="3">
-                      <ShowImageWhenItsUploaded />
-                    </TabPanel>
-                    {/* Comments */}
-                    <TabPanel value="4">
-                      <TextField
-                        variant="outlined"
-                        type="text"
-                        multiline
-                        rows={3}
-                        fullWidth
-                        autoComplete="comment"
-                        {...getFieldProps('comment')}
-                        error={Boolean(touched.comment && errors.comment)}
-                        helperText={touched.comment && errors.comment}
-                      />
-                    </TabPanel>
-                  </TabContext>
-                </Box>
+                        </TabPanel>
+                      </TabContext>
+                    </ColumnBox>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+                      <Button
+                        size="large"
+                        color="primary"
+                        variant="contained"
+                        onClick={handleItemIssuance}
+                        sx={{ m: 1 }}
+                      >
+                        Issue to Warehouse
+                      </Button>
+                      <LoadingButton
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                        loading={isSubmitting}
+                        sx={{ m: 1 }}
+                      >
+                        Save
+                      </LoadingButton>
+                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
               </CardContent>
-            </Card>
-            <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
             </Card>
           </Form>
         </FormikProvider>

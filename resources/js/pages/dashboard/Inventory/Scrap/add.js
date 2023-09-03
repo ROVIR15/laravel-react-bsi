@@ -12,17 +12,21 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 import { enqueueSnackbar } from 'notistack';
 
+import useAuth from '../../../../context';
+
 // api
 import API from '../../../../helpers';
 
 function Scrap() {
+  const { user } = useAuth();
+
   const formik = useFormik({
     initialValues: {
       document_number: 0,
       date: '2023-07-18'
     },
     onSubmit: (values) => {
-      const data = {...values, items};
+      const data = {...values, items, user_id: user.id};
 
       try {
         API.insertScrapV2(data, function (res) {
@@ -67,7 +71,7 @@ function Scrap() {
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Qty', editable: true },
-      { field: 'unit_measurement', headerName: 'Satuan', editable: false },
+      { field: 'unit_measurement', headerName: 'Satuan', editable: true },
       {
         field: 'actions',
         type: 'actions',
@@ -143,7 +147,6 @@ function Scrap() {
   const handleCloseModal = () => setOpenM(false);
   // --------------------------------------------------------------------- //
 
-  console.log(items);
   return (
     <Page>
       <Container>

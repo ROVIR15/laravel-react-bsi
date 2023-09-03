@@ -31,10 +31,12 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'mt_id', label: 'Nomor Permintaan MT', alignRight: false },
+  { id: 'from_facility_name', label: 'Dari', alignRight: false },
+  { id: 'to_facility_name', label: 'Ke', alignRight: false },
   { id: 'date', label: 'Tanggal Buat', alignRight: false },
   { id: 'est_transfer_date', label: 'Tanggal Terproses', alignRight: false },
-  { id: 'qty', label: 'Qty Minta', alignRight: false },
-  { id: 'transferred_qty', label: 'Terkirim', alignRight: false }
+  { id: 'req_transfer_qty', label: 'Qty Minta', alignRight: false },
+  { id: 'res_transfer_qty', label: 'Terkirim', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -115,8 +117,7 @@ function Invoice({ placeHolder }) {
         if (!res.data) {
           setInvoice([]);
         } else {
-          let item = display_material_transfer_resources(res.data);
-          setInvoice(item)
+          setInvoice(res.data)
         }
       });
     } catch (error) {
@@ -232,8 +233,11 @@ function Invoice({ placeHolder }) {
                       mt_id,
                       date,
                       est_transfer_date,
-                      qty,
-                      transferred_qty
+                      from_facility_name,
+                      to_facility_name,
+                      req_transfer_qty,
+                      res_transfer_qty,
+                      unit_measurement
                     } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
                     return (
@@ -254,15 +258,17 @@ function Invoice({ placeHolder }) {
                           /> */}
                         </TableCell>
                         <TableCell align="left">{mt_id}</TableCell>
+                        <TableCell align="left">{from_facility_name}</TableCell>
+                        <TableCell align="left">{to_facility_name}</TableCell>
                         <TableCell align="left">{moment(date).format('LL')}</TableCell>
                         <TableCell align="left">{moment(est_transfer_date).format('LL')}</TableCell>
-                        <TableCell align="left">{`${fNumber(qty)} pcs`}</TableCell>
-                        <TableCell align="left">{fNumber(transferred_qty)}</TableCell>
+                        <TableCell align="left">{`${fNumber(req_transfer_qty)} ${unit_measurement}`}</TableCell>
+                        <TableCell align="left">{`${fNumber(res_transfer_qty)} ${unit_measurement}`}</TableCell>
                         <TableCell align="right">
                           <MoreMenu
-                            id={mt_id}
+                            id={id}
                             document={true}
-                            handleDelete={(event) => handleDeleteData(event, mt_id)}
+                            handleDelete={(event) => handleDeleteData(event, id)}
                           />
                         </TableCell>
                       </TableRow>

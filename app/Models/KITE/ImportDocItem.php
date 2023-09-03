@@ -32,4 +32,8 @@ class ImportDocItem extends Model
     public function product() {
         return $this->belongsTo('App\Models\Product\Product', 'product_id');
     }
+
+    public function doc() {
+        return $this->belongsTo('App\Models\KITE\ImportDoc', 'kite_import_doc_id');
+    }
 }

@@ -12,6 +12,7 @@ use App\Http\Resources\Manufacture\BOMItem as BOMItemOneCollection;
 use App\Http\Resources\Manufacture\BOMItemCollection;
 use App\Models\Product\ProductFeature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BOMItemController extends Controller
 {
@@ -41,8 +42,14 @@ class BOMItemController extends Controller
     public function getCostingId()
     {
         try {
-            $query = BOM::select('id', 'name')->get();
-            
+            $query = BOM::select('id', 'name')->get()->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'order_id' => $item->id,
+                    'name' => $item->name,
+                    'po_number' => $item->name
+                ];
+            });
         } catch (\Throwable $th) {
             //throw $th;
 
@@ -88,8 +95,65 @@ class BOMItemController extends Controller
                         'unit_measurement' => $goods ? $goods->satuan : null,
                         'brand' => $goods ? $goods->brand : null,
                         'category_id' => $query->product_category->product_category_id,
+                        'category_name' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
                         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
                         'unit_price' => count($query3) ? $query3[0]['unit_price'] : 0,
+                        'costing_item_id' => count($query3) ? $query3[0]['costing_item_id'] : 0
+                    ];
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $items
+        ], 200);
+    }
+
+    public function findItemsByCostingIdWithStock($costing_id)
+    {
+
+        try {
+            $query = BOMItem::with('product_feature')->where('bom_id', $costing_id)->get()->map(function ($data) {
+                $query2 = ProductFeature::select('product_id', 'id')
+                    ->where('id', $data['product_feature_id'])
+                    ->get();
+
+                if ($data['product_id'] === 0) {
+                    BOMItem::where('id', $data['id'])->update(['product_id' => $query2[0]['product_id']]);
+                    $status = 'updated product id on costing item';
+                }
+
+                return $query2[0]['product_id'];
+            });
+
+            $items = ProductFeature::with('product', 'product_category')
+                    ->with(['movement' => function($query) {
+                        return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))->where('facility_id', 3)->groupBy('product_feature_id');
+                    }])
+                    ->whereHas('movement')
+                    ->whereIn('product_id', $query)->get()->map(function ($query) use ($costing_id) {
+                $product = $query->product ? $query->product : null;
+                $goods = $product ? $product->goods : null;
+
+                $query3 = BOMItem::select('unit_price', 'id as costing_item_id')->where('bom_id', $costing_id)->where('product_id', $query->product_id)->get();
+                return
+                    [
+                        'id' => $query['id'],
+                        'product_id' => $query['product_id'],
+                        'product_feature_id' => $query['id'],
+                        'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+                        'unit_measurement' => $goods ? $goods->satuan : null,
+                        'brand' => $goods ? $goods->brand : null,
+                        'category_id' => $query->product_category->product_category_id,
+                        'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+                        'unit_price' => count($query3) ? $query3[0]['unit_price'] : 0,
+                        'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0,
                         'costing_item_id' => count($query3) ? $query3[0]['costing_item_id'] : 0
                     ];
             });

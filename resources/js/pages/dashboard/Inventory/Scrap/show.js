@@ -70,7 +70,7 @@ function Scrap() {
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Qty', editable: true },
-      { field: 'unit_measurement', headerName: 'Satuan', editable: false },
+      { field: 'unit_measurement', headerName: 'Satuan', editable: true },
       {
         field: 'actions',
         type: 'actions',

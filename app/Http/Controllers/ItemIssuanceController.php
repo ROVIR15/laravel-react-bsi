@@ -2,155 +2,221 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+
 use Illuminate\Http\Request;
 use App\Models\Shipment\ItemIssuance;
 use App\Models\Inventory\Inventory;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Shipment\ItemIssuance as ItemIssuanceOneCollection;
 use App\Http\Resources\Shipment\ItemIssuanceCollection;
+use App\Models\Inventory\GoodsMovement;
+use App\Models\Inventory\MaterialTransfer;
+use App\Models\Inventory\MaterialTransferItem;
+use App\Models\Inventory\MaterialTransferRealisation;
+use App\Models\Inventory\MaterialTransferShipmentRelationship;
 
 class ItemIssuanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-      $param = $request->all();
-      $query = ItemIssuance::all();
+  /**
+   * Display a listing of the resource.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function index(Request $request)
+  {
+    $param = $request->all();
+    $query = ItemIssuance::all();
 
-      return new ItemIssuanceCollection($query);
-    }
+    return new ItemIssuanceCollection($query);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+  /**
+   * Show the form for creating a new resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function create()
+  {
+    //
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-      $param = $request->all()['payload'];
-      try {
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $param = $request->all()['payload'];
+    try {
 
-        $payloadItems = [];
-        $invItems = [];
+      DB::beginTransaction();
 
-        foreach ($param['items'] as $item) {
-          # code...
-          array_push($payloadItems, [
-            'shipment_item_id' => $item['id'],
-            'item_issued' => $item['qty_shipped']
-          ]);
-        }
+      //check if this shipment already issued or the quantity is enough
+      $mtsr = MaterialTransferShipmentRelationship::where('shipment_id', $param['shipment_id'])->get();
 
-        foreach ($param['items'] as $item) {
-          # code...
-          array_push($invItems, [
-            'facility_id' => 1,
-            'product_feature_id' => $item['product_feature_id'],
-            'qty_on_hand' =>  $item['qty_shipped']*-1
-          ]);
-        }
-
-        ItemIssuance::insert($payloadItems);
-
-        Inventory::insert($invItems);
-
-      } catch (Exception $th) {
+      if(count($mtsr)){
+        //check if the quantity is below
         return response()->json([
           'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
-      }
-      return response()->json([
-        'success' => true
-      ], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\X  $X
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-      try {
-        $query = ItemIssuance::find($id);
-        return new ItemIssuanceOneCollection($query);
-      } catch (Exception $th) {
-        return response()->json([
-          'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
-      }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\X  $X
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(X $x)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\X  $X
-     * @return \Illuminate\Http\Response
-     */
-    public function update($id, Request $request)
-    {
-      $param = $request->all()['payload'];
-      try {
-        ItemIssuance::find($id)->update($param);
-      } catch (Exception $th) {
-        return response()->json([
-          'success' => false,
-          'errors' => $e->getMessage()
-        ],500);
-      }
-      return response()->json([
-        'success' => true
-      ], 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\X  $X
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-      try {
-        ItemIssuance::find($id)->delete();
-        return response()->json([ 'success'=> true ], 200);
-      } catch (Exception $th) {
-        //throw $th;
-        return response()->json([
-          'success' => false,
-          'errors' => $th->getMessage()
+          'message' => 'sorry, you cannot issued twice'
         ]);
       }
+
+      $to_facility_id = $param['to_facility_id'];
+      $from_facility_id = $param['from_facility_id'];
+      $date = date("Y-m-d");
+      $prep = [
+        'to_facility_id' => $to_facility_id,
+        'from_facility_id' => $from_facility_id,
+        'est_transfer_date' => $date,
+        'user_id' => $param['user_id'],
+        'description' => 'Automatically Generated by System'
+      ];
+
+      $mt = MaterialTransfer::create($prep);
+      DB::commit();
+
+      foreach ($param['items'] as $key) {
+        $_temp = [
+          'material_transfer_id' => $mt['id'],
+          'product_id' => $key['product_id'],
+          'product_feature_id' => $key['product_feature_id'],
+          'transfer_qty' => $key['deliv_qty']
+        ];
+
+        $mti = MaterialTransferItem::create($_temp);
+        DB::commit();
+
+        $mtr = MaterialTransferRealisation::create([
+          'material_transfer_id' => $mt['id'],
+          'material_transfer_item_id' => $mti['id'],
+          'transferred_qty' => $key['deliv_qty']
+        ]);
+        DB::commit();
+
+        // substract qty from from_facility_id and make record on goods movement
+        GoodsMovement::create([
+          'date' => $date,
+          'material_transfer_id' => $mt['id'],
+          'material_transfer_item_id' => $mti['id'],
+          'material_transfer_item_realisation_id' => $mtr['id'],
+          'facility_id' => $from_facility_id,
+          'goods_id' => $key['goods_id'],
+          'product_id' => $key['product_id'],
+          'product_feature_id' => $key['product_feature_id'],
+          'type_movement' => 2, // 1 for incoming and 2 outbound
+          'qty' => $key['deliv_qty'] * -1,
+        ]);
+        DB::commit();
+
+        //add qty from to_facility_id and make record on goods_movement;
+        GoodsMovement::create([
+          'date' => $date,
+          'material_transfer_id' => $mt['id'],
+          'material_transfer_item_id' => $mti['id'],
+          'material_transfer_item_realisation_id' => $mtr['id'],
+          'facility_id' => $to_facility_id,
+          'goods_id' => $key['goods_id'],
+          'product_id' => $key['product_id'],
+          'product_feature_id' => $key['product_feature_id'],
+          'type_movement' => 1, // 1 for incoming and 2 outbound
+          'qty' => $key['deliv_qty']
+        ]);
+        DB::commit();
+      }
+
+      MaterialTransferShipmentRelationship::create([
+        'shipment_id' => $param['shipment_id'],
+        'material_transfer_id' => $mt['id']
+      ]);
+      DB::commit();
+
+    } catch (Exception $th) {
+      DB::rollback();
+      return response()->json([
+        'success' => false,
+        'errors' => $th->getMessage()
+      ], 500);
     }
+    return response()->json([
+      'success' => true
+    ], 200);
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  \App\X  $X
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    try {
+      $query = ItemIssuance::find($id);
+      return new ItemIssuanceOneCollection($query);
+    } catch (Exception $th) {
+      return response()->json([
+        'success' => false,
+        'errors' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  /**
+   * Show the form for editing the specified resource.
+   *
+   * @param  \App\X  $X
+   * @return \Illuminate\Http\Response
+   */
+  public function edit(X $x)
+  {
+    //
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\X  $X
+   * @return \Illuminate\Http\Response
+   */
+  public function update($id, Request $request)
+  {
+    $param = $request->all()['payload'];
+    try {
+      ItemIssuance::find($id)->update($param);
+    } catch (Exception $th) {
+      return response()->json([
+        'success' => false,
+        'errors' => $e->getMessage()
+      ], 500);
+    }
+    return response()->json([
+      'success' => true
+    ], 200);
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  \App\X  $X
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy($id)
+  {
+    try {
+      ItemIssuance::find($id)->delete();
+      return response()->json(['success' => true], 200);
+    } catch (Exception $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'errors' => $th->getMessage()
+      ]);
+    }
+  }
 }

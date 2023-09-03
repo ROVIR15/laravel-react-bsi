@@ -23,6 +23,12 @@ use App\Models\Monitoring\FinishedGoods;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Inventory\Inventory as InventoryOneCollection;
 use App\Http\Resources\Inventory\InventoryCollection;
+use App\Http\Resources\Shipment\Shipment;
+use App\Models\Inventory\GoodsMovement;
+use App\Models\Inventory\MaterialTransfer;
+use App\Models\Inventory\MaterialTransferShipmentRelationship;
+use App\Models\Order\PurchaseOrder;
+use App\Models\Order\SalesOrder;
 
 class InventoryController extends Controller
 {
@@ -120,27 +126,28 @@ class InventoryController extends Controller
     $paginate = $request->query('paginate');
 
     try {
-      $query = ProductFeature::with('movement', 'product')
-        ->get();
-        // ->map(function ($item) {
-        //   $product = $item->product ? $item->product : null;
-        //   $goods = $product ? $product->goods : null;
+      $query = ProductFeature::with('product', 'product_category')
+        ->with(['movement' => function ($query) {
+          return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))->where('facility_id', 3)->groupBy('product_feature_id');
+        }])
+        ->whereHas('movement')
+        ->get()->map(function ($query) {
+          $product = $query->product ? $query->product : null;
+          $goods = $product ? $product->goods : null;
 
-        //   // Retrieve the incoming and outgoing quantities
-        //   $incoming_qty_ = $item->in->isEmpty() ? 0 : $item->in[0]->qty;
-        //   $outgoing_qty_ = $item->out->isEmpty() ? 0 : $item->out[0]->qty;
-
-        //   //Goods produced if its finished goods
-        //   $finishedGoods = $item->finished_goods->isEmpty() ? 0 : $item->finished_goods[0]->output;
-
-        //   return [
-        //     'id' => $item->id,
-        //     'item_name' => $goods ? $goods->name . ' - ' . $item->color . ' ' . $item->size : null,
-        //     'stock_in' => $incoming_qty_ + $finishedGoods,
-        //     'stock_out' => $outgoing_qty_,
-        //     'current_stock' => $incoming_qty_ - $outgoing_qty_ + $finishedGoods
-        //   ];
-        // });
+          return
+            [
+              'id' => $query['id'],
+              'product_id' => $query['product_id'],
+              'product_feature_id' => $query['id'],
+              'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+              'unit_measurement' => $goods ? $goods->satuan : null,
+              'brand' => $goods ? $goods->brand : null,
+              'category_id' => $query->product_category->product_category_id,
+              'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+              'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0,
+            ];
+        });
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -180,26 +187,85 @@ class InventoryController extends Controller
       $query = ShipmentItem::with(['order_item' => function ($query) {
         return $query->with(['order' => function ($query) {
           // Load the related order and purchase order only if purchase_order_id is not null
-          return $query->with('purchase_order')->whereNotNull('purchase_order_id');
+          return $query->with(['purchase_order' => function ($query) {
+            return $query->with('import_doc');
+          }]);
         }]);
-      }])
-        ->whereHas('order_item', function ($query) {
-          // Filter shipment items that have associated order items
-          return $query->whereHas('order', function ($query) {
-            // Filter order items that have associated orders with purchase_order_id not null
-            return $query->whereNotNull('purchase_order_id');
-          });
-        })
-        ->whereHas('shipment', function ($query) use ($from_date, $thru_date) {
-          return $query
-            ->where('shipment_type_id', 1)
-            ->whereHas('status', function ($query) {
-              // Filter shipments that have a status with shipment_type_status_id = 5 and group by shipment_id
-              return $query->where('shipment_type_status_id', 5)->groupBy('shipment_id');
-            })
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
-        })
-        ->get();
+      }, 'import_info'])
+        ->whereHas('import_info')
+        // ->whereHas('shipment', function ($query) use ($from_date, $thru_date) {
+        //   return $query
+        //     ->where('shipment_type_id', 1)
+        //     ->whereHas('status', function ($query) {
+        //       // Filter shipments that have a status with shipment_type_status_id = 5 and group by shipment_id
+        //       return $query->where('shipment_type_status_id', 5)->groupBy('shipment_id');
+        //     })
+        //     ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
+        // })
+        ->get()
+        ->map(function ($item, $index) {
+          $orderItem = $item->order_item ? $item->order_item : null;
+          $order = $orderItem ? $orderItem->order : null;
+          $purchaseOrder = $order ? $order->purchase_order : null;
+          $ship_to = $purchaseOrder ? $purchaseOrder->party : null;
+          $productFeature = $orderItem->product_feature ? $orderItem->product_feature : null;
+          $product = $productFeature->product ? $productFeature->product : null;
+          $goods = $product->goods ? $product->goods : null;
+          $importItem  = $item->import_info ? $item->import_info : null;
+          $importDoc  = $importItem ? $importItem->doc : null;
+
+          $doc_type = '';
+
+          switch ($importDoc->type) {
+            case 1:
+              $doc_type = 'BC 2.0';
+              break;
+
+            case 2:
+              $doc_type = 'BC 2.4';
+              break;
+
+            case 3:
+              $doc_type = 'BC 2.5';
+              break;
+
+            case 4:
+              $doc_type = 'BC 2.8';
+              break;
+
+            default:
+              # code...
+              $doc_type = 'None';
+              break;
+          }
+
+          return [
+            'id' => $index + 1,
+            'shipment_id' => $item->shipment->id,
+            'serial_number' => $item->shipment->serial_number,
+            'recoded_date' => $item->shipment->delivery_date,
+            'shipment_date' => $item->shipment->delivery_date,
+            'product_id' => $product->id,
+            'product_feature_id' => $productFeature->id,
+            'goods_id' => $goods->id,
+            'purchase_order_id' => $purchaseOrder->id,
+            'order_id' => $order->id,
+            'order_item_id' => $orderItem->id,
+            'buyer_name' => $ship_to->name,
+            'country' => $ship_to->address->country,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'qty' => $orderItem->qty,
+            'unit_price' => $orderItem->unit_price,
+            'valuation' => $orderItem->qty * $orderItem->unit_price,
+            'customs_item_number' => $importItem->item_serial_number,
+            'customs_doc' => $doc_type,
+            'hs_code_item' => $importItem->hs_code,
+            'customs_document_number' => $importDoc->document_number,
+            'customs_document_date' => $importDoc->date,
+            'currency' => $order->currency_id
+          ];
+        });
     } catch (Exception $th) {
       //throw $th;
       return response()->json([
@@ -227,12 +293,16 @@ class InventoryController extends Controller
 
       $query = ShipmentItem::with(['order_item' => function ($query) {
         return $query->with(['order' => function ($query) {
-          return $query->with('sales_order')->whereNotNull('sales_order_id');
+          return $query->with(['sales_order' => function ($query) {
+            return $query->with('export_doc');
+          }])->whereNotNull('sales_order_id');
         }]);
       }])
         ->whereHas('order_item', function ($query) {
           return $query->whereHas('order', function ($query) {
-            return $query->whereNotNull('sales_order_id');
+            return $query->whereNotNull('sales_order_id')->whereHas('sales_order', function ($query) {
+              return $query->whereHas('export_doc');
+            });
           });
         })
         ->whereHas('shipment', function ($query) use ($from_date, $thru_date) {
@@ -243,7 +313,40 @@ class InventoryController extends Controller
             })
             ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
         })
-        ->get();
+        ->get()
+        ->map(function ($item, $index) {
+          $orderItem = $item->order_item ? $item->order_item : null;
+          $order = $orderItem ? $orderItem->order : null;
+          $salesOrder = $order ? $order->sales_order : null;
+          $ship_to = $salesOrder ? $salesOrder->ship : null;
+          $productFeature = $orderItem->product_feature ? $orderItem->product_feature : null;
+          $product = $productFeature->product ? $productFeature->product : null;
+          $goods = $product->goods ? $product->goods : null;
+          $exportDoc  = $salesOrder->export_doc ? $salesOrder->export_doc : null;
+
+          return [
+            'id' => $index,
+            'shipment_id' => $item->shipment->id,
+            'serial_number' => $item->shipment->serial_number,
+            'shipment_date' => $item->shipment->delivery_date,
+            'product_id' => $product->id,
+            'product_feature_id' => $productFeature->id,
+            'goods_id' => $goods->id,
+            'sales_order_id' => $salesOrder->id,
+            'order_id' => $order->id,
+            'order_item_id' => $orderItem->id,
+            'buyer_name' => $ship_to->name,
+            'country' => $ship_to->address->country,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'qty' => $item->qty_shipped,
+            'unit_price' => $orderItem->unit_price,
+            'valuation' => $orderItem->qty * $orderItem->unit_price,
+            'export_document_number' => $exportDoc ? $exportDoc->document_number : null,
+            'export_document_date' => $exportDoc ? $exportDoc->date : null,
+            'currency' => $order->currency_id
+          ];
+        });
     } catch (\Throwable $th) {
       //throw $th;
       return response()->json([
@@ -470,6 +573,266 @@ class InventoryController extends Controller
     ]);
   }
 
+  public function repWIPSubcontract(Request $request)
+  {
+    $fromDate = $request->query('fromDate');
+    $thruDate = $request->query('thruDate');
+    $type = $request->query('type_of_facility');
+
+    try {
+      if (!isset($fromDate) && !isset($thruDate)) {
+        throw new Exception("Error Processing Request", 1);
+      }
+      $query = GoodsMovement::with('product', 'product_feature', 'goods', 'material_transfer')
+        ->where('facility_id', $type)
+        ->whereHas('material_transfer', function ($query) {
+          return $query->whereHas('relation_to_shipment');
+        })
+        // ->whereHas('relations_with_shipment', function($query) {
+        //   return $query->whereHas('shipment', function($query) {
+        //     return $query->where('shipment_type_id', 1);
+        //   });
+        // })
+        // ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->get()
+        ->map(function ($item, $index) {
+          $materialTransfer = $item->material_transfer ? $item->material_transfer : null;
+          $productFeature = $item->product_feature;
+          $product = $productFeature ? $productFeature->product : null;
+          $goods = $product ? $product->goods : null;
+
+          $mtsr = MaterialTransferShipmentRelationship::with('shipment')
+            ->where('material_transfer_id', $materialTransfer->id)->get();
+          return [
+            'id' => $index + 1,
+            'document_number' => $materialTransfer->id,
+            'document_date' => $materialTransfer->est_transfer_date,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'goods_id' => $goods->id,
+            'product_id' => $productFeature->product->id,
+            'product_feature_id' => $item->product_feature_id,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'subcontractor_name' => count($mtsr) ? $mtsr[0]->shipment->order->sales_order->ship->name : null,
+            'qty' => $item->qty
+          ];
+        });
+    } catch (Exception $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ]);
+  }
+
+  public function repRawMaterialMovement(Request $request)
+  {
+    $fromDate = $request->query('fromDate');
+    $thruDate = $request->query('thruDate');
+    $type = $request->query('type_of_facility');
+
+    try {
+      if (!isset($fromDate) && !isset($thruDate)) {
+        throw new Exception("Error Processing Request", 1);
+      }
+      $query = GoodsMovement::select(
+        'id',
+        'product_id',
+        'product_feature_id',
+        'goods_id',
+        'material_transfer_id',
+        'facility_id',
+        'type_movement',
+        DB::raw('sum(qty)*-1 as qty')
+      )
+        ->with('product', 'product_feature', 'goods', 'material_transfer')
+        ->whereIn('facility_id', [3, 18])
+        ->where('qty', '<', 0)
+        ->groupBy('facility_id', 'product_feature_id')
+        // ->whereHas('relations_with_shipment', function($query) {
+        //   return $query->whereHas('shipment', function($query) {
+        //     return $query->where('shipment_type_id', 1);
+        //   });
+        // })
+        ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->get()
+        ->map(function ($item, $index) {
+          $materialTransfer = $item->material_transfer ? $item->material_transfer : null;
+          $productFeature = $item->product_feature;
+          $product = $productFeature ? $productFeature->product : null;
+          $goods = $product ? $product->goods : null;
+
+          return [
+            'id' => $index + 1,
+            'facility_id' => $item->facility_id,
+            'material_transfer_id' => $materialTransfer->id,
+            'document_number' => $materialTransfer->id,
+            'document_date' => $materialTransfer->est_transfer_date,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'goods_id' => $goods->id,
+            'product_id' => $productFeature->product->id,
+            'product_feature_id' => $item->product_feature_id,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'qty' => $item->qty
+          ];
+        });
+
+      $organizedData = array();
+      foreach ($query as $item) {
+        $itemName = $item['product_feature_id'];
+        $facility = $item['facility_id'];
+        if (!isset($organizedData[$itemName])) {
+          $organizedData[$itemName] = array(
+            'id' => $item['id'],
+            'document_number' => $item['document_number'],
+            'document_date' => $item['document_date'],
+            'facility_id' => $item['facility_id'],
+            "item_name" => $item['item_name'],
+            "product_id" => $item['product_id'],
+            "product_feature_id" => $item['product_feature_id'],
+            "goods_id" => $item['goods_id'],
+            "unit_measurement" => $item['unit_measurement'],
+            "qty_digunakan" => 0,
+            "qty_subcontract" => 0,
+            "subcontractor_name" => ''
+          );
+        }
+
+        // Step 3: Sum up the quantities for "type_movement" 1 and 2 for each "item_name"
+        if ($facility == 3) {
+          $organizedData[$itemName]['qty_digunakan'] += $item['qty'];
+        } elseif ($facility == 18) {
+          $organizedData[$itemName]['qty_subcontract'] += $item['qty'] * -1;
+          // $data = MaterialTransferShipmentRelationship::where('material_transfer_id', $item['material_transfer_id'])
+          //         ->with('shipment')
+          //         ->get();
+          // $organizedData[$itemName]['subcontractor_name'] = $data;
+        }
+      }
+
+      $result = array_values($organizedData);
+    } catch (\Throwable $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $result
+    ]);
+  }
+
+  public function repFGoods(Request $request)
+  {
+    $fromDate = $request->query('fromDate');
+    $thruDate = $request->query('thruDate');
+    $type = $request->query('type_of_facility');
+
+    try {
+      if (!isset($fromDate) && !isset($thruDate)) {
+        throw new Exception("Error Processing Request", 1);
+      }
+
+      $order_id = SalesOrder::select('order_id')->where('export_flag', 1)->get()->map(function ($item) {
+        return $item->order_id;
+      });
+
+      $order_item = OrderItem::select('product_feature_id')->whereIn('order_id', $order_id)->groupBy('product_feature_id')->get()->map(function ($item) {
+        return $item->product_feature_id;
+      });
+      $query = GoodsMovement::select(
+        'id',
+        'product_id',
+        'product_feature_id',
+        'goods_id',
+        'material_transfer_id',
+        'facility_id',
+        'type_movement',
+        DB::raw('sum(qty) as qty')
+      )
+        ->with('product', 'product_feature', 'goods', 'material_transfer')
+        ->whereIn('facility_id', [2, 17])
+        ->whereIn('product_feature_id', $order_item)
+        ->groupBy('facility_id', 'product_feature_id')
+        // ->whereHas('relations_with_shipment', function($query) {
+        //   return $query->whereHas('shipment', function($query) {
+        //     return $query->where('shipment_type_id', 1);
+        //   });
+        // })
+        ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->get()
+        ->map(function ($item, $index) {
+          $materialTransfer = $item->material_transfer ? $item->material_transfer : null;
+          $productFeature = $item->product_feature;
+          $product = $productFeature ? $productFeature->product : null;
+          $goods = $product ? $product->goods : null;
+
+          return [
+            'id' => $index + 1,
+            'facility_id' => $item->facility_id,
+            'document_number' => $materialTransfer->id,
+            'document_date' => $materialTransfer->est_transfer_date,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'goods_id' => $goods->id,
+            'product_id' => $productFeature->product->id,
+            'product_feature_id' => $item->product_feature_id,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'qty' => $item->qty
+          ];
+        });
+
+      $organizedData = array();
+      foreach ($query as $item) {
+        $itemName = $item['product_feature_id'];
+        $facility = $item['facility_id'];
+        if (!isset($organizedData[$itemName])) {
+          $organizedData[$itemName] = array(
+            'id' => $item['id'],
+            'document_number' => $item['document_number'],
+            'document_date' => $item['document_date'],
+            'facility_id' => $item['facility_id'],
+            "item_name" => $item['item_name'],
+            "product_id" => $item['product_id'],
+            "product_feature_id" => $item['product_feature_id'],
+            "goods_id" => $item['goods_id'],
+            "unit_measurement" => $item['unit_measurement'],
+            "qty_digunakan" => 0,
+            "qty_subcontract" => 0,
+            "subcontractor_name" => ''
+          );
+        }
+
+        // Step 3: Sum up the quantities for "type_movement" 1 and 2 for each "item_name"
+        if ($facility == 2) {
+          $organizedData[$itemName]['qty_digunakan'] += $item['qty'];
+        } elseif ($facility == 17) {
+          $organizedData[$itemName]['qty_subcontract'] += $item['qty'] * -1;
+        }
+      }
+
+      $result = array_values($organizedData);
+    } catch (\Throwable $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $result
+    ]);
+  }
+
   /**
    * This API will returned resources from
    * material-transfer which has been confirmed 
@@ -491,17 +854,17 @@ class InventoryController extends Controller
     switch ($cat) {
       case 'bahan_jadi':
         # code...
-        $cat_lvl =[1];
+        $cat_lvl = [1];
         break;
 
       case 'bahan_baku':
         # code...
-        $cat_lvl = [2,3,4,5,6,7,8];
+        $cat_lvl = [2, 3, 4, 5, 6, 7, 8];
         break;
 
       default:
         # code...
-        $cat_lvl = [1,2,3,4,5,6,7];
+        $cat_lvl = [1, 2, 3, 4, 5, 6, 7];
         break;
     }
 
@@ -512,41 +875,42 @@ class InventoryController extends Controller
 
       $query = ProductFeature::with(
         [
-          'movement' => function($query) use ($from_date, $thru_date){
+          'movement' => function ($query) use ($from_date, $thru_date) {
             return $query
-                    ->select('id', 'product_id', 'product_feature_id', 'goods_id', 'material_transfer_id', 'type_movement', 'material_transfer_item_id', 'material_transfer_item_realisation_id', 'date', DB::raw('sum(qty) as final_qty'))
-                    ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date])
-                    ->groupBy('product_feature_id', 'type_movement');
+              ->select('id', 'product_id', 'product_feature_id', 'goods_id', 'material_transfer_id', 'type_movement', 'material_transfer_item_id', 'material_transfer_item_realisation_id', 'date', DB::raw('sum(qty) as final_qty'))
+              ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date])
+              ->groupBy('product_feature_id', 'type_movement');
           },
-          'last_movement' => function($query) use ($from_date){
+          'last_movement' => function ($query) use ($from_date) {
             return $query
-                    ->select('id', 'product_id', 'product_feature_id', 'goods_id', 'material_transfer_id', 'type_movement', 'material_transfer_item_id', 'material_transfer_item_realisation_id', 'date', DB::raw('sum(qty) as final_qty'))
-                    ->where('date', '<', $from_date);
+              ->select('id', 'product_id', 'product_feature_id', 'goods_id', 'material_transfer_id', 'type_movement', 'material_transfer_item_id', 'material_transfer_item_realisation_id', 'date', DB::raw('sum(qty) as final_qty'))
+              ->where('date', '<', $from_date);
           },
           'product_category'
-        ])
-        ->whereHas('product_category', function($query) use ($cat_lvl){
+        ]
+      )
+        ->whereHas('product_category', function ($query) use ($cat_lvl) {
           return $query
-          ->whereIn('product_category_id', $cat_lvl);
+            ->whereIn('product_category_id', $cat_lvl);
         })
-        ->whereHas('movement', function($query) use ($from_date, $thru_date){
+        ->whereHas('movement', function ($query) use ($from_date, $thru_date) {
           return $query
-          ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date]);
+            ->whereBetween(DB::raw('DATE(date)'), [$from_date, $thru_date]);
         })
         ->get();
 
-      $convert = $query->map(function($item){
+      $convert = $query->map(function ($item) {
         $product = $item->product ? $item->product : null;
         $goods = $product ? $product->goods : null;
 
         $qty_pemasukan = 0;
         $qty_pengeluaran = 0;
 
-        if(count($item->movement) >= 1) {
+        if (count($item->movement) >= 1) {
           foreach ($item->movement as $key) {
             # code...
             // find incoming goods to a facility
-            if($key->type_movement === 1) {
+            if ($key->type_movement === 1) {
               $qty_pemasukan = $qty_pemasukan + $key->final_qty;
             } else if ($key->type_movement === 2) {
               $qty_pengeluaran = $qty_pengeluaran + $key->final_qty;
@@ -574,7 +938,6 @@ class InventoryController extends Controller
           'final_stock' => $initial_stock + $qty_pemasukan + $qty_pengeluaran
         ];
       });
-
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -590,46 +953,101 @@ class InventoryController extends Controller
     ]);
   }
 
-  public function get_scrap(Request $request)
+  public function repMutasiV2(Request $request)
   {
-    // $param = $request->all()['payload'];
-    $from_date = $request->query('fromDate');
-    $thru_date = $request->query('thruDate');
+    $type = $request->query('type_of_facility');
+    $fromDate = $request->query('fromDate');
+    $thruDate = $request->query('thruDate');
+
+    if (empty($fromDate) || empty($thruDate)) {
+      $thruDate = date('Y-m-d');
+      $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+      $fromDate = date_format($fromDate, 'Y-m-d');
+    }
 
     try {
-      $query = Scrap::with('product', 'product_feature')
-        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date])
-        ->get();
+      //code...
 
-      $prepared_data = $query->map(function ($item) {
-        $productFeature = $item->product_feature;
-        $product = $item->product ? $item->product : null;
-        $goods = $product ? $product->goods : null;
+      $salesOrder = [];
+      $purchaseOrder = [];
 
-        $unit_price = 29000;
-        $valuation = $item['qty'] * $unit_price;
+      $salesOrder = SalesOrder::select('order_id')->where('export_flag', 1)->get()->map(function ($item) {
+        return $item->order_id;
+      })->toArray();
+      $purchaseOrder = PurchaseOrder::select('order_id')->where('import_flag', 1)->get()->map(function ($item) {
+        return $item->order_id;
+      })->toArray();
 
-        return [
-          'id' => $item['id'],
-          'nomor_pendaftaran' => '1234',
-          'tanggal_dokumen' => '2022/07/05',
-          // 'material_transfer_id' => $item['material_transfer_id'],
-          // 'material_transfer_item_id' => $item['material_transfer_item_id'],
-          'transferred_qty' => $item['qty'],
-          'transfer_date' => $item['created_at'],
-          'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
-          'unit_measurement' => $goods ? $goods->satuan : '',
-          'category_name' => 'Scrap',
-          'goods_id' => $product['goods_id'],
-          'unit_price' => $unit_price,
-          'valuation' => $valuation,
-          'product_id' => $item['product_id'],
-          'product_feature_id' => $item['product_feature_id']
-        ];
+      $order_id = array_merge($salesOrder, $purchaseOrder);
+
+      $order_item = OrderItem::select('product_feature_id')->whereIn('order_id', $order_id)->groupBy('product_feature_id')->get()->map(function ($item) {
+        return $item->product_feature_id;
       });
+
+      $query = GoodsMovement::select('id', 'date', 'material_transfer_id', 'material_transfer_item_id', 'product_id', 'product_feature_id', 'goods_id', 'facility_id', 'type_movement', DB::raw('sum(qty) as qty'))
+        ->with('product', 'product_feature', 'goods', 'facility')
+        ->where('facility_id', $type)
+        ->whereIn('product_feature_id', $order_item)
+        ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->groupBy('product_feature_id', 'type_movement')
+        ->get()
+        ->map(function ($item, $index) use ($fromDate) {
+          $productFeature = $item->product_feature;
+          $product = $item->product ? $item->product : null;
+          $goods = $item->goods ? $item->goods : null;
+
+          $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
+            ->where('product_feature_id', $productFeature->id)
+            ->where(DB::raw('DATE(date)'), '<', $fromDate)
+            ->get();
+
+          return [
+            'id' => $index + 1,
+            'initial_stock' => count($initial_stock) ? $initial_stock[0]['stock'] : 0,
+            'date' => $item->date,
+            'facility_name' => $item->facility ? $item->facility->name : '',
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'product_id' => $product->id,
+            'product_feature_id' => $item->product_feature_id,
+            'goods_id' => $goods->id,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'type_movement' => $item->type_movement,
+            'qty' => $item->qty
+          ];
+        });
+
+      // Step 2: Organize the data based on "item_name" and "type_movement"
+      $organizedData = array();
+      foreach ($query as $item) {
+        $itemName = $item['product_feature_id'];
+        $typeMovement = $item['type_movement'];
+        if (!isset($organizedData[$itemName])) {
+          $organizedData[$itemName] = array(
+            'id' => $item['id'],
+            'date' => $item['date'],
+            'facility_name' => $item['facility_name'],
+            'initial_stock' => $item['initial_stock'] ? $item['initial_stock'] : 0,
+            "item_name" => $item['item_name'],
+            "product_id" => $item['product_id'],
+            "product_feature_id" => $item['product_feature_id'],
+            "goods_id" => $item['goods_id'],
+            "unit_measurement" => $item['unit_measurement'],
+            "qty_in" => 0,
+            "qty_out" => 0
+          );
+        }
+
+        // Step 3: Sum up the quantities for "type_movement" 1 and 2 for each "item_name"
+        if ($typeMovement == 1) {
+          $organizedData[$itemName]['qty_in'] += $item['qty'];
+        } elseif ($typeMovement == 2) {
+          $organizedData[$itemName]['qty_out'] += $item['qty'];
+        }
+      }
+
+      $result = array_values($organizedData);
     } catch (\Throwable $th) {
       //throw $th;
-
       return response()->json([
         'success' => false,
         'error' => $th->getMessage()
@@ -637,10 +1055,11 @@ class InventoryController extends Controller
     }
 
     return response()->json([
-      'success' => true,
-      'data' => $prepared_data
+      'success' => false,
+      'data' => $result
     ]);
   }
+
 
   /**
    * Display the specified resource.

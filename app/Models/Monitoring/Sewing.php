@@ -32,6 +32,10 @@ class Sewing extends Model
         return $this->belongsTo('App\Models\Order\OrderItem')->with('product_feature');
     }
 
+    public function facility() {
+        return $this->belongsTo('App\Models\Facility\Facility', 'facility_id');
+    }
+
     public function product_feature(){
         return $this->belongsTo('App\Models\Product\ProductFeature')->with('product');
     }

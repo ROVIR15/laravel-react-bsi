@@ -26,7 +26,7 @@ import { isEditCondition } from '../../../../../helpers/data';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'name', label: 'Style', alignRight: false },
-  { id: 'items', label: 'Length of Materials', alignRight: false }
+  { id: 'items', label: 'Numbers of Material', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -86,7 +86,6 @@ function TableD({ list, placeHolder, selected, setSelected, update }) {
     if (event.target.checked) {
       const newSelecteds = filteredData.map((n, index) => ({
         ...n,
-        product_feature_id: n.id,
         id: index + 1
       }));
       setSelected(newSelecteds);
@@ -97,18 +96,7 @@ function TableD({ list, placeHolder, selected, setSelected, update }) {
   };
 
   const handleClick = (event, name) => {
-    const _data = name.bom_items.map(function(item, index){
-      let { product_feature, ...rest} = item;
-      return {
-        ...rest,
-        id: index+1,
-        name: product_feature?.product?.goods?.name,
-        color: product_feature?.color,
-        size: product_feature?.size,
-        brand: product_feature?.product?.goods?.brand
-      }
-    });
-    setSelected(_data);
+    setSelected(name?.bom_items);
   };
 
   const handleChangePage = (event, newPage) => {

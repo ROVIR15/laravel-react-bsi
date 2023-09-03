@@ -43,7 +43,10 @@ import {
   MaterialTransferLayout,
   CostingLayout,
   ScrapLayout,
-  SubcontractLayout
+  SubcontractLayout,
+  ExportLayout,
+  ImportLayout,
+  LogsLayout,
 } from '../pages/dashboard';
 
 import UserRoles from '../pages/dashboard/UserManagement/role';
@@ -258,8 +261,20 @@ import Inbound from '../pages/dashboard/Inventory/Reports/Inbound';
 import Outbound from '../pages/dashboard/Inventory/Reports/LaporanBarangKeluar';
 import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
 import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
+import MutasiBahanBaku from '../pages/dashboard/Inventory/Reports/LaporanMutasiBahanBaku';
 import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkrap';
 import UsageReport from '../pages/dashboard/Inventory/Reports/LaporanPemakaian';
+import FGReport from '../pages/dashboard/Inventory/Reports/LaporanHasilProduksi';
+import WasteReport from '../pages/dashboard/Inventory/Reports/LaporanWaste'
+// KITE 
+import AddImport from '../pages/dashboard/KITE/Import/new';
+import ShowImport from '../pages/dashboard/KITE/Import/show';
+import DisplayImport from '../pages/dashboard/KITE/Import/display';
+
+import AddExport from '../pages/dashboard/KITE/Export/new';
+import ShowExport from '../pages/dashboard/KITE/Export/show';
+import DisplayExport from '../pages/dashboard/KITE/Export/display';
+
 
 import InventoryAdjustment from '../pages/dashboard/Inventory/StockOpname';
 
@@ -468,7 +483,7 @@ export default function TestRouter() {
           element: <Inbound/>
         },
         {
-          path: 'laporan-kite/laporan-barang-keluar',
+          path: 'laporan-kite/laporan-pengeluaran-barang-hasil-produksi',
           element: <Outbound/>
         },
         {
@@ -476,20 +491,28 @@ export default function TestRouter() {
           element: <WIPReport/>
         },
         {
-          path: 'laporan-kite/laporan-mutasi-barang',
+          path: 'laporan-kite/laporan-mutasi-hasil-produksi',
           element: <MaterialTransferReport />
         },
         {
-          path: 'laporan-kite/laporan-mutasi-barang-jadi',
-          element: <MaterialTransferReport />
+          path: 'laporan-kite/laporan-mutasi-bahan-baku',
+          element: <MutasiBahanBaku />
         },
         {
           path: 'laporan-kite/laporan-skrap-barang',
           element: <MaterialSkrapReport />
         },
         {
+          path: 'laporan-kite/laporan-pemasukan-hasil-produksi',
+          element: <FGReport/>
+        },
+        {
           path: 'laporan-kite/laporan-pemakaian',
           element: <UsageReport/>
+        },
+        {
+          path: 'laporan-kite/laporan-mutasi-skrap',
+          element: <WasteReport/>
         },
         {
           path: 'laporan-kite/cctv-factory',
@@ -761,6 +784,13 @@ export default function TestRouter() {
             { path: 'display', element: <DisplayOrderPLAnalysis /> },
           ]
         },
+        {
+          path: 'logs', 
+          element: <LogsLayout />,
+          children: [
+            { path: 'display', element: <DisplayFacility /> }
+          ]
+        },
         { 
           path: 'facility', 
           element: <FacilityLayout />,
@@ -777,6 +807,30 @@ export default function TestRouter() {
             { path: 'add', element: <AddLineTarget /> },
             { path: ':id', element: <ShowLineTarget /> },
             { path: 'display', element: <DisplayLineTarget /> }
+          ]
+        },
+        //KITE,
+        {
+          path: 'kite',
+          children: [
+            {
+              path: 'import', 
+              element: <ImportLayout />,
+              children: [
+                { path: 'add', element: <AddImport /> },
+                { path: ':id', element: <ShowImport /> },
+                { path: 'display', element: <DisplayImport /> }
+              ]
+            },
+            {
+              path: 'export', 
+              element: <ExportLayout />,
+              children: [
+                { path: 'add', element: <AddExport /> },
+                { path: ':id', element: <ShowExport /> },
+                { path: 'display', element: <DisplayExport /> }
+              ]
+            }
           ]
         },
         // Shipment

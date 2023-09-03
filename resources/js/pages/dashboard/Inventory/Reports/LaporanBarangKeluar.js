@@ -33,7 +33,8 @@ import { StyledTableCell as TableCell } from './components/TableCell';
 import API from '../../../../helpers';
 import { isEmpty } from 'lodash';
 
-import { rearrange_data_out } from './utils';
+import { generalizeSKU, rearrange_data_out } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
@@ -115,22 +116,21 @@ function Inbound() {
     if (isEmpty(rangeDate.start_date) && isEmpty(rangeData.end_date)) return;
     let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
     try {
-      // API.getOutboundMaterial(param, (res) => {
-      //   if (!res) return;
-      //   if (isEmpty(res.data)) throw new Error('Request error!');
-      //   else {
-      //     let _res = rearrange_data_out(res.data);
-      //     setPayloadData(_res);
-      //   }
-      // });
+      API.getOutboundMaterial(param, (res) => {
+        if (!res) return;
+        if (isEmpty(res.data)) throw new Error('Request error!');
+        else {
+          setPayloadData(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
     }
   }
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: '2023-01-01',
-    end_date: '2023-01-15'
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD')
   });
 
   /** Handle Date Changes */
@@ -255,7 +255,7 @@ function Inbound() {
                   <TableCell align="center" colSpan={2}>
                     Bukti Pengeluaran Barang
                   </TableCell>
-                  <TableCell colSpan={7}> </TableCell>
+                  <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
                   {/*  */}
@@ -267,7 +267,7 @@ function Inbound() {
                   {/*  */}
                   <TableCell>Penerima</TableCell>
                   <TableCell>Negara Tujuan</TableCell>
-                  <TableCell>Kode Barang</TableCell>
+                  <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   {/* <TableCell>Category Name</TableCell> */}
                   <TableCell>Satuan</TableCell>
@@ -281,19 +281,21 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell>{row?.tanggal_bukti_pengeluaran_barang}</TableCell>
-                      <TableCell>{row?.nomor_bukti_pengeluaran_barang}</TableCell>
-                      <TableCell>{row?.sales_order_date} </TableCell>
-                      <TableCell>{row?.serial_number_sales_order} </TableCell>
+                      <TableCell>{row?.export_document_number}</TableCell>
+                      <TableCell>{row?.export_document_date}</TableCell>
+                      <TableCell>{row?.shipment_id} </TableCell>
+                      <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>
-                      <TableCell>{row.material_code}</TableCell>
+                      <TableCell>
+                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                      </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.category}</TableCell>
-                      <TableCell>{row.qty}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
+                      <TableCell>{row.qty}</TableCell>
+                      <TableCell>{row.currency}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
-                      <TableCell>{fCurrency(Math.floor(row.qty * row.unit_price), 'id')}</TableCell>
+                      {/* <TableCell>{fCurrency(row.valuation, 'id')}</TableCell> */}
                     </TableRow>
                   ))}
               </TableBody>
@@ -333,68 +335,87 @@ function Inbound() {
                     <thead>
                       <tr>
                         <th
-                          colSpan="2"
-                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                          colSpan={2}
                         >
-                          Bea Cukai
+                          PEB
                         </th>
                         <th
-                          colSpan="2"
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                          colSpan={2}
+                        >
+                          Bukti Pengeluaran
+                        </th>
+                      </tr>
+
+                      <tr>
+                        <th
                           className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
                         >
-                          Sales Order
+                          Nomor Dokumen
+                        </th>
+                        <th
+                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Tanggal
+                        </th>
+                      </tr>
+                      <tr>
+                        <th
+                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Nomor Dokumen
+                        </th>
+                        <th
+                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Tanggal
                         </th>
                       </tr>
                       <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Tanggal
+                          Penerima
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No Bea
+                          Negara Tujuan
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Tanggal
+                          Kode BB
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No SO
+                          Nama Barang
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Item Name
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Category Name
-                        </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
                         </th>
-                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nilai
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Jumlah
                         </th>
-                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Total
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Mata Uang
+                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nilai Barang
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {payloadData.map((row, index) => (
                         <tr>
-                          <td className="wk_width_2"> 12/12/2023 </td>
-                          <td className="wk_width_2"> {`BC ${12389 + index}`} </td>
-                          <td className="wk_width_2">{row?.po_date} </td>
-                          <td className="wk_width_2">{row?.po_serial} </td>
-                          <td className="wk_width_3">{row.material_code}</td>
-                          <td className="wk_width_2">{row.item_name}</td>
-                          <td className="wk_width_2">{row.category}</td>
-                          <td className="wk_width_1">{row.qty}</td>
-                          <td className="wk_width_1">{row.unit_measurement}</td>
-                          <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
-                          <td className="wk_width_2 wk_text_right">
-                            {fCurrency(Math.floor(row.qty * row.unit_price), 'id')}
+                          <td className="wk_width_2">{row?.export_document_number}</td>
+                          <td className="wk_width_2">{row?.export_document_date}</td>
+                          <td className="wk_width_2">{row?.shipment_id} </td>
+                          <td className="wk_width_2">{row?.shipment_date} </td>
+                          <td className="wk_width_2">{row.buyer_name}</td>
+                          <td className="wk_width_2">{row.country}</td>
+                          <td className="wk_width_2">
+                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                           </td>
+                          <td className="wk_width_2">{row.item_name}</td>
+                          <td className="wk_width_2">{row.unit_measurement}</td>
+                          <td className="wk_width_2">{row.qty}</td>
+                          <td className="wk_width_2">{row.currency}</td>
+                          <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
                         </tr>
                       ))}
                     </tbody>

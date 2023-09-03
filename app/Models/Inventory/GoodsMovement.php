@@ -46,4 +46,12 @@ class GoodsMovement extends Model
     public function facility(){
         return $this->belongsTo('App\Models\Facility\Facility', 'facility_id', 'id')->with('type');
     }
+
+    public function material_transfer(){
+        return $this->belongsTo('App\Models\Inventory\MaterialTransfer', 'material_transfer_id', 'id');
+    }
+
+    public function relations_with_shipment(){
+        return $this->belongsTo('App\Models\Inventory\MaterialTransferShipmentRelationship', 'material_transfer_id', 'material_transfer_id');
+    }
 }

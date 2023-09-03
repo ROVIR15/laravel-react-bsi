@@ -28,6 +28,8 @@ import API from '../../../../helpers';
 import DataGrid from './DataGrid';
 import Modal from './Modal';
 import DialogBox from './DialogBox';
+import useAuth from '../../../../context';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -44,6 +46,8 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 }));
 
 function WorkCenter() {
+  const { user } = useAuth();
+
   const WorkCenterSchema = Yup.object().shape({
     recorder: Yup.string().required('is required'),
     sales_order_id: Yup.string().required('is required'),
@@ -61,26 +65,35 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const { line, recorder } = values;
-      let data = items.map(({ id, date, brand, name, size, color, ...x }) => ({
+      let _item = items.map(({ id, date, brand, name, size, color, ...x }) => ({
         ...x,
         line,
         date: values.date,
         recorder
       }));
+
+      let data = { user_id: user.id, to_facility_id: 2, from_facility_id: 18, items: _item };
+
       try {
         API.insertMonitoringFG(data, function (res) {
-          if (!res) return;
-          if (!res.success) throw new Error('failed to save');
-          setItems([]);
-          handleReset();
-          setSelectedValueSO({
-            po_number: '',
-            sold_to: ''
-          });
+          if (res.success) {
+            enqueueSnackbar('', { variant: 'successAlert' });
+            setItems([]);
+            handleReset();
+            setSelectedValueSO({
+              po_number: '',
+              sold_to: '',
+              line: null,
+              date: '',
+              sales_order_id: ''
+            });      
+          }
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
+
       setSubmitting(false);
     }
   });
@@ -158,7 +171,7 @@ function WorkCenter() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              if(editRowData[editedColumnName].value > row.qty_loading ) {
+              if (editRowData[editedColumnName].value > row.qty_loading) {
                 alert('You trying to do something wrong! please check your input');
                 return row;
               }
@@ -205,7 +218,7 @@ function WorkCenter() {
   const [openSO, setOpenSO] = useState(false);
   const loading = openSO && options.length === 0;
   const [selectedValueSO, setSelectedValueSO] = React.useState({});
-  const [id, setId] = React.useState(0);
+  const [salesOrderId, setSalesOrderId] = React.useState(0);
 
   React.useEffect(() => {
     let active = true;
@@ -241,7 +254,7 @@ function WorkCenter() {
     setSelectedValueSO(value);
     setFieldValue(name, value.id);
     setOptions([]);
-    setId(value.id);
+    setSalesOrderId(value.id);
   };
 
   // Modal

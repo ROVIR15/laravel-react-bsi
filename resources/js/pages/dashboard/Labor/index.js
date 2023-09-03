@@ -31,8 +31,8 @@ function Labor() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleClick = () => {
-    enqueueSnackbar('Here I am', {
-      variant: 'success'
+    enqueueSnackbar('hello', {
+      variant: 'successAlert'
     });
   };
 
@@ -74,14 +74,14 @@ function Labor() {
           >
             Display
           </Button>
-          {/* <Button
+          <Button
             variant="contained"
             component='div'
             onClick={handleClick}
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Show Snackbar
-          </Button> */}
+          </Button>
         </Stack>
       </Stack>
       {isBeginning()}

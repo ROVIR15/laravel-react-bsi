@@ -3,6 +3,7 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import {
+  FormControl,
   IconButton,
   InputLabel,
   MenuItem,
@@ -44,23 +45,45 @@ const StyledCard = styled(Card)(({ theme }) => ({
 export default function BasicModal({ payload, open, handleClose, items, setItems, update }) {
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
+  const [type, setType] = React.useState(0);
+
+  const handleSelectType = (e) => {
+    setSelectedCosting(0);
+    setOptions([])
+    setType(e.target.value);
+  };
 
   React.useEffect(() => {
     let active = true;
 
-    if (!loading) {
-      return undefined;
-    }
-
     try {
-      API.getSalesOrderV2('', (res) => {
-        if (!res) return;
-        if (!res.data) {
+      switch (type) {
+        case "1":
+          API.getCostingV2((res) => {
+            if (!res) return;
+            if (!res.data) {
+              setCostingData([]);
+            } else {
+              setCostingData(res.data);
+            }
+          });
+          break;
+
+        case "2":
+          API.getSalesOrderV2('', (res) => {
+            if (!res) return;
+            if (!res.data) {
+              setCostingData([]);
+            } else {
+              setCostingData(res.data);
+            }
+          });
+          break;
+
+        default:
           setCostingData([]);
-        } else {
-          setCostingData(res.data);
-        }
-      });  
+          break;
+      }
     } catch (error) {
       alert('error');
     }
@@ -68,7 +91,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
     return () => {
       active = false;
     };
-  }, [loading]);
+  }, [type]);
 
   // --------------------------------------------------------------- //
   const [selectedCosting, setSelectedCosting] = React.useState(0);
@@ -76,18 +99,39 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
 
   const handleSelect = (e) => {
     setSelectedCosting(e.target.value);
-  }
+  };
 
   React.useEffect(() => {
     // console.log(selectedCosting)
+    setOptions([]);
     if (selectedCosting !== 0) {
       try {
-        API.getSalesOrderItemV2(selectedCosting, '', function (res) {
-          if (!res) return;
-          if (res.success) {
-            setOptions(res.data)
-          }
-        });
+        switch (type) {
+          case "1":
+            API.getBOMItemV3(selectedCosting, (res) => {
+              if (!res) return;
+              if (!res.data) {
+                setOptions([]);
+              } else {
+                // console.log(data);
+                setOptions(res.data);
+              }
+            });
+            break;
+
+          case "2":
+            API.getSalesOrderItemV2(selectedCosting, '', function (res) {
+              if (!res) return;
+              if (res.success) {
+                setOptions(res.data);
+              }
+            });
+            break;
+
+          default:
+            setOptions([])
+            break;
+        }
       } catch (error) {
         alert(error);
       }
@@ -112,21 +156,33 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
             </IconButton>
           </Stack>
 
-          <div>
-            <InputLabel id="costing_name">Pilih Sales Order</InputLabel>
+          <Stack direction="row" spacing={2}>
             <Select
-              onChange={handleSelect}
-              value={selectedCosting}
+              onChange={handleSelectType}
+              value={type}
               input={<OutlinedInput label="Name" />}
               size="small"
               fullWidth
             >
-              <MenuItem value={0}>None</MenuItem>;
-              {dataCosting?.map(function (item) {
-                return <MenuItem value={item.id}>{item.po_number}</MenuItem>;
-              })}
+              <MenuItem value="1">CBD</MenuItem>
+              <MenuItem value="2">Sales Order</MenuItem>
             </Select>
-          </div>
+            <FormControl fullWidth>
+              <InputLabel id="costing_name">Pilih Sales Order</InputLabel>
+              <Select
+                onChange={handleSelect}
+                value={selectedCosting}
+                input={<OutlinedInput label="Name" />}
+                size="small"
+                fullWidth
+              >
+                <MenuItem value={0}>None</MenuItem>;
+                {dataCosting?.map(function (item) {
+                  return <MenuItem value={item.order_id}>{item.po_number}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+          </Stack>
 
           <Table list={options} selected={items} setSelected={setItems} />
         </StyledCard>

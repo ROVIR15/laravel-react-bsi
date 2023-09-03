@@ -36,6 +36,7 @@ import { isEmpty, values } from 'lodash';
 import API from '../../../../helpers';
 
 import { generalizeSKU } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Skrap'];
 
@@ -69,7 +70,7 @@ function Inbound() {
       if (isEmpty(values.start_date) || isEmpty(values.start_date) || isEmpty(values.category))
         new Error('Error processing your request!');
 
-      let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}&cat=${cat}`;
+      let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}&type_of_facility=${2}`;
 
       API.getReportMutasi_alt(param, function (res) {
         if (!res) return;
@@ -172,8 +173,8 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: '2023-05-01',
-    end_date: '2023-05-15'
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD')
   });
 
   /** Handle Date Changes */
@@ -223,23 +224,6 @@ function Inbound() {
                   onChange={handleChangeDate}
                   sx={{ minWidth: '10em' }}
                 />
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  size="small"
-                  value={values.category}
-                  label="Kategori"
-                  onChange={handleSelectChange}
-                  input={<OutlinedInput label="Name" />}
-                  sx={{ minWidth: '10em' }}
-                  // MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
               </Stack>
 
               <Button onClick={handleGo}> Go </Button>
@@ -272,9 +256,8 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell>Kode Barang</TableCell>
+                  <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
-                  {/* <TableCell>Kategori Barang</TableCell> */}
                   <TableCell>Satuan</TableCell>
                   <TableCell>Saldo Awal</TableCell>
                   <TableCell>Pemasukan</TableCell>
@@ -289,17 +272,16 @@ function Inbound() {
                   ?.map((row, index) => (
                     <TableRow>
                       <TableCell>
-                        {row.sku_barang}
-                        {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
+                        {/* {row.sku_barang} */}
+                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      {/* <TableCell>{row.category_name}</TableCell> */}
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.initial_stock}</TableCell>
-                      <TableCell>{row.qty_pemasukan}</TableCell>
-                      <TableCell>{row.qty_pengeluaran}</TableCell>
-                      <TableCell>{row.final_stock}</TableCell>
-                      <TableCell>{'Gudang X'}</TableCell>
+                      <TableCell>{row.qty_in}</TableCell>
+                      <TableCell>{row.qty_out}</TableCell>
+                      <TableCell>{(row?.initial_stock+row?.qty_in)+row?.qty_out}</TableCell>
+                      <TableCell>{row?.facility_name}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -340,13 +322,10 @@ function Inbound() {
                     <thead>
                       <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
+                          Kode BB
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nama Barang
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kategori
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
@@ -355,13 +334,16 @@ function Inbound() {
                           Saldo Awal
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Pemasukan Barang
+                          Pemasukan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Pengeluaran Barang
+                          Pengeluaran
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Saldo Akhir
+                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Gudang
                         </th>
                       </tr>
                     </thead>
@@ -372,12 +354,12 @@ function Inbound() {
                             {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
-                          <td className="wk_width_2">{row.category_name}</td>
                           <td className="wk_width_3">{row.unit_measurement}</td>
                           <td className="wk_width_1">{row.initial_stock}</td>
-                          <td className="wk_width_1">{row.qty_pemasukan}</td>
-                          <td className="wk_width_1">{row.qty_pengeluaran}</td>
-                          <td className="wk_width_1">{row.final_stock}</td>
+                          <td className="wk_width_1">{row.qty_in}</td>
+                          <td className="wk_width_1">{row.qty_out}</td>
+                          <td className="wk_width_1">{(row?.initial_stock+row?.qty_in)+row?.qty_out}</td>
+                          <td className="wk_width_1">{row?.facility_name}</td>
                         </tr>
                       ))}
                     </tbody>

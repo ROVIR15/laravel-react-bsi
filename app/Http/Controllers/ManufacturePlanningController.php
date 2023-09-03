@@ -68,7 +68,7 @@ class ManufacturePlanningController extends Controller
                 'facility_id' => $key['facility_id'],
                 'bom_id' => $key['costing_id'],
                 'manufacture_planning_id' => $plan['id'],
-                'sales_order_id' => $key['id'],
+                'sales_order_id' => $key['sales_order_id'],
                 'number_of_machines' => $key['number_of_machines'],
                 'line_start_date' => $_start_date,
                 'line_end_date' => $_end_date,

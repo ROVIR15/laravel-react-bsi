@@ -35,6 +35,7 @@ class SalesOrder extends JsonResource
             'valid_thru' => $this->valid_thru,
             'order_item' => new OrderItemCollection($this->order_item),
             'export_doc' => $this->export_doc,
+            'order_proof' => $this->order_proof,
             'completion_status' => $this->completion_status,
             'status' => $this->status
         ];

@@ -26,7 +26,17 @@ class MaterialTransfer extends Model
 
     public function items()
     {
-        return $this->hasMany('App\Models\Inventory\MaterialTransferItem', 'material_transfer_id', 'id');
+        return $this->hasMany('App\Models\Inventory\MaterialTransferItem', 'material_transfer_id', 'id')->with('product');
+    }
+
+    public function items_r()
+    {
+        return $this->hasMany('App\Models\Inventory\MaterialTransferItem', 'material_transfer_id', 'id')->with('transferred');
+    }
+
+    public function realisation()
+    {
+        return $this->hasMany('App\Models\Inventory\MaterialTransferRealisation', 'material_transfer_id', 'id');
     }
 
     public function status()
@@ -47,6 +57,11 @@ class MaterialTransfer extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function relation_to_shipment()
+    {
+        return $this->belongsTo('App\Models\Inventory\MaterialTransferShipmentRelationship', 'id', 'material_transfer_id');
     }
 
     // public function realisation(){

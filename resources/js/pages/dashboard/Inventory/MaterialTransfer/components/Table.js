@@ -24,10 +24,10 @@ import { isEditCondition } from '../../../../../helpers/data';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
+    { id: 'item_name', label: 'Style', alignRight: false },
     { id: 'category', label: 'Kategori', alignRight: false },
-    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'satuan', label: 'Satuan', alignRight: false }
+    { id: 'current_stock', label: 'Stok Tersedia', alignRight: false },
+    { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -213,7 +213,8 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                     id,
                     category,
                     sub_category,
-                    satuan
+                    unit_measurement,
+                    current_stock
                   } = row;
                   return (
                     <TableRow
@@ -232,12 +233,11 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">
-                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
+                      <TableCell align="left"> {row?.item_name}
                       </TableCell>
                       <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
+                      <TableCell align="left">{current_stock}</TableCell>
+                      <TableCell align="left">{unit_measurement}</TableCell>
                     </TableRow>
                   );
                 })}

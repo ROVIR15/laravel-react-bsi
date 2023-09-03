@@ -46,6 +46,7 @@ import { _partyAddress, productItemArrangedData } from '../../../helpers/data';
 import { enqueueSnackbar } from 'notistack';
 
 import LoadingPage from '../../../components/LoadingPage';
+import { UploadPaper } from './components/UploadPaper';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -107,6 +108,8 @@ function SalesOrder() {
 
   const formik = useFormik({
     initialValues: {
+      nomor_po: '0',
+      tanggal_po: '2023-01-01',
       sold_to: '',
       ship_to: '',
       quote_id: '',
@@ -122,6 +125,7 @@ function SalesOrder() {
     onSubmit: (values) => {
       const _data = {
         ...values,
+        imageUrl: file,
         order_items: items
       };
 
@@ -350,6 +354,69 @@ function SalesOrder() {
       if (valueTab === '4') setValueTab('1');
     }
   };
+
+  // ----------------------------------------------------------------- //
+  // Upload file area
+  // ----------------------------------------------------------------- //
+
+  const [file, setFile] = useState(null);
+
+  const handleOnFileChange = (event) => {
+    setFile(event.target.files[0]);
+
+    // Create an object of formData
+    const formData = new FormData();
+
+    // Update the formData object
+    formData.append('file', event.target.files[0], event.target.files[0].name);
+    try {
+      API.uploadSalesOrderImage(formData, function (res) {
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
+  };
+
+  function ShowImageWhenItsUploaded() {
+    if (file) {
+      return (
+        <Paper sx={{ height: '100%' }}>
+          <img src={file} alt="Image" />
+          <Button component="label" htmlFor="upload-file">
+            <input
+              accept="image/*"
+              multiple
+              id="upload-file"
+              type="file"
+              onChange={handleOnFileChange}
+              hidden
+            />
+            <Typography variant="h5">Change File</Typography>
+          </Button>
+        </Paper>
+      );
+    } else {
+      return (
+        <Paper sx={{ height: '100%' }}>
+          <label htmlFor="upload-file">
+            <input
+              accept="image/*"
+              multiple
+              id="upload-file"
+              type="file"
+              onChange={handleOnFileChange}
+              style={{ display: 'none' }}
+            />
+            <UploadPaper component="span" fullWidth>
+              <Typography variant="h5">Drop or Select File</Typography>
+            </UploadPaper>
+          </label>
+        </Paper>
+      );
+    }
+  }
   // ----------------------------------------------------------------- //
 
   return (
@@ -510,7 +577,7 @@ function SalesOrder() {
                                 >
                                   <Tab label="Overview" value="1" />
                                   <Tab label="Finance" value="2" />
-                                  <Tab label="PEB" value="3" disabled={!isExport} />
+                                  <Tab label="Attachment Official PO" value="3" />
                                 </TabList>
                               </Box>
 
@@ -611,48 +678,37 @@ function SalesOrder() {
                                   </Stack>
                                 </CardContent>
                               </TabPanel>
-                              <TabPanel value="3">
-                                <Grid container direction="row" spacing={2}>
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Nomor Dokumen PEB</FormLabel>
-                                      <TextField
-                                        placeholder="13223XX"
-                                        fullWidth
-                                        autoComplete="document_number"
-                                        type="text"
-                                        {...getFieldProps('document_number')}
-                                        error={Boolean(
-                                          touched.document_number && errors.document_number
-                                        )}
-                                        helperText={
-                                          touched.document_number && errors.document_number
-                                        }
-                                      />
-                                    </FormControl>
-                                  </Grid>
 
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Tanggal Dokumen</FormLabel>
-                                      <TextField
-                                        type="date"
-                                        placeholder="26-03-2023"
-                                        fullWidth
-                                        autoComplete="date"
-                                        {...getFieldProps('date')}
-                                        error={Boolean(
-                                          touched.date &&
-                                            errors.date
-                                        )}
-                                        helperText={
-                                          touched.date &&
-                                          errors.date
-                                        }
-                                      />
-                                    </FormControl>
+                              <TabPanel value="3" sx={{ padding: 'unset' }}>
+                                <Box p={2}>
+                                  <Grid container direction="row" spacing={2}>
+                                    <Grid item xs={12}>
+                                      <Stack direction="row" spacing={2}>
+                                        <TextField
+                                          fullWidth
+                                          autoComplete="tanggal_po"
+                                          type="date"
+                                          label="Tanggal Rilis PO Buyer Resmi"
+                                          {...getFieldProps('tanggal_po')}
+                                          error={Boolean(touched.tanggal_po && errors.tanggal_po)}
+                                          helperText={touched.tanggal_po && errors.tanggal_po}
+                                        />
+                                        <TextField
+                                          fullWidth
+                                          autoComplete="nomor_po"
+                                          type="text"
+                                          label="Nomor PO Buyer Resmi"
+                                          {...getFieldProps('nomor_po')}
+                                          error={Boolean(touched.nomor_po && errors.nomor_po)}
+                                          helperText={touched.nomor_po && errors.nomor_po}
+                                        />
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                      <ShowImageWhenItsUploaded />
+                                    </Grid>
                                   </Grid>
-                                </Grid>
+                                </Box>
                               </TabPanel>
                             </TabContext>
                           </ColumnBox>

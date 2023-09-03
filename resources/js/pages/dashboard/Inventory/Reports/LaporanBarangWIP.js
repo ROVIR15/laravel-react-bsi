@@ -33,7 +33,8 @@ import { __payload } from '../data-testing/wip';
 import API from '../../../../helpers';
 import { isEmpty } from 'lodash';
 
-import { generalizeSKU } from '../utils';
+import { generalizeSKU } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
@@ -49,8 +50,8 @@ function Inbound() {
 
   // range of date
   const [values, setValues] = useState({
-    start_date: '2023-01-01',
-    end_date: '2023-01-14',
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD'),
     category: 1
   });
 
@@ -64,18 +65,18 @@ function Inbound() {
 
   const handleGo = () => {
     try {
-      // if (isEmpty(values.start_date) || isEmpty(values.start_date) || isEmpty(values.category))
-      //   new Error('Error processing your request!');
-      // let param = `?fromDate=${values.start_date}&thruDate=${values.end_date}`;
-      // API.getReportWIP_beta(param, function (res) {
-      //   if (!res) return;
-      //   if (!res.data) new Error('Error processing request');
-      //   else {
-      //     // console.log(res.data);
-      //     // let _res = rearrange_data_material_transfer(res.data);
-      //     setPayloadData(res.data);
-      //   }
-      // });
+      if (isEmpty(values.start_date) || isEmpty(values.start_date))
+        new Error('Error processing your request!');
+      let param = `?fromDate=${values.start_date}&thruDate=${values.end_date}&type_of_facility=17`;
+      API.getReportWIP_beta(param, function (res) {
+        if (!res) return;
+        if (!res.data) new Error('Error processing request');
+        else {
+          // console.log(res.data);
+          // let _res = rearrange_data_material_transfer(res.data);
+          setPayloadData(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
     }
@@ -169,7 +170,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{titleCase(pagename)}</Typography>
+              <Typography variant="h5">{titleCase('Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak ')}</Typography>
               <Button
                 variant="contained"
                 onClick={handleDownload}
@@ -202,23 +203,6 @@ function Inbound() {
                   value={values.end_date}
                   onChange={handleChangeDateRange}
                 />
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  size="small"
-                  value={valueOfSelect}
-                  label="Kategori"
-                  // onChange={handleSelectChange}
-                  input={<OutlinedInput label="Name" />}
-                  sx={{ minWidth: '10em' }}
-                  // MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
               </Stack>
 
               <Button onClick={handleGo}> Go </Button>
@@ -251,13 +235,18 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell>Nomor Bukti Pengeluaran dan/atau Penerimaan</TableCell>
-                  <TableCell>Tanggal Bukti Pengeluaran dan/atau Penerimaan</TableCell>
-                  <TableCell>Kode Barang</TableCell>
+                  <TableCell colSpan={2}> Bukti Pengeluaran</TableCell>
+
+                  <TableCell colSpan={5}></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Nomor </TableCell>
+                  <TableCell>Tanggal </TableCell>
+                  <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
-                  {/* <TableCell>Category Name</TableCell> */}
+                  <TableCell>Satuan</TableCell>
+                  <TableCell>Disubkontrakan</TableCell>
                   <TableCell>Perusahaan Sub Kontrak</TableCell>
-                  <TableCell>Lokasi Gudang</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -275,16 +264,15 @@ function Inbound() {
 
                     return (
                       <TableRow>
-                        <TableCell>{row.nomor_bukti}</TableCell>
-                        <TableCell>{row.tanggal_bukti}</TableCell>
-                        <TableCell>{`WIP-00${row.id}`}</TableCell>
+                        <TableCell>{row.document_number}</TableCell>
+                        <TableCell>{row.document_date}</TableCell>
+                        <TableCell>
+                          {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                        </TableCell>
                         <TableCell>{row.item_name}</TableCell>
-                        {/* <TableCell>{convertedString}</TableCell> */}
-                        {/* <TableCell>{row.category_name}</TableCell> */}
                         <TableCell>{row.unit_measurement}</TableCell>
-                        <TableCell>{row.total_output}</TableCell>
-                        <TableCell>{row.sub_kontrak}</TableCell>
-                        <TableCell>{row.current_position}</TableCell>
+                        <TableCell>{row.qty}</TableCell>
+                        <TableCell>{row.subcontractor_name}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -297,7 +285,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan WIP</Typography>
+            <Typography variant="h3">Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -325,23 +313,31 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th colSpan={2} className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Bukti Pengeluaran
+                        </th>
+                      </tr>
+                      <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Item Name
+                          Tanggal
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Category Name
+                          Kode BB
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nama Barang
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
                         </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Stok Awal</th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Stok Masuk</th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Stok Keluar</th>
-                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Stok Akhir
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Disubkontrakan
+                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nama Penerima Subkontrak
                         </th>
                       </tr>
                     </thead>
@@ -359,14 +355,14 @@ function Inbound() {
 
                         return (
                           <tr>
-                            <td className="wk_width_3">{row.material_code}</td>
+                            <td className="wk_width_3">{row.document_number}</td>
+                            <td className="wk_width_3">{row.document_date}</td>
                             <td className="wk_width_2">{row.item_name}</td>
-                            <td className="wk_width_2">{convertedString}</td>
-                            <td className="wk_width_3">{row.unit_measurement}</td>
-                            <td className="wk_width_1">{row.total_output}</td>
-                            <td className="wk_width_1">{row.total_output}</td>
-                            <td className="wk_width_1">{row.next_wip_output}</td>
-                            <td className="wk_width_2">{last_stock}</td>
+                            <td className="wk_width_2">{generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}</td>
+                            <td className="wk_width_3">{row.item_name}</td>
+                            <td className="wk_width_1">{row.unit_measurement}</td>
+                            <td className="wk_width_1">{row.qty}</td>
+                            <td className="wk_width_1">{row.subcontractor_name}</td>
                           </tr>
                         );
                       })}

@@ -159,9 +159,6 @@ function SalesOrder() {
       delivery_date: load.delivery_date,
       import_flag: Boolean(load?.import_flag),
       currency_id: load.order.currency_id,
-      document_number: load?.import_doc?.document_number,
-      customs_document_date: load?.import_doc?.date,
-      customs_document_type: load?.import_doc?.type,
       import_flag: load?.import_flag
     });
 
@@ -287,10 +284,6 @@ function SalesOrder() {
     handleUpdateAllRows();
   });
 
-  useEffect(() => {
-    var orderItem;
-  }, [items]);
-
   const postIncomingGoods = (order_id) => {
     try {
       API.postIncomingGoods({ id: order_id, user_id: user?.id }, function (res) {
@@ -403,18 +396,6 @@ function SalesOrder() {
     ],
     [deleteData]
   );
-
-  const columnsBC = useMemo(() => [
-    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'hs_code', headerName: 'Kode HS', editable: true },
-    {
-      field: 'item_serial_number',
-      headerName: 'Nomor Seri Barang',
-      editable: true,
-      width: '200'
-    },
-    { field: 'item_name', headerName: 'Name', width: 350, align: 'left' }
-  ]);
 
   const columnShipment = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
@@ -678,7 +659,6 @@ function SalesOrder() {
                                   <Tab label="Shipment Tracking" value="3" />
                                   <Tab label="Finance" value="4" />
                                   <Tab label="Invoice List" value="5" />
-                                  <Tab label="Customs" value="6" disabled={!isImport} />
                                 </TabList>
                               </Box>
   
@@ -829,79 +809,6 @@ function SalesOrder() {
                                     );
                                   })}
                                 </Table>
-                              </TabPanel>
-  
-                              <TabPanel value="6">
-                                <Grid container direction="row" spacing={2}>
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
-                                      <TextField
-                                        placeholder="13223XX"
-                                        fullWidth
-                                        autoComplete="document_number"
-                                        type="text"
-                                        {...getFieldProps('document_number')}
-                                        error={Boolean(
-                                          touched.document_number && errors.document_number
-                                        )}
-                                        helperText={touched.document_number && errors.document_number}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-  
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Tanggal Dokumen Kepabean</FormLabel>
-                                      <TextField
-                                        type="date"
-                                        placeholder="26-03-2023"
-                                        fullWidth
-                                        autoComplete="customs_document_date"
-                                        {...getFieldProps('customs_document_date')}
-                                        error={Boolean(
-                                          touched.customs_document_date &&
-                                            errors.customs_document_date
-                                        )}
-                                        helperText={
-                                          touched.customs_document_date &&
-                                          errors.customs_document_date
-                                        }
-                                      />
-                                    </FormControl>
-                                  </Grid>
-  
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Jenis Dokumen Kepabean</FormLabel>
-                                      <Select
-                                        {...getFieldProps('customs_document_type')}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        error={Boolean(
-                                          touched.customs_document_type &&
-                                            errors.customs_document_type
-                                        )}
-                                        helperText={
-                                          touched.customs_document_type &&
-                                          errors.customs_document_type
-                                        }
-                                      >
-                                        <MenuItem value="">
-                                          <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={1}>BC 2.0</MenuItem>
-                                        <MenuItem value={2}>BC 2.4</MenuItem>
-                                        <MenuItem value={3}>BC 2.5</MenuItem>
-                                        <MenuItem value={4}>BC 2.8</MenuItem>
-                                      </Select>
-                                    </FormControl>
-                                  </Grid>
-  
-                                  <Grid item xs={12}>
-                                    <DataGrid columns={columnsBC} rows={items} />
-                                  </Grid>
-                                </Grid>
                               </TabPanel>
                             </TabContext>
                           </ColumnBox>

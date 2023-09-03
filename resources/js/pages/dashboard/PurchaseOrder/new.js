@@ -122,9 +122,7 @@ function SalesOrder() {
       description: '',
       import_flag: false,
       tax: 0,
-      currency_id: 2,
-      document_number: 0,
-      customs_document_date: ''
+      currency_id: 2
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
@@ -204,8 +202,6 @@ function SalesOrder() {
         qty: key.qty,
         delivery_date: null,
         unit_price: key.unit_price,
-        hs_code: 0,
-        item_serial_number: 0,
         description: ''
       };
     });
@@ -558,7 +554,6 @@ function SalesOrder() {
                                   <Tab label="Overview" value="1" />
                                   <Tab label="Description" value="2" />
                                   <Tab label="Finance" value="3" />
-                                  <Tab label="Customs" value="4" disabled={!isImport} />
                                 </TabList>
                               </Box>
 
@@ -626,85 +621,6 @@ function SalesOrder() {
                                 </Stack>
                               </TabPanel>
 
-                              <TabPanel value="4">
-                                <Grid container direction="row" spacing={2}>
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
-                                      <TextField
-                                        placeholder="13223XX"
-                                        fullWidth
-                                        autoComplete="document_number"
-                                        type="text"
-                                        {...getFieldProps('document_number')}
-                                        error={Boolean(
-                                          touched.document_number && errors.document_number
-                                        )}
-                                        helperText={
-                                          touched.document_number && errors.document_number
-                                        }
-                                      />
-                                    </FormControl>
-                                  </Grid>
-
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Tanggal Dokumen Kepabean</FormLabel>
-                                      <TextField
-                                        type="date"
-                                        placeholder="26-03-2023"
-                                        fullWidth
-                                        autoComplete="customs_document_date"
-                                        {...getFieldProps('customs_document_date')}
-                                        error={Boolean(
-                                          touched.customs_document_date &&
-                                            errors.customs_document_date
-                                        )}
-                                        helperText={
-                                          touched.customs_document_date &&
-                                          errors.customs_document_date
-                                        }
-                                      />
-                                    </FormControl>
-                                  </Grid>
-
-                                  <Grid item xs={4}>
-                                    <FormControl>
-                                      <FormLabel id="xx">Jenis Dokumen Kepabean</FormLabel>
-                                      <Select
-                                        {...getFieldProps('customs_document_type')}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        error={Boolean(
-                                          touched.customs_document_type &&
-                                            errors.customs_document_type
-                                        )}
-                                        helperText={
-                                          touched.customs_document_type &&
-                                          errors.customs_document_type
-                                        }
-                                      >
-                                        <MenuItem value="">
-                                          <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={1}>BC 2.0</MenuItem>
-                                        <MenuItem value={2}>BC 2.4</MenuItem>
-                                        <MenuItem value={3}>BC 2.5</MenuItem>
-                                        <MenuItem value={4}>BC 2.8</MenuItem>
-                                      </Select>
-                                    </FormControl>
-                                  </Grid>
-
-                                  <Grid item xs={12}>
-                                    <DataGrid
-                                      columns={columnsBC}
-                                      rows={items}
-                                      onEditRowsModelChange={handleEditRowsModelChange}
-                                      handleUpdateAllRows={handleUpdateAllRows}
-                                    />
-                                  </Grid>
-                                </Grid>
-                              </TabPanel>
                             </TabContext>
                           </ColumnBox>
                         </Grid>

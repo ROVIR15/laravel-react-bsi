@@ -35,6 +35,7 @@ import { isEmpty, values } from 'lodash';
 import API from '../../../../helpers';
 
 import { generalizeSKU } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Skrap'];
 
@@ -52,8 +53,8 @@ function Inbound() {
 
   // range of date
   const [values, setValues] = useState({
-    start_date: '',
-    end_date: '',
+    start_date: '2023-08-01',
+    end_date: '2023-08-15',
     category: 'Bahan Baku'
   });
 
@@ -63,18 +64,18 @@ function Inbound() {
 
   const handleGo = () => {
     try {
-      // let cat = searchParams.get('cat');
-      // if (isEmpty(values.start_date) || isEmpty(values.start_date))
-      //   new Error('Error processing your request!');
-      // let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
-      // API.getReportMutasi_alt(param, function (res) {
-      //   if (!res) return;
-      //   if (!res.data) new Error('Error processing request');
-      //   else {
-      //     // let _res = rearrange_data_material_transfer(res.data);
-      //     setPayloadData(res.data);
-      //   }
-      // });
+      let cat = searchParams.get('cat');
+      if (isEmpty(values.start_date) || isEmpty(values.start_date))
+        new Error('Error processing your request!');
+      let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
+      API.getReportRawMaterial(param, function (res) {
+        if (!res) return;
+        if (!res.data) new Error('Error processing request');
+        else {
+          // let _res = rearrange_data_material_transfer(res.data);
+          setPayloadData(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
     }
@@ -162,8 +163,8 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: '2023-05-01',
-    end_date: '2023-05-15'
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD')
   });
 
   /** Handle Date Changes */
@@ -181,7 +182,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{`${titleCase(pagename)}`}</Typography>
+              <Typography variant="h5">{`${titleCase("Laporan Pemakaian Bahan Baku")}`}</Typography>
               <Button
                 variant="contained"
                 startIcon={<Icon icon={downloadIcon} />}
@@ -250,11 +251,12 @@ function Inbound() {
                   </TableCell>
                   <TableCell colSpan={3}>{' '}</TableCell>
                   <TableCell colSpan={2}>Jumlah</TableCell>
+                  <TableCell colSpan={1}></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Nomor Bukti Pengeluaran Barang</TableCell>
-                  <TableCell>Tanggal Bukti Pengeluaran</TableCell>
-                  <TableCell>Kode Barang</TableCell>
+                  <TableCell>Nomor </TableCell>
+                  <TableCell>Tanggal</TableCell>
+                  <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Digunakan</TableCell>
@@ -267,17 +269,17 @@ function Inbound() {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row, index) => (
                     <TableRow>
-                      <TableCell>{row.nomor_bukti_pengeluaran}</TableCell>
-                      <TableCell>{row.tanggal_bukti_pengeluaran}</TableCell>
+                      <TableCell>{row.document_number}</TableCell>
+                      <TableCell>{row.document_date}</TableCell>
                       <TableCell>
-                        {row.kode_barang}
-                        {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
+                        {/* {row.kode_barang} */}
+                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
-                      <TableCell>{row.jumlah_pemakaian_barang}</TableCell>
-                      <TableCell>{row.jumlah_barang_subkontrak}</TableCell>
-                      <TableCell>{row.nama_penerima_subkontrak}</TableCell>
+                      <TableCell>{row.qty_digunakan}</TableCell>
+                      <TableCell>{row.qty_subcontract}</TableCell>
+                      <TableCell>{row.subcontractor_name}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -289,7 +291,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Mutasi Barang</Typography>
+            <Typography variant="h3">Laporan Pemakaian Bahan Baku</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -324,7 +326,10 @@ function Inbound() {
                           Tanggal Bukti Pengeluaran
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
+                          Kode BB
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nama Barang
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
@@ -346,17 +351,14 @@ function Inbound() {
                     <tbody>
                       {payloadData?.map((row, index) => (
                         <tr>
-                          <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
-                          </td>
-                          <td className="wk_width_2">{row.nomor_bukti_pengeluaran}</td>
-                          <td className="wk_width_2">{row.tanggal_bukti_pengeluaran}</td>
-                          <td className="wk_width_3">{row.kode_barang}</td>
+                          <td className="wk_width_2">{row.document_number}</td>
+                          <td className="wk_width_2">{row.document_date}</td>
+                          <td className="wk_width_3">{generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}</td>
                           <td className="wk_width_1">{row.item_name}</td>
                           <td className="wk_width_1">{row.unit_measurement}</td>
-                          <td className="wk_width_1">{row.jumlah_pemakaian_barang}</td>
-                          <td className="wk_width_1">{row.jumlah_barang_subkontrak}</td>
-                          <td className="wk_width_1">{row.nama_penerima_subkontrak}</td>
+                          <td className="wk_width_1">{row.qty_digunakan}</td>
+                          <td className="wk_width_1">{row.qty_subcontract}</td>
+                          <td className="wk_width_1">{row.subcontractor_name}</td>
                         </tr>
                       ))}
                     </tbody>

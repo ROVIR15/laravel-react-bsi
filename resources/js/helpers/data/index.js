@@ -171,6 +171,35 @@ export function _miniFuncCutting(array, _so_id) {
   return arranged;
 }
 
+export function _miniFuncCutting2(array, _so_id) {
+  if (isEmpty(array)) return;
+  let arranged = array.map((x, index) => {
+    const {
+      order_id,
+      order_item_id,
+      product_id,
+      product_feature_id,
+      name,
+      size,
+      color
+    } = x;
+    return {
+      id: index + 1,
+      date: moment(new Date()).format('YYYY-MM-DD'),
+      order_id,
+      order_item_id,
+      sales_order_id: _so_id,
+      product_feature_id,
+      po_number: '',
+      color,
+      size,
+      name
+    };
+  });
+
+  return arranged;
+}
+
 export function _miniFunc(array, _so_id) {
   if (isEmpty(array)) return;
   let arranged = array.map((x, index) => {
@@ -1019,9 +1048,9 @@ export function _shipmentItem(array) {
     return {
       id,
       item_name,
-      name: order_item?.product_feature?.product?.goods?.name,
-      size: order_item?.product_feature?.size,
-      color: order_item?.product_feature?.color,
+      goods_id: order_item?.product_feature?.product?.goods?.id,
+      product_feature_id: order_item?.product_feature?.id,
+      product_id: order_item?.product_feature?.product?.id,
       satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
       deliv_qty: qty_shipped,

@@ -1,11 +1,17 @@
 export { default as BuyerLayout } from './Buyer';
+
+//Sales
 export { default as InquiryLayout } from './Inquiry';
 export { default as QuotationLayout } from './Quotation';
 export { default as SalesOrderLayout } from './SalesOrder';
+
+// Material Management
 export { default as GoodsLayout } from './Goods';
 export { default as ServiceLayout } from './Service';
+
+//Inventory
 export { default as InventoryLayout } from './Inventory';
-export { default as MaterialTransferLayout} from './Inventory/MaterialTransfer';
+export { default as MaterialTransferLayout } from './Inventory/MaterialTransfer';
 export { default as WorkCenterLayout } from './WorkCenter';
 export { default as RoutingLayout } from './Routing';
 export { default as CostingLayout } from './Costing';
@@ -48,3 +54,9 @@ export { default as ScrapLayout } from './Inventory/Scrap';
 
 //Shipment 
 export { default as SubcontractLayout } from './Shipment/Subcontract';
+
+//KITE
+export { default as ImportLayout } from './KITE/Import';
+export { default as ExportLayout } from './KITE/Export';
+
+export { default as LogsLayout } from './Logs';

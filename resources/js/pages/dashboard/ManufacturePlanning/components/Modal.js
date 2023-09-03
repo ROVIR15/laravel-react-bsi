@@ -157,6 +157,7 @@ export default function BasicModal({
         const data = res.data.map(function (item) {
           return {
             id: item?.id,
+            sales_order_id: item?.sales_order_id,
             order_id: item?.order_id,
             po_number: item?.po_number,
             sold_to: item?.sold_to,

@@ -35,6 +35,7 @@ import { isEmpty, values } from 'lodash';
 import API from '../../../../helpers';
 
 import { generalizeSKU } from './utils';
+import moment from 'moment';
 
 const names = ['Bahan Baku', 'Skrap'];
 
@@ -65,14 +66,14 @@ function Inbound() {
 
       let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}`;
 
-      // API.getScrapReport(param, function (res) {
-      //   if (!res) return;
-      //   if (!res.data) new Error('Error processing request');
-      //   else {
-      //     // let _res = rearrange_data_material_transfer(res.data);
-      //     setPayloadData(res.data);
-      //   }
-      // });
+      API.getScrapReport(param, function (res) {
+        if (!res) return;
+        if (!res.data) new Error('Error processing request');
+        else {
+          // let _res = rearrange_data_material_transfer(res.data);
+          setPayloadData(res.data);
+        }
+      });
     } catch (error) {
       alert(error);
     }
@@ -160,8 +161,8 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: '2023-05-01',
-    end_date: '2023-05-15'
+    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD')
   });
 
   /** Handle Date Changes */
@@ -179,7 +180,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{`${titleCase(pagename)}`}</Typography>
+              <Typography variant="h5">{`${titleCase("Laporan Waste/Scrap")}`}</Typography>
               <Button
                 variant="contained"
                 startIcon={<Icon icon={downloadIcon} />}
@@ -246,13 +247,13 @@ function Inbound() {
                   <TableCell align="center" colSpan={2}>
                     BC 2.4
                   </TableCell>
-                  <TableCell colSpan={5}></TableCell>
+                  <TableCell colSpan={6}></TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
-                  <TableCell>Kode Barang</TableCell>
-                  <TableCell>Nama Item</TableCell>
+                  <TableCell>Kode BB</TableCell>
+                  <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Jumlah</TableCell>
                   <TableCell>Nilai</TableCell>
@@ -263,17 +264,15 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell>{row.nomor_pendaftaran_dokumen_penyelesaian}</TableCell>
-                      <TableCell>{row.tanggal_dokumen}</TableCell>
+                      <TableCell>{row.document_number}</TableCell>
+                      <TableCell>{row.document_date}</TableCell>
                       <TableCell>
-                        {row?.sku_barang}
-                        {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
+                        {generalizeSKU(row?.goods_id, row?.product_id, row?.product_feature_id)}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.category_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
+                      <TableCell>{row.qty}</TableCell>
                       <TableCell>{row.unit_price}</TableCell>
-                      <TableCell>{row.transferred_qty}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -285,7 +284,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Mutasi Barang</Typography>
+            <Typography variant="h3">Laporan Waste/Scrap</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -313,45 +312,45 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center" colSpan={2}>BC 2.4</th>
+                        <th colSpan={5}></th>
+                      </tr>
+                      <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Tanggal
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Kode BB
+                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nama Barang
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kategori
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Saldo Awal
+                          Jumlah
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Pemasukan Barang
-                        </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Pengeluaran Barang
-                        </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Saldo Akhir
+                          Nilai
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {payloadData.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{row.document_number}</td>
+                          <td className="wk_width_2">{row.document_date}</td>
                           <td className="wk_width_3">
                             {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
-                          <td className="wk_width_2">{row.category_name}</td>
                           <td className="wk_width_3">{row.unit_measurement}</td>
-                          <td className="wk_width_1">{row.initial_stock}</td>
-                          <td className="wk_width_1">{row.stock_in}</td>
-                          <td className="wk_width_1">{row.stock_out}</td>
-                          <td className="wk_width_1">{row.transferred_qty}</td>
+                          <td className="wk_width_1">{row.qty}</td>
+                          <td className="wk_width_1">{row.unit_price}</td>
                         </tr>
                       ))}
                     </tbody>

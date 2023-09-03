@@ -32,6 +32,10 @@
       return $this->belongsTo('App\Models\Order\Order', 'order_id', 'id')->with('status');
     }
 
+    public function order_proof(){
+      return $this->belongsTo('App\Models\Order\POBuyerProof', 'order_id', 'order_id');
+    }
+
     public function product_feature(){
       return $this->hasManyThrough('App\Models\Product\ProductFeature', 'App\Models\Order\OrderItem', 'order_id', 'id', 'order_id', 'product_feature_id')->with('product');
     }
@@ -53,7 +57,7 @@
     }
 
     public function ship(){
-        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id');
+        return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
     }
 
     public function status(){

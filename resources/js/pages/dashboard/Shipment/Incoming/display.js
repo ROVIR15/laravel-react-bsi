@@ -94,17 +94,6 @@ function OutboundDelivery({ placeHolder }) {
         if (!res.data) {
           setGoodsReceipt([]);
         } else {
-          let buyer = res?.data
-          .filter(function (item, index, arr) {
-            return !isNull(item?.order?.purchase_order?.party);
-          })
-          .map(function (obj) {
-            return obj.order?.purchase_order?.party;
-          });
-
-          let _buyer = uniqBy(buyer, 'id');
-          setOptionsBuyer(_buyer);
-
           setGoodsReceipt(res.data);
         }
       });
@@ -199,10 +188,6 @@ function OutboundDelivery({ placeHolder }) {
         filterMonthYear={filterMonthYear}
         onFilterMonthYear={handleMonthYearChanges}
         placeHolder={placeHolder}
-        buyerFilterActive={true}
-        filterBuyer={filterBuyer}
-        onFilterBuyer={handleBuyerFilter}
-        listOfBuyer={optionsBuyer}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>

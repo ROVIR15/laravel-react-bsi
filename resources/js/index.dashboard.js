@@ -58,7 +58,7 @@ const AlertFailed = React.forwardRef((props, ref) => {
     <SnackbarContent ref={ref} role="alert">
       <Alert severity="error">
         <AlertTitle>FAILED</AlertTitle>
-          Please try again!
+          {`${props.message}`} Please try again!
       </Alert>
     </SnackbarContent>
   );

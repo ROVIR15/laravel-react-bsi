@@ -16,7 +16,10 @@ import {
   Tab,
   Typography,
   Select,
-  Stack
+  Stack,
+  Table,
+  TableRow,
+  TableCell
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
@@ -53,7 +56,7 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt } from 'lodash';
+import { gt, isArray } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
@@ -296,7 +299,12 @@ function BillofMaterial() {
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
       { field: 'unit_price', headerName: 'Harga', editable: editableUser },
       // { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
-      { field: 'jumlah', headerName: 'Biaya Unit', editable: editableUser, valueGetter: totalMoney },
+      {
+        field: 'jumlah',
+        headerName: 'Biaya Unit',
+        editable: editableUser,
+        valueGetter: totalMoney
+      },
       {
         field: 'actions',
         type: 'actions',
@@ -381,6 +389,8 @@ function BillofMaterial() {
     [deleteDataService]
   );
 
+  const [listPO, setListPO] = useState([])
+
   /**
    * Handling GET Bill of Material Information from spesific bom_id
    */
@@ -389,7 +399,8 @@ function BillofMaterial() {
 
     const load = await axios
       .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
-      .then(function ({ data: { data } }) {
+      .then(function ({ data: { data, items } }) {
+        setListPO(items)
         return data;
       })
       .catch((error) => {
@@ -414,14 +425,7 @@ function BillofMaterial() {
 
     setSelectedValueSH(load.party);
 
-    const load2 = await axios
-      .get(process.env.MIX_API_URL + '/bom-item' + `/${id}`)
-      .then(function ({ data: { data } }) {
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
+    const load2 = load?.bom_items;
 
     var c = load2.map((key) => {
       const {
@@ -449,26 +453,12 @@ function BillofMaterial() {
     });
     setComponent(c);
 
-    const load3 = await axios
-      .get(process.env.MIX_API_URL + '/bom-service' + `/${id}`)
-      .then(function ({ data: { data } }) {
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
+    const load3 = load?.bom_services;
 
     var s = BomServiceList(load3);
     setService(s);
 
-    const load4 = await axios
-      .get(process.env.MIX_API_URL + '/operation' + `/${id}`)
-      .then(function ({ data: { data } }) {
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
+    const load4 = load?.operations;
 
     var o = load4.map((key) => {
       const { work_center_info, seq, id, work_center_id, bom_id } = key;
@@ -481,6 +471,7 @@ function BillofMaterial() {
       };
     });
     setOperation(o);
+
   }, [id]);
 
   /**
@@ -499,7 +490,7 @@ function BillofMaterial() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        if(!editableUser) return;
+        if (!editableUser) return;
         try {
           API.updateABOMItem(editedIds, data, function (res) {
             if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
@@ -884,6 +875,7 @@ function BillofMaterial() {
                                   <Tab label="Material" value="3" />
                                   <Tab label="Service" value="4" />
                                   <Tab label="Tax" value="5" />
+                                  <Tab label="List PO" value="6" />
                                 </TabList>
                               </Box>
                               <TabPanel value="1">
@@ -956,6 +948,30 @@ function BillofMaterial() {
                                     }}
                                   />
                                 </Stack>
+                              </TabPanel>
+                              <TabPanel value="6">
+                                <Table>
+                                  <TableRow>
+                                    <TableCell>
+                                      <Typography variant="h6">No</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor PO</Typography>
+                                    </TableCell>
+                                  </TableRow>
+                                  {isEmpty(listPO) ? listPO.map(function (item) {
+                                    return (
+                                      <TableRow>
+                                        <TableCell variant="subtitle">{item.id}</TableCell>
+                                        <TableCell variant="subtitle">
+                                          <Typography variant='body1' component='a' href={`../../purchasing/purchase-order/${item.id}`}>
+                                            {`PO-0${item.id}`}
+                                          </Typography>
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  }) : <TableRow>Data is empty!</TableRow>}
+                                </Table>
                               </TabPanel>
                             </TabContext>
                           </Box>

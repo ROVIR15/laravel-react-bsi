@@ -22,9 +22,31 @@ class MaterialTransferController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = MaterialTransfer::with('items', 'status', 'from_facility')
-                ->get();
-        } catch (\Throwable $th) {
+            $query = MaterialTransfer::with('status', 'items', 'realisation', 'from_facility', 'to_facility')
+                ->orderBy('id', 'desc')
+                ->get()
+                ->map(function($item, $index) {
+                    $product = count($item->items) ? $item->items[0]->product : null;
+                    $goods = $product ? $product->goods : null;
+
+                    return [
+                        'id' => $item->id,
+                        'status' => count($item->status) ? $item->status[0]->status : 'None',
+                        'mt_id' => 'MT-00' . $item->id,
+                        'date' => $item->created_at,
+                        'from_facility_name' => $item->from_facility_id,
+                        'to_facility_id' => $item->to_facility_id,
+                        'from_facility_name' => $item->from_facility->name,
+                        'to_facility_name' => $item->to_facility->name,
+                        'req_transfer_qty' => $item->items->sum('transfer_qty'),
+                        'res_transfer_qty' => $item->realisation->sum('transferred_qty'),
+                        'unit_measurement' => $goods ? $goods->satuan : null,
+                        'est_transfer_date' => date_format(date_create($item->est_transfer_date), 'd-m-Y'),
+                        'created_at' => $item->created_at,
+                        'updated_at' => $item->updated_at
+                    ];
+                });
+        } catch (Exception $th) {
             //throw $th;
             return response()->json([
                 'success' => false,

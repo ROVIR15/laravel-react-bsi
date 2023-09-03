@@ -49,7 +49,6 @@ import useAuth from '../../../../context';
 // Snackbar
 import { enqueueSnackbar } from 'notistack';
 
-
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -243,6 +242,10 @@ function OutboundDelivery() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
+              if (editRowData[editedColumnName].value > row.current_stock) {
+                alert('You trying to do something wrong! please check your input');
+                return row;
+              }
               return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
               return row;
@@ -285,10 +288,11 @@ function OutboundDelivery() {
         function (res) {
           if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
           else enqueueSnackbar('', { variant: 'failedAlert' });
-        });
-      } catch (error) {
-        enqueueSnackbar('', { variant: 'failedAlert' });
-      }  
+        }
+      );
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
   };
 
   const handleChangeStatus = (event) => {

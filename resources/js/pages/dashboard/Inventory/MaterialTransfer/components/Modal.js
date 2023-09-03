@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import { FormControl, InputLabel, IconButton, MenuItem, Select, Stack } from '@mui/material';
+import { FormControl, InputLabel, IconButton, OutlinedInput, MenuItem, Select, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
@@ -10,7 +10,7 @@ import closeCircle from '@iconify/icons-eva/close-outline';
 // Components
 import API from '../../../../../helpers';
 import Table from './Table';
-import { bomitem_data_alt } from '../../utils'
+import { bomitem_data_alt } from '../../utils';
 
 // Helpers
 import { optionProductFeature, productItemArrangedData } from '../../../../../helpers/data';
@@ -49,19 +49,18 @@ export default function BasicModal({
   const [optionBom, setOptionBOm] = React.useState([]);
 
   const handleBOMFilter = (event) => {
-    if(event.target.value === 0 && !isEmpty(options)) {
-      console.log(options.length)
-      setSelectionOptions(options)
+    if (event.target.value === 0 && !isEmpty(options)) {
+      setSelectionOptions(options);
     } else {
       // console.log(event.target.value)
       const selected = optionBom.find((x) => x.id === event.target.value);
-      if(isEmpty(selected)) return;
-      if(isEmpty(selected?.items)) setSelectionOptions([]);
+      if (isEmpty(selected)) return;
+      if (isEmpty(selected?.items)) setSelectionOptions([]);
       else {
         const _items_converted = bomitem_data_alt(selected?.items);
         setSelectionOptions(_items_converted);
       }
-  }
+    }
   };
 
   React.useEffect(() => {
@@ -71,35 +70,62 @@ export default function BasicModal({
       return undefined;
     }
 
-    // get productFeature
-    API.getProductFeature(async (res) => {
-      if (!res) return;
-      if (!res.data) {
-        setOptions([]);
-      } else {
-        let data = await optionProductFeature(res.data);
-        setOptions(data);
-      }
-    });
+    try {
+      // get productFeature
+      API.getProductFeature(async (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setOptions([]);
+        } else {
+          let data = await optionProductFeature(res.data);
+          setOptions(data);
+        }
+      });
 
-    // get bom_alt
-    API.getBOM_alt('', (res) => {
-      if (!res) return;
-      if (!res.data) {
-        setOptionBOm([]);
-      } else {
-        setOptionBOm(res.data);
-      }
-    });
+      // get bom_alt
+      API.getCostingV2((res) => {
+        if (!res) return;
+        if (!res.data) {
+          setOptionBOm([]);
+        } else {
+          setOptionBOm(res.data);
+        }
+      });
+    } catch (error) {
+      alert('error')
+    }
 
     return () => {
       active = false;
     };
   }, [loading]);
 
+  // --------------------------------------------------------------- //
+  const [selectedCosting, setSelectedCosting] = React.useState(0);
+
+  const handleSelect = (e) => {
+    setSelectedCosting(e.target.value);
+  };
+
   React.useEffect(() => {
-    // get bom
-  }, []);
+    // console.log(selectedCosting)
+    if (selectedCosting !== 0) {
+      try {
+        API.getBOMItemV4(selectedCosting, (res) => {
+          if (!res) return;
+          if (!res.data) {
+            setSelectionOptions([]);
+          } else {
+            // console.log(data);
+            setSelectionOptions(res.data);
+          }
+        });
+      } catch (error) {
+        alert('error');
+      }
+    }
+  }, [selectedCosting]);
+  // --------------------------------------------------------------- //
 
   return (
     <div>
@@ -119,12 +145,25 @@ export default function BasicModal({
           </Stack>
 
           <FormControl fullWidth>
-            <InputLabel>Select BOM</InputLabel>
+            {/* <InputLabel>Select BOM</InputLabel>
             <Select onChange={handleBOMFilter}>
               <MenuItem value={0}>{'Semua Item'}</MenuItem>
               {optionBom?.map((item) => {
                 const item_name = `${item.product_feature?.product?.goods?.name} ${item.product_feature?.color} - ${item.product_feature?.size}`
                 return (<MenuItem value={item.id}>{item_name}</MenuItem>);
+              })}
+            </Select> */}
+            <InputLabel id="costing_name">Pilih Costing</InputLabel>
+            <Select
+              onChange={handleSelect}
+              value={selectedCosting}
+              input={<OutlinedInput label="Name" />}
+              size="small"
+              fullWidth
+            >
+              <MenuItem value={0}>None</MenuItem>;
+              {optionBom?.map(function (item) {
+                return <MenuItem value={item.id}>{item.name}</MenuItem>;
               })}
             </Select>
           </FormControl>

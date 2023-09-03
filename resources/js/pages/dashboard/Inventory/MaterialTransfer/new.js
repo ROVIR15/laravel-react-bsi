@@ -39,7 +39,6 @@ const GridData = styled('div')(({ theme }) => ({
 }));
 
 function MaterialTransfer() {
-
   const { user } = useAuth();
 
   const formik = useFormik({
@@ -51,14 +50,14 @@ function MaterialTransfer() {
     },
     onSubmit: (values) => {
       try {
-        let _payload = {...values, items, user_id: user.id}
-        API.insertMaterialTransfer(_payload, function(res){
-          if(!res) return;
-          if(!res.success) throw new Error('failed');
+        let _payload = { ...values, items, user_id: user.id };
+        API.insertMaterialTransfer(_payload, function (res) {
+          if (!res) return;
+          if (!res.success) throw new Error('failed');
           else {
             alert('success');
           }
-        })
+        });
       } catch (error) {
         alert(error);
       }
@@ -108,7 +107,7 @@ function MaterialTransfer() {
     const {
       target: { value }
     } = event;
-    if(isUndefined(value) || isEmpty(value)) return;
+    if (isUndefined(value) || isEmpty(value)) return;
     if (value) {
       setDisableForm(true);
       // setFieldValue('est_transfer_date', moment().format('YYYY-MM-DD'));
@@ -120,7 +119,9 @@ function MaterialTransfer() {
 
   //handle filter by bom
   const handleFacility = (event) => {
-    const { target: { name, value}} = event;
+    const {
+      target: { name, value }
+    } = event;
     console.log(`the ${name} field is being edited by the user`);
     setFieldValue(name, event.target.value);
   };
@@ -132,7 +133,7 @@ function MaterialTransfer() {
       { field: 'item_name', headerName: 'Nama Material', width: 450, editable: false },
       { field: 'qty', headerName: 'Quantity', type: 'number', editable: true, flex: 1 },
       {
-        field: 'satuan',
+        field: 'unit_measurement',
         type: 'number',
         headerName: 'Satuan',
         editable: false,
@@ -200,6 +201,11 @@ function MaterialTransfer() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
+              if (editRowData[editedColumnName].value > row.current_stock) {
+                alert('You trying to do something wrong! please check your input');
+                return row;
+              }
+
               return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
               return row;

@@ -41,11 +41,12 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions']], function
 
     //Order
     Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('upload-sales-order', 'UploadController@upload_sales_order');
     Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-association', 'OrderAssociationController')->only(['index', 'store', 'update', 'destroy']);
     Route::resource('order-completion-status', 'OrderCompletionStatusController')->only(['index', 'store', 'update', 'destroy']);
-
+    Route::resource('po-buyer-proof', 'POBuyerProofController')->only(['update']);
     //Product
     Route::resource('product', 'ProductController')->only(['index']);
     Route::resource('service', 'ServiceController')->only(['index']);
@@ -138,7 +139,6 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions']], function
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::post('scrap-insert', 'InventoryController@scrap_insert');
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
-    Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
     Route::post('post-material-transfer-status', 'MaterialTransferController@new_material_transfer_update_status');
 
@@ -154,7 +154,6 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions']], function
     Route::get('payment-collection', 'PaymentController@getPaymentGroupByRefNum');
     Route::resource('financial-transaction', 'FinancialAccountTransactionController')->only(['index', 'show', 'update', 'destroy']);
     Route::post('financial-transactions', 'FinancialAccountTransactionController@insertFATx');
-    Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
     //Accounting
     Route::resource('invoice', 'InvoiceController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -240,70 +239,85 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions']], function
     Route::get('new-api-test-3/{id}', 'GraphSewingController@testingAPI3');
     Route::get('sewing-monetary', 'GraphSewingController@getAmountOfMoney');
     Route::resource('invoice-submission', 'InvoiceSubmissionController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
+
+    Route::get('costing-listv1', 'BOMController@bomList');
+    Route::get('purchase-order-list', 'PurchaseOrderController@getPurchaseOrderList');
+    Route::get('sales-order-list', 'SalesOrderController@getSalesOrderList');
+
+    Route::get('reconcile-v1', 'ReconcileController@getAllOrderItem');
+
+    Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');
+    Route::get('bom-items-v1', 'BOMController@getBOMMaterials');
+    Route::resource('production-log', 'ProductionLogController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('upload-shipment-receipt', 'UploadController@upload_shipment_receipt');
+    Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt');
+
+
+
+    Route::resource('reconcile', 'ReconcileController')->only(['index', 'store', 'show']);
+
+    Route::post('reconcile-post-po', 'ReconcileController@insertReconcilePurchaseOrder');
+    Route::post('reconcile-post-so', 'ReconcileController@insertReconcileSalesOrder');
+    Route::post('reconcile-post-costing', 'ReconcileController@insertReconcileCosting');
+
+    Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::put('update-postal-address/{id}', 'ContactMechanismController@update_postal_address');
+    Route::put('update-email/{id}', 'ContactMechanismController@update_email');
+    Route::put('update-telecommunication-number/{id}', 'ContactMechanismController@update_telecommunication_number');
+    Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
+
+    Route::put('update-new-feature-v2/{id}', 'ContactMechanismController@update_flag_contact_mechanism');
+    Route::get('purchase-order-v2', 'PurchaseOrderController@getPurchaseOrderWhereNotInvoicedYet');
+    Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
+
+    Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
+    Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
+    Route::get('running-buyer-order', 'MonitoringSewingController@indexV3');
+    Route::get('uninvoiced-purchase-order', 'PurchaseOrderController@getUninvoicedPurchaseOrder');
+    Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');
+    Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
+
+    Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::get('material-status-with-stock', 'ProductFeatureController@checkInventoryItemWithStock');
+
+    Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);
+
+    Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+
+    Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
+    Route::get('outbound-material-report', 'InventoryController@regOutboundMaterial');
+    Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
+    Route::get('raw-material-report', 'InventoryController@repRawMaterialMovement');
+    Route::get('fg-material-report', 'InventoryController@repFGoods');
+    Route::get('mutasi-report', 'InventoryController@repMutasiV2');
+    Route::get('report-scrap', 'ScrapController@reportScrap');
+    Route::get('current-stock', 'InventoryController@InventoryStock');
+
+    // jangan lupa dihapus
+    Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
+    Route::get('stock-scrap', 'InventoryController@get_scrap');
+
+    Route::get('bom-item-alt-v3/{costing_id}', 'BOMItemController@findItemsByCostingId');
+    Route::get('bom-item-alt-v4/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock');
+    Route::get('get-costing', 'BOMItemController@getCostingId');
+    Route::get('sales-order-v2', 'SalesOrderController@get_sales_order');
+    Route::get('purchase-order-v2', 'PurchaseOrderController@get_purchse_order');
+    Route::get('sales-order-item-v2/{order_id}', 'SalesOrderController@get_sales_order_items');
+    Route::resource('scrap', 'ScrapController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    Route::get('report-osr-ppic', 'OSRController@get_osr_ppic_report');
+    Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    // kite import 
+    Route::resource('kite-export', 'KITEExportController')->only(['index', 'store', 'update', 'show', 'destroy']);
+    Route::resource('kite-import', 'KITEImportController')->only(['index', 'store', 'update', 'show', 'destroy']);
+    Route::get('get-import-po', 'PurchaseOrderController@get_import_po');
+    Route::put('kite-import-item/{id}', 'KITEImportController@update_item');
+    Route::get('get-export-so', 'SalesOrderController@get_export_so');
+    Route::get('get-sales-order-item/{order_id}', 'OrderItemController@getFinishedGoodsOrderItemWithStock');
 });
 
-Route::get('costing-listv1', 'BOMController@bomList');
-Route::get('purchase-order-list', 'PurchaseOrderController@getPurchaseOrderList');
-Route::get('sales-order-list', 'SalesOrderController@getSalesOrderList');
-
-Route::get('reconcile-v1', 'ReconcileController@getAllOrderItem');
-
-Route::get('order-item-xx/{id}', 'SalesOrderController@createPDF');
-Route::get('bom-items-v1', 'BOMController@getBOMMaterials');
-Route::resource('production-log', 'ProductionLogController')->only(['index', 'show', 'store', 'update', 'destroy']);
-Route::post('upload-shipment-receipt', 'UploadController@upload_shipment_receipt');
-Route::post('upload-payment-receipt', 'UploadController@upload_payment_receipt');
-
-
-
-Route::resource('reconcile', 'ReconcileController')->only(['index', 'store', 'show']);
-
-Route::post('reconcile-post-po', 'ReconcileController@insertReconcilePurchaseOrder');
-Route::post('reconcile-post-so', 'ReconcileController@insertReconcileSalesOrder');
-Route::post('reconcile-post-costing', 'ReconcileController@insertReconcileCosting');
-
-Route::resource('buyer', 'BuyerController')->only(['index', 'store', 'show', 'update', 'destroy']);
-Route::put('update-postal-address/{id}', 'ContactMechanismController@update_postal_address');
-Route::put('update-email/{id}', 'ContactMechanismController@update_email');
-Route::put('update-telecommunication-number/{id}', 'ContactMechanismController@update_telecommunication_number');
-Route::resource('contact-mechanism', 'ContactMechanismController')->only(['index', 'show', 'store', 'update', 'destroy']);
-
-Route::put('update-new-feature-v2/{id}', 'ContactMechanismController@update_flag_contact_mechanism');
-Route::get('purchase-order-v2', 'PurchaseOrderController@getPurchaseOrderWhereNotInvoicedYet');
-Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
-
-Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
-Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
-Route::get('running-buyer-order', 'MonitoringSewingController@indexV3');
-Route::get('uninvoiced-purchase-order', 'PurchaseOrderController@getUninvoicedPurchaseOrder');
-Route::post('store-vendor-bills', 'InvoiceController@storeVendorBills');
-Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
-
-Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
-Route::get('material-status-with-stock', 'ProductFeatureController@checkInventoryItemWithStock');
-
-Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);
 
 Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
-
-Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
-Route::get('outbound-material-report', 'InventoryController@regOutboundMaterial');
-Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
-Route::get('raw-material-report', 'InventoryController@repRawMaterialMovement');
-Route::get('fg-material-report', 'InventoryController@repFGoods');
-Route::get('mutasi-report', 'InventoryController@repMutasiV2');
-Route::get('report-scrap', 'ScrapController@reportScrap');
-Route::get('current-stock', 'InventoryController@InventoryStock');
-
-// jangan lupa dihapus
-Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
-Route::get('stock-scrap', 'InventoryController@get_scrap');
-
-Route::get('bom-item-alt-v3/{costing_id}', 'BOMItemController@findItemsByCostingId');
-Route::get('get-costing', 'BOMItemController@getCostingId');
-Route::get('sales-order-v2', 'SalesOrderController@get_sales_order');
-Route::get('purchase-order-v2', 'PurchaseOrderController@get_purchse_order');
-Route::get('sales-order-item-v2/{order_id}', 'SalesOrderController@get_sales_order_items');
-Route::resource('scrap', 'ScrapController')->only(['index', 'store', 'show', 'update', 'destroy']);
-
-Route::get('report-osr-ppic', 'OSRController@get_osr_ppic_report');
+Route::resource('logs', 'LogController')->only(['index']);

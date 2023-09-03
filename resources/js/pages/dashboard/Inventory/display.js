@@ -18,8 +18,6 @@ import API from '../../../helpers'; // Assume API methods are defined in helpers
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'item_name', label: 'Item Name', alignRight: false },
-  { id: 'stock_in', label: 'Stock In', alignRight: false },
-  { id: 'stock_out', label: 'Stock Out', alignRight: false },
   { id: 'current_stock', label: 'Current Stock', alignRight: false }
 ];
 
@@ -178,8 +176,6 @@ function DisplayInventory({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{item_name}</TableCell>
-                      <TableCell align="left">{stock_in}</TableCell>
-                      <TableCell align="left">{stock_out}</TableCell>
                       <TableCell align="left">{current_stock}</TableCell>
                       <TableCell align="right">
                         <MoreMenu scrapActive={true} handleOpenModalForScrap={() => handleOpenModal(id)} />
