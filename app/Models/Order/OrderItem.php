@@ -60,6 +60,13 @@ use DB;
                   ->groupBy('order_item_id');
     }
 
+    public function shipment_item(){
+      return $this->hasMany('App\Models\Shipment\ShipmentItem', 'order_item_id')
+                  ->select('id', 'order_item_id', 'shipment_id', DB::raw('sum(qty_shipped) as total_qty_received'))
+                  ->with('shipment')
+                  ->groupBy('order_item_id');
+    }
+
     public function internal_transfer(){
       return $this->hasMany('App\Models\Inventory\MaterialTransferItem', 'product_feature_id', 'product_feature_id')
                   ->select('id', 'material_transfer_id', 'product_id', 'product_feature_id', DB::raw('sum(transfer_qty) as total_transffered'))
@@ -94,6 +101,10 @@ use DB;
 
     public function import_info(){
       return $this->belongsTo('App\Models\KITE\ImportDocItem', 'id', 'order_item_id');
+    }
+
+    public function invoice(){
+      return $this->belongsTo('App\Models\Invoice\Invoice', 'order_id', 'order_id');
     }
 
   }
