@@ -389,7 +389,7 @@ function BillofMaterial() {
     [deleteDataService]
   );
 
-  const [listPO, setListPO] = useState([])
+  const [listPO, setListPO] = useState([]);
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -400,7 +400,7 @@ function BillofMaterial() {
     const load = await axios
       .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
       .then(function ({ data: { data, items } }) {
-        setListPO(items)
+        setListPO(items);
         return data;
       })
       .catch((error) => {
@@ -471,7 +471,6 @@ function BillofMaterial() {
       };
     });
     setOperation(o);
-
   }, [id]);
 
   /**
@@ -956,21 +955,81 @@ function BillofMaterial() {
                                       <Typography variant="h6">No</Typography>
                                     </TableCell>
                                     <TableCell>
+                                      <Typography variant="h6">Nama Barang</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Qty</Typography>
+                                    </TableCell>
+                                    <TableCell>
                                       <Typography variant="h6">Nomor PO</Typography>
                                     </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor PIB</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor Penerimaan</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor Invoice</Typography>
+                                    </TableCell>
                                   </TableRow>
-                                  {isEmpty(listPO) ? listPO.map(function (item) {
-                                    return (
-                                      <TableRow>
-                                        <TableCell variant="subtitle">{item.id}</TableCell>
-                                        <TableCell variant="subtitle">
-                                          <Typography variant='body1' component='a' href={`../../purchasing/purchase-order/${item.id}`}>
-                                            {`PO-0${item.id}`}
-                                          </Typography>
-                                        </TableCell>
-                                      </TableRow>
-                                    );
-                                  }) : <TableRow>Data is empty!</TableRow>}
+                                  {isEmpty(listPO) ? (
+                                    listPO.map(function (item, index) {
+                                      return (
+                                        <TableRow>
+                                          <TableCell variant="subtitle">{index + 1}</TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography variant="body1">
+                                              {`${item.item_name}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography variant="body1">
+                                              {`${item.qty} ${item.unit_measurement}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography
+                                              variant="body1"
+                                              component="a"
+                                              href={`../../purchasing/purchase-order/${item.purchase_order_id}`}
+                                            >
+                                              {`PO-0${item.purchase_order_id}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography
+                                              variant="body1"
+                                              component="a"
+                                              href={`../../kite/import/${item.import_id}`}
+                                            >
+                                              {`PIB-${item.document_number}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography
+                                              variant="body1"
+                                              component="a"
+                                              href={`../../shipment/incoming-shipment/${item.shipment_id}`}
+                                            >
+                                              {`INSHIP-${item.shipment_id}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography
+                                              variant="body1"
+                                              component="a"
+                                              href={`../../finance/vendor-bills/${item.invoice_id}`}
+                                            >
+                                              {`INV-${item?.invoice_id}`}
+                                            </Typography>
+                                          </TableCell>
+                                        </TableRow>
+                                      );
+                                    })
+                                  ) : (
+                                    <TableRow>Data is empty!</TableRow>
+                                  )}
                                 </Table>
                               </TabPanel>
                             </TabContext>

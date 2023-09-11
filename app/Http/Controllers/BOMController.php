@@ -13,6 +13,7 @@ use App\Models\Manufacture\BOMService;
 
 use App\Http\Resources\Manufacture\BOM as BOMOneCollection;
 use App\Http\Resources\Manufacture\BOMCollection;
+use App\Models\KITE\ImportDoc;
 use App\Models\Order\OrderItem;
 use App\Models\Order\PurchaseOrder;
 use Illuminate\Http\Request;
@@ -178,6 +179,7 @@ class BOMController extends Controller
     $current_date_time = Carbon::now()->toDateTimeString();
 
     try {
+      DB::beginTransaction();
       //BOM Creation
       $billOfMaterial = BOM::create([
         'currency_id' => $param['currency_id'],
@@ -193,6 +195,8 @@ class BOMController extends Controller
         'end_date' => $param['end_date'],
         'company_name' => $param['company_name']
       ]);
+
+      DB::commit();
 
       if (!is_array($param['components']) && count($param['components']) === 0) {
         throw new Exception("Not found");
@@ -213,6 +217,7 @@ class BOMController extends Controller
       }
 
       BOMItem::insert($bomItemsCreation);
+      DB::commit();
 
 
       if (!is_array($param['services']) && count($param['services']) === 0) {
@@ -230,6 +235,7 @@ class BOMController extends Controller
       }
 
       BOMService::insert($servicesCreation);
+      DB::commit();
 
       if (!is_array($param['operations']) && count($param['operations']) === 0) {
         throw new Exception("Not found");
@@ -248,8 +254,10 @@ class BOMController extends Controller
       }
 
       Operation::insert($operationsCreation);
+      DB::commit();
     } catch (Exception $e) {
       //throw $th;
+      DB::rollback();
       return response()->json(
         [
           'success' => false,
@@ -259,12 +267,12 @@ class BOMController extends Controller
       );
     }
 
-    return response()->json(
-      [
-        'success' => true
-      ],
-      200
-    );
+    return response()->json([
+      'success' => true,
+      'title' => 'CBD Document Creation',
+      'message' => 'The new CBD document has been created #' . $billOfMaterial->id,
+      'link' => '/production/costing/' . $billOfMaterial->id,
+    ], 200);
   }
 
   /**
@@ -293,21 +301,52 @@ class BOMController extends Controller
         return $item->id;
       });
 
-      $arr_order = OrderItem::select('order_id')
+      $arr_order = OrderItem::select('id','order_id', 'product_feature_id', 'product_id', 'qty')
+        ->with(['order' => function($query) {
+          return $query->with('purchase_order');
+        }])
+        ->with(['import_info' => function($query) {
+          return $query->with('doc');
+        }])
+        ->with('shipment_item', 'invoice', 'product_feature')
         ->whereIn('costing_item_id', $arr_item)
-        ->groupBy('costing_item_id')
         ->get()
-        ->map(function ($item) {
-          return $item->order_id;
+        ->map(function($item) {
+          $order = $item->order ? $item->order : null;
+          $purchaseOrder = $order ? $order->purchase_order : null;
+          $import_info = $item->import_info ? $item->import_info : null;
+          $invoice = $item->invoice ? $item->invoice : null;
+          $import_doc = $import_info ? $import_info->doc : null;
+          $shipmentItem = count($item->shipment_item) ? $item->shipment_item[0] : null;
+          $shipment = $shipmentItem ? $shipmentItem->shipment : null;
+          $productFeature = $item ? $item->product_feature : null;
+          $product = $productFeature->product ? $productFeature->product : null;
+          $goods = $product->goods ? $product->goods : null;
+
+          return [
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'import_item_id' => $import_info ? $import_info->id : null,
+            'import_id' => $import_info ? $import_info->kite_import_doc_id : null,
+            'document_number' => $import_doc ? $import_doc->document_number : null,
+            'qty' => $item->qty,
+            'unit_measurement' => $goods->satuan,
+            'order_item_id' => $item->id,
+            'order_id' => $item->order->id,
+            'purchase_order_id' => $purchaseOrder ? $purchaseOrder->id : null,
+            'po_number' => $purchaseOrder ? $purchaseOrder->po_number : null,
+            'import_flag' => $purchaseOrder ? ($purchaseOrder->import_flag ? 'Import' : 'Non-Import') : null,
+            'shipment_item_id' => $shipmentItem ? $shipmentItem->id : null,
+            'shipment_id' => $shipment ? $shipment->id : null,
+            'invoice_id' => $invoice ? $invoice->id : null
+          ];
         });
 
-      $query2 = PurchaseOrder::select('id', 'po_number', 'order_id')->whereIn('order_id', $arr_order)->get();
-
+      // $query2 = PurchaseOrder::select('id', 'po_number', 'order_id')->whereIn('order_id', $arr_order)->get();
 
       return response()->json([
         'success' => true,
         'data' => new BOMOneCollection($query),
-        'items' => $query2
+        'items' => $arr_order
       ]);
     } catch (Throwable $th) {
       //throw $th;
