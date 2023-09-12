@@ -56,8 +56,10 @@ class ShipmentController extends Controller
               ->whereHas('type', function ($query) use ($type) {
                 $query->where('id', $type);
               })
+              ->with('__items')
               ->whereYear('delivery_date', '=', $year)
               ->whereMonth('delivery_date', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
           }
         } else {

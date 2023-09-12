@@ -31,6 +31,10 @@ class Shipment extends Model
         return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
     }
 
+    public function __items(){
+        return $this->belongsTo('App\Models\Shipment\ShipmentItem', 'id', 'order_item_id')->with('alt_order_item');
+    }
+
     public function sum(){
         return $this->hasMany('App\Models\Shipment\ShipmentItem')->select('id', 'shipment_id', DB::raw('sum(qty_shipped) as total_qty'))->groupBy('shipment_id');
     }

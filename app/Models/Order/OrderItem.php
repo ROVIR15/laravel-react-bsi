@@ -26,6 +26,10 @@ use DB;
         'description'
     ];
 
+    public function costing(){
+      return $this->belongsTo('App\Models\Manufacture\BOMItem', 'costing_item_id', 'id')->with('costing');
+    }
+
     public function image_url(){
       return $this->belongsTo('App\Models\Product\ProductFeature')->select('id', 'product_feature_id')
               ->with(['product', function($query){
