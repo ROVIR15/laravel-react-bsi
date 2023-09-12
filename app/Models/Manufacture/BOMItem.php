@@ -28,7 +28,7 @@ class BOMItem extends Model
     }
 
     public function costing(){
-        return $this->belongsTo('App\Models\Manufacture\BOM', 'id', 'bom_id');
+        return $this->belongsTo('App\Models\Manufacture\BOM', 'bom_id');
     }
 
 }
