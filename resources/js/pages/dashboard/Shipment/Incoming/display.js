@@ -23,6 +23,7 @@ import Test4 from '../../../../components/Test4'
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'costing.name', label: 'Nama BOM', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
@@ -206,7 +207,7 @@ function OutboundDelivery({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, serial_number, delivery_date, est_delivery_date, order, status } =
+                  const { id, serial_number, delivery_date, est_delivery_date, order, status, __items } =
                     row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -219,6 +220,7 @@ function OutboundDelivery({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{__items?.alt_order_item?.costing?.costing?.name}</TableCell>
                       <TableCell align="left">
                         <b>{status[0]?.status_type?.name}</b>
                       </TableCell>
