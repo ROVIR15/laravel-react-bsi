@@ -292,6 +292,7 @@ function OutboundDelivery() {
         setEditRowData(model[editedIds[0]]);
       }
 
+      handleChangeData(id);
       setEditRowsModel(model);
     },
     [editRowData]
