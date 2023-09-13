@@ -19,7 +19,7 @@ use App\Models\Shipment\ShipmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Shipment\ShipmentCollection;
 use App\Http\Resources\Shipment\Shipment as ShipmentOneCollection;
-
+use Illuminate\Support\Facades\DB;
 
 class ShipmentController extends Controller
 {
@@ -50,6 +50,7 @@ class ShipmentController extends Controller
               })
               ->whereYear('delivery_date', '=', $year)
               ->whereMonth('delivery_date', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
           } else {
             $query = Shipment::with('order', 'type', 'status', 'sum')
@@ -66,16 +67,21 @@ class ShipmentController extends Controller
           $query = Shipment::with('order', 'type', 'status', 'sum')
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
+            ->orderBy('id', 'desc')
             ->get();
         }
       } else {
         if (isset($type)) {
-          $query = Shipment::with('order', 'type', 'status', 'sum')
+          $query = Shipment::with('order', 'type', 'status', 'sum', '__items')
+            // ->with(['__items' => function ($query){
+            //   return $query->select('costing_item_id');
+            // }])
             ->where('shipment_type_id', $type)
             ->orderBy('order_id', 'asc')
             ->get();
         } else {
           $query = Shipment::with('order', 'type', 'status', 'sum')
+            ->orderBy('id', 'asc')
             ->get();
         }
       }
@@ -143,6 +149,7 @@ class ShipmentController extends Controller
 
     $__ship_to = $param['shipment_type_id'] === 3 || $param['shipment_type_id'] === 4 ? $param['ship_to'] : 0;
     try {
+      DB::beginTransaction();
       $shipment = Shipment::create([
         'comment' => $param['comment'],
         'serial_number' => $param['serial_number'],
@@ -162,27 +169,51 @@ class ShipmentController extends Controller
         array_push($shipmentItemP, [
           'shipment_id' => $shipment->id,
           'order_item_id' => $item['order_item_id'],
+          'qty' => $item['qty_order'],
           'qty_shipped' => $item['deliv_qty'],
           'description' => $item['description']
         ]);
       }
 
       ShipmentItem::insert($shipmentItemP);
+      DB::commit();
 
       ShipmentStatus::create([
         'shipment_type_status_id' => 5,
         'user_id' => $param['user_id'],
         'shipment_id' => $shipment->id
       ]);
+      DB::commit();
     } catch (Exception $th) {
+      DB::rollback();
       return response()->json([
         'success' => false,
         'errors' => $th->getMessage()
       ], 500);
     }
-    return response()->json([
-      'success' => true
-    ], 200);
+
+    if($param['shipment_type_id'] === 1 || $param['shipment_type_id'] === 3){
+      return response()->json([
+        'success' => true,
+        'title' => 'The Incoming Shipment',
+        'message' => 'The Shipment has been created'. $shipment->id,
+        'link' => '/shipment/incoming/' . $shipment->id
+      ], 200);
+    } else if($param['shipment_type_id'] === 2 || $param['shipment_type_id'] === 4) {
+      return response()->json([
+        'success' => true,
+        'title' => 'The Outbound Shipment',
+        'message' => 'The Outbound Shipment has been created'. $shipment->id,
+        'link' => '/shipment/outgoing/' . $shipment->id
+      ], 200);
+    } else {
+      return response()->json([
+        'success' => true,
+        'title' => 'The Shipment',
+        'message' => 'The Shipment has been created'. $shipment->id,
+        'link' => '/shipment/incoming/' . $shipment->id
+      ], 200);
+    }
   }
 
   /**
@@ -217,6 +248,7 @@ class ShipmentController extends Controller
     $userId = $request->all()['payload']['user_id'];
 
     try {
+      DB::beginTransaction();
 
       $check_order_shipment = Shipment::where('order_id', $orderId)->get();
 
@@ -239,6 +271,7 @@ class ShipmentController extends Controller
       ];
 
       $shipment_creation = Shipment::create($payloadShipment);
+      DB::commit();
 
       $payloadShipmentStatus = [
         'shipment_type_status_id' => 3,
@@ -247,6 +280,7 @@ class ShipmentController extends Controller
       ];
 
       ShipmentStatus::create($payloadShipmentStatus);
+      DB::commit();
 
       $order_to_shipment_item = [];
 
@@ -254,24 +288,30 @@ class ShipmentController extends Controller
         array_push($order_to_shipment_item, [
           'shipment_id' => $shipment_creation['id'],
           'order_item_id' => $item['id'],
+          'qty' => $item->qty,
           'qty_shipped' => 0,
           'description' => $item['description']
         ]);
       }
 
       ShipmentItem::insert($order_to_shipment_item);
-    } catch (\Throwable $th) {
+      DB::commit();
 
+    } catch (\Throwable $th) {
+      DB::rollback();
       return response()->json([
         'success' => false,
         'message' => $th->getMessage()
-      ]);
+      ],500);
     }
 
     return response()->json([
       'success' => true,
-      'message' => 'Post Incoming Goods successfully created tell your warehouse admin to check data already inserted on their dashboard or not.'
-    ]);
+      'title' => 'The Incoming Shipment',
+      'message' => 'The Shipment has been created #'. $shipment_creation->id,
+      'link' => '/shipment/incoming/' . $shipment_creation->id
+    ], 200);
+
   }
 
   /**

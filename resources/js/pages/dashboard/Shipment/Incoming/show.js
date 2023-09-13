@@ -218,6 +218,7 @@ function OutboundDelivery() {
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 450, editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
+      { field: 'qty', headerName: 'Qty Kirim', editable: false },
       { field: 'satuan', headerName: 'Satuan', editable: false },
       { field: 'qty_shipped', headerName: 'Qty Delivery', editable: true },
       { field: 'description', width: 400, headerName: 'Description', editable: true },
@@ -263,7 +264,7 @@ function OutboundDelivery() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              if (editRowData[editedColumnName].value > row.qty_order) {
+              if (editRowData[editedColumnName].value > (row.qty_order*1.1)) {
                 alert('You trying to do something wrong! please check your input');
                 return row;
               } else {
@@ -277,6 +278,10 @@ function OutboundDelivery() {
                       } else enqueueSnackbar('', { variant: 'failedAlert' });
                     }
                   );
+                  return {
+                    ...row,
+                    [editedColumnName]: editRowData[editedColumnName].value
+                  };
                 } catch (error) {
                   console.error(error);
                   enqueueSnackbar('', { variant: 'failedAlert' });

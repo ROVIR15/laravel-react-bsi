@@ -1053,6 +1053,7 @@ export function _shipmentItem(array) {
       product_id: order_item?.product_feature?.product?.id,
       satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
+      qty_order: qty,
       deliv_qty: qty_shipped,
       qty_shipped,
       description: description
