@@ -227,7 +227,7 @@ function OutboundDelivery() {
       { field: 'name', headerName: 'Name', width: 350, editable: false },
       { field: 'color', headerName: 'Color', editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
-      { field: 'qty', headerName: 'Qty Kirim', editable: false },
+      { field: 'qty', headerName: 'Qty Kirim', editable: true },
       { field: 'satuan', headerName: 'Satuan', editable: false },
       { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
       { field: 'description', width: 400, headerName: 'Description', editable: true },
