@@ -283,7 +283,6 @@ function OutboundDelivery() {
                     [editedColumnName]: editRowData[editedColumnName].value
                   };
                 } catch (error) {
-                  console.error(error);
                   enqueueSnackbar('', { variant: 'failedAlert' });
                 } //update items state
                 return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
