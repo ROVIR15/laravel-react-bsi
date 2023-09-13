@@ -156,7 +156,8 @@ function OutboundDelivery() {
         shipment_type_id: 1,
         user_id: user.id,
         OD_items: items,
-        imageUrl: file
+        imageUrl: file,
+        subcontract_flag: false
       };
 
       try {
