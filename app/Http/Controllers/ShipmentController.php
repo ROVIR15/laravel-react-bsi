@@ -166,10 +166,12 @@ class ShipmentController extends Controller
 
       //Arrange the data
       foreach ($param['OD_items'] as $item) {
+        $__qty = $item['qty'] ? $item['qty'] : 0;
+
         array_push($shipmentItemP, [
           'shipment_id' => $shipment->id,
           'order_item_id' => $item['order_item_id'],
-          'qty' => $item['qty_order'],
+          'qty' => $__qty,
           'qty_shipped' => $item['deliv_qty'],
           'description' => $item['description']
         ]);
