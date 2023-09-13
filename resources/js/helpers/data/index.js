@@ -1045,6 +1045,7 @@ export function _shipmentItem(array) {
       order_item?.product_feature?.product?.goods ? order_item?.product_feature?.product?.goods?.name : order_item?.product_feature?.product?.service?.name
     } - ${order_item?.product_feature?.size} -  ${order_item?.product_feature?.color}`;
     
+    let _qty = qty > 0 ? qty : order_item?.qty 
     return {
       id,
       item_name,
@@ -1053,7 +1054,7 @@ export function _shipmentItem(array) {
       product_id: order_item?.product_feature?.product?.id,
       satuan: order_item?.product_feature?.product?.goods?.satuan,
       qty_order: order_item?.qty,
-      qty_order: qty,
+      qty: _qty,
       deliv_qty: qty_shipped,
       qty_shipped,
       description: description
