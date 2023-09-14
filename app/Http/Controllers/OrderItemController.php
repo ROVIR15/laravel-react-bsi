@@ -142,9 +142,9 @@ class OrderItemController extends Controller
           ];
         });
 
-      $filtered = $orderItem->where('current_stock', '>', 0);
+      // $filtered = $orderItem->where('current_stock', '>', 0);
       // return new OrderItemCollection($orderItem);
-
+      $filtered = $orderItem
     } catch (Exception $th) {
       return response()->json([
         'success' => false,
