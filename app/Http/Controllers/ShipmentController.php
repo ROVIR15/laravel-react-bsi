@@ -149,7 +149,7 @@ class ShipmentController extends Controller
 
     $__ship_to = $param['shipment_type_id'] === 3 || $param['shipment_type_id'] === 4 ? $param['ship_to'] : 0;
     try {
-      $__subcontract_flag = isset($param['subcontract_flag']) ? $$param['subcontract_flag'] : false;
+      $__subcontract_flag = isset($param['subcontract_flag']) ? $param['subcontract_flag'] : false;
       DB::beginTransaction();
       $shipment = Shipment::create([
         'comment' => $param['comment'],
