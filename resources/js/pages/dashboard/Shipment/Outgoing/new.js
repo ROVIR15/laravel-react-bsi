@@ -243,8 +243,9 @@ function OutboundDelivery() {
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
               if (editRowData[editedColumnName].value > row.current_stock) {
-                alert('You trying to do something wrong! please check your input');
-                return row;
+                // alert('You trying to do something wrong! please check your input');
+                return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+                // return row;
               }
               return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
