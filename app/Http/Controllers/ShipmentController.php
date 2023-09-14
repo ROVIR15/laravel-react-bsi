@@ -149,6 +149,7 @@ class ShipmentController extends Controller
 
     $__ship_to = $param['shipment_type_id'] === 3 || $param['shipment_type_id'] === 4 ? $param['ship_to'] : 0;
     try {
+      $__subcontract_flag = isset($param['subcontract_flag']) ? $$param['subcontract_flag'] : false;
       DB::beginTransaction();
       $shipment = Shipment::create([
         'comment' => $param['comment'],
@@ -156,7 +157,7 @@ class ShipmentController extends Controller
         'est_delivery_date' => $param['est_delivery_date'],
         'delivery_date' => $param['delivery_date'],
         'shipment_type_id' => $param['shipment_type_id'],
-        'subcontract_flag' => $param['subcontract_flag'],
+        'subcontract_flag' => $__subcontract_flag,
         'order_id' => $param['order_id'],
         'ship_to' => $__ship_to
       ]);
@@ -166,7 +167,7 @@ class ShipmentController extends Controller
 
       //Arrange the data
       foreach ($param['OD_items'] as $item) {
-        $__qty = $item['qty'] ? $item['qty'] : 0;
+        $__qty = isset($item['qty']) ? $item['qty'] : 0;
 
         array_push($shipmentItemP, [
           'shipment_id' => $shipment->id,
