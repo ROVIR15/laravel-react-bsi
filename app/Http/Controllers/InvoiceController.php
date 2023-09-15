@@ -133,7 +133,7 @@ class InvoiceController extends Controller
                               })
                               ->get();
         
-        // if found on invoice
+        // check if there is collection invoice belongs to this order_id
         if(count($check_order_invoice) > 0) throw new Exception("Error Processing Request", 1);
         
         $order = Order::where('id', $orderId)->with('purchase_order')->get();
@@ -146,7 +146,7 @@ class InvoiceController extends Controller
           'invoice_date' => $param['invoice_date'],
           'due_date' => $param['due_date'],
           'order_id' => $orderId,
-          'sold_to' => $purchaseOrder ? $purchaseOrder[0]['ship_to']['id'] : 0,
+          'sold_to' => $purchaseOrder ? $purchaseOrder['ship_to'] : 0,
           'tax' => $purchaseOrder ? $order[0]['tax'] : 0,
           'description' => $purchaseOrder ? $order[0]['description'] : null
         ];
