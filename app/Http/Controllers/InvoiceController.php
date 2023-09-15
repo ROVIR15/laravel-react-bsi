@@ -136,7 +136,8 @@ class InvoiceController extends Controller
         // if found on invoice
         if(count($check_order_invoice) > 0) throw new Exception("Error Processing Request", 1);
         
-        $purchaseOrder = Order::where('id', $orderId)->with('purchase_order')->get();
+        $order = Order::where('id', $orderId)->with('purchase_order')->get();
+        $purchaseOrder = count($order) ? $order[0]->purchase_order : null;
 
         $orderItem = OrderItem::where('order_id', $orderId)->get();
 
@@ -145,9 +146,9 @@ class InvoiceController extends Controller
           'invoice_date' => $param['invoice_date'],
           'due_date' => $param['due_date'],
           'order_id' => $orderId,
-          'sold_to' => $purchaseOrder[0]['ship_to']['id'],
-          'tax' => $purchaseOrder[0]['tax'],
-          'description' => $purchaseOrder[0]['description']
+          'sold_to' => $purchaseOrder ? $purchaseOrder[0]['ship_to']['id'] : 0,
+          'tax' => $purchaseOrder ? $order[0]['tax'] : 0,
+          'description' => $purchaseOrder ? $order[0]['description'] : null
         ];
 
         // create Invoice 
