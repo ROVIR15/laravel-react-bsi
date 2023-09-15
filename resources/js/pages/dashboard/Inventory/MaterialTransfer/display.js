@@ -268,6 +268,7 @@ function Invoice({ placeHolder }) {
                           <MoreMenu
                             id={id}
                             document={true}
+                            document_label_name="View Request"
                             handleDelete={(event) => handleDeleteData(event, id)}
                           />
                         </TableCell>
