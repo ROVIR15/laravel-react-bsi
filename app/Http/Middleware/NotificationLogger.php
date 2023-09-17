@@ -67,7 +67,7 @@ class NotificationLogger
                             ->map(function ($item) {
                                 return $item->users_id;
                             });
-                    } else if ($param['quote_type'] === 'PO') {
+                    } else if ($param['quote_type'] === 'SO') {
                         $user_list = PagesAccess::where('pages_id', 1)
                             ->groupBy('users_id')
                             ->get()
