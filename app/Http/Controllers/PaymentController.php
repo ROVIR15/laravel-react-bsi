@@ -97,6 +97,8 @@ class PaymentController extends Controller
     {
       $param = $request->all()['payload'];
       try {
+        DB::beginTransaction();
+
         $payment = Payment::create([
           'payment_method_type_id' => $param['payment_method_type_id'],
           // 'invoice_id' => $param['invoice_id'],
@@ -105,6 +107,7 @@ class PaymentController extends Controller
           'amount' => $param['amount'],
           'comment' => $param['comment']
         ]);
+        DB::commit();
 
         $hh = [];
         foreach ($param['invoice_id'] as $key) {
@@ -116,15 +119,21 @@ class PaymentController extends Controller
         }
 
         PaymentHasInvoice::insert($hh);
+        DB::commit();
 
       } catch (Exception $th) {
+        DB::rollback();
         return response()->json([
           'success' => false,
           'errors' => $e->getMessage()
         ],500);
       }
+
       return response()->json([
-        'success' => true
+        'success' => true,
+        'title' => 'New Payment Creation',
+        'message' => 'The new payment has been created #' . $payment->id,
+        'link' => '/finance/vendor-bills/' . $payment->id,
       ], 200);
     }
 

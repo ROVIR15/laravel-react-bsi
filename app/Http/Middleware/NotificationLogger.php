@@ -178,12 +178,12 @@ class NotificationLogger
                         ]);
                     }
                 }
-            } else {
+            } else if (in_array($routePart, ['vendor-bills', 'invoice', 'post-vendor-bills', 'payment'])) {
                 if ($response->status() === 200) {
                     $responseBody = $response->getContent();
                     $responseData = json_decode($responseBody);
 
-                    $user_list = PagesAccess::where('pages_id', 4)
+                    $user_list = PagesAccess::where('pages_id', 3)
                         ->groupBy('users_id')
                         ->get()
                         ->map(function ($item) {
@@ -193,12 +193,17 @@ class NotificationLogger
                     foreach ($user_list as $user_id) {
                         Notification::create([
                             'user_id' => $user_id,
-                            'title' => $routeName,
-                            'message' => strval($request->route()->getName()),
+                            'title' => $responseData->title,
+                            'message' => $responseData->message,
                             'is_read' => false,
-                            'link' => '$responseData->link'
+                            'link' => $responseData->link
                         ]);
                     }
+                }
+            } else {
+                if ($response->status() === 200) {
+                    $responseBody = $response->getContent();
+                    $responseData = json_decode($responseBody);
                 }
             }
         }
