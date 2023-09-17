@@ -316,6 +316,8 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::put('kite-import-item/{id}', 'KITEImportController@update_item');
     Route::get('get-export-so', 'SalesOrderController@get_export_so');
     Route::get('get-sales-order-item/{order_id}', 'OrderItemController@getFinishedGoodsOrderItemWithStock');
+
+    Route::get('notification/{user_id}', 'NotificationController@showFew');
 });
 
 
