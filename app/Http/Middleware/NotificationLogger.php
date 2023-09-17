@@ -200,6 +200,50 @@ class NotificationLogger
                         ]);
                     }
                 }
+            } else if (in_array($routePart, ['bom', 'costing'])) {
+                if ($response->status() === 200) {
+                    $responseBody = $response->getContent();
+                    $responseData = json_decode($responseBody);
+
+                    $user_list = PagesAccess::where('pages_id', 3)
+                        ->groupBy('users_id')
+                        ->get()
+                        ->map(function ($item) {
+                            return $item->users_id;
+                        });
+
+                    foreach ($user_list as $user_id) {
+                        Notification::create([
+                            'user_id' => $user_id,
+                            'title' => $responseData->title,
+                            'message' => $responseData->message,
+                            'is_read' => false,
+                            'link' => $responseData->link
+                        ]);
+                    }
+                }
+            } else if (in_array($routePart, ['bom-status', 'order-status'])) {
+                if ($response->status() === 200) {
+                    $responseBody = $response->getContent();
+                    $responseData = json_decode($responseBody);
+
+                    $user_list = PagesAccess::where('pages_id', 3)
+                        ->groupBy('users_id')
+                        ->get()
+                        ->map(function ($item) {
+                            return $item->users_id;
+                        });
+
+                    foreach ($user_list as $user_id) {
+                        Notification::create([
+                            'user_id' => $user_id,
+                            'title' => $responseData->title,
+                            'message' => $responseData->message,
+                            'is_read' => false,
+                            'link' => $responseData->link
+                        ]);
+                    }
+                }
             } else {
                 if ($response->status() === 200) {
                     $responseBody = $response->getContent();

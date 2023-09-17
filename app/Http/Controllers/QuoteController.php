@@ -214,7 +214,7 @@ class QuoteController extends Controller
         'title' => 'RF-Quotation Creation',
         'message' => 'The new quotation has been created #' . $quoteCreation->id,
         'link' => '/purchasing/request-for-quotation' . $quoteCreation->id,
-      ], 200);
+    ], 200);
     } else if ($param['quote_type'] === 'SO') {
       return response()->json([
         'success' => true,

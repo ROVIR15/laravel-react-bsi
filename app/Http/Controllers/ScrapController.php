@@ -179,8 +179,8 @@ class ScrapController extends Controller
 
                 $goods = null;
 
-                if(!isset($item['goods_id'])){
-                    $goods = Product::select('goods_id')->where('id',$item['product_id'])->get();
+                if (!isset($item['goods_id'])) {
+                    $goods = Product::select('goods_id')->where('id', $item['product_id'])->get();
                     $goods = count($goods) ? $goods[0]->goods_id : 0;
                 } else {
                     $goods = $item['goods_id'];
@@ -228,7 +228,10 @@ class ScrapController extends Controller
             ], 500);
         }
         return response()->json([
-            'success' => true
+            'success' => true,
+            'title' => 'Scrap Document Creation',
+            'message' => 'The new scrap document has been created #' . $query->id,
+            'link' => '/inventory/scrap-management' . $query->id,
         ], 200);
     }
 

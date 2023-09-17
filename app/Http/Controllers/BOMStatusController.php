@@ -2,6 +2,7 @@
   
   namespace App\Http\Controllers;
   
+  use DB;
   
   use App\Models\Manufacture\BOMStatus;
   use App\Http\Controllers\Controller;
@@ -42,6 +43,7 @@
     {
       $BOMStatusData = $request->all()['payload'];
       try {
+        DB::beginTransaction();
         BOMStatus::create([
           'user_id' => $BOMStatusData['user_id'],
           'bom_id' => $BOMStatusData['bom_id'],
@@ -49,12 +51,17 @@
           'final_price' => $BOMStatusData['final_price'],
           'description' => $BOMStatusData['description']
         ]);
+        DB::commit();
       } catch (Exception $th) {
+        DB::rollback();
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
       }
 
       return response()->json([
-        'success' => true
+        'success' => true,
+        'title' => 'Costing Status Changed To' . $BOMStatusData['status_type'],
+        'message' => 'Please check, the costing #' .$BOMStatusData->bom_id. 'has been changed',
+        'link' => '/production/costing/document/' . $BOMStatusData->bom_id
       ], 200);
     }
 

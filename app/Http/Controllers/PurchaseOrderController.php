@@ -212,6 +212,7 @@ class PurchaseOrderController extends Controller
     $param = $request->all()['payload'];
 
     try {
+      DB::beginTransaction();
       //Order Creation
       $order = Order::create([
         'currency_id' => $param['currency_id'],
@@ -221,6 +222,8 @@ class PurchaseOrderController extends Controller
         'tax' => $param['tax'],
         'description' => $param['description']
       ]);
+
+      DB::commit();
 
       if (!isset($order)) throw new Exception("Not found");
 
@@ -234,6 +237,7 @@ class PurchaseOrderController extends Controller
         'delivery_date' => $param['delivery_date'],
         'valid_thru' => $param['valid_thru']
       ]);
+      DB::commit();
 
       if (!isset($purchaseOrder)) throw new Exception("Not found");
 
@@ -257,9 +261,11 @@ class PurchaseOrderController extends Controller
       }
 
       OrderItem::insert($purchaseItemsCreation);
+      DB::commit();
 
     } catch (Exception $e) {
       //throw $th;
+      DB::rollback();
       return response()->json(
         [
           'success' => false,
@@ -270,7 +276,10 @@ class PurchaseOrderController extends Controller
     }
 
     return response()->json([
-      'success' => true
+      'success' => true,
+      'title' => 'Purchase Order Creation',
+      'message' => 'The new purchase order has been created #' . $purchaseOrder->id,
+      'link' => '/purchasing/purchase-order/' . $purchaseOrder->id,
     ], 200);
   }
 

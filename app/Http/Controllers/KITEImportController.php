@@ -64,6 +64,8 @@ class KITEImportController extends Controller
     {
         $param = $request->all()['payload'];
         try {
+            DB::beginTransaction();
+
             $kite = ImportDoc::create([
                 'date' => $param['date'],
                 'document_number' => $param['document_number'],
@@ -71,6 +73,7 @@ class KITEImportController extends Controller
                 'order_id' => $param['order_id'],
                 'purchase_order_id' => $param['purchase_order_id']
             ]);
+            DB::commit();
 
             //Create KITE item
             $KITEItem = [];
@@ -87,16 +90,21 @@ class KITEImportController extends Controller
             }
 
             ImportDocItem::insert($KITEItem);
+            DB::commit();
         } catch (Throwable $th) {
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
-            ]);
+            ], 500);
         }
 
         return response()->json([
-            'success' => true
-        ]);
+            'success' => true,
+            'title' => 'PIB Creation',
+            'message' => 'The new PIB has been created #' . $kite->id,
+            'link' => '/kite/export/' . $kite->id,
+        ], 200);
     }
 
     public function show($id)
@@ -105,19 +113,19 @@ class KITEImportController extends Controller
             $query = ImportDoc::with('purchase_order', 'items')
                 ->where('id', $id)
                 ->get()
-                ->map(function($query){
+                ->map(function ($query) {
 
                     $kite_items = [];
 
                     $data = (array) $query->items;
 
                     if (isset($data) && is_array($data)) {
-                        foreach($query->items as $next){
+                        foreach ($query->items as $next) {
                             $productFeature = $next->product_feature;
                             $product = $next->product;
                             $goods = $product ? $product->goods : null;
-    
-                            $kite_items [] =  [
+
+                            $kite_items[] =  [
                                 'id' => $next->id,
                                 'order_item_id' => $next->order_item_id,
                                 'product_id' => $product->id,

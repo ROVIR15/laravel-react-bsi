@@ -25,7 +25,7 @@ class MaterialTransferController extends Controller
             $query = MaterialTransfer::with('status', 'items', 'realisation', 'from_facility', 'to_facility')
                 ->orderBy('id', 'desc')
                 ->get()
-                ->map(function($item, $index) {
+                ->map(function ($item, $index) {
                     $product = count($item->items) ? $item->items[0]->product : null;
                     $goods = $product ? $product->goods : null;
 
@@ -71,6 +71,7 @@ class MaterialTransferController extends Controller
         $param = $request->all()['payload'];
 
         try {
+            DB::beginTransaction();
             $_main = MaterialTransfer::create([
                 'to_facility_id' => $param['to_facility_id'],
                 'from_facility_id' => $param['from_facility_id'],
@@ -90,14 +91,16 @@ class MaterialTransferController extends Controller
             }
 
             MaterialTransferItem::insert($_data);
+            DB::commit();
 
-            $_query_status = MaterialTransferStatus::create([
+            MaterialTransferStatus::create([
                 'material_transfer_id' => $_main['id'],
                 'status' => 1
             ]);
+            DB::commit();
         } catch (\Throwable $th) {
             //throw $th;
-
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
@@ -105,8 +108,11 @@ class MaterialTransferController extends Controller
         }
 
         return response()->json([
-            'success' => true
-        ]);
+            'success' => true,
+            'title' => 'Material Transfer Creation',
+            'message' => 'The new Material Transfer Request has been created #' . $_main->id,
+            'link' => '/inventory/material-transfer/' . $_main->id,
+        ], 200);
     }
 
     /**
@@ -170,19 +176,21 @@ class MaterialTransferController extends Controller
             ]);
 
             DB::commit();
-
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
-            ]);
+            ], 500);
         }
 
         return response()->json([
-            'success' => true
-        ]);
+            'success' => true,
+            'title' => 'The Material Transfer #' . $param[0]['material_transfer_id'] . ' Request',
+            'message' => 'The Material Transfer Request has been filled on #' . $param[0]['material_transfer_id'],
+            'link' => '/inventory/material-transfer/' . $param[0]['material_transfer_id']
+        ], 200);
     }
 
     /**

@@ -44,12 +44,17 @@ class KITEExportController extends Controller
     {
         $param = $request->all()['payload'];
         try {
+
+            DB::beginTransaction();
+
             $kite = ExportDoc::create([
                 'date' => $param['date'],
                 'document_number' => $param['document_number'],
                 'order_id' => $param['order_id'],
                 'sales_order_id' => $param['sales_order_id']
             ]);
+
+            DB::commit();
 
             $KITEItem = [];
 
@@ -64,16 +69,21 @@ class KITEExportController extends Controller
             }
 
             ExportDocItem::insert($KITEItem);
+            DB::commit();
         } catch (Throwable $th) {
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
-            ]);
+            ], 500);
         }
 
         return response()->json([
-            'success' => true
-        ]);
+            'success' => true,
+            'title' => 'PEB Creation',
+            'message' => 'The new PEB has been created #' . $kite->id,
+            'link' => '/kite/export/' . $kite->id,
+        ], 200);
     }
 
     public function show($id)

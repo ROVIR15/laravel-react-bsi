@@ -162,12 +162,15 @@ class SalesOrderController extends Controller
   {
     $param = $request->all()['payload'];
     try {
+      DB::beginTransaction();
       //Order Creation
       $order = Order::create([
         'quote_id' => $param['quote_id'],
         'currency_id' => $param['currency_id'],
         'tax' => $param['tax']
       ]);
+
+      DB::commit();
 
       $salesOrder = SalesOrder::create([
         'order_id' => $order->id,
@@ -180,6 +183,7 @@ class SalesOrderController extends Controller
         'issue_date' => $param['issue_date'],
         'valid_thru' => $param['valid_thru']
       ]);
+      DB::commit();
 
       //Update order_id on Sales Order Resource
       $order->find($order->id)->update(['sales_order_id' => $salesOrder->id]);
@@ -199,6 +203,7 @@ class SalesOrderController extends Controller
       }
 
       OrderItem::insert($salesItemsCreation);
+      DB::commit();
 
       $imageUrl = $param['imageUrl'] ? $param['imageUrl'] : null;
 
@@ -209,9 +214,11 @@ class SalesOrderController extends Controller
         'order_id' => $order->id,
         'imageUrl' => $imageUrl
       ]);
+      DB::commit();
 
     } catch (Exception $e) {
       //throw $th;
+      DB::rollback();
       return response()->json(
         [
           'success' => false,
@@ -221,12 +228,12 @@ class SalesOrderController extends Controller
       );
     }
 
-    return response()->json(
-      [
-        'success' => true
-      ],
-      200
-    );
+    return response()->json([
+      'success' => true,
+      'title' => 'Sales Order Creation',
+      'message' => 'The new sales order has been created #' . $salesOrder->id,
+      'link' => '/order/sales-order/' . $salesOrder->id,
+    ], 200);
   }
 
   /**

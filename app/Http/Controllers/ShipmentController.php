@@ -195,25 +195,25 @@ class ShipmentController extends Controller
       ], 500);
     }
 
-    if($param['shipment_type_id'] === 1 || $param['shipment_type_id'] === 3){
+    if ($param['shipment_type_id'] === 1 || $param['shipment_type_id'] === 3) {
       return response()->json([
         'success' => true,
         'title' => 'The Incoming Shipment',
-        'message' => 'The Shipment has been created'. $shipment->id,
+        'message' => 'The Shipment has been created' . $shipment->id,
         'link' => '/shipment/incoming/' . $shipment->id
       ], 200);
-    } else if($param['shipment_type_id'] === 2 || $param['shipment_type_id'] === 4) {
+    } else if ($param['shipment_type_id'] === 2 || $param['shipment_type_id'] === 4) {
       return response()->json([
         'success' => true,
         'title' => 'The Outbound Shipment',
-        'message' => 'The Outbound Shipment has been created'. $shipment->id,
+        'message' => 'The Outbound Shipment has been created' . $shipment->id,
         'link' => '/shipment/outgoing/' . $shipment->id
       ], 200);
     } else {
       return response()->json([
         'success' => true,
         'title' => 'The Shipment',
-        'message' => 'The Shipment has been created'. $shipment->id,
+        'message' => 'The Shipment has been created' . $shipment->id,
         'link' => '/shipment/incoming/' . $shipment->id
       ], 200);
     }
@@ -299,22 +299,20 @@ class ShipmentController extends Controller
 
       ShipmentItem::insert($order_to_shipment_item);
       DB::commit();
-
     } catch (\Throwable $th) {
       DB::rollback();
       return response()->json([
         'success' => false,
         'message' => $th->getMessage()
-      ],500);
+      ], 500);
     }
 
     return response()->json([
       'success' => true,
       'title' => 'The Incoming Shipment',
-      'message' => 'The Shipment has been created #'. $shipment_creation->id,
+      'message' => 'The Shipment has been created #' . $shipment_creation->id,
       'link' => '/shipment/incoming/' . $shipment_creation->id
     ], 200);
-
   }
 
   /**

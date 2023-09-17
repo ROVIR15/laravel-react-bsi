@@ -2,7 +2,8 @@
   
   namespace App\Http\Controllers;
   
-  
+  use DB;
+
   use App\Models\Order\OrderStatus;
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\OrderStatusCollection;
@@ -44,18 +45,25 @@
     {
       $orderStatusData = $request->all()['payload'];
       try {
+        DB::beginTransaction();
         OrderStatus::create([
           'user_id' => $orderStatusData['user_id'],
           'order_id' => $orderStatusData['order_id'],
           'status_type' => $orderStatusData['status_type'],
           'description' => $orderStatusData['description']
         ]);
+        
+        DB::commit();
       } catch (Exception $th) {
+        DB::rollback();
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
       }
 
       return response()->json([
-        'success' => true
+        'success' => true,
+        'title' => 'Order Status Changed To' . $orderStatusData['status_type'],
+        'message' => 'Please check, the costing #' .$orderStatusData->order_id. 'has been changed',
+        'link' => '/purchasing/purchase-order/document/' . $orderStatusData->order_id
       ], 200);
     }
 
