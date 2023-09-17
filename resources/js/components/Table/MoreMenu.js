@@ -24,7 +24,7 @@ function getEditPathname(array, param) {
   return '/' + array[1] + '/' + array[2] + `/${array[3]}/${param}`;
 }
 
-export default function MoreMenu({ handleDelete, name="Edit", deleteActive=true, document=false, id }) {
+export default function MoreMenu({ document_label_name=null, handleDelete, name="Edit", deleteActive=true, document=false, id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -51,7 +51,7 @@ export default function MoreMenu({ handleDelete, name="Edit", deleteActive=true,
           <ListItemIcon>
             <Icon icon={paperFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="View Document" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={document_label_name ? document_label_name : "View Document"} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
         ) : null }
 

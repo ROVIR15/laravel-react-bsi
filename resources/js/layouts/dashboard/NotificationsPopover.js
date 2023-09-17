@@ -84,40 +84,41 @@ const NOTIFICATIONS = [
 function renderContent(notification) {
   const title = (
     <Typography variant="subtitle2">
-      {notification.title}
+      {notification?.title}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
+        &nbsp; {noCase(notification?.message)}
       </Typography>
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
-      title
-    };
-  }
-  if (notification.type === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
-      title
-    };
-  }
-  if (notification.type === 'mail') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
-      title
-    };
-  }
-  if (notification.type === 'chat_message') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
-      title
-    };
-  }
+  // if (notification.type === 'order_placed') {
+  //   return {
+  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
+  //     title
+  //   };
+  // }
+  // if (notification.type === 'order_shipped') {
+  //   return {
+  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
+  //     title
+  //   };
+  // }
+  // if (notification.type === 'mail') {
+  //   return {
+  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
+  //     title
+  //   };
+  // }
+  // if (notification.type === 'chat_message') {
+  //   return {
+  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
+  //     title
+  //   };
+  // }
   return {
     avatar: <img alt={notification.title} src={notification.avatar} />,
-    title
+    title,
+    link: notification?.link
   };
 }
 
@@ -126,11 +127,11 @@ NotificationItem.propTypes = {
 };
 
 function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
+  const { avatar, title, link } = renderContent(notification);
 
   return (
     <ListItemButton
-      to="#"
+      to={`/dashboard${link}`}
       disableGutters
       component={RouterLink}
       sx={{
@@ -158,7 +159,7 @@ function NotificationItem({ notification }) {
             }}
           >
             <Box component={Icon} icon={clockFill} sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {formatDistanceToNow(new Date(notification.createdAt))}
+            {formatDistanceToNow(new Date(notification?.created_at))}
           </Typography>
         }
       />
@@ -166,11 +167,13 @@ function NotificationItem({ notification }) {
   );
 }
 
-export default function NotificationsPopover() {
+export default function NotificationsPopover({ content = [] }) {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  let notifications = content;
+  const read = notifications.filter((item) => item.is_read === true);
+  const unread = notifications.filter((item) => item.is_read === false);
+  const totalUnRead = unread.length;
 
   const handleOpen = () => {
     setOpen(true);
@@ -232,16 +235,16 @@ export default function NotificationsPopover() {
 
         <Divider />
 
-        <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+        <Scrollbar sx={{ height: { xs: 240, sm: 'auto' }, overflowY: 'auto' }}>
           <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                Read
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
+            {read.map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
@@ -250,11 +253,11 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
+                Unread
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
+            {unread.map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>

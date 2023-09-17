@@ -4770,6 +4770,16 @@ const main = {
       .catch(function (err) {
         cb(err.response);
       });
+  },
+  getNotificationLimit(user_id, cb) {
+    axios
+      .get(uri + '/notification/' + user_id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
   }
 };
 export default main;

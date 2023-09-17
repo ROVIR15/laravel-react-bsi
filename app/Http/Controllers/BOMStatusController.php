@@ -60,7 +60,7 @@
       return response()->json([
         'success' => true,
         'title' => 'Costing Status Changed To' . $BOMStatusData['status_type'],
-        'message' => 'Please check, the costing #' .$BOMStatusData->bom_id. 'has been changed',
+        'message' => 'Please check, the costing #' .$BOMStatusData->bom_id. ' has been changed',
         'link' => '/production/costing/document/' . $BOMStatusData->bom_id
       ], 200);
     }

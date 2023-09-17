@@ -61,9 +61,9 @@
 
       return response()->json([
         'success' => true,
-        'title' => 'Order Status Changed To' . $orderStatusData['status_type'],
-        'message' => 'Please check, the costing #' .$orderStatusData->order_id. 'has been changed',
-        'link' => '/purchasing/purchase-order/document/' . $orderStatusData->order_id
+        'title' => 'Order Status Changed To ' . $orderStatusData['status_type'],
+        'message' => 'Please check, the costing #' .$orderStatusData['order_id']. ' has been changed',
+        'link' => '/purchasing/purchase-order/document/' . $orderStatusData['order_id']
       ], 200);
     }
 
