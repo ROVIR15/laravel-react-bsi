@@ -8,6 +8,8 @@ import { Icon } from '@iconify/react';
 import bellFill from '@iconify/icons-eva/bell-fill';
 import clockFill from '@iconify/icons-eva/clock-fill';
 import doneAllFill from '@iconify/icons-eva/done-all-fill';
+import refreshOutline from '@iconify/icons-eva/refresh-outline';
+
 // material
 import { alpha } from '@mui/material/styles';
 import {
@@ -25,6 +27,10 @@ import {
   ListItemAvatar,
   ListItemButton
 } from '@mui/material';
+
+//contect
+import useNotification from '../../context/notification'
+
 // utils
 import { mockImgAvatar } from '../../utils/mockImages';
 // components
@@ -192,6 +198,8 @@ export default function NotificationsPopover({ content = [] }) {
     );
   };
 
+  const { getNewNotification } = useNotification();
+
   return (
     <>
       <IconButton
@@ -223,6 +231,12 @@ export default function NotificationsPopover({ content = [] }) {
               You have {totalUnRead} unread messages
             </Typography>
           </Box>
+
+          <Tooltip title="Get New Notification">
+            <IconButton color="primary" onClick={getNewNotification}>
+              <Icon icon={refreshOutline} width={20} height={20} />
+            </IconButton>
+          </Tooltip>
 
           {totalUnRead > 0 && (
             <Tooltip title=" Mark all as read">

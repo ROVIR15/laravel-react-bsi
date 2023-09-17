@@ -17,8 +17,9 @@ class ShipmentItem extends Model
         'id',
         'shipment_id',
         'order_item_id',
-        'qty_shipped',
         'shipment_type_id',
+        'qty',
+        'qty_shipped',
         'description'
     ];
 

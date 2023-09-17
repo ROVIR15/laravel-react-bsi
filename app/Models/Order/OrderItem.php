@@ -30,6 +30,11 @@ use DB;
       return $this->belongsTo('App\Models\Manufacture\BOMItem', 'costing_item_id', 'id')->with('costing');
     }
 
+    public function costing_item(){
+      return $this->belongsTo('App\Models\Manufacture\BOMItem', 'costing_item_id', 'id')
+                  ->select('id', 'consumption', 'bom_id')->with('costing');
+    }
+
     public function image_url(){
       return $this->belongsTo('App\Models\Product\ProductFeature')->select('id', 'product_feature_id')
               ->with(['product', function($query){

@@ -222,7 +222,7 @@ class NotificationLogger
                         ]);
                     }
                 }
-            } else if (in_array($routePart, ['bom-status', 'order-status'])) {
+            } else if (in_array($routePart, ['bom-status', 'costing-status', 'order-status'])) {
                 if ($response->status() === 200) {
                     $responseBody = $response->getContent();
                     $responseData = json_decode($responseBody);

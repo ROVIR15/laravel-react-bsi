@@ -27,6 +27,10 @@ class BOMItem extends Model
         return $this->belongsTo('App\Models\Product\ProductFeature')->with('product', 'product_category');
     }
 
+    public function order_item(){
+        return $this->belongsTo('App\Models\Order\OrderItem', 'id', 'costing_item_id');
+    }
+
     public function costing(){
         return $this->belongsTo('App\Models\Manufacture\BOM', 'bom_id');
     }

@@ -55,7 +55,8 @@ export const NotificationProvider = ({ children }) => {
   const memoedValue = useMemo(
     () => ({
       data: NotificationData,
-      initialLoading
+      initialLoading,
+      getNewNotification
     }),
     [NotificationData, loading]
   );
