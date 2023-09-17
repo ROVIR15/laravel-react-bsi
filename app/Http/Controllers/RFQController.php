@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\RRQ\Quote as QuoteOneCollection;
 use App\Http\Resources\RRQ\QuoteCollection;
 use App\Http\Resources\RRQ\QuoteViewCollection;
+use Illuminate\Support\Facades\DB;
 
 class RFQController extends Controller
 {
@@ -49,6 +50,7 @@ class RFQController extends Controller
         $param = $request->all()['payload'];
         try {
           //code...
+          DB::beginTransaction();
           $rfqCreation = Quote::create([
             'quote_type' => $param['quote_type'],
             'po_number' => $param['po_number'],
@@ -60,7 +62,7 @@ class RFQController extends Controller
             'tax' => $param['tax'],
             'currency_id' => $param['currency_id']
           ]);
-          
+          DB::commit();
           $rfqItemsCreation = [];
   
           foreach($param['quote_items'] as $key){
@@ -75,17 +77,21 @@ class RFQController extends Controller
           }
   
           QuoteItem::insert($rfqItemsCreation);
-  
+          DB::commit();
         } catch (Exception $th) {
+          DB::rollBack();
           return response()->json([
             'success' => false,
             'error' => $th->getMessage()
           ]);
         }
-  
+
         return response()->json([
-          'success' => true
-        ]);        
+          'success' => true,
+          'title' => 'RF-Quotation Creation',
+          'message' => 'The new quotation has been created #' . $rfqCreation->id,
+          'link' => '/purchasing/request-for-quotation/' . $rfqCreation->id,
+        ], 200);   
     }
 
     /**
