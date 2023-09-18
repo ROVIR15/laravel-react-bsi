@@ -17,6 +17,7 @@ export const CurrencyProvider = ({ children }) => {
     usd: 1,
     idr: 1
   });
+  const userStorage = JSON.parse(localStorage.getItem('user'));
 
   // store loading state
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,10 @@ export const CurrencyProvider = ({ children }) => {
 
   // API to get currency data
   useEffect(() => {
+    if (!isEmpty(userStorage)) getCurrency();
+  }, []);
+
+  function getCurrency(){
     try {
       API.getCurrencyData(function (res) {
         if (!res) return;
@@ -38,7 +43,7 @@ export const CurrencyProvider = ({ children }) => {
     } catch (error) {
       alert('error');
     }
-  }, []);
+  }
 
   function exchanger(value, initialCurrencyType, requestedCurrencyType) {
     //check if initial currency_type is not equal requested_currency_type

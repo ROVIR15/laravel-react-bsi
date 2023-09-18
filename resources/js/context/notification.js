@@ -20,9 +20,8 @@ export const NotificationProvider = ({ children }) => {
   // with NotificationData is empty and loading state is true
   let initialLoading = isEmpty(NotificationData) || loading;
 
-
   const userStorage = JSON.parse(localStorage.getItem('user'));
-  const { id } = userStorage;
+  const id = isEmpty(userStorage) ? null : userStorage?.id;
 
   // API to get currency data
   useEffect(() => {
@@ -30,7 +29,6 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   function getNewNotification(){
-
     try {
       if(!isEmpty(id)){
         API.getNotificationLimit(id, function(res) {
@@ -39,7 +37,7 @@ export const NotificationProvider = ({ children }) => {
           else {
             setNotificationData(res.data);
           }
-        })  
+        })
       } else {
         setNotificationData([])
       }
@@ -51,7 +49,7 @@ export const NotificationProvider = ({ children }) => {
   // Make the provider update only when it should.
   // We only want to force re-renders if the user,
   // loading or error states change.
-  //
+
   // Whenever the `value` passed into a provider changes,
   // the whole tree under the provider re-renders, and
   // that can be very costly! Even in this case, where
