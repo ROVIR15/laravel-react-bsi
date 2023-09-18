@@ -321,5 +321,5 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 });
 
 
-Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+// Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 Route::resource('logs', 'LogController')->only(['index']);
