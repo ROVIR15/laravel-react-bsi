@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 import useAuth from '.';
 import API from '../helpers';
 
@@ -30,7 +30,7 @@ export const NotificationProvider = ({ children }) => {
 
   function getNewNotification(){
     try {
-      if(!isEmpty(id)){
+      if(!isNull(id)){
         API.getNotificationLimit(id, function(res) {
           if(!res) throw new Error("Something wrong!");
           if(!res.data) throw new Error("Something wrong!");
