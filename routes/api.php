@@ -323,3 +323,8 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
 // Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 Route::resource('logs', 'LogController')->only(['index']);
+
+// Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
+// Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+// Route::get('bom-detail-report/{id}', 'BOMItemController@findItemOrderItemCostingId');
+Route::get('notification/{user_id}', 'NotificationController@showFew');
