@@ -56,7 +56,7 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt, isArray, isNull } from 'lodash';
+import { gt, isArray } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
@@ -287,7 +287,9 @@ function BillofMaterial() {
   }, [loading]);
 
   const editableUser = user.id === 2 ? true : false;
+  const editableCondition = isEmpty(status) ? true : (status.status_type === 'Submit' ? true : false)
 
+  console.log(editableCondition)
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
@@ -371,7 +373,7 @@ function BillofMaterial() {
     () => [
       { field: 'id', headerName: 'ID', editable: false, hideable: false, width: 30 },
       { field: 'name', headerName: 'Service Name', editable: false, width: 250 },
-      { field: 'unit_price', headerName: 'Harga', editable: true },
+      { field: 'unit_price', headerName: 'Harga', editable: editableCondition },
       {
         field: 'actions',
         type: 'actions',
@@ -483,7 +485,7 @@ function BillofMaterial() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if ((editedIds.length === 0 && (!isNull(status.id) && status.status_type === 'Submit')) || editableUser) {
+      if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
@@ -491,7 +493,7 @@ function BillofMaterial() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        if (!editableUser) return;
+        if (!editableUser || !editableCondition) return;
         try {
           API.updateABOMItem(editedIds, data, function (res) {
             if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
@@ -648,7 +650,7 @@ function BillofMaterial() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if ((editedIds.length === 0 && (!isNull(status.id) && status.status_type === 'Submit')) || editableUser) {
+      if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
@@ -656,9 +658,16 @@ function BillofMaterial() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        API.updateABOMService(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+
+        if (!editableUser || !editableCondition) return;
+        try {
+          API.updateABOMService(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
