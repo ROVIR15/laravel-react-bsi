@@ -8,6 +8,7 @@
   use App\Http\Controllers\Controller;
   use App\Http\Resources\Order\OrderStatusCollection;
   use App\Http\Resources\Order\OrderStatus as OrderStatusOneCollection;
+  use App\Models\Order\PurchaseOrder;
   use Illuminate\Http\Request;
   
   class OrderStatusController extends Controller
@@ -52,7 +53,6 @@
           'status_type' => $orderStatusData['status_type'],
           'description' => $orderStatusData['description']
         ]);
-        
         DB::commit();
 
         $query = PurchaseOrder::where('order_id', $orderStatusData['order_id'])

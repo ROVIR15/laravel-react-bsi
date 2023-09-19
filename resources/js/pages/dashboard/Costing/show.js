@@ -972,6 +972,9 @@ function BillofMaterial() {
                                     <TableCell>
                                       <Typography variant="h6">Nomor Invoice</Typography>
                                     </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">Nomor Payment</Typography>
+                                    </TableCell>
                                   </TableRow>
                                   {isEmpty(listPO) ? (
                                     listPO.map(function (item, index) {
@@ -1022,6 +1025,15 @@ function BillofMaterial() {
                                               href={`../../finance/vendor-bills/${item.invoice_id}`}
                                             >
                                               {`INV-${item?.invoice_id}`}
+                                            </Typography>
+                                          </TableCell>
+                                          <TableCell variant="subtitle">
+                                            <Typography
+                                              variant="body1"
+                                              component="a"
+                                              href={`../../finance/payment/${item?.payment_id}`}
+                                            >
+                                              {`PAYMENT-${item?.payment_id}`}
                                             </Typography>
                                           </TableCell>
                                         </TableRow>

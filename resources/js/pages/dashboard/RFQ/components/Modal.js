@@ -94,6 +94,16 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
       } catch (error) {
         alert('error');
       }
+    } else {
+      try {
+        API.getProductFeatureFinishedGoods((res)=>{
+          if(!res) return;
+          if(!res.data) setOptions([])
+          else setOptions(res.data);
+        })
+      } catch {
+        alert('error');
+      }
     }
   }, [selectedCosting]);
   // --------------------------------------------------------------- //

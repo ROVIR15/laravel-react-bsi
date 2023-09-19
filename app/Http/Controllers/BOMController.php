@@ -13,6 +13,7 @@ use App\Models\Manufacture\BOMService;
 
 use App\Http\Resources\Manufacture\BOM as BOMOneCollection;
 use App\Http\Resources\Manufacture\BOMCollection;
+use App\Models\Invoice\Payment;
 use App\Models\KITE\ImportDoc;
 use App\Models\Order\OrderItem;
 use App\Models\Order\PurchaseOrder;
@@ -323,6 +324,9 @@ class BOMController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
 
+          $query22 = Payment::where('invoice_id', $invoice->id)->get();
+          $payment = count($query22) ? $query22[0] : null;
+
           return [
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
             'import_item_id' => $import_info ? $import_info->id : null,
@@ -337,7 +341,8 @@ class BOMController extends Controller
             'import_flag' => $purchaseOrder ? ($purchaseOrder->import_flag ? 'Import' : 'Non-Import') : null,
             'shipment_item_id' => $shipmentItem ? $shipmentItem->id : null,
             'shipment_id' => $shipment ? $shipment->id : null,
-            'invoice_id' => $invoice ? $invoice->id : null
+            'invoice_id' => $invoice ? $invoice->id : null,
+            'payment_id' => $payment ? $payment->id : 0
           ];
         });
 

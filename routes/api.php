@@ -299,6 +299,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('stock-scrap', 'InventoryController@get_scrap');
 
     Route::get('bom-item-alt-v3/{costing_id}', 'BOMItemController@findItemsByCostingId');
+    Route::get('final-goods', 'ProductFeatureController@justFinishedGoods');
     Route::get('bom-item-alt-v4/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock');
     Route::get('get-costing', 'BOMItemController@getCostingId');
     Route::get('sales-order-v2', 'SalesOrderController@get_sales_order');
