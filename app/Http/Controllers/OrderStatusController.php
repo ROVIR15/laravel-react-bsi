@@ -54,6 +54,10 @@
         ]);
         
         DB::commit();
+
+        $query = PurchaseOrder::where('order_id', $orderStatusData['order_id'])
+                                     ->get();
+        
       } catch (Exception $th) {
         DB::rollback();
         return response()->json([ 'success' => false, 'errors' => $th->getMessage()], 500);
@@ -62,7 +66,7 @@
       return response()->json([
         'success' => true,
         'title' => 'Order Status Changed To ' . $orderStatusData['status_type'],
-        'message' => 'Please check, the costing #' .$orderStatusData['order_id']. ' has been changed',
+        'message' => 'Please check, the purchase order #' .$query[0]->id. ' has been changed',
         'link' => '/purchasing/purchase-order/document/' . $orderStatusData['order_id']
       ], 200);
     }
