@@ -346,7 +346,7 @@ function DisplayBOM({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index + 1}</TableCell>
+                      <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">
                         {moment(new Date(rest.start_date)).format('DD MMM YYYY')}
