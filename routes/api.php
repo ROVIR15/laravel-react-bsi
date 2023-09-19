@@ -329,4 +329,4 @@ Route::resource('logs', 'LogController')->only(['index']);
 // Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
 // Route::get('bom-detail-report/{id}', 'BOMItemController@findItemOrderItemCostingId');
 Route::get('notification/{user_id}', 'NotificationController@showFew');
-fRoute::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
