@@ -117,7 +117,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     //Agreement
     Route::resource('po-agreement', 'POApprovalController')->only(['index', 'show', 'update']);
     Route::resource('bom-agreement', 'BOMApprovalController')->only(['index', 'show', 'update']);
-    Route::resource('agreement', 'AgreementController')->only(['index']);
+    Route::resource('agreement', 'AgreementController')->only(['index', 'store']);
     Route::resource('agreement-role', 'AgreementRoleController')->only(['update']);
     Route::resource('agreement-item', 'AgreementItemController')->only(['index']);
     Route::resource('price-component', 'PriceComponentController')->only(['index']);
@@ -130,7 +130,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-role', 'ShipmentRoleController')->only(['index']);
     Route::get('shipment-invoicing', 'ShipmentController@shipmentInvoicing');
-    Route::post('post-incoming-goods', 'ShipmentController@postIncomingGoods');
+    Route::post('post-incoming-goods', 'ShipmentController@postIncomingGoods')->name('shipment');
 
     //Inventory
     Route::resource('goods-receipt', 'GoodsReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('inventory-type', 'InventoryTypeController')->only(['index']);
     Route::post('scrap-insert', 'InventoryController@scrap_insert');
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['store']);
-    Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer');
+    Route::post('material-transfer-realisation', 'MaterialTransferController@confirmation_material_tranfer')->name('material-transfer-realisation');
     Route::post('post-material-transfer-status', 'MaterialTransferController@new_material_transfer_update_status');
 
     Route::resource('adjustment-item', 'AdjustmentItemController')->only(['store', 'update', 'destroy']);
@@ -329,3 +329,4 @@ Route::resource('logs', 'LogController')->only(['index']);
 // Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
 // Route::get('bom-detail-report/{id}', 'BOMItemController@findItemOrderItemCostingId');
 Route::get('notification/{user_id}', 'NotificationController@showFew');
+fRoute::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
