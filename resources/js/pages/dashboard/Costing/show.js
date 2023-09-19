@@ -56,7 +56,7 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt, isArray } from 'lodash';
+import { gt, isArray, isNull } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
@@ -390,6 +390,7 @@ function BillofMaterial() {
   );
 
   const [listPO, setListPO] = useState([]);
+  const [status, setStatus] = useState({id: null, status_type: null})
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -400,6 +401,7 @@ function BillofMaterial() {
     const load = await axios
       .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
       .then(function ({ data: { data, items } }) {
+        setStatus(data?.status[0]);
         setListPO(items);
         return data;
       })
@@ -481,7 +483,7 @@ function BillofMaterial() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if (editedIds.length === 0) {
+      if ((editedIds.length === 0 && (!isNull(status.id) && status.status_type === 'Submit')) || editableUser) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
@@ -646,7 +648,7 @@ function BillofMaterial() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if (editedIds.length === 0 && user?.id === 2) {
+      if ((editedIds.length === 0 && (!isNull(status.id) && status.status_type === 'Submit')) || editableUser) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
