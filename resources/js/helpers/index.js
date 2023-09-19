@@ -4780,6 +4780,16 @@ const main = {
       .catch(function (err) {
         cb(err.response);
       });
+  },
+  getProductFeatureFinishedGoods(cb){
+    axios
+    .get(uri + '/final-goods')
+    .then(function (res) {
+      cb(res.data);
+    })
+    .catch(function (err) {
+      cb(err.response);
+    });
   }
 };
 export default main;
