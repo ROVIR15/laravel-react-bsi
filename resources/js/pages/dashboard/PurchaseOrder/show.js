@@ -299,7 +299,7 @@ function SalesOrder() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if (editedIds.length === 0) {
+      if (editedIds.length === 0 && user?.id === 11 && user?.id===2) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
@@ -828,7 +828,7 @@ function SalesOrder() {
                                 setOpenGenerateVendorBillsModal(true);
                               }}
                             >
-                              Post Vendor Bills{' '}
+                              Post Vendor Bills
                             </Button>
                             <Button
                               size="large"
@@ -837,8 +837,7 @@ function SalesOrder() {
                               sx={{ m: 1 }}
                               onClick={() => postIncomingGoods(values?.order_id)}
                             >
-                              {' '}
-                              Post Incoming Goods{' '}
+                              Post Incoming Goods
                             </Button>
                             <LoadingButton
                               size="large"
