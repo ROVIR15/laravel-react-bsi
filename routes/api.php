@@ -283,7 +283,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
     Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);
 
-    Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+    // Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
     Route::get('incoming-material-report', 'InventoryController@regIncomingMaterial');
     Route::get('outbound-material-report', 'InventoryController@regOutboundMaterial');
