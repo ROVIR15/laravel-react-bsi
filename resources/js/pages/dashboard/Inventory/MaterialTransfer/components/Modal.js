@@ -31,7 +31,8 @@ export default function BasicModal({
   open,
   handleClose,
   items,
-  setItems
+  setItems,
+  params=null
 }) {
   const [value, setValue] = React.useState([]);
 
@@ -111,7 +112,7 @@ export default function BasicModal({
     // console.log(selectedCosting)
     if (selectedCosting !== 0) {
       try {
-        API.getBOMItemV4(selectedCosting, (res) => {
+        API.getBOMItemV4(selectedCosting, `?from_facility=${params}`, (res) => {
           if (!res) return;
           if (!res.data) {
             setSelectionOptions([]);
@@ -124,7 +125,7 @@ export default function BasicModal({
         alert('error');
       }
     }
-  }, [selectedCosting]);
+  }, [selectedCosting, params]);
   // --------------------------------------------------------------- //
 
   return (

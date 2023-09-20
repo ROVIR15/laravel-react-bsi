@@ -20,6 +20,7 @@ import cardOutlined from '@iconify/icons-eva/credit-card-outline';
 import dollarCircle from '@iconify/icons-ant-design/dollar-circle-filled';
 import monitorOutline from '@iconify/icons-ant-design/monitor-outline';
 import dollarOutlined from '@iconify/icons-ant-design/dollar-outlined';
+import swapOutlined from '@iconify/icons-eva/swap-outline';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -379,9 +380,26 @@ const sidebarConfig = [
     ]
   },
   {
+    title: 'Permintaan Bahan Baku',
+    name: 'mt-request',
+    icon: getIcon(swapOutlined),
+    path: '/dashboard/material-transfer/request'
+  },
+  {
+    title: 'Daftar Permitaan',
+    name: 'mt-list',
+    icon: getIcon(swapOutlined),
+    path: '/dashboard/material-transfer/list'
+  },
+  {
     title: 'User Management',
     name: 'user-management',
     path: '/dashboard/user-management'
+  },
+  {
+    name: 'operator-supermarket',
+    title: 'Supermarket',
+    path: '/dashboard/monitoring/supermarket'
   },
   {
     title: 'Facility',

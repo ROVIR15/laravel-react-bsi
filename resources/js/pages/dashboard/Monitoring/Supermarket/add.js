@@ -74,12 +74,9 @@ function WorkCenter() {
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false},
-    { field: 'size', headerName: 'Size', editable: false },
-    { field: 'color', headerName: 'Color', editable: false },
-    { field: 'po_number', headerName: 'PO', editable: true },
-    { field: 'numbering', headerName: 'Numbering', type: 'number', editable: true },
-    { field: 'qty', headerName: 'Output To Supermarket', type: 'number', editable: true },
+    { field: 'name', headerName: 'Name', editable: false, width: 400},
+    { field: 'numbering', headerName: 'Numbering', type: 'text', editable: true },
+    { field: 'qty', headerName: 'Qty', type: 'number', editable: true, width: 150 },
     { field: 'actions', type: 'actions', width: 100, 
       getActions: (params) => [
         <GridActionsCellItem

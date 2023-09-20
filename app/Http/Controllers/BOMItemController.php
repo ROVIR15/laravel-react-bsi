@@ -217,9 +217,12 @@ class BOMItemController extends Controller
         ], 200);
     }
 
-    public function findItemsByCostingIdWithStock($costing_id)
+    public function findItemsByCostingIdWithStock($costing_id, Request $request)
     {
 
+        $from_facility = $request->query('from_facility');
+        $_param = is_null($from_facility) ? 3 : $from_facility;
+        
         try {
             $query = BOMItem::with('product_feature')->where('bom_id', $costing_id)->get()->map(function ($data) {
                 $query2 = ProductFeature::select('product_id', 'id')
@@ -235,8 +238,8 @@ class BOMItemController extends Controller
             });
 
             $items = ProductFeature::with('product', 'product_category')
-                ->with(['movement' => function ($query) {
-                    return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))->where('facility_id', 3)->groupBy('product_feature_id');
+                ->with(['movement' => function ($query) use ($_param) {
+                    return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))->where('facility_id', $_param)->groupBy('product_feature_id');
                 }])
                 ->whereHas('movement')
                 ->whereIn('product_id', $query)->get()->map(function ($query) use ($costing_id) {

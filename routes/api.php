@@ -211,6 +211,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('monitoring-supermarket', 'MonitoringSupermarketController')->only(['store', 'index', 'show']);
     Route::resource('monitoring-numbering', 'MonitoringNumberingController')->only(['store', 'index', 'show']);
     Route::resource('monitoring-cutting', 'MonitoringCuttingController')->only(['store', 'index', 'show']);
+    Route::get('cutting-supermarket', 'MonitoringCuttingController@getCuttingSupermarket');
     Route::resource('monitoring-spreading', 'MonitoringSpreadingController')->only(['store', 'index', 'show']);
     Route::resource('monitoring-sewing', 'MonitoringSewingController')->only(['store', 'index', 'show']);
     Route::resource('monitoring-qc', 'MonitoringQcController')->only(['store', 'index', 'show']);
@@ -279,6 +280,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('invoice-payment', 'InvoiceController@paymentInvoice');
 
     Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::post('material-transfer-direct', 'MaterialTransferController@submit_and_confirmation');
     Route::get('material-status-with-stock', 'ProductFeatureController@checkInventoryItemWithStock');
 
     Route::resource('adjustment', 'AdjustmentController')->only(['index', 'store', 'update', 'show', 'update', 'destroy']);

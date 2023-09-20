@@ -395,6 +395,14 @@ export default function TestRouter() {
             { path: 'document/:id', element: <DocumentMaterialTransfer/>}
           ]
         },
+        {
+          path: 'material-transfer',
+          children: [
+            { path: 'request', element: <AddMaterialTransfer/> },
+            { path: 'list', element: <DisplayMaterialTranfer/> },
+            { path: 'list/:id', element: <ShowMaterialTransfer />}
+          ]
+        },
         { 
           path: 'production/work-center', 
           element: <WorkCenterLayout />,

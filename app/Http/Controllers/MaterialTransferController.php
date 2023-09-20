@@ -10,6 +10,9 @@ use App\Models\Inventory\MaterialTransferItem;
 use App\Models\Inventory\MaterialTransferRealisation;
 use App\Models\Inventory\MaterialTransferStatus;
 use App\Models\Inventory\GoodsMovement;
+use App\Models\Product\Goods;
+use App\Models\Product\Product;
+use Exception;
 
 class MaterialTransferController extends Controller
 {
@@ -22,15 +25,17 @@ class MaterialTransferController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = MaterialTransfer::with('status', 'items', 'realisation', 'from_facility', 'to_facility')
+            $query = MaterialTransfer::with('status', 'items', 'realisation', 'from_facility', 'to_facility', 'user')
                 ->orderBy('id', 'desc')
                 ->get()
                 ->map(function ($item, $index) {
                     $product = count($item->items) ? $item->items[0]->product : null;
                     $goods = $product ? $product->goods : null;
+                    $username = $item->user ? $item->user->name : 'none';
 
                     return [
                         'id' => $item->id,
+                        'user' => $username,
                         'status' => count($item->status) ? $item->status[0]->status : 'None',
                         'mt_id' => 'MT-00' . $item->id,
                         'date' => $item->created_at,
@@ -190,6 +195,103 @@ class MaterialTransferController extends Controller
             'title' => 'The Material Transfer #' . $param[0]['material_transfer_id'] . ' Request',
             'message' => 'The Material Transfer Request has been filled on #' . $param[0]['material_transfer_id'],
             'link' => '/inventory/material-transfer/' . $param[0]['material_transfer_id']
+        ], 200);
+    }
+
+    public function submit_and_confirmation(Request $request)
+    {
+        $param = $request->all()['payload'];
+
+        try {
+            DB::beginTransaction();
+            $_mt = MaterialTransfer::create([
+                'to_facility_id' => $param['to_facility_id'],
+                'from_facility_id' => $param['from_facility_id'],
+                'est_transfer_date' => $param['est_transfer_date'],
+                'user_id' => $param['user_id'],
+                'description' => $param['description']
+            ]);
+            DB::commit();
+
+            $_data = [];
+            foreach ($param['items'] as $key) {
+                $_mti = MaterialTransferItem::create([
+                    'material_transfer_id' => $_mt['id'],
+                    'product_id' => $key['product_id'],
+                    'product_feature_id' => $key['product_feature_id'],
+                    'transfer_qty' => $key['qty']
+                ]);
+                DB::commit();
+
+                $mtr = MaterialTransferRealisation::create([
+                    'material_transfer_id' => $_mt['id'],
+                    'material_transfer_item_id' => $_mti['id'],
+                    'transferred_qty' => $key['qty']
+                ]);
+                DB::commit();
+
+                $goods = Product::where('id', $key['product_id'])->first();
+
+                if (!isset($mtr->id)) throw new Exception('Cannot find material transfer realisation');
+                if (!isset($_mt->id)) throw new Exception('Cannot find material transfer');
+
+                // substract qty from from_facility_id and make record on goods movement
+                GoodsMovement::create([
+                    'date' => $param['est_transfer_date'],
+                    'material_transfer_id' => $_mt['id'],
+                    'material_transfer_item_id' => $_mti['id'],
+                    'material_transfer_item_realisation_id' => $mtr['id'],
+                    'facility_id' => $param['from_facility_id'],
+                    'goods_id' => $goods['goods_id'],
+                    'product_id' => $key['product_id'],
+                    'product_feature_id' => $key['product_feature_id'],
+                    'type_movement' => 2, // 1 for incoming and 2 outbound
+                    'qty' => $key['qty'] * -1,
+                ]);
+                DB::commit();
+
+                //add qty from to_facility_id and make record on goods_movement;
+                GoodsMovement::create([
+                    'date' => $param['est_transfer_date'],
+                    'material_transfer_id' => $_mt['id'],
+                    'material_transfer_item_id' => $_mti['id'],
+                    'material_transfer_item_realisation_id' => $mtr['id'],
+                    'facility_id' => $param['to_facility_id'],
+                    'goods_id' => $goods['goods_id'],
+                    'product_id' => $key['product_id'],
+                    'product_feature_id' => $key['product_feature_id'],
+                    'type_movement' => 1, // 1 for incoming and 2 outbound
+                    'qty' => $key['qty']
+                ]);
+                DB::commit();
+            }
+
+            MaterialTransferStatus::create([
+                'material_transfer_id' => $_mt['id'],
+                'status' => 1
+            ]);
+            DB::commit();
+
+            MaterialTransferStatus::create([
+                'material_transfer_id' => $_mt['id'],
+                'status' => 2
+            ]);
+            DB::commit();
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'title' => 'Material Transfer Creation',
+            'message' => 'The new Material Transfer Request has been created #' . $_mt->id,
+            'link' => '/inventory/material-transfer/' . $_mt->id,
         ], 200);
     }
 

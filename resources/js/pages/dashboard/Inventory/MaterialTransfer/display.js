@@ -23,12 +23,15 @@ import moment from 'moment';
 import API from '../../../../helpers';
 import { display_material_transfer_resources } from '../utils';
 
+import useAuth from '../../../../context/index';
+
 // ----------------------------------------------------------------------
 
 moment.locale('id');
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'user', label: 'Nama Petugas', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'mt_id', label: 'Nomor Permintaan MT', alignRight: false },
   { id: 'from_facility_name', label: 'Dari', alignRight: false },
@@ -87,7 +90,16 @@ function Invoice({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+
+  // context 
+  const { user } = useAuth()
+
+  const pages = !isEmpty(user) ? user?.pages : [];
+
+  const disableSeeRequest = pages.some(function(item){
+    return item.pages_id = 32;
+  })
 
   //----------------filter by month and year------------------//
   const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
@@ -229,6 +241,7 @@ function Invoice({ placeHolder }) {
                   .map((row) => {
                     const {
                       id,
+                      user,
                       status,
                       mt_id,
                       date,
@@ -250,6 +263,7 @@ function Invoice({ placeHolder }) {
                         aria-checked={isItemSelected}
                       >
                         <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{user}</TableCell>
                         <TableCell align="left">
                           {status}
                           {/* <PinStatus
@@ -267,7 +281,7 @@ function Invoice({ placeHolder }) {
                         <TableCell align="right">
                           <MoreMenu
                             id={id}
-                            document={true}
+                            document={disableSeeRequest}
                             document_label_name="View Request"
                             handleDelete={(event) => handleDeleteData(event, id)}
                           />
@@ -294,7 +308,7 @@ function Invoice({ placeHolder }) {
           </TableContainer>
         </Scrollbar>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[15, 25, 50]}
           component="div"
           count={invoice?.length}
           rowsPerPage={rowsPerPage}

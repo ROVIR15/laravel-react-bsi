@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { filter, isArray } from 'lodash';
 import {
+  Box,
   Card,
   Checkbox,
   Table,
@@ -9,6 +10,7 @@ import {
   TableCell,
   TableContainer,
   TablePagination,
+  Typography
 } from '@mui/material';
 //components
 import Scrollbar from '../../../../components/Scrollbar';
@@ -21,13 +23,12 @@ import API from '../../../../helpers';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
-    // { id: 'po_number', label: 'PO Number', alignRight: false },
+    // { id: 'id', label: 'ID', alignRight: false, width: 20 },
+    // { id: 'order_id', label: 'Order ID', alignRight: false },
     { id: 'name', label: 'Style', alignRight: false },
-    { id: 'size', label: 'Size', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
-    // { id: 'numbering', label: 'Numbering', alignRight: false },
-    // { id: 'qty', label: 'Qty', alignRight: false },
+    { id: 'qty_loading', label: 'Qty Tersisa', alignRight: false },
+    // { id: 'size', label: 'Size', alignRight: false },
+    // { id: 'color', label: 'Color', alignRight: false },
   ];
 
 // ----------------------------------------------------------------------
@@ -57,7 +58,10 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_b) => {
+      let b = `${_b?.name}`
+      return b.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -79,11 +83,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+      setSelected(filteredData);
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
   const handleClick = (event, name) => {
@@ -140,11 +143,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
   return (
     <div>
       <ListToolbar
-        numSelected={selected.length}
+        numSelected={0}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
-        onDeletedSelected={handleDeleteSelected}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -166,12 +168,10 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                   const {
                     id,
                     order_id,
-                    po_number,
-                    // qty,
-                    size,
-                    color,
                     name,
-                    // numbering
+                    qty_loading
+		    // qty_loading,
+		    // numbering
                   } = row;
                   return (
                     <TableRow
@@ -181,6 +181,7 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                       role="checkbox"
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
+                      onClick={(event) => handleClick(event, row)}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
@@ -188,13 +189,13 @@ function TableD({ list, placeHolder, selected, setSelected}) {
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
-                      {/* <TableCell align="left">{po_number}</TableCell> */}
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
-                      {/* <TableCell align="left">{numbering}</TableCell> */}
-                      {/* <TableCell align="left">{qty}</TableCell> */}
+                      {/* <TableCell align="left">{id}</TableCell> */}
+                      {/* <TableCell align="left">{order_id}</TableCell> */}
+                      <TableCell align="left">{`${name}`}</TableCell>
+                      <TableCell align="right">{qty_loading}</TableCell>
+                      {/* <TableCell align="left">{color}</TableCell> */}
+		      {/* <TableCell align="left">{numbering}</TableCell>
+		      <TableCell align="left">{qty_loading}</TableCell> */}
                     </TableRow>
                   );
                 })}
@@ -225,6 +226,21 @@ function TableD({ list, placeHolder, selected, setSelected}) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      <Box
+      sx={{
+        ...(selected.length > 0 && {
+          color: 'primary.main',
+          bgcolor: 'primary.lighter'
+        })
+      }}
+      >
+        {selected.length > 0 ? (
+          <Typography component="div" variant="subtitle1" py={"1em"} px={2}>
+            {selected.length} selected
+          </Typography>): null
+        }
+      </Box>
     </div>
   )
 }

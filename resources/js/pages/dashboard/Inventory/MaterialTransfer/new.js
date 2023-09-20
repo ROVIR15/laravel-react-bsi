@@ -41,6 +41,14 @@ const GridData = styled('div')(({ theme }) => ({
 function MaterialTransfer() {
   const { user } = useAuth();
 
+  const pages = !isEmpty(user) ? user?.pages : [];
+
+  const disableSeeRequest = pages.some(function (item) {
+    return (item.pages_id === 12);
+  });
+
+  console.log(disableSeeRequest)
+
   const formik = useFormik({
     initialValues: {
       to_facility_id: 0,
@@ -164,6 +172,21 @@ function MaterialTransfer() {
     });
   });
 
+  const handleSaveAndConfirmation = () => {
+    try {
+      let _payload = { ...values, items, user_id: user.id };
+      API.postMaterialTransferSupermarket(_payload, function (res) {
+        if (!res) return;
+        if (!res.success) throw new Error('failed');
+        else {
+          alert('success');
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   // formik
   const {
     errors,
@@ -223,7 +246,7 @@ function MaterialTransfer() {
 
   return (
     <FormikProvider value={formik}>
-      <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} />
+      <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} params={values.from_facility_id}/>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Paper elevation={2} style={{ padding: '2em' }}>
           <Grid container spacing={2}>
@@ -355,9 +378,21 @@ function MaterialTransfer() {
                 variant="contained"
                 loading={isSubmitting}
                 sx={{ m: 1 }}
+                disabled={disableSeeRequest}
               >
                 Save
               </LoadingButton>
+
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ m: 1 }}
+                onClick={handleSaveAndConfirmation}
+                disabled={!disableSeeRequest && (values.from_facility_id !== 20)}
+              >
+                Save and Transfer
+              </Button>
+
               <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                 Cancel
               </Button>

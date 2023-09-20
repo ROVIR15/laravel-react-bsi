@@ -2,7 +2,7 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import {styled} from '@mui/material';
+import { styled } from '@mui/material';
 
 import { Icon } from '@iconify/react';
 import SquareOutline from '@iconify/icons-eva/square-outline';
@@ -21,10 +21,10 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  p: 4,
+  p: 4
 };
 
-const StyledCard = styled(Card)(({theme}) => ({
+const StyledCard = styled(Card)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -33,30 +33,43 @@ const StyledCard = styled(Card)(({theme}) => ({
   [theme.breakpoints.down('md')]: {
     maxWidth: '320px'
   }
-}))
+}));
 
-export default function BasicModal({ order_id, so_id, payload, open, options, handleClose, selected, setSelected}) {
-  const [value, setValue] = React.useState([])
+export default function BasicModal({
+  order_id,
+  so_id,
+  payload,
+  open,
+  options,
+  handleClose,
+  selected,
+  setSelected
+}) {
+  const [value, setValue] = React.useState([]);
   const loading = openX && options.length === 0;
   const [openX, setOpenX] = React.useState(false);
 
   React.useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
+    function isEmpty(array) {
+      if (!Array.isArray(array)) return true;
       return !array.length;
     }
 
-    API.getMonitoringCutting(`?sales-order=${order_id}`, (res) => {
-		if(!res) return
-		if(!res.data) {
-        setValue([]);
-      } else {
-        let ras = optionSupermarket(res.data);
-        ras = ras.filter(item => item.qty_loading > 0);
-        setValue(ras)
-      }
-    });
-  }, [order_id])
+    try {
+      API.getMonitoringCutting(`?sales-order=${order_id}`, (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setValue([]);
+        } else {
+          let ras = optionSupermarket(res.data);
+          ras = ras.filter((item) => item.qty_loading > 0);
+          setValue(ras);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [order_id]);
 
   return (
     <div>
@@ -68,14 +81,14 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
         <StyledCard sx={style}>
           <Stack direction="row" justifyContent="space-between">
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Product 
+              Select Product
             </Typography>
             <IconButton onClick={handleClose} color="error">
-              <Icon icon={closeCircle}/>
+              <Icon icon={closeCircle} />
             </IconButton>
           </Stack>
-          
-          <Table list={value} selected={selected} setSelected={setSelected}/>
+
+          <Table list={value} selected={selected} setSelected={setSelected} />
         </StyledCard>
       </Modal>
     </div>

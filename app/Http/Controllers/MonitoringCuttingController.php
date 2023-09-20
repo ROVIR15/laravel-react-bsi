@@ -54,6 +54,46 @@ class MonitoringCuttingController extends Controller
       return response()->json(['data' => $query]);
     }
 
+    public function getCuttingSupermarket(Request $request)
+    {
+      $param = $request->has('sales-order');
+      $order_id = $request->query('sales-order');
+      $fromDate = $request->query('fromDate');
+      $thruDate = $request->query('thruDate');
+      $query = [];
+
+      if(empty($fromDate) || empty($thruDate)){
+        $thruDate = date('Y-m-d');
+        $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+        $fromDate = date_format($fromDate, 'Y-m-d');
+      }
+
+      try {
+        if($param){
+          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, sum(output) as output')
+                  ->groupBy('po_number', 'sales_order_id', 'order_item_id')
+                  ->with('sales_order', 'product_feature')
+                  ->with(['supermarket' => function ($query) use ($order_id){
+                    return $query->where('order_id', $order_id);
+                  }])
+                  ->where('order_id', $request->query('sales-order'))
+                  ->orderBy('date', 'desc')
+                  ->get();
+        } else {
+          $query = Cutting::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, output')
+                  ->with('sales_order', 'product_feature')
+                  ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+                  ->orderBy('id', 'desc')
+                  ->get();
+        }
+        
+      } catch (Throwable $th) {
+        return response()->json(['success' => false, 'error' => $th->getMessage()]);
+      }
+
+      return response()->json(['data' => $query]);
+    }    
+
     /**
      * Store a newly created resource in storage.
      *

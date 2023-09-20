@@ -9,6 +9,7 @@ export function isEmpty(array) {
 
 export function isEditCondition(array, id) {
   if (!array.length) console.error('Require an Array type');
+  if (array.length < 5) return false;
   if (array[4].valueOf() === undefined) return false;
   return parseInt(array[4]) === parseInt(id);
 }
@@ -814,6 +815,46 @@ export function optionSupermarket(array) {
       numbering: '',
       qty_loading:
         parseInt(output) - parseInt(sewing[0]?.total_output ? sewing[0]?.total_output : 0)
+    };
+    return res;
+  });
+
+  return arranged;
+}
+
+export function optionSupermarketV2(array) {
+  if (isEmpty(array)) return;
+
+  function check(param1, param2) {
+    if (isEmpty(param2)) return param1;
+    if (param1 === param2) return param1;
+    else return param2;
+  }
+
+  let arranged = array.map((x) => {
+    const {
+      id,
+      date,
+      order_id,
+      order_item_id,
+      sales_order_id,
+      po_number,
+      product_feature: { product, ...product_feature },
+      output,
+      supermarket
+    } = x;
+
+    let res = {
+      id,
+      date,
+      order_id,
+      order_item_id: check(order_item_id, supermarket[0]?.order_item_id),
+      sales_order_id,
+      product_feature_id: product_feature.id,
+      po_number: "23",
+      name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
+      qty_loading:
+        parseInt(output) - parseInt(supermarket[0]?.total_output ? supermarket[0]?.total_output : 0)
     };
     return res;
   });

@@ -25,7 +25,7 @@ const pages = [
   'request-for-quotation',
   'sales-order',
   'purchase-order',
-  'bom',
+  'costing',
   'invoice'
 ];
 

@@ -1360,13 +1360,13 @@ const main = {
         cb(err.response);
       });
   },
-  getBOMItemV4(costing_id, cb) {
+  getBOMItemV4(costing_id, params, cb) {
     if (!costing_id) {
       return;
     }
 
     axios
-      .get(uri + `/bom-item-alt-v4/${costing_id}`)
+      .get(uri + `/bom-item-alt-v4/${costing_id}` + params)
       .then(function (res) {
         cb(res.data);
       })
@@ -3272,6 +3272,18 @@ const main = {
         cb(err.response);
       });
   },
+
+  postMaterialTransferSupermarket(params, cb) {
+    axios
+      .post(uri + '/material-transfer-direct', { payload: params })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+
   getMaterialTransfer(params, cb) {
     axios
       .get(uri + '/material-transfer' + params)
@@ -3909,6 +3921,18 @@ const main = {
   getMonitoringCutting(param, cb) {
     if (!cb) return;
     const paramUri = '/monitoring-cutting' + `${param}`;
+    axios
+      .get(uri + paramUri)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getCuttingSupermarket(param, cb){
+    if(!cb) return
+    const paramUri = '/cutting-supermarket' + `${param}`;
     axios
       .get(uri + paramUri)
       .then(function (res) {

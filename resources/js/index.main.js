@@ -10,35 +10,35 @@ import TestRouter from './routes/auth.route';
 import ScrollToTop from './components/ScrollToTop';
 
 //Auth
-import { AuthProvider } from './context'
+import { AuthProvider } from './context';
 
 // Notistack
-import { SnackbarProvider } from 'notistack'
+import { SnackbarProvider } from 'notistack';
 import moment from 'moment';
 
-import './styles.css'
+import './styles.css';
+import { NotificationProvider } from './context/notification';
 
-function MainApp(){
-
-  moment.locale("id");
+function MainApp() {
+  moment.locale('id');
 
   return (
     <HelmetProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <ThemeConfig>
-              <ScrollToTop/>
-                <GlobalStyles/>
-              <TestRouter />
-            </ThemeConfig>
-          </AuthProvider>
-        </BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <ThemeConfig>
+            <ScrollToTop />
+            <GlobalStyles />
+            <TestRouter />
+          </ThemeConfig>
+        </AuthProvider>
+      </BrowserRouter>
     </HelmetProvider>
-  )
+  );
 }
 
 export default MainApp;
 
-if (document.getElementById('test-main-app')){
-  ReactDOM.render(<MainApp/>, document.getElementById('test-main-app'));
+if (document.getElementById('test-main-app')) {
+  ReactDOM.render(<MainApp />, document.getElementById('test-main-app'));
 }
