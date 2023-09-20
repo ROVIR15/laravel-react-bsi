@@ -46,7 +46,6 @@ export default function PPICChart() {
         if (!res.success) throw new Error('failed to load report');
         else {
           setRow(res.data);
-          console.log(res.data);
           // setTotalVal(total_array);
         }
       });

@@ -90,7 +90,7 @@ class NotificationLogger
                         }
                     }
                 }
-            } else if (in_array($routePart, ['material-transfer', 'material-transfer-realisation'])) {
+            } else if (in_array($routePart, ['material-transfer', 'material-transfer-realisation', 'material-transfer-direct'])) {
                 if ($response->status() === 200) {
                     $responseBody = $response->getContent();
                     $responseData = json_decode($responseBody);

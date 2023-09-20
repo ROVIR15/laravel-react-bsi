@@ -23,6 +23,7 @@ class OSRController extends Controller
             $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order')
                 ->whereHas('man_plan', function ($query) use ($month, $year) {
                     return $query
+                        ->where('month', '=', $month)
                         ->where('year', '=', $year);
                 })
                 ->get()
