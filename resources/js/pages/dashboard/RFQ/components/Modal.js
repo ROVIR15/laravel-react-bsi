@@ -43,7 +43,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 export default function BasicModal({ payload, open, handleClose, items, setItems, update }) {
   const [options, setOptions] = React.useState([]);
-  const loading = open && options.length === 0;
+  const loading = open;
 
   React.useEffect(() => {
     let active = true;
