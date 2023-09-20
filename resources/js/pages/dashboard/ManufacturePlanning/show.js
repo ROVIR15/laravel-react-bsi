@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Page from '../../../components/Page';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -18,6 +18,12 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  TableContainer,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
   Typography,
   Select,
   TextField,
@@ -44,6 +50,7 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-2-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moment from 'moment';
+import downloadIcon from '@iconify/icons-eva/download-fill';
 
 //utils
 import { countWorkingDays } from './utils';
@@ -238,20 +245,21 @@ function Goods() {
                 editedColumnName === 'line_start_date' ||
                 editedColumnName === 'line_end_date'
               ) {
-
-                let date = moment(new Date(editRowData[editedColumnName].value)).format('YYYY-MM-DD');
+                let date = moment(new Date(editRowData[editedColumnName].value)).format(
+                  'YYYY-MM-DD'
+                );
                 _payloadToBePosted = {
                   [editedColumnName]: date
                 };
 
                 return {
                   ...row,
-                  [editedColumnName]: moment(date).format('YYYY-MM-DD'),
+                  [editedColumnName]: moment(date).format('YYYY-MM-DD')
                 };
               } else {
                 _payloadToBePosted = {
                   [editedColumnName]: editRowData[editedColumnName].value
-                }
+                };
                 return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
               }
             } else {
@@ -281,6 +289,8 @@ function Goods() {
   const GoodsSchema = Yup.object().shape({
     monthYear: Yup.date().required('is required')
   });
+
+  const [OSRRows, setOSRRows] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -315,6 +325,8 @@ function Goods() {
   }, [id]);
 
   const handleUpdateData = () => {
+    let monthYear;
+
     try {
       API.getAManufacturePlanning(id, (res) => {
         if (!res) return undefined;
@@ -361,9 +373,17 @@ function Goods() {
           setCollected(result);
           setItems(payload);
 
-          let monthYear = `${res?.year}-${res?.month}`;
+          monthYear = `${res?.year}-${res?.month}`;
+
+          API.getOSRPPIC(`?monthYear=${monthYear}`, function (res) {
+            if (!res) return;
+            if (!res.success) throw new Error('failed to load report');
+            else {
+              setOSRRows(res.data);
+            }
+          });
           monthYear = moment(monthYear).format('YYYY-MM');
-          console.log(monthYear);
+
           setFieldValue('monthYear', monthYear);
         }
       });
@@ -372,9 +392,39 @@ function Goods() {
     }
   };
 
-  const handleMultiSelect = (name, value) => {
-    setFieldValue(name, value);
-  };
+  const xlsRef = useRef(null);
+
+  const handleDownload = React.useCallback(() => {
+    let downloadLink;
+    const dataType = 'application/vnd.ms-excel';
+    const tableSelect = xlsRef.current;
+
+    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+
+    // Specify file name
+    const filename = 'laporan mutasi barang' + '.xls';
+
+    // Create download link element
+    downloadLink = document.createElement('a');
+
+    document.body.appendChild(downloadLink);
+
+    if (navigator.msSaveOrOpenBlob) {
+      const blob = new Blob(['\ufeff', tableHTML], {
+        type: dataType
+      });
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      // Create a link to the file
+      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+
+      // Setting the file name
+      downloadLink.download = filename;
+
+      //triggering the function
+      downloadLink.click();
+    }
+  }, [xlsRef]);
 
   return (
     <Page>
@@ -428,6 +478,15 @@ function Goods() {
                   </Grid>
 
                   <Grid item xs={12}>
+                    <Button
+                      size="large"
+                      variant="contained"
+                      startIcon={<Icon icon={downloadIcon} />}
+                      onClick={handleDownload}
+                    >
+                      Download
+                    </Button>
+
                     <LoadingButton
                       size="large"
                       type="submit"
@@ -447,6 +506,104 @@ function Goods() {
           </Form>
         </FormikProvider>
       </Container>
+
+      <TableContainer component={Paper} ref={xlsRef} style={{ display: 'none' }}>
+        <Table
+          className="wk_table wk_style1 wk_border"
+          sx={{ minWidth: 650, margin: 2 }}
+          size="small"
+          aria-label="a dense table"
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell className="wk_primary_color wk_gray_bg" colSpan={10} />
+              <TableCell className="wk_primary_color wk_gray_bg" align="center" colSpan={13}>
+                Bulan
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="wk_primary_color wk_gray_bg">Nama Buyer</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Gambar</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Nama Pesanan</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Order Qty</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Line yg Digunakan</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Jumlah Mesin</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Tanggal Mulai Produksi</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">
+                Tanggal Selesai Produksi
+              </TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Target Kecepatan Harian</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Jumlah Hari Kerja</TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg">Output Saat Ini</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Januari</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Februari</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Maret</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">April</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Mei</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Juni</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Juli</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Agustus</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">September</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Oktober</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">November</TableCell>
+              <TableCell className="wk_primary_color wk_black_bg">Desember</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {!isEmpty(OSRRows) ? (
+              OSRRows.map((_row) => (
+                <TableRow
+                  key={_row.sold_to}
+                  sx={{
+                    '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
+                  }}
+                >
+                  <TableCell component="th" align="left">
+                    {_row?.buyer_name}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    <img src={_row?.imageUrl} alt="Image" />
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {_row?.sales_order_name}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {`${_row?.order_qty} pcs`}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {_row?.line}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {_row?.number_machines}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {moment(_row?.line_start_date).format('DD MMMM YYYY')}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {moment(_row?.line_end_date).format('DD MMMM YYYY')}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {`${_row?.anticipated_pcs_per_line_output} pcs/hari`}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {`${countWorkingDays(_row?.line_start_date, _row?.line_end_date)} hari`}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    {`${0} pcs`}
+                  </TableCell>
+                  {_row?.expected_output.map((_d) => (
+                    <TableCell component="th" align="right">
+                      {_d.value}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableCell>No Data</TableCell>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Page>
   );
 }
