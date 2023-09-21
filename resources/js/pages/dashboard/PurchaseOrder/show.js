@@ -371,11 +371,11 @@ function SalesOrder() {
     setItems(c);
   };
 
-  const editableUser = user.id === 2 ? true : false;
-  const roles = !isEmpty(user) ? user?.roles : [];
-  const editableCondition = roles.some(function (item) {
-    return (item.name === purchase_order_id && item.review);
-  });
+  const editableUser = user.id !== 2 ? true : false;
+  const roles = !isEmpty(user) ? user?.role : [];
+  const editableCondition = isArray(roles) ? (roles.some(function (item) {
+    return (item.name === 'purchase-order' && item.review);
+  })) : false;
 
   const columns = useMemo(
     () => [
