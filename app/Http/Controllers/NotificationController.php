@@ -48,4 +48,20 @@ class NotificationController extends Controller
             'success' => true
         ], 200);
     }
+
+    public function markAllAsRead($userId)
+    {
+        try {
+            Notification::where('user_id', $userId)->update([ 'is_read' => true ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true
+        ], 200);
+    }
 }

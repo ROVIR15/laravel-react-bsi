@@ -37,7 +37,9 @@ import { mockImgAvatar } from '../../utils/mockImages';
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
 
-import API from '../../helpers'
+import useAuth from '../../context';
+
+import API from '../../helpers';
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
@@ -189,12 +191,15 @@ function NotificationItem({ notification, refresh }) {
 }
 
 export default function NotificationsPopover({ content = [] }) {
+  const { user } = useAuth();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   let notifications = content;
   const read = notifications.filter((item) => item.is_read === true);
   const unread = notifications.filter((item) => item.is_read === false);
   const totalUnRead = unread.length;
+
+  const { getNewNotification } = useNotification();
 
   const handleOpen = () => {
     setOpen(true);
@@ -205,15 +210,18 @@ export default function NotificationsPopover({ content = [] }) {
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false
-      }))
-    );
-  };
+    try {
+      API.markAllAsRead(user?.id, function(res) {
+        if(!res) return;
+        if(!res.success) return;
+        else console.log('mark as all');
+      })  
+    } catch (err) {
+      alert(err);
+    }
 
-  const { getNewNotification } = useNotification();
+    getNewNotification();
+  };
 
   return (
     <>
@@ -247,7 +255,7 @@ export default function NotificationsPopover({ content = [] }) {
             </Typography>
           </Box>
 
-          <Tooltip title="Get New Notification">
+          <Tooltip title="Get new notification">
             <IconButton color="primary" onClick={getNewNotification}>
               <Icon icon={refreshOutline} width={20} height={20} />
             </IconButton>

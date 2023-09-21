@@ -3374,7 +3374,7 @@ const main = {
       });
   },
   getInventoryStock_alt(params, cb) {
-    if(!params) return;
+    if (!params) return;
     axios
       .get(uri + '/current-stock' + params)
       .then(function (res) {
@@ -3932,8 +3932,8 @@ const main = {
         cb(err.response);
       });
   },
-  getCuttingSupermarket(param, cb){
-    if(!cb) return
+  getCuttingSupermarket(param, cb) {
+    if (!cb) return;
     const paramUri = '/cutting-supermarket' + `${param}`;
     axios
       .get(uri + paramUri)
@@ -4808,9 +4808,9 @@ const main = {
       });
   },
   updateNotif(notif_id, _data, cb) {
-    if(!_data) return
+    if (!_data) return;
     axios
-      .put(uri + '/notification/' + notif_id,  { payload: _data })
+      .put(uri + '/notification/' + notif_id, { payload: _data })
       .then(function (res) {
         cb(res.data);
       })
@@ -4818,15 +4818,25 @@ const main = {
         cb(err.response);
       });
   },
-  getProductFeatureFinishedGoods(cb){
+  getProductFeatureFinishedGoods(cb) {
     axios
-    .get(uri + '/final-goods')
-    .then(function (res) {
-      cb(res.data);
-    })
-    .catch(function (err) {
-      cb(err.response);
-    });
+      .get(uri + '/final-goods')
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  markAllAsRead(user_id, cb) {
+    axios
+      .put(uri + '/notification-mark-all/' + user_id)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
   }
 };
 export default main;
