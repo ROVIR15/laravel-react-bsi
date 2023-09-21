@@ -151,7 +151,7 @@ export default function PPICChart() {
                   {`${countWorkingDays(_row.line_start_date, _row.line_end_date)} hari`}
                 </TableCell>
                 <TableCell component="th" align="left">
-                  {`${0} pcs`}
+                  {`${_row?.output} pcs`}
                 </TableCell>
                 {_row.expected_output.map((_d) => (
                   <TableCell component="th" align="right">

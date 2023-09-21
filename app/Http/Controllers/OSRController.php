@@ -20,7 +20,7 @@ class OSRController extends Controller
             $month = date_format($monthYear, 'm');
             $year = date_format($monthYear, 'Y');
 
-            $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order')
+            $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order', 'ckck')
                 ->whereHas('man_plan', function ($query) use ($month, $year) {
                     return $query
                         ->where('month', '=', $month)
@@ -30,6 +30,8 @@ class OSRController extends Controller
                 ->map(function ($query) {
 
                     $goods = count($query->sales_order->sum) ? $query->sales_order->sum[0]->product_feature->product->goods : null;
+                    $totalOutput = count($query->ckck) ? $query->ckck[0]->total_output : 0;
+
                     return [
                         'month' => $query->man_plan->month,
                         'id' => $query->id,
@@ -44,7 +46,8 @@ class OSRController extends Controller
                         'line' => $query->facility->name,
                         'number_of_machines' => $query->number_of_machines,
                         'anticipated_pcs_per_line_output' => $query->anticipated_pcs_per_line_output,
-                        'expected_output' => $query->expected_output
+                        'expected_output' => $query->expected_output,
+                        'output' => $totalOutput
                     ];
                 });
 
