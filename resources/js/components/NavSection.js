@@ -7,7 +7,15 @@ import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
 import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill';
 // material
 import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton, Typography } from '@mui/material';
+import {
+  Box,
+  List,
+  Collapse,
+  ListItemText,
+  ListItemIcon,
+  ListItemButton,
+  Typography
+} from '@mui/material';
 // material labs
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
@@ -37,7 +45,7 @@ const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props
   })
 );
 
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -48,37 +56,30 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     paddingRight: theme.spacing(1),
     fontWeight: theme.typography.fontWeightMedium,
     '&.Mui-expanded': {
-      fontWeight: theme.typography.fontWeightRegular,
+      fontWeight: theme.typography.fontWeightRegular
     },
     '&:hover': {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.action.hover
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
       backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      color: 'var(--tree-view-color)',
+      color: 'var(--tree-view-color)'
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
-      color: 'inherit',
-    },
+      color: 'inherit'
+    }
   },
   [`& .${treeItemClasses.group}`]: {
     marginLeft: 0,
     [`& .${treeItemClasses.content}`]: {
-      paddingLeft: theme.spacing(2),
-    },
-  },
+      paddingLeft: theme.spacing(2)
+    }
+  }
 }));
 
 function StyledTreeItem(props) {
-  const {
-    bgColor,
-    color,
-    labelIcon: LabelIcon,
-    labelInfo,
-    labelText,
-    ...other
-  } = props;
+  const { bgColor, color, labelIcon: LabelIcon, labelInfo, labelText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
@@ -95,7 +96,7 @@ function StyledTreeItem(props) {
       }
       style={{
         '--tree-view-color': color,
-        '--tree-view-bg-color': bgColor,
+        '--tree-view-bg-color': bgColor
       }}
       {...other}
     />
@@ -107,9 +108,8 @@ StyledTreeItem.propTypes = {
   color: PropTypes.string,
   labelIcon: PropTypes.elementType,
   labelInfo: PropTypes.string,
-  labelText: PropTypes.string.isRequired,
+  labelText: PropTypes.string.isRequired
 };
-
 
 const ListItemIconStyle = styled(ListItemIcon)({
   width: 22,
@@ -170,34 +170,34 @@ function NavItem({ item, active }) {
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {children.map((item) => {
-              const { title, path, disabled} = item;
+              const { title, path, disabled } = item;
               const isActiveSub = active(path);
-              
-              if(disabled) {
+
+              if (disabled) {
                 return (
-                <ListItemStyle>
-                  <ListItemIconStyle>
-                    <Box
-                      component="span"
-                      sx={{
-                        width: 4,
-                        height: 4,
-                        display: 'flex',
-                        borderRadius: '50%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'text.disabled',
-                        transition: (theme) => theme.transitions.create('transform'),
-                        ...(isActiveSub && {
-                          transform: 'scale(2)',
-                          bgcolor: 'primary.main'
-                        })
-                      }}
-                    />
-                  </ListItemIconStyle>
-                  <ListItemText disableTypography primary={title} />
-                </ListItemStyle>                  
-                )
+                  <ListItemStyle>
+                    <ListItemIconStyle>
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 4,
+                          height: 4,
+                          display: 'flex',
+                          borderRadius: '50%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: 'text.disabled',
+                          transition: (theme) => theme.transitions.create('transform'),
+                          ...(isActiveSub && {
+                            transform: 'scale(2)',
+                            bgcolor: 'primary.main'
+                          })
+                        }}
+                      />
+                    </ListItemIconStyle>
+                    <ListItemText disableTypography primary={title} />
+                  </ListItemStyle>
+                );
               }
               return (
                 <ListItemStyle
@@ -263,6 +263,16 @@ export default function NavSection({ navConfig, ...other }) {
   return (
     <Box {...other}>
       <List disablePadding>
+        <NavItem
+          key="Home"
+          item={{
+            title: 'Home',
+            name: 'home',
+            path: '/dashboard'
+          }}
+          active={match}
+        />
+
         {navConfig.map((item) => (
           <NavItem key={item.title} item={item} active={match} />
         ))}

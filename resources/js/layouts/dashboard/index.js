@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 // material
+import { Stack } from '@mui/material'
 import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
@@ -12,6 +13,7 @@ import useRealtime from '../../context/testing-realtime';
 import { parseJSON } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import { isEmpty } from 'lodash';
+import OSRPPIC from './OSRPPIC.general';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -47,34 +49,33 @@ export default function DashboardLayout() {
   const { enqueueSnackbar } = useSnackbar();
 
   mqttSubscribe('general');
-  
-  useEffect(() => {
 
-    if(isEmpty(payload)) return;
+  useEffect(() => {
+    if (isEmpty(payload)) return;
     enqueueSnackbar(payload?.message);
-    navigator.serviceWorker.ready.then(function(registration) {
+    navigator.serviceWorker.ready.then(function (registration) {
       registration.showNotification(payload?.message);
     });
-
-  }, [payload])
+  }, [payload]);
 
   useEffect(() => {
-    if (!("Notification" in window)) {
-      console.log("Browser does not support desktop notification");
+    if (!('Notification' in window)) {
+      console.log('Browser does not support desktop notification');
     } else {
       Notification.requestPermission();
     }
-  }, [])
+  }, []);
 
-  function isWelcoming(){
-    if(pathname.split('/').length === 2){
+  function isWelcoming() {
+    if (pathname.split('/').length === 2) {
       return (
-        <Welcoming />
-      )  
+        <Stack direction="column">
+          <Welcoming />
+          <OSRPPIC />
+        </Stack>
+      );
     } else {
-      return (
-        <Outlet/> 
-      )
+      return <Outlet />;
     }
   }
 
@@ -82,9 +83,7 @@ export default function DashboardLayout() {
     <RootStyle>
       <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
-      <MainStyle>
-        {loadingInitial ? null : isWelcoming()}
-      </MainStyle>
+      <MainStyle>{loadingInitial ? null : isWelcoming()}</MainStyle>
     </RootStyle>
   );
 }
