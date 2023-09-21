@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+
 use App\Http\Resources\Product\ProductFeature;
 use Illuminate\Http\Request;
 use App\Models\Manufacture\ManufacturePlanningItems;
@@ -20,7 +22,13 @@ class OSRController extends Controller
             $month = date_format($monthYear, 'm');
             $year = date_format($monthYear, 'Y');
 
-            $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order', 'ckck')
+            $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order')
+                ->with([ 'sewing' => function($query) use ($month, $year){
+                    return $query
+                    ->select('sales_order_id', 'order_item_id', 'facility_id', 'date', DB::raw('sum(output) as total_output, avg(output) as average_output, min(date) as real_start_date, max(date) as real_end_date'))
+                    ->groupBy('facility_id', 'sales_order_id')            
+                    ->whereMonth('date', $month)->whereYear('date', $year);
+                }])
                 ->whereHas('man_plan', function ($query) use ($month, $year) {
                     return $query
                         ->where('month', '=', $month)
