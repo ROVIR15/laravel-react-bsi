@@ -52,7 +52,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { PurchaseOrderSchema } from '../../../helpers/FormerSchema';
 import { _partyAddress } from '../../../helpers/data';
-import { isEmpty } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { fCurrency } from '../../../utils/formatNumber';
 import LoadingPage from '../../../components/LoadingPage';
