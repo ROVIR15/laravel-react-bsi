@@ -38,7 +38,7 @@ function LoadingPage() {
         <Box sx={{ margin: '0 1em' }}>
           <img src="/data_file/3d-waiting.png" alt="welcome" sx={{ width: '1em' }} />
         </Box>
-        <Typography variant="h2"> Hold on, we are working to store the costing...</Typography>
+        <Typography variant="h2"> Hold on, we are working to store your data...</Typography>
       </Stack>
 
       <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />

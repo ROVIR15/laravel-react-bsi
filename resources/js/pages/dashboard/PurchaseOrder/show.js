@@ -263,7 +263,8 @@ function SalesOrder() {
     handleSubmit,
     setValues,
     getFieldProps,
-    setFieldValue
+    setFieldValue,
+    setSubmitting
   } = formik;
 
   const deleteData = useCallback((id) => () => {
