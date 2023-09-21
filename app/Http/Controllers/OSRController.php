@@ -73,7 +73,8 @@ class OSRController extends Controller
                     'line_start_date' => $group[0]['line_start_date'],
                     'line_end_date' => $group[0]['line_end_date'],
                     'anticipated_pcs_per_line_output' => (int)$group[0]['anticipated_pcs_per_line_output'],
-                    'expected_output' => []
+                    'expected_output' => [],
+                    'output' => $group[0]['output']
                 ];
 
                 // Loop through the months and set the expected output values
