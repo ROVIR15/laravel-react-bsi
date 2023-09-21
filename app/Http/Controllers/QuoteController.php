@@ -46,21 +46,21 @@ class QuoteController extends Controller
     $month = date_format($monthYear, 'm');
     $year = date_format($monthYear, 'Y');
 
-      switch ($type) {
-        case 'SO':
-          # code...
-          switch ($level) {
-            case 'approve':
-              # code...
-              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
-                $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-              })
-                ->whereYear('created_at', '=', $year)
-                ->whereMonth('created_at', '=', $month)
-                ->get();
-              // return response()->json($query);
-              return new QuoteViewCollection($query);
-              break;
+    switch ($type) {
+      case 'SO':
+        # code...
+        switch ($level) {
+          case 'approve':
+            # code...
+            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
+              $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+            })
+              ->whereYear('created_at', '=', $year)
+              ->whereMonth('created_at', '=', $month)
+              ->get();
+            // return response()->json($query);
+            return new QuoteViewCollection($query);
+            break;
 
             case 'review':
               # code...
