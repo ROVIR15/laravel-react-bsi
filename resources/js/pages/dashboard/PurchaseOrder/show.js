@@ -371,13 +371,19 @@ function SalesOrder() {
     setItems(c);
   };
 
+  const editableUser = user.id === 2 ? true : false;
+  const roles = !isEmpty(user) ? user?.roles : [];
+  const editableCondition = roles.some(function (item) {
+    return (item.name === purchase_order_id && item.review);
+  });
+
   const columns = useMemo(
     () => [
       { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
       { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
-      { field: 'unit_price', headerName: 'Unit Price', editable: false },
+      { field: 'unit_price', headerName: 'Unit Price', editable: editableUser || editableCondition },
       { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
       { field: 'description', headerName: 'Description', type: 'text', width: 400, editable: true },
       {
