@@ -402,6 +402,11 @@ const sidebarConfig = [
     path: '/dashboard/monitoring/supermarket'
   },
   {
+    name: 'current-stock',
+    title: 'Cek Stok',
+    path: '/dashboard/current-stock'
+  },
+  {
     title: 'Facility',
     name: 'facility',
     path: '/dashboard/facility'

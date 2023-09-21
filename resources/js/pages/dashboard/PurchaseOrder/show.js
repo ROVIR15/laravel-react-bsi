@@ -299,7 +299,7 @@ function SalesOrder() {
     (model) => {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
-      if (editedIds.length === 0 && user?.id === 11 && user?.id===2) {
+      if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
@@ -321,20 +321,16 @@ function SalesOrder() {
           case 'shipment_estimated':
             let date = formatDate(editRowData[editedColumnName].value);
             data[editedColumnName] = date;
-            API.updatePurchaseOrderItem(editedIds, data, function (res) {
-              alert(JSON.stringify(res));
-            });
             break;
 
           default:
             data[editedColumnName] = editRowData[editedColumnName].value;
-            API.updatePurchaseOrderItem(editedIds, data, function (res) {
-              alert(JSON.stringify(res));
-            });
             break;
         }
         // update on firebase
-
+        API.updatePurchaseOrderItem(editedIds, data, function (res) {
+          alert(JSON.stringify(res));
+        });
       } else {
         setEditRowData(model[editedIds[0]]);
       }

@@ -487,6 +487,10 @@ export default function TestRouter() {
           ]
         },
         {
+          path: 'current-stock',
+          element: <DisplayInventoryItem/>
+        },
+        {
           path: 'laporan-kite/laporan-barang-masuk',
           element: <Inbound/>
         },
