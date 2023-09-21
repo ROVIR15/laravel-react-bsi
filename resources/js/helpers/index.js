@@ -842,6 +842,7 @@ const main = {
   getQuoteByPO(cb) {
     axios
       .get(uri + '/quote?type=PO')
+      // .get(uri + '/quote?type=PO&status=Review')
       .then(function (res) {
         cb(res.data);
       })
@@ -3372,9 +3373,10 @@ const main = {
         cb(err.response);
       });
   },
-  getInventoryStock_alt(cb) {
+  getInventoryStock_alt(params, cb) {
+    if(!params) return;
     axios
-      .get(uri + '/current-stock')
+      .get(uri + '/current-stock' + params)
       .then(function (res) {
         cb(res.data);
       })

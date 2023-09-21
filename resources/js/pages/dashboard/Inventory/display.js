@@ -10,10 +10,12 @@ import {
 } from '@mui/material';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
-import { ListHead, ListToolbar } from '../../../components/Table';
+import { ListHead } from '../../../components/Table';
+import ListToolbar from './components/ListToolbar';
 import MoreMenu from './components/MoreMenu';
 import ScrapModal from './components/ScrapCard';
 import API from '../../../helpers'; // Assume API methods are defined in helpers/api.js
+import { isArray, isEmpty, isEqual } from 'lodash';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
@@ -32,12 +34,17 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const filteredArray = array.filter((item) => {
-    const itemName = item.item_name && item.item_name.toString().toLowerCase();
-    return itemName && itemName.indexOf(query.toLowerCase()) !== -1;
+  console.log(array)
+  const stabilizedThis = array?.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
   });
-  filteredArray.sort(comparator);
-  return filteredArray;
+  if (query) {
+    return filter(array, (_b) => _b.item_name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  }
+  return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayInventory({ placeHolder }) {
@@ -47,29 +54,61 @@ function DisplayInventory({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
   const [orderBy, setOrderBy] = useState('item_name');
-  const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [modalManageScrap, setModalManageScrap] = useState(false);
 
-  useEffect(() => {
-    const fetchData = () => {
+  const fetchData = () => {
+    if(isEqual(filterCosting, 0) && isEqualfilterFacility,0) alert('Please select cbd/sales-order and facility');
+    else {
+      let param = `?costing=${filterCosting}&facility=${filterFacility}`
       try {
-        API.getInventoryStock_alt((res) => {
-          if(!res) return
-          if(!res.data) throw new Error('failed')
-          else setData(res.data)
-        })
+        API.getInventoryStock_alt(param, (res) => {
+          if (!res) return;
+          if (!res.data) throw new Error('failed');
+          else setData(res.data);
+        });
       } catch (error) {
+        setData([]);
         alert('Error fetching inventory data:', error);
-        console.error('Error fetching inventory data:', error);
         // Handle error
-      }
-    };
-
-    if (data.length === 0) {
-      fetchData();
+      }  
     }
-  }, [data]);
+  };
+  const [optionsFilter, setOptionsFilter] = useState([]);
+  const [optionsCosting, setCostingOptions] = useState([]);
+
+  useEffect(() => {
+    //get facility
+
+    try {
+      API.getFacility('', (res) => {
+        if (!res) return;
+        if (isEmpty(res.data)) {
+          setOptionsFilter([]);
+        } else {
+          let a = res.data.map(function (item) {
+            return {
+              id: item.id,
+              name: item.name,
+              facility_type: item.type.name
+            };
+          });
+          setOptionsFilter(a);
+        }
+      });
+
+      API.getCostingV2((res) => {
+        if (!res) return;
+        if (!res.data) {
+          setCostingOptions([]);
+        } else {
+          setCostingOptions(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, []);
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -112,13 +151,31 @@ function DisplayInventory({ placeHolder }) {
     setPage(0);
   };
 
+  const [filterName, setFilterName] = useState('');
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
     setPage(0);
   };
 
+  const [filterFacility, setFilterFacility] = useState(0);
+  const handleFilterFacility = (event) => {
+    setFilterFacility(event.target.value);
+    setPage(0);
+  };
+
+  const [filterCategory, setFilterCategory] = useState(0);
+  const handleFilterCategory = (event) => {
+    setFilterCategory(event.target.value);
+    setPage(0);
+  };
+
+  const [filterCosting, setFilterCosting] = useState(0);
+  const handleFilterCosting = (event) => {
+    setFilterCosting(event.target.value);
+    setPage(0);
+  };
+
   const handleOpenModal = (id) => {
-    console.log(id)
     setSelectedData(id);
     setModalManageScrap(true);
   };
@@ -138,10 +195,27 @@ function DisplayInventory({ placeHolder }) {
     <Card>
       <ScrapModal id={selectedData} modalOpen={modalManageScrap} onCloseModal={handleCloseModal} />
       <ListToolbar
+        // filter costing
+        filterCosting={filterCosting}
+        costingFilterActive={true}
+        onFilterCosting={handleFilterCosting}
+        costingList={optionsCosting}
+        // filter cateogry
+        categoryFilterActive={true}
+        filterCategory={filterCategory}
+        onFilterCategoryAndSub={handleFilterCategory}
+        // filter facility
+        facilityFilterActive={true}
+        filterFacility={filterFacility}
+        filterList={optionsFilter}
+        onFilterFacility={handleFilterFacility}
+        // name
         numSelected={selected.length}
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+
+        onGo={fetchData}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
@@ -178,7 +252,10 @@ function DisplayInventory({ placeHolder }) {
                       <TableCell align="left">{item_name}</TableCell>
                       <TableCell align="left">{current_stock}</TableCell>
                       <TableCell align="right">
-                        <MoreMenu scrapActive={true} handleOpenModalForScrap={() => handleOpenModal(id)} />
+                        <MoreMenu
+                          scrapActive={true}
+                          handleOpenModalForScrap={() => handleOpenModal(id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );

@@ -42,109 +42,109 @@ class QuoteController extends Controller
       $monthYear = date('Y-m-d');
     }
 
-    $query;
-
     $monthYear = date_create($monthYear);
     $month = date_format($monthYear, 'm');
     $year = date_format($monthYear, 'Y');
 
-    switch ($type) {
-      case 'SO':
-        # code...
-        switch ($level) {
-          case 'approve':
-            # code...
-            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
-              $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-            })
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
-            // return response()->json($query);
-            return new QuoteViewCollection($query);
-            break;
+      switch ($type) {
+        case 'SO':
+          # code...
+          switch ($level) {
+            case 'approve':
+              # code...
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
+                $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+              })
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
+              // return response()->json($query);
+              return new QuoteViewCollection($query);
+              break;
 
-          case 'review':
-            # code...
-            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
-              $query2->whereIn('status_type', ['Submit', 'Reject Approve', 'Reject Review']);
-            })
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
-            return new QuoteViewCollection($query);
-            break;
+            case 'review':
+              # code...
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->whereHas('status', function ($query2) {
+                $query2->whereIn('status_type', ['Submit', 'Reject Approve', 'Reject Review']);
+              })
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
+              return new QuoteViewCollection($query);
+              break;
 
-          case 'submit':
-            # code...
-            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
+            case 'submit':
+              # code...
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
 
-            return new QuoteViewCollection($query);
-            break;
+              return new QuoteViewCollection($query);
+              break;
 
-          default:
-            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->get();
-            return new QuoteViewCollection($query);
-        }
-      case 'PO':
-        # code...
-        switch ($level) {
-          case 'approve':
-            # code...
-            $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function ($query2) {
-              $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
-            })
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
+            default:
+              $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->get();
+              return new QuoteViewCollection($query);
+          }
+        case 'PO':
+          # code...
+          switch ($level) {
+            case 'approve':
+              # code...
+              $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function ($query2) {
+                $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
+              })
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
 
-            return new QuoteViewCollection($query);
-            break;
+              return new QuoteViewCollection($query);
+              break;
 
-          case 'review':
-            # code...
-            $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function ($query2) {
-              $query2->whereIn('status_type', ['Submit', 'Review', 'Reject Review']);
-            })
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
+            case 'review':
+              # code...
+              $query = Quote::with('sum', 'status')->where('quote_type', 'PO')->whereHas('status', function ($query2) {
+                $query2->whereIn('status_type', ['Submit', 'Review', 'Reject Review']);
+              })
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
 
-            return new QuoteViewCollection($query);
-            break;
+              return new QuoteViewCollection($query);
+              break;
 
-          case 'submit':
-            # code...
-            // $query = QuoteStatus::whereHas
-            $query = Quote::with('sum', 'status')
-              ->where('quote_type', 'PO')
-              ->whereYear('created_at', '=', $year)
-              ->whereMonth('created_at', '=', $month)
-              ->get();
+            case 'submit':
+              # code...
+              // $query = QuoteStatus::whereHas
+              $query = Quote::with('sum', 'status')
+                ->where('quote_type', 'PO')
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
+                ->get();
 
-            return new QuoteViewCollection($query);
-            break;
+              return new QuoteViewCollection($query);
+              break;
 
-          default:
-            $query = Quote::with('sum', 'status')
-              ->where('quote_type', 'PO')
-              ->get();
+            default:
+              $query = Quote::with('sum', 'status')
+                ->where('quote_type', 'PO')
+                ->get();
 
-            return new QuoteViewCollection($query);
-        }
-      default:
-        # code...
-        $query = Quote::with('sum')
-          ->whereYear('created_at', '=', $year)
-          ->whereMonth('created_at', '=', $month)
-          ->get();
+              return new QuoteViewCollection($query);
+          }
+        default:
+          # code...
+          $query = Quote::with('sum')
+            ->whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)
+            ->get();
 
-        // return new QuoteViewCollection($query);
-        break;
+          return new QuoteViewCollection($query);
+          break;
+      }
     }
+
 
     // return response()->json([ 'data' => $query, 'type' => $type, 'level' => $level]);
   }
@@ -214,7 +214,7 @@ class QuoteController extends Controller
         'title' => 'RF-Quotation Creation',
         'message' => 'The new quotation has been created #' . $quoteCreation->id,
         'link' => '/purchasing/request-for-quotation' . $quoteCreation->id,
-    ], 200);
+      ], 200);
     } else if ($param['quote_type'] === 'SO') {
       return response()->json([
         'success' => true,

@@ -27,6 +27,7 @@ use App\Http\Resources\Shipment\Shipment;
 use App\Models\Inventory\GoodsMovement;
 use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferShipmentRelationship;
+use App\Models\Manufacture\BOMItem;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
 
@@ -124,14 +125,28 @@ class InventoryController extends Controller
   public function InventoryStock(Request $request)
   {
     $paginate = $request->query('paginate');
+    $costingId = $request->query('costing');
+    $facilityId = $request->query('facility');
 
     try {
+
+      $_items = BOMItem::select('product_feature_id')
+        ->where('bom_id', $costingId)
+        ->get()
+        ->map(function ($item) {
+          return $item->product_feature_id;
+        });
+
       $query = ProductFeature::with('product', 'product_category')
-        ->with(['movement' => function ($query) {
-          return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))->where('facility_id', 3)->groupBy('product_feature_id');
+        ->with(['movement' => function ($query) use ($_items, $facilityId) {
+          return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))
+            ->where('facility_id', $facilityId)
+            ->whereIn('product_feature_id', $_items)
+            ->groupBy('product_feature_id');
         }])
         ->whereHas('movement')
-        ->get()->map(function ($query) {
+        ->get()
+        ->map(function ($query) {
           $product = $query->product ? $query->product : null;
           $goods = $product ? $product->goods : null;
 
@@ -145,9 +160,13 @@ class InventoryController extends Controller
               'brand' => $goods ? $goods->brand : null,
               'category_id' => $query->product_category->product_category_id,
               'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-              'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0,
+              'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0
             ];
-        });
+        })
+        ->filter(function ($item) {
+          return $item['current_stock'] > 0;
+        })
+        ->values();
     } catch (\Throwable $th) {
       //throw $th;
 

@@ -47,8 +47,6 @@ function MaterialTransfer() {
     return (item.pages_id === 12);
   });
 
-  console.log(disableSeeRequest)
-
   const formik = useFormik({
     initialValues: {
       to_facility_id: 0,
@@ -200,6 +198,8 @@ function MaterialTransfer() {
     setValues,
     getFieldProps
   } = formik;
+
+  console.log(disableSeeRequest, values.from_facility_id)
 
   /**
    * Handling Data Grid for a Component BOM
@@ -378,7 +378,7 @@ function MaterialTransfer() {
                 variant="contained"
                 loading={isSubmitting}
                 sx={{ m: 1 }}
-                disabled={disableSeeRequest}
+                disabled={!disableSeeRequest || (values.from_facility_id === 20)}
               >
                 Save
               </LoadingButton>
@@ -388,7 +388,7 @@ function MaterialTransfer() {
                 variant="contained"
                 sx={{ m: 1 }}
                 onClick={handleSaveAndConfirmation}
-                disabled={!disableSeeRequest && (values.from_facility_id !== 20)}
+                disabled={disableSeeRequest && !(values.from_facility_id === 20)}
               >
                 Save and Transfer
               </Button>

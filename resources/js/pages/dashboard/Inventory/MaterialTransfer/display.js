@@ -88,7 +88,7 @@ function Invoice({ placeHolder }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('id');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(15);
 
@@ -275,7 +275,7 @@ function Invoice({ placeHolder }) {
                         <TableCell align="left">{from_facility_name}</TableCell>
                         <TableCell align="left">{to_facility_name}</TableCell>
                         <TableCell align="left">{moment(date).format('LL')}</TableCell>
-                        <TableCell align="left">{moment(est_transfer_date).format('LL')}</TableCell>
+                        <TableCell align="left">{est_transfer_date}</TableCell>
                         <TableCell align="left">{`${fNumber(req_transfer_qty)} ${unit_measurement}`}</TableCell>
                         <TableCell align="left">{`${fNumber(res_transfer_qty)} ${unit_measurement}`}</TableCell>
                         <TableCell align="right">

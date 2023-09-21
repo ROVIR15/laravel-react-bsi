@@ -289,7 +289,6 @@ function BillofMaterial() {
   const editableUser = user.id === 2 ? true : false;
   const editableCondition = isEmpty(status) ? true : (status.status_type === 'Submit' ? true : false)
 
-  console.log(editableCondition)
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
