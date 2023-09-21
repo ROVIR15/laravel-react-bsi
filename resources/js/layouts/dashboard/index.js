@@ -69,7 +69,7 @@ export default function DashboardLayout() {
   function isWelcoming() {
     if (pathname.split('/').length === 2) {
       return (
-        <Stack direction="column">
+        <Stack direction="column" spacing={2}>
           <Welcoming />
           <OSRPPIC />
         </Stack>
