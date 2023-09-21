@@ -4807,6 +4807,17 @@ const main = {
         cb(err.response);
       });
   },
+  updateNotif(notif_id, _data, cb) {
+    if(!_data) return
+    axios
+      .put(uri + '/notification/' + notif_id,  { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getProductFeatureFinishedGoods(cb){
     axios
     .get(uri + '/final-goods')

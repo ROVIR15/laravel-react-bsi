@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Notification;
+use Exception;
 
 class NotificationController extends Controller
 {
@@ -19,19 +20,32 @@ class NotificationController extends Controller
         try {
             //code...
             $query = Notification::where('user_id', $userId)->orderBy('id', 'desc')->limit(10)->get();
-
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
                 'message' => 'Error message'
-            ], 500);            
+            ], 500);
         }
 
         return response()->json([
             'data' => $query
         ], 200);
-
     }
 
+    public function update($notifId, Request $request)
+    {
+        $param = $request->all()['payload'];
+        try {
+            Notification::find($notifId)->update($param);
+        } catch (Exception $th) {
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
 
+        return response()->json([
+            'success' => true
+        ], 200);
+    }
 }

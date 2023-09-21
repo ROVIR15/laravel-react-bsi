@@ -67,7 +67,7 @@
         'success' => true,
         'title' => 'Order Status Changed To ' . $orderStatusData['status_type'],
         'message' => 'Please check, the purchase order #' .$query[0]->id. ' has been changed',
-        'link' => '/purchasing/purchase-order/document/' . $orderStatusData['order_id']
+        'link' => '/purchasing/purchase-order/document/' . $query[0]->id
       ], 200);
     }
 

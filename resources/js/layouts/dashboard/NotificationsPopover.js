@@ -37,6 +37,7 @@ import { mockImgAvatar } from '../../utils/mockImages';
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
 
+import API from '../../helpers'
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
@@ -124,7 +125,8 @@ function renderContent(notification) {
   return {
     avatar: <img alt={notification.title} src={notification.avatar} />,
     title,
-    link: notification?.link
+    link: notification?.link,
+    id: notification?.id
   };
 }
 
@@ -132,11 +134,24 @@ NotificationItem.propTypes = {
   notification: PropTypes.object.isRequired
 };
 
-function NotificationItem({ notification }) {
-  const { avatar, title, link } = renderContent(notification);
+function NotificationItem({ notification, refresh }) {
+  const { avatar, title, link, id } = renderContent(notification);
 
+  const handleClick = () => {
+    try {
+      API.updateNotif(id, {is_read: true}, function(res){
+        if(!res) return;
+        if(!res?.success) throw new Error('error');
+        else refresh()
+      })        
+    } catch (error) {
+      alert(error)
+    }
+  }
+  
   return (
     <ListItemButton
+      onClick={handleClick}
       to={`/dashboard${link}`}
       disableGutters
       component={RouterLink}
@@ -272,7 +287,7 @@ export default function NotificationsPopover({ content = [] }) {
             }
           >
             {unread.map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+              <NotificationItem key={notification.id} notification={notification} refresh={getNewNotification}/>
             ))}
           </List>
         </Scrollbar>

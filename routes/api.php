@@ -321,6 +321,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('get-sales-order-item/{order_id}', 'OrderItemController@getFinishedGoodsOrderItemWithStock');
 
     Route::get('notification/{user_id}', 'NotificationController@showFew');
+    Route::put('notification/{notif_id}', 'NotificationController@update');
 });
 
 
