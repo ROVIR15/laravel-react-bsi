@@ -321,16 +321,20 @@ function SalesOrder() {
           case 'shipment_estimated':
             let date = formatDate(editRowData[editedColumnName].value);
             data[editedColumnName] = date;
+            API.updatePurchaseOrderItem(editedIds, data, function (res) {
+              alert(JSON.stringify(res));
+            });
             break;
 
           default:
             data[editedColumnName] = editRowData[editedColumnName].value;
+            API.updatePurchaseOrderItem(editedIds, data, function (res) {
+              alert(JSON.stringify(res));
+            });
             break;
         }
         // update on firebase
-        API.updatePurchaseOrderItem(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+
       } else {
         setEditRowData(model[editedIds[0]]);
       }
