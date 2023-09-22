@@ -34,6 +34,7 @@ class OSRController extends Controller
                         ->where('month', '=', $month)
                         ->where('year', '=', $year);
                 })
+                ->orderBy('facility_id', 'asc')
                 ->get()
                 ->map(function ($query) {
 
