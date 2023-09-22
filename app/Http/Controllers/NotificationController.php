@@ -36,7 +36,7 @@ class NotificationController extends Controller
     {
         $param = $request->all()['payload'];
         try {
-            Notification::find($notifId)->update($param);
+            Notification::find($notifId)->update([ 'is_read' => true ]);
         } catch (Exception $th) {
             return response()->json([
                 'success' => false,
