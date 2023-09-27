@@ -87,6 +87,7 @@ class MaterialTransferController extends Controller
 
             $_data = [];
             foreach ($param['items'] as $key) {
+                $_item_costing_id = isset($key['costing_item_id']) ? $key['costing_item_id'] : NULL;
                 array_push($_data, [
                     'material_transfer_id' => $_main['id'],
                     'costing_item_id' => $key['costing_item_id'],
@@ -134,10 +135,13 @@ class MaterialTransferController extends Controller
         try {
 
             foreach ($param as $key) {
+
+                $_item_costing_id = isset($key['costing_item_id']) ? $key['costing_item_id'] : NULL;
+
                 $mtr = MaterialTransferRealisation::create([
                     'material_transfer_id' => $key['material_transfer_id'],
                     'material_transfer_item_id' => $key['material_transfer_item_id'],
-                    'costing_item_id' => $key['costing_item_id'],
+                    'costing_item_id' => $_item_costing_id,
                     'transferred_qty' => $key['transferred_qty']
                 ]);
 
