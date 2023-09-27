@@ -16,6 +16,7 @@ import Test from '../../../../components/Test';
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
+import PinStatus from '../../../../components/PinStatus';
 
 import moment from 'moment';
 
@@ -68,17 +69,26 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query[1] !== 0)
+  if (query[1] !== 0 && query[2] !== 0)
     return filter(
       array,
       (_b) =>
         _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
-        _b.party_id === query[1]
+        _b.to_facility_id === query[1] &&
+        _b.status === query[2]
+    );
+  else if (query[1] !== 0 || query[2] !== 0)
+    return filter(
+      array,
+      (_b) =>
+        _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+        _b.to_facility_id === query[1] ||
+        _b.status === query[2]
     );
   else
     return filter(
       array,
-      (_b) => _b.serial_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+      (_b) => _b.user?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
     );
   // return stabilizedThis.map((el) => el[0]);
 }
@@ -92,14 +102,14 @@ function Invoice({ placeHolder }) {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(15);
 
-  // context 
-  const { user } = useAuth()
+  // context
+  const { user } = useAuth();
 
   const pages = !isEmpty(user) ? user?.pages : [];
 
-  const disableSeeRequest = pages.some(function(item){
-    return item.pages_id = 32;
-  })
+  const disableSeeRequest = pages.some(function (item) {
+    return (item.pages_id = 32);
+  });
 
   //----------------filter by month and year------------------//
   const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
@@ -110,11 +120,19 @@ function Invoice({ placeHolder }) {
   //----------------------------------------------------------//
 
   //----------------filter by buyer name----------------------//
-  const [filterBuyer, setFilterBuyer] = useState(0);
-  const [optionsBuyer, setOptionsBuyer] = useState([]);
+  const [filterFacility, setFilterFacility] = useState(0);
+  const [optionsFacility, setOptionsFacility] = useState([]);
 
   const handleBuyerFilter = (event) => {
-    setFilterBuyer(event.target.value);
+    setFilterFacility(event.target.value);
+  };
+  //------------------------------------------------------------//
+
+  //----------------filter by status----------------------//
+  const [filterStatus, setFilterStatus] = useState(0);
+
+  const handleFilterStatus = (event) => {
+    setFilterStatus(event.target.value);
   };
   //------------------------------------------------------------//
 
@@ -129,7 +147,23 @@ function Invoice({ placeHolder }) {
         if (!res.data) {
           setInvoice([]);
         } else {
-          setInvoice(res.data)
+          setInvoice(res.data);
+        }
+      });
+
+      API.getFacility('', (res) => {
+        if (!res) return;
+        if (isEmpty(res.data)) {
+          setOptionsFacility([]);
+        } else {
+          let a = res.data.map(function (item) {
+            return {
+              id: item.id,
+              name: item.name,
+              facility_type: item.type.name
+            };
+          });
+          setOptionsFacility(a);
         }
       });
     } catch (error) {
@@ -187,13 +221,13 @@ function Invoice({ placeHolder }) {
     event.preventDefault();
 
     try {
-      API.deleteMaterialTransfer(id, function(res){
-        if(!res) return;
-        if(!res.success) throw new Error('error');
+      API.deleteMaterialTransfer(id, function (res) {
+        if (!res) return;
+        if (!res.success) throw new Error('error');
         else {
-          alert(`data is deleted on id ${id}`)
+          alert(`data is deleted on id ${id}`);
         }
-      })
+      });
     } catch (error) {
       alert(error);
     }
@@ -205,7 +239,8 @@ function Invoice({ placeHolder }) {
 
   const filteredData = applySortFilter(invoice, getComparator(order, orderBy), [
     filterName,
-    filterBuyer
+    filterFacility,
+    filterStatus
   ]);
 
   const isDataNotFound = filteredData.length === 0;
@@ -214,6 +249,15 @@ function Invoice({ placeHolder }) {
     <>
       <Card>
         <ListToolbar
+          statusActive={true}
+          filterStatus={filterStatus}
+          onFilterStatus={handleFilterStatus}
+          //
+          statusActiveRequester={true}
+          optionsFacility={optionsFacility}
+          onFilterFacility={handleBuyerFilter}
+          filterFacility={filterFacility}
+          //
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -252,6 +296,35 @@ function Invoice({ placeHolder }) {
                       res_transfer_qty,
                       unit_measurement
                     } = row;
+
+                    let status_item = {
+                      status: '',
+                      color: '',
+                      backgroundColor: ''
+                    };
+                    if (status == 1) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Belum Diproses',
+                        color: 'rgb(183, 29, 24)',
+                        backgroundColor: 'rgba(255, 86, 48, 0.16)'
+                      };
+                    } else if (status == 2) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Selesai',
+                        color: 'rgb(27, 128, 106)',
+                        backgroundColor: 'rgba(54, 179, 126, 0.16)'
+                      };
+                    } else {
+                      status_item = {
+                        ...status_item,
+                        status: 'Diproses Sistem',
+                        color: 'rgb(183, 110, 0)',
+                        backgroundColor: 'rgba(255, 171, 0, 0.16)'
+                      };
+                    }
+
                     const isItemSelected = selected.indexOf(name) !== -1;
                     return (
                       <TableRow
@@ -265,19 +338,25 @@ function Invoice({ placeHolder }) {
                         <TableCell align="left">{id}</TableCell>
                         <TableCell align="left">{user}</TableCell>
                         <TableCell align="left">
-                          {status}
-                          {/* <PinStatus
-                            status={status.status}
-                            style={{ color: status.color, backgroundColor: status.backgroundColor }}
-                          /> */}
+                          <PinStatus
+                            status={status_item.status}
+                            style={{
+                              color: status_item.color,
+                              backgroundColor: status_item.backgroundColor
+                            }}
+                          />
                         </TableCell>
                         <TableCell align="left">{mt_id}</TableCell>
                         <TableCell align="left">{from_facility_name}</TableCell>
                         <TableCell align="left">{to_facility_name}</TableCell>
                         <TableCell align="left">{moment(date).format('LL')}</TableCell>
                         <TableCell align="left">{est_transfer_date}</TableCell>
-                        <TableCell align="left">{`${fNumber(req_transfer_qty)} ${unit_measurement}`}</TableCell>
-                        <TableCell align="left">{`${fNumber(res_transfer_qty)} ${unit_measurement}`}</TableCell>
+                        <TableCell align="left">{`${fNumber(
+                          req_transfer_qty
+                        )} ${unit_measurement}`}</TableCell>
+                        <TableCell align="left">{`${fNumber(
+                          res_transfer_qty
+                        )} ${unit_measurement}`}</TableCell>
                         <TableCell align="right">
                           <MoreMenu
                             id={id}

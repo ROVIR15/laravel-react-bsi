@@ -35,7 +35,7 @@ const TABLE_HEAD = [
   { id: 'serial_number', label: 'No. Invoice', alignRight: false },
   { id: 'billed_to', label: 'Billed To', alignRight: false },
   { id: 'total_qty', label: 'Total Qty', alignRight: false },
-  { id: 'total_amount', label: 'Total Amount Billed', alignRight: false },
+  { id: 'total_amount', label: 'Total Amount Billed', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------

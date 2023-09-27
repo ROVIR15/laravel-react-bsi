@@ -23,7 +23,7 @@ import {
   ListSubheader
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { isArray } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +82,11 @@ export default function ListToolbar({
   onGo,
   onDeletedSelected, 
   placeHolder,
-  sizeSearchBox="medium"
+  sizeSearchBox="medium",
+  statusActiveRequester=false,
+  optionsFacility,
+  onFilterFacility,
+  filterFacilty
 }) {
   
   function dateForm(){
@@ -155,11 +159,29 @@ export default function ListToolbar({
             label="status"
             onChange={onFilterStatus}
           >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Approve">Approve</MenuItem>
-            <MenuItem value="Reject">Reject</MenuItem>
-            <MenuItem value="Review">Review</MenuItem>
-            <MenuItem value="Submit">Submit</MenuItem>
+            <MenuItem value={0}>All</MenuItem>
+            <MenuItem value={2}>Selesai</MenuItem>
+            <MenuItem value={1}>Belum Diproses</MenuItem>
+          </Select>
+        </FormControl>
+    )
+  }
+
+  function statusFilterRequester() {
+    if(statusActiveRequester) return (
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Dari Fasilitas</InputLabel>
+          <Select
+            value={filterFacilty}
+            label="Facility"
+            onChange={onFilterFacility}
+          >
+            <MenuItem value={0}>All</MenuItem>
+            { isEmpty(optionsFacility) ? null : 
+              (optionsFacility.map(function(item){
+                return (<MenuItem value={item.id}>{item.name}</MenuItem>)
+              }))
+            }
           </Select>
         </FormControl>
     )
@@ -204,6 +226,8 @@ export default function ListToolbar({
         {monthYearForm()}
 
         {statusFilter()}
+
+        {statusFilterRequester()}
 
         {categoryAndSubCategory()}
 
