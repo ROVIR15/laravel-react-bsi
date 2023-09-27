@@ -18,7 +18,8 @@ class MaterialTransferItem extends Model
         'goods_id',
         'product_id',
         'product_feature_id',
-        'transfer_qty'
+        'transfer_qty',
+        'costing_item_id'
     ];
 
     public function product(){

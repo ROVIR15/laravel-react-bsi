@@ -89,6 +89,7 @@ class MaterialTransferController extends Controller
             foreach ($param['items'] as $key) {
                 array_push($_data, [
                     'material_transfer_id' => $_main['id'],
+                    'costing_item_id' => $key['costing_item_id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'transfer_qty' => $key['qty']
@@ -131,14 +132,12 @@ class MaterialTransferController extends Controller
         $param = $request->all()['payload'];
 
         try {
-            // $_pa = [];
-            // $_inventory = [];
-            foreach ($param as $key) {
-                # code...
 
+            foreach ($param as $key) {
                 $mtr = MaterialTransferRealisation::create([
                     'material_transfer_id' => $key['material_transfer_id'],
                     'material_transfer_item_id' => $key['material_transfer_item_id'],
+                    'costing_item_id' => $key['costing_item_id'],
                     'transferred_qty' => $key['transferred_qty']
                 ]);
 

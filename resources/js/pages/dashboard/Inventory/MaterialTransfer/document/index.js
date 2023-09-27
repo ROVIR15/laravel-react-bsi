@@ -37,6 +37,8 @@ import { isEmpty } from 'lodash';
 import moment from 'moment';
 import useAuth from '../../../../../context';
 
+import { enqueueSnackbar } from 'notistack';
+
 const GridData = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -79,6 +81,7 @@ function MaterialTransfer() {
       try {
         const _payload = items.map((data) => ({
           transferred_qty: data?.transferred_qty,
+          costing_item_id: data.costing_item_id,
           material_transfer_id: data.material_transfer_id,
           material_transfer_item_id: data.id,
           to_facility_id: values.to_facility_id,
@@ -90,14 +93,11 @@ function MaterialTransfer() {
         }));
 
         API.postMaterialTransferIssue(_payload, function (res) {
-          if (!res) return;
-          if (!res.success) throw new Error('failed');
-          else {
-            alert('success');
-          }
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
 
       // handleReset();
@@ -154,10 +154,13 @@ function MaterialTransfer() {
           });
 
           let _items = material_transfer_items(res.data?.items);
-          console.log(_items);
           setItems(_items);
 
-          setStatusLoad({ ...statusLoad, completed: true, timestamps: moment(res.data.status[0]?.created_at).format('LT') });
+          setStatusLoad({
+            ...statusLoad,
+            completed: true,
+            timestamps: moment(res.data.status[0]?.created_at).format('LT')
+          });
         }
       });
     } catch (error) {

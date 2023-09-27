@@ -16,6 +16,7 @@ class MaterialTransferRealisation extends Model
     protected $fillable = [
         'material_transfer_id',
         'material_transfer_item_id',
+        'costing_item_id',
         'transferred_qty'
     ];
 

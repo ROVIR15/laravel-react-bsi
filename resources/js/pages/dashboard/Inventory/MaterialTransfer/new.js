@@ -29,6 +29,8 @@ import { Icon } from '@iconify/react';
 import plusSquare from '@iconify/icons-eva/plus-square-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { isEmpty, isUndefined } from 'lodash';
+import { enqueueSnackbar } from 'notistack';
+
 import moment from 'moment';
 import useAuth from '../../../../context';
 
@@ -44,7 +46,7 @@ function MaterialTransfer() {
   const pages = !isEmpty(user) ? user?.pages : [];
 
   const disableSeeRequest = pages.some(function (item) {
-    return (item.pages_id === 12);
+    return item.pages_id === 12;
   });
 
   const formik = useFormik({
@@ -58,14 +60,11 @@ function MaterialTransfer() {
       try {
         let _payload = { ...values, items, user_id: user.id };
         API.insertMaterialTransfer(_payload, function (res) {
-          if (!res) return;
-          if (!res.success) throw new Error('failed');
-          else {
-            alert('success');
-          }
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
 
       // handleReset();
@@ -199,7 +198,7 @@ function MaterialTransfer() {
     getFieldProps
   } = formik;
 
-  console.log(disableSeeRequest, values.from_facility_id)
+  console.log(disableSeeRequest, values.from_facility_id);
 
   /**
    * Handling Data Grid for a Component BOM
@@ -246,7 +245,13 @@ function MaterialTransfer() {
 
   return (
     <FormikProvider value={formik}>
-      <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} params={values.from_facility_id}/>
+      <Modal
+        open={openSh}
+        handleClose={() => setOpenSh(false)}
+        items={items}
+        setItems={setItems}
+        params={values.from_facility_id}
+      />
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Paper elevation={2} style={{ padding: '2em' }}>
           <Grid container spacing={2}>
@@ -378,7 +383,7 @@ function MaterialTransfer() {
                 variant="contained"
                 loading={isSubmitting}
                 sx={{ m: 1 }}
-                disabled={!disableSeeRequest || (values.from_facility_id === 20)}
+                disabled={!disableSeeRequest || values.from_facility_id === 20}
               >
                 Save
               </LoadingButton>

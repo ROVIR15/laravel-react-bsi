@@ -35,13 +35,14 @@ export function bomitem_data_alt(array, filter) {
 export function material_transfer_items(array, filter) {
   if (isEmpty(array)) return [];
   let arranged = array.map((x) => {
-    const { id, material_transfer_id, transfer_qty, product_feature, product, transferred } = x;
+    const { id, material_transfer_id, costing_item_id, transfer_qty, product_feature, product, transferred } = x;
     const transferred_qty = isEmpty(transferred) || isUndefined(transferred) ? 0 : transferred.reduce((initial, next) => initial + parseFloat(next.transferred_qty), 0);
 
     let item_name = `${product?.goods?.name} ${product_feature?.color} - ${product_feature?.size}`;
 
     return {
       id,
+      costing_item_id: costing_item_id,
       material_transfer_id: material_transfer_id,
       product_feature_id: product_feature?.id,
       product_id: product?.id,
