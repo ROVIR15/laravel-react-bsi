@@ -61,8 +61,8 @@ function MaterialTransfer() {
     },
     onSubmit: (values) => {
       try {
-        let _payload = {...values, items, user_id: user.id}
-        API.insertMaterialTransfer(_payload, function(res){
+        let _payload = {...values, user_id: user.id}
+        API.updateMaterialTransfer(id, _payload, function(res){
           if(!res) return;
           if(!res.success) throw new Error('failed');
           else {
@@ -110,8 +110,8 @@ function MaterialTransfer() {
 
           let _date = moment(res.data?.date).format('YYYY-MM-DD');
 
-          console.log(_date);
           setValues({
+            from_facility_id: res.data?.from_facility_id,
             to_facility_id: res.data?.to_facility_id,
             est_transfer_date: _date,
             description: res.data?.description
