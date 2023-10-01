@@ -176,7 +176,8 @@ class ScrapController extends Controller
                 $mtr = MaterialTransferRealisation::create([
                     'material_transfer_id' => $mt['id'],
                     'material_transfer_item_id' => $mti['id'],
-                    'transferred_qty' => $item['qty']
+                    'transferred_qty' => $item['qty'],
+                    'costing_item_id' => $_item_costing_id
                 ]);
                 DB::commit();
 
