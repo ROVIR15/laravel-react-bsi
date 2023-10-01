@@ -93,7 +93,8 @@ class MaterialTransferController extends Controller
                     'costing_item_id' => $key['costing_item_id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
-                    'transfer_qty' => $key['qty']
+                    'transfer_qty' => $key['qty'],
+                    'costing_item_id' => $_item_costing_id
                 ]);
             }
 

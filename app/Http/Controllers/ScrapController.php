@@ -160,7 +160,10 @@ class ScrapController extends Controller
                     'scrap_id' => $query->id
                 ]);
 
+                $_item_costing_id = isset($key['costing_item_id']) ? $key['costing_item_id'] : NULL;
+
                 $_temp = [
+                    'costing_item_id' => $_item_costing_id,
                     'material_transfer_id' => $mt['id'],
                     'product_id' => $item['product_id'],
                     'product_feature_id' => $item['product_feature_id'],
