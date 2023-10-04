@@ -325,8 +325,8 @@ class BOMController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
 
-          $query22 = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : [];
-          $query21 = $query22 ? Payment::where('invoice_id', $invoice->id)->get() : [];
+          $query22 = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
+          $query21 = $query22 ? Payment::where('invoice_id', $query22->invoice_id)->get() : [];
           $payment = count($query21) ? $query21[0] : null;
 
           return [
