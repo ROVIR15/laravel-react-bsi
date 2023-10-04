@@ -56,7 +56,7 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt, isArray } from 'lodash';
+import { gt, isArray, isNull } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
@@ -287,7 +287,7 @@ function BillofMaterial() {
   }, [loading]);
 
   const editableUser = user.id === 2 ? true : false;
-  const editableCondition = isEmpty(status) ? true : (status.status_type === 'Submit' ? true : false)
+  const editableCondition = isEmpty(status) ? true : status.status_type === 'Submit' ? true : false;
 
   const goodsColumns = useMemo(
     () => [
@@ -391,7 +391,7 @@ function BillofMaterial() {
   );
 
   const [listPO, setListPO] = useState([]);
-  const [status, setStatus] = useState({id: null, status_type: null})
+  const [status, setStatus] = useState({ id: null, status_type: null });
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -656,7 +656,6 @@ function BillofMaterial() {
         //update items state
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
-
 
         if (!editableUser || !editableCondition) return;
         try {
@@ -1002,49 +1001,59 @@ function BillofMaterial() {
                                             </Typography>
                                           </TableCell>
                                           <TableCell variant="subtitle">
-                                            <Typography
-                                              variant="body1"
-                                              component="a"
-                                              href={`../../purchasing/purchase-order/${item.purchase_order_id}`}
-                                            >
-                                              {`PO-0${item.purchase_order_id}`}
-                                            </Typography>
+                                            {isNull(item.purchase_order_id) ? null : (
+                                              <Typography
+                                                variant="body1"
+                                                component="a"
+                                                href={`../../purchasing/purchase-order/${item.purchase_order_id}`}
+                                              >
+                                                {`PO-0${item.purchase_order_id}`}
+                                              </Typography>
+                                            )}
                                           </TableCell>
                                           <TableCell variant="subtitle">
-                                            <Typography
-                                              variant="body1"
-                                              component="a"
-                                              href={`../../kite/import/${item.import_id}`}
-                                            >
-                                              {`PIB-${item.document_number}`}
-                                            </Typography>
+                                            {isNull(item.document_number) ? null : (
+                                              <Typography
+                                                variant="body1"
+                                                component="a"
+                                                href={`../../kite/import/${item.import_id}`}
+                                              >
+                                                {`PIB-${item.document_number}`}
+                                              </Typography>
+                                            )}
                                           </TableCell>
                                           <TableCell variant="subtitle">
-                                            <Typography
-                                              variant="body1"
-                                              component="a"
-                                              href={`../../shipment/incoming-shipment/${item.shipment_id}`}
-                                            >
-                                              {`INSHIP-${item.shipment_id}`}
-                                            </Typography>
+                                            {isNull(item.shipment_id) ? null : (
+                                              <Typography
+                                                variant="body1"
+                                                component="a"
+                                                href={`../../shipment/incoming-shipment/${item.shipment_id}`}
+                                              >
+                                                {`INSHIP-${item.shipment_id}`}
+                                              </Typography>
+                                            )}
                                           </TableCell>
                                           <TableCell variant="subtitle">
-                                            <Typography
-                                              variant="body1"
-                                              component="a"
-                                              href={`../../finance/vendor-bills/${item.invoice_id}`}
-                                            >
-                                              {`INV-${item?.invoice_id}`}
-                                            </Typography>
+                                            {isNull(item.invoice_id) ? null : (
+                                              <Typography
+                                                variant="body1"
+                                                component="a"
+                                                href={`../../finance/vendor-bills/${item.invoice_id}`}
+                                              >
+                                                {`INV-${item?.invoice_id}`}
+                                              </Typography>
+                                            )}
                                           </TableCell>
                                           <TableCell variant="subtitle">
-                                            <Typography
-                                              variant="body1"
-                                              component="a"
-                                              href={`../../finance/payment/${item?.payment_id}`}
-                                            >
-                                              {`PAYMENT-${item?.payment_id}`}
-                                            </Typography>
+                                            {isNull(item.payment_id) ? null : (
+                                              <Typography
+                                                variant="body1"
+                                                component="a"
+                                                href={`../../finance/payment/${item?.payment_id}`}
+                                              >
+                                                {`PAYMENT-${item?.payment_id}`}
+                                              </Typography>
+                                            )}
                                           </TableCell>
                                         </TableRow>
                                       );

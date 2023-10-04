@@ -325,9 +325,7 @@ class BOMController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
 
-          $query22 = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
-          $query21 = $query22 ? Payment::where('invoice_id', $query22->invoice_id)->get() : [];
-          $payment = count($query21) ? $query21[0] : null;
+          $payment = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
 
           return [
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
@@ -344,7 +342,7 @@ class BOMController extends Controller
             'shipment_item_id' => $shipmentItem ? $shipmentItem->id : null,
             'shipment_id' => $shipment ? $shipment->id : null,
             'invoice_id' => $invoice ? $invoice->id : null,
-            'payment_id' => $payment ? $payment->id : 0
+            'payment_id' => $payment ? $payment['payment_id'] : 0
           ];
         });
 
