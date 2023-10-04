@@ -32,7 +32,7 @@ class Shipment extends Model
     }
 
     public function __items(){
-        return $this->belongsTo('App\Models\Shipment\ShipmentItem', 'shipment_id')->with('alt_order_item');
+        return $this->belongsTo('App\Models\Shipment\ShipmentItem', 'id')->with('alt_order_item');
     }
 
     public function sum(){
