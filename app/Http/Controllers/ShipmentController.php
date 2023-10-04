@@ -43,7 +43,7 @@ class ShipmentController extends Controller
         $year = date_format($monthYear, 'Y');
 
         if (isset($type)) {
-          if ($type === "34") {
+          if ($type === 34) {
             $query = Shipment::with('order', 'type', 'status', 'sum', 'ship_to')
               ->whereHas('type', function ($query) {
                 $query->whereIn('id', [3, 4]);
