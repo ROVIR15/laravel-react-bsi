@@ -322,7 +322,7 @@ class SalesOrderController extends Controller
   public function show($id)
   {
     try {
-      $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order', 'export_doc', 'order_proof')->find($id);
+      $salesOrder = SalesOrder::with('invoice', 'party', 'order_item', 'ship', 'status', 'completion_status', 'order', 'export_doc', 'order_proof', 'reconcile')->find($id);
       return new oneSalesOrder($salesOrder);
     } catch (Exception $th) {
       return response()->json([

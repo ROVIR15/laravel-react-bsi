@@ -116,4 +116,8 @@
       return $this->belongsTo('App\Models\Order\Order', 'order_id', 'id')->with('order_item_img');
     }
 
+    public function reconcile(){
+      return $this->belongsTo('App\Models\Reconcile', 'id', 'sales_order_id');
+    }
+
   }

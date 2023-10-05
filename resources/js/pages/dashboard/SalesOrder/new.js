@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Page from '../../../components/Page';
 import {
+  Autocomplete,
   Box,
   Card,
   CardHeader,
@@ -47,6 +48,7 @@ import { enqueueSnackbar } from 'notistack';
 
 import LoadingPage from '../../../components/LoadingPage';
 import { UploadPaper } from './components/UploadPaper';
+import { isString, isUndefined } from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -419,6 +421,53 @@ function SalesOrder() {
   }
   // ----------------------------------------------------------------- //
 
+  //Costing Option
+  const [optionsCosting, setOptionsCosting] = React.useState([]);
+  const loadingCosting = optionsCosting.length === 0;
+
+  const [choosen, setChoosen] = React.useState();
+
+  const handleAutoComplete = (value) => {
+    let val = value.split('-')[0];
+    if (!isUndefined(val) && val !== 'undefined') {
+      let val = value.split('-')[0];
+      setFieldValue('costing_id', parseInt(val));
+      setChoosen(parseInt(val));
+    }
+  };
+
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loadingCosting) {
+      return undefined;
+    }
+
+    if (optionsCosting.length > 0 || optionsCosting.length != 0) return;
+    else {
+      try {
+        API.getCostingList(function (res) {
+          if (!res.length) return;
+          else {
+            let _data = res.map(function (item) {
+              return {
+                id: item?.id,
+                name: item?.name
+              };
+            });
+            setOptionsCosting(_data);
+          }
+        });
+      } catch (error) {
+        alert('error');
+      }
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [loadingCosting]);
+
   return (
     <Page>
       <Container>
@@ -443,19 +492,43 @@ function SalesOrder() {
                       {/* Quotation List and "Pembeli and Penerima Selection" */}
                       <Grid container direction="row" spacing={2}>
                         <Grid item xs={4}>
-                          {/* Quotation */}
-                          <AutoComplete
-                            fullWidth
-                            autoComplete="quote_id"
-                            type="text"
-                            label="No Quotation"
-                            error={Boolean(touched.quote_id && errors.quote_id)}
-                            helperText={touched.quote_id && errors.quote_id}
-                            options={options}
-                            setOpen={setOpen}
-                            loading={loading}
-                            changeData={changeData}
-                          />
+                          <Stack direction="column" spacing={2}>
+                            {/* Quotation */}
+                            <AutoComplete
+                              fullWidth
+                              autoComplete="quote_id"
+                              type="text"
+                              label="No Quotation"
+                              error={Boolean(touched.quote_id && errors.quote_id)}
+                              helperText={touched.quote_id && errors.quote_id}
+                              options={options}
+                              setOpen={setOpen}
+                              loading={loading}
+                              changeData={changeData}
+                            />
+
+                            <Autocomplete
+                              fullWidth
+                              disablePortal
+                              onInputChange={(event, newInputValue) => {
+                                handleAutoComplete(newInputValue);
+                              }}
+                              value={choosen}
+                              options={optionsCosting}
+                              isOptionEqualToValue={(option, value) => {
+                                return option.id === value;
+                              }}
+                              getOptionLabel={(option) => `${option.id}-${option.name}`}
+                              renderInput={(params) => (
+                                <TextField
+                                  fullWidth
+                                  error={Boolean(touched.costing_id && errors.costing_id)}
+                                  helperText={touched.costing_id && errors.costing_id}
+                                  {...params}
+                                />
+                              )}
+                            />
+                          </Stack>
                         </Grid>
 
                         {/* Pembeli dan Penerima */}
