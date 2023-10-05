@@ -61,14 +61,14 @@ class QuoteStatusController extends Controller
       return response()->json([
         'success' => true,
         'title' => 'RF-Quotation Status Has Been Changed to' . $QuoteStatusData['status_type'],
-        'message' => 'The new quotation has been created #' . $QuoteStatusData['quote_id'],
-        'link' => '/purchasing/request-for-quotation' . $QuoteStatusData['quote_id'],
+        'message' => 'The #'. $QuoteStatusData['quote_id'] .'quotation has been changed status',
+        'link' => '/purchasing/request-for-quotation/' . $QuoteStatusData['quote_id'],
       ], 200);
     } else if ($query['quote_type'] === 'SO') {
       return response()->json([
         'success' => true,
-        'title' => 'Quotation Creation',
-        'message' => 'The new quotation has been created #' . $QuoteStatusData['quote_id'],
+        'title' => 'Quotation Status Has Been Changed to' . $QuoteStatusData['status_type'],
+        'message' => 'The #'. $QuoteStatusData['quote_id'] .'quotation has been changed status',
         'link' => '/order/quotation/' . $QuoteStatusData['quote_id'],
       ], 200);
     }
