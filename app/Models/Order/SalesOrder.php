@@ -117,9 +117,7 @@
     }
 
     public function reconcile(){
-      return $this->belongsTo('App\Models\Reconcile\Reconcile', 'order_id', 'order_id')->with(['costing2' => function($query) {
-        return $query->select('id', 'name');
-      }]);
+      return $this->belongsTo('App\Models\Reconcile\Reconcile', 'order_id', 'order_id')->with('costing2');
     }
 
   }
