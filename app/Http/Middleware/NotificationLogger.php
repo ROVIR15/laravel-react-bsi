@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use App\LogTable;
 use App\Models\General\PagesAccess;
+use App\Models\RRQ\Quote;
 use App\Notification;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,6 +50,50 @@ class NotificationLogger
                             'is_read' => false,
                             'link' => $responseData->link
                         ]);
+                    }
+                }
+            } else if (in_array($routePart, ['quote-status'])) {
+                if ($response->status() === 200) {
+                    $param = $request->all()['payload'];
+
+                    $responseBody = $response->getContent();
+                    $responseData = json_decode($responseBody);
+
+                    $user_list = [];
+
+                    $quote = Quote::find($param['quote_id']);
+                    
+                    if (!isset($quote)) {
+                        $user_list = [];
+                    } else {
+                        if ($quote['quote_type'] === 'PO') {
+                            $user_list = PagesAccess::where('pages_id', 8)
+                                ->groupBy('users_id')
+                                ->get()
+                                ->map(function ($item) {
+                                    return $item->users_id;
+                                });
+                        } else if ($quote['quote_type'] === 'SO') {
+                            $user_list = PagesAccess::where('pages_id', 1)
+                                ->groupBy('users_id')
+                                ->get()
+                                ->map(function ($item) {
+                                    return $item->users_id;
+                                });
+                        } else {
+                            $user_list = [];
+                        }    
+                    }
+                    if (count($user_list)) {
+                        foreach ($user_list as $user_id) {
+                            Notification::create([
+                                'user_id' => $user_id,
+                                'title' => $responseData->title,
+                                'message' => $responseData->message,
+                                'is_read' => false,
+                                'link' => $responseData->link
+                            ]);
+                        }
                     }
                 }
             } else if (in_array($routePart, ['quote', 'request-for-quotation'])) {
