@@ -1027,7 +1027,7 @@ function BillofMaterial() {
                                               <Typography
                                                 variant="body1"
                                                 component="a"
-                                                href={`../../shipment/incoming-shipment/${item.shipment_id}`}
+                                                href={`../../shipment/incoming/${item.shipment_id}`}
                                               >
                                                 {`INSHIP-${item.shipment_id}`}
                                               </Typography>
