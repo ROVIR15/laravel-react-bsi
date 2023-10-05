@@ -17,6 +17,7 @@ use App\Http\Resources\Order\SOView as oneSalesOrderView;
 use App\Http\Resources\Order\SOViewCollection;
 use App\Models\KITE\ExportDoc;
 use App\Models\Order\POBuyerProof;
+use App\Models\Reconcile\Reconcile;
 use Illuminate\Http\Request;
 
 class SalesOrderController extends Controller
@@ -213,6 +214,13 @@ class SalesOrderController extends Controller
         'sales_order_id' => $salesOrder->id,
         'order_id' => $order->id,
         'imageUrl' => $imageUrl
+      ]);
+      DB::commit();
+
+      Reconcile::create([
+        'costing_id' => $param['costing_id'],
+        'sales_order_id' => $salesOrder->id,
+        'order_id' => $order->id
       ]);
       DB::commit();
 
