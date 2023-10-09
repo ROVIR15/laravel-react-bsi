@@ -24,12 +24,13 @@ function numericMonthToName(numericMonth) {
 
 export default function OSRPPIC() {
   const [OSRRows, setOSRRows] = useState([]);
+  const [month, setMonth] = useState(0);
 
   useEffect(() => {
     try {
       let dateNow = new Date();
       let monthYear = moment(dateNow).format('YYYY-MM');
-
+      setMonth(dateNow.getMonth() + 1)
       API.getOSRPPIC(`?monthYear=${monthYear}`, function (res) {
         if (!res) return;
         else {
@@ -67,13 +68,6 @@ export default function OSRPPIC() {
             <TableCell className="wk_primary_color wk_gray_bg">Target Kecepatan Harian</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Jumlah Hari Kerja</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Output Saat Ini</TableCell>
-            {_row?.expected_output.map((_d, index) => {
-              if (_d?.value > 0) {
-                return (
-                  <TableCell className="wk_primary_color wk_black_bg">{numericMonthToName(index+1)}</TableCell>
-                );
-              }
-            })}
             <TableCell className="wk_primary_color wk_black_bg">Februari</TableCell>
             <TableCell className="wk_primary_color wk_black_bg">Maret</TableCell>
             <TableCell className="wk_primary_color wk_black_bg">April</TableCell>
