@@ -14,11 +14,12 @@ import {
 import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../../components/Table';
-import ListToolbar from './components/ListToolbar'
+import ListToolbar from './components/ListToolbar';
 // api
 import API from '../../../../helpers';
-// 
-import Test4 from '../../../../components/Test4'
+//
+import Test4 from '../../../../components/Test4';
+import PinStatus from '../../../../components/PinStatus';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -60,13 +61,23 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query[1] !== 0)
-    return filter(
-      array,
-      (_b) =>
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.order?.purchase_order?.party?.id === query[1]
-    );
+    if (query[2] !== 0){
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.__items?.alt_order_item?.costing?.costing.id === query[1] &&
+          _b.status[0]?.shipment_type_status_id === query[2]
+      );
+    } else {
+      return filter(
+        array,
+        (_b) =>
+          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.__items?.alt_order_item?.costing?.costing.id === query[1]
+      );
+    }
   else return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-
 }
 
 function OutboundDelivery({ placeHolder }) {
@@ -96,6 +107,27 @@ function OutboundDelivery({ placeHolder }) {
           setGoodsReceipt([]);
         } else {
           setGoodsReceipt(res.data);
+
+          let __costing = res.data.reduce(function (init, next) {
+            const costing = next?.__items?.alt_order_item?.costing;
+
+            if (!isNull(costing)) {
+              const checkIfExist = init.some(function (item) {
+                return item.id === costing.costing.id;
+              });
+
+              if (!checkIfExist) {
+                let id = costing.costing.id;
+                let name = costing.costing.name;
+                init.push({ id, name });
+              }
+            }
+
+            return init; 
+          }, []);
+
+          console.log(__costing);
+          setOptionsBuyer(__costing);
         }
       });
     } catch (error) {
@@ -169,103 +201,170 @@ function OutboundDelivery({ placeHolder }) {
   };
   //------------------------------------------------------------//
 
+  //----------------filter by shipment status----------------------//
+  const [filterShipmentStatus, setFilterShipmentStatus] = useState(0);
+
+  const handleFilterShipmentStatusChange = (event) => {
+    setFilterShipmentStatus(event.target.value);
+  };
+  //------------------------------------------------------------//
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsReceipt.length) : 0;
   const filteredData = applySortFilter(goodsReceipt, getComparator(order, orderBy), [
     filterName,
-    filterBuyer
+    filterBuyer,
+    filterShipmentStatus
   ]);
 
   const isDataNotFound = filteredData.length === 0;
 
   return (
     <>
-    <Test4 data={filteredData}/>
-    <Card>
-      <ListToolbar
-        numSelected={selected.length}
-        filterName={filterName}
-        onFilterName={handleFilterByName}
-        monthYearActive={true}
-        filterMonthYear={filterMonthYear}
-        onFilterMonthYear={handleMonthYearChanges}
-        placeHolder={placeHolder}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
-            <ListHead
-              active={false}
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={goodsReceipt.length}
-              numSelected={selected.length}
-              onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const { id, serial_number, delivery_date, est_delivery_date, order, status, __items } =
-                    row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
-                    >
-                      <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{__items?.alt_order_item?.costing?.costing?.name}</TableCell>
-                      <TableCell align="left">
-                        <b>{status[0]?.status_type?.name}</b>
-                      </TableCell>
-                      <TableCell align="left">{serial_number}</TableCell>
-                      <TableCell align="left">{order?.purchase_order?.po_number}</TableCell>
-                      <TableCell align="left">{order?.purchase_order?.party?.name}</TableCell>
-                      <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
-                      <TableCell align="left">{moment(est_delivery_date).format('ll')}</TableCell>
-                      <TableCell align="left">
-                        {dateDiff(delivery_date, est_delivery_date)}
-                      </TableCell>
-                      <TableCell align="right">
-                        <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            {isDataNotFound && (
+      <Test4 data={filteredData} />
+      <Card>
+        <ListToolbar
+          numSelected={selected.length}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+          monthYearActive={true}
+          filterMonthYear={filterMonthYear}
+          onFilterMonthYear={handleMonthYearChanges}
+          statusActive={true}
+          filterStatus={filterShipmentStatus}
+          onFilterStatus={handleFilterShipmentStatusChange}
+          buyerFilterActive={true}
+          filterBuyer={filterBuyer}
+          onFilterBuyer={handleBuyerFilter}
+          listOfBuyer={optionsBuyer}
+          placeHolder={placeHolder}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table size="small">
+              <ListHead
+                active={false}
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={goodsReceipt.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
               <TableBody>
-                <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
-                  </TableCell>
-                </TableRow>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    const {
+                      id,
+                      serial_number,
+                      delivery_date,
+                      est_delivery_date,
+                      order,
+                      status,
+                      __items
+                    } = row;
+                    const isItemSelected = selected.indexOf(name) !== -1;
+
+                    let status_item = {
+                      status: '',
+                      color: '',
+                      backgroundColor: ''
+                    };
+                    if (status[0]?.shipment_type_status_id == 4) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Cancelled',
+                        color: 'rgb(183, 29, 24)',
+                        backgroundColor: 'rgba(255, 86, 48, 0.16)'
+                      };
+                    } else if (status[0]?.shipment_type_status_id == 5) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Completed',
+                        color: 'rgb(27, 128, 106)',
+                        backgroundColor: 'rgba(54, 179, 126, 0.16)'
+                      };
+                    } else if (status[0]?.shipment_type_status_id == 3) {
+                      status_item = {
+                        ...status_item,
+                        status: 'In Delivery',
+                        color: 'rgb(183, 110, 0)',
+                        backgroundColor: 'rgba(255, 171, 0, 0.16)'
+                      };
+                    } else {
+                      status_item = {
+                        ...status_item,
+                        status: 'Scheduled',
+                        color: 'rgb(54, 47, 217)',
+                        backgroundColor: 'rgba(255, 171, 0, 0.16)'
+                      };
+                    }
+
+                    return (
+                      <TableRow
+                        hover
+                        key={id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={isItemSelected}
+                        aria-checked={isItemSelected}
+                      >
+                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">
+                          {__items?.alt_order_item?.costing?.costing?.name}
+                        </TableCell>
+                        <TableCell align="left">
+                          <PinStatus
+                            status={status_item.status}
+                            style={{
+                              color: status_item.color,
+                              backgroundColor: status_item.backgroundColor
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell align="left">{serial_number}</TableCell>
+                        <TableCell align="left">{order?.purchase_order?.po_number}</TableCell>
+                        <TableCell align="left">{order?.purchase_order?.party?.name}</TableCell>
+                        <TableCell align="left">{moment(delivery_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(est_delivery_date).format('ll')}</TableCell>
+                        <TableCell align="left">
+                          {dateDiff(delivery_date, est_delivery_date)}
+                        </TableCell>
+                        <TableCell align="right">
+                          <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
               </TableBody>
-            )}
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <TablePagination
-        rowsPerPageOptions={[15, 25, 50]}
-        component="div"
-        count={goodsReceipt.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Card>
+              {isDataNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <SearchNotFound searchQuery={filterName} />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <TablePagination
+          rowsPerPageOptions={[15, 25, 50]}
+          component="div"
+          count={goodsReceipt.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
     </>
   );
 }

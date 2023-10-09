@@ -159,23 +159,23 @@ export default function ListToolbar({
             label="status"
             onChange={onFilterStatus}
           >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Approve">Approve</MenuItem>
-            <MenuItem value="Dropped">Dropped</MenuItem>
-            <MenuItem value="Review">Review</MenuItem>
-            <MenuItem value="Submit">Submit</MenuItem>
+            <MenuItem value={0}>All</MenuItem>
+            <MenuItem value={5}>Completed</MenuItem>
+            <MenuItem value={4}>Cancelled</MenuItem>
+            <MenuItem value={3}>In Delivery</MenuItem>
           </Select>
         </FormControl>
     )
   }
 
   function buyerList() {
+    console.log(listOfBuyer)
     if(buyerFilterActive) return (
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Buyer</InputLabel>
+          <InputLabel id="demo-simple-select-label">Costing</InputLabel>
           <Select
             value={filterBuyer}
-            label="Buyer"
+            label="Costing"
             onChange={onFilterBuyer}
           >
             <MenuItem value={0}>All</MenuItem>
