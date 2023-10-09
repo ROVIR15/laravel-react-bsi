@@ -69,6 +69,7 @@ export default function OSRPPIC() {
             <TableCell className="wk_primary_color wk_gray_bg">Jumlah Hari Kerja</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Output Saat Ini</TableCell>
             <TableCell className="wk_primary_color wk_black_bg">{numericMonthToName(month)}</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
