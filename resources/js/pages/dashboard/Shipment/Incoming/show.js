@@ -579,7 +579,7 @@ function OutboundDelivery() {
                                 onChange={handleChangeStatus}
                               >
                                 <MenuItem value={3}>In Delivery</MenuItem>
-                                <MenuItem value={4}>Delivered</MenuItem>
+                                <MenuItem value={4}>Cancelled</MenuItem>
                                 <MenuItem value={5}>Delivered</MenuItem>
                               </Select>
                             </FormControl>
