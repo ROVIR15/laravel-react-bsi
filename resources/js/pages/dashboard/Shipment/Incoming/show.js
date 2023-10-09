@@ -264,7 +264,7 @@ function OutboundDelivery() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              if (editRowData[editedColumnName].value > (row.qty_order*1.1)) {
+              if (editRowData[editedColumnName].value > row.qty_order * 1.1) {
                 alert('You trying to do something wrong! please check your input');
                 return row;
               } else {
@@ -573,12 +573,14 @@ function OutboundDelivery() {
                           <Stack direction="row" spacing={4} alignItems="center">
                             <FormControl fullWidth>
                               <InputLabel>Selet Status</InputLabel>
-                              <Select value={status} label="Status" onChange={handleChangeStatus}>
-                                <MenuItem value={5}>Scheduled</MenuItem>
-                                <MenuItem value={1}>Shipped</MenuItem>
-                                <MenuItem value={2}>On Going</MenuItem>
-                                <MenuItem value={3}>Cancelled</MenuItem>
+                              <Select
+                                value={status}
+                                label="Status"
+                                onChange={handleChangeStatus}
+                              >
+                                <MenuItem value={3}>In Delivery</MenuItem>
                                 <MenuItem value={4}>Delivered</MenuItem>
+                                <MenuItem value={5}>Delivered</MenuItem>
                               </Select>
                             </FormControl>
 
