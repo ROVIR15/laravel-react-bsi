@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { TableContainer, Table, TableHead, TableBody, TableCell, TableRow, Paper } from '@mui/material';
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow,
+  Paper
+} from '@mui/material';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
 import { countWorkingDays } from '../../pages/dashboard/OSR/utils';
 import API from '../../helpers';
 
+function numericMonthToName(numericMonth) {
+  if (numericMonth >= 1 && numericMonth <= 12) {
+    const date = new Date(2000, numericMonth - 1, 1);
+    return date.toLocaleString('default', { month: 'long' });
+  } else {
+    return 'Invalid';
+  }
+}
+
 export default function OSRPPIC() {
-  const [OSRRows, setOSRRows] = useState([])
+  const [OSRRows, setOSRRows] = useState([]);
 
   useEffect(() => {
     try {
@@ -50,7 +67,13 @@ export default function OSRPPIC() {
             <TableCell className="wk_primary_color wk_gray_bg">Target Kecepatan Harian</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Jumlah Hari Kerja</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Output Saat Ini</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Januari</TableCell>
+            {_row?.expected_output.map((_d, index) => {
+              if (_d?.value > 0) {
+                return (
+                  <TableCell className="wk_primary_color wk_black_bg">{numericMonthToName(index+1)}</TableCell>
+                );
+              }
+            })}
             <TableCell className="wk_primary_color wk_black_bg">Februari</TableCell>
             <TableCell className="wk_primary_color wk_black_bg">Maret</TableCell>
             <TableCell className="wk_primary_color wk_black_bg">April</TableCell>
@@ -106,11 +129,15 @@ export default function OSRPPIC() {
                 <TableCell component="th" align="left">
                   {`${_row?.output} pcs`}
                 </TableCell>
-                {_row?.expected_output.map((_d) => (
-                  <TableCell component="th" align="right">
-                    {_d.value}
-                  </TableCell>
-                ))}
+                {_row?.expected_output.map((_d) => {
+                  if (_d?.value > 0) {
+                    return (
+                      <TableCell component="th" align="right">
+                        {_d.value}
+                      </TableCell>
+                    );
+                  }
+                })}
               </TableRow>
             ))
           ) : (
