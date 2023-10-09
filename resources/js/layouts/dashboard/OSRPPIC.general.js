@@ -68,17 +68,7 @@ export default function OSRPPIC() {
             <TableCell className="wk_primary_color wk_gray_bg">Target Kecepatan Harian</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Jumlah Hari Kerja</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Output Saat Ini</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Februari</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Maret</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">April</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Mei</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Juni</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Juli</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Agustus</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">September</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Oktober</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">November</TableCell>
-            <TableCell className="wk_primary_color wk_black_bg">Desember</TableCell>
+            <TableCell className="wk_primary_color wk_black_bg">{numericMonthToName(month)}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
