@@ -58,7 +58,7 @@ class OrderItemController extends Controller
         } else {
           $queryProduct = ProductFeature::find($key['product_feature_id']);
           $product__id = $queryProduct->id;
-          $costing_item_id_ = null;
+          $costing_item_id_ = 0;
         }
   
         array_push($salesItemsCreation, [
