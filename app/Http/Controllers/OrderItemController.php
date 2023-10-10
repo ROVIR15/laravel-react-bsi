@@ -52,7 +52,7 @@ class OrderItemController extends Controller
       $salesItemsCreation = [];
 
       foreach ($param as $key) {
-        if (array_key_exists($key, 'product_id')) {
+        if (array_key_exists('product_id', $key)) {
           $product__id = $key['product_id'];
         } else {
           $queryProduct = ProductFeature::find($key['product_feature_id']);
