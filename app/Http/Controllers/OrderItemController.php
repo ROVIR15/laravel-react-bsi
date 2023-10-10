@@ -7,6 +7,8 @@ use App\Models\Order\OrderItem;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Order\OrderItemCollection;
 use App\Http\Resources\Order\OrderItem as oneOrderItem;
+use App\Models\Product\Product;
+use App\Models\Product\ProductFeature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,10 +52,17 @@ class OrderItemController extends Controller
       $salesItemsCreation = [];
 
       foreach ($param as $key) {
+        if property_exists($key, 'product_id') {
+          $product__id = $key['product_id'];
+        } else {
+          $queryProduct = ProductFeature::find($key['product_feature_id']);
+          $product__id = $queryProduct->id;
+        }
+  
         array_push($salesItemsCreation, [
           'order_id' => $key['order_id'],
           'product_feature_id' => $key['product_feature_id'],
-          'product_id' => $key['product_id'],
+          'product_id' => $product__id,
           'costing_item_id' => $key['costing_item_id'],
           'qty' => $key['qty'],
           'unit_price' => $key['unit_price'],
