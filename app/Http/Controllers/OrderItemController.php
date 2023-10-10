@@ -55,22 +55,32 @@ class OrderItemController extends Controller
         if (array_key_exists('product_id', $key) && array_key_exists('costing_item_id', $key)) {
           $product__id = $key['product_id'];
           $costing_item_id_ = $key['costing_item_id'];
+          array_push($salesItemsCreation, [
+            'order_id' => $key['order_id'],
+            'product_feature_id' => $key['product_feature_id'],
+            'product_id' => $product__id,
+            'costing_item_id' => $costing_item_id_,
+            'qty' => $key['qty'],
+            'unit_price' => $key['unit_price'],
+            'cm_price' => $key['cm_price'],
+            'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
+          ]);
+  
         } else {
           $queryProduct = ProductFeature::find($key['product_feature_id']);
           $product__id = $queryProduct->id;
-          $costing_item_id_ = 0;
+          array_push($salesItemsCreation, [
+            'order_id' => $key['order_id'],
+            'product_feature_id' => $key['product_feature_id'],
+            'product_id' => $product__id,
+            'qty' => $key['qty'],
+            'unit_price' => $key['unit_price'],
+            'cm_price' => $key['cm_price'],
+            'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
+          ]);
+  
         }
   
-        array_push($salesItemsCreation, [
-          'order_id' => $key['order_id'],
-          'product_feature_id' => $key['product_feature_id'],
-          'product_id' => $product__id,
-          'costing_item_id' => $costing_item_id_,
-          'qty' => $key['qty'],
-          'unit_price' => $key['unit_price'],
-          'cm_price' => $key['cm_price'],
-          'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
-        ]);
       }
 
       OrderItem::insert($salesItemsCreation);
