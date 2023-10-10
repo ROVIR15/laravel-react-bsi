@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order\SalesOrder;
 use App\Models\Order\POBuyerProof;
 use Illuminate\Http\Request;
 
@@ -31,8 +32,10 @@ class POBuyerProofController extends Controller
                     'imageUrl' => $param['imageUrl']
                 ]);
             } else {
-            POBuyerProof::where('sales_order_id', $id)->update($param);
-        } catch (Exception $e) {
+                POBuyerProof::where('sales_order_id', $id)->update($param);
+            }
+
+        } catch (Throwable $e) {
             //throw $th;
             return response()->json([
                 'success' => false,
