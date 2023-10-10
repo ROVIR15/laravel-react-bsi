@@ -18,6 +18,19 @@ class POBuyerProofController extends Controller
     {
         $param = $request->all()['payload'];
         try {
+            $query = POBuyerProof::where('sales_order_id', $id)->first();
+
+            if (is_null($query)){
+                $so = SalesOrder::find($id);
+
+                POBuyerProof::create([
+                    'tanggal_po' => $param['tanggal_po'],
+                    'nomor_po' => $param['nomor_po'],
+                    'sales_order_id' => $so['id'],
+                    'order_id' => $so['order_id'],
+                    'imageUrl' => $param['imageUrl']
+                ]);
+            } else {
             POBuyerProof::where('sales_order_id', $id)->update($param);
         } catch (Exception $e) {
             //throw $th;
