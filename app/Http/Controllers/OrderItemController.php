@@ -68,7 +68,7 @@ class OrderItemController extends Controller
   
         } else {
           $queryProduct = ProductFeature::find($key['product_feature_id']);
-          $product__id = $queryProduct->id;
+          $product__id = $queryProduct->product_id;
           array_push($salesItemsCreation, [
             'order_id' => $key['order_id'],
             'product_feature_id' => $key['product_feature_id'],
