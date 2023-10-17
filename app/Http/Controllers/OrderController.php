@@ -36,6 +36,7 @@
                 ->whereHas('completion_status', function($query2){
                     $query2->where('completion_status_id', 2);
                 })
+                ->orderBy('id', 'desc')
                 ->get();
 
         return response()->json(['data' => $query]);
