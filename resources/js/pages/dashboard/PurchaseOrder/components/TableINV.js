@@ -32,6 +32,15 @@ const rows = [
 ];
 
 export default function BasicTable({ payload, tax, currency }) {
+  const sumOfQty = () => {
+    let total = 0;
+    total = payload.reduce(function (init, next) {
+      return init + next.qty
+    }, 0);
+
+    return Math.floor(total);
+  };
+
   const sumSubTotal = () => {
     var sub = 0;
     payload.map(function (item) {
@@ -46,8 +55,8 @@ export default function BasicTable({ payload, tax, currency }) {
       sub = sub + item.qty * item.unit_price;
     });
 
-    if(tax < 1) return fCurrency(Math.floor(sub), currency);
-    else return fCurrency(Math.floor(sub) * (1+(tax/100)), currency);
+    if (tax < 1) return fCurrency(Math.floor(sub), currency);
+    else return fCurrency(Math.floor(sub) * (1 + tax / 100), currency);
   };
 
   return (
@@ -55,16 +64,16 @@ export default function BasicTable({ payload, tax, currency }) {
       <div className="wk_table wk_style1">
         <div className="wk_border">
           <div className="wk_table_responsive">
-            <table>
+            <table style={{fontSize: '11px'}}>
               <thead>
                 <tr>
-                  <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">Item Name</th>
-                  <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
-                  <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">Price</th>
-                  <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_right">
+                  <th className="wk_width_3 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">Item Name</th>
+                  <th className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
+                  <th className="wk_width_2 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">Price</th>
+                  <th className="wk_width_2 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg wk_text_right">
                     Total
                   </th>
-                  <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_left">
+                  <th className="wk_width_2 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg wk_text_left">
                     Keterangan
                   </th>
                 </tr>
@@ -72,17 +81,17 @@ export default function BasicTable({ payload, tax, currency }) {
               <tbody>
                 {payload.map((row, index) => (
                   <tr>
-                    <td className="wk_width_3">
+                    <td className="wk_width_3 wk_padd_8_20">
                       {`${row.name} ${row.color === '1' ? '' : row.color} ${
                         row.size === '1' ? '' : `- ${row.size}`
                       }`}
                     </td>
-                    <td className="wk_width_1">{`${row.qty} ${row.unit_measurement}`}</td>
-                    <td className="wk_width_2">{fCurrency(row.unit_price, currency)}</td>
-                    <td className="wk_width_2 wk_text_right">
+                    <td className="wk_width_1 wk_padd_8_20">{`${row.qty} ${row.unit_measurement}`}</td>
+                    <td className="wk_width_2 wk_padd_8_20">{fCurrency(row.unit_price, currency)}</td>
+                    <td className="wk_width_2 wk_padd_8_20 wk_text_right">
                       {fCurrency(Math.floor(row.qty * row.unit_price), currency)}
                     </td>
-                    <td className="wk_width_2 wk_text_left">{row.description}</td>
+                    <td className="wk_width_2 wk_padd_8_20 wk_text_left">{row.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -100,27 +109,31 @@ export default function BasicTable({ payload, tax, currency }) {
           </p> */}
         </div>
         <div className="wk_right_footer">
-          <table>
+          <table style={{fontSize: '11px'}}>
             <tbody>
               <tr>
-                <td className="wk_width_3 wk_primary_color wk_border_none wk_bold">Subtotal</td>
-                <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_bold">
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_border_none wk_bold">Subtotal</td>
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_text_right wk_border_none wk_bold">
                   {fCurrency(sumSubTotal(), currency)}
                 </td>
               </tr>
               <tr>
-                <td className="wk_width_3 wk_primary_color wk_border_none wk_pt0">
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_border_none wk_bold">Jumlah Qty</td>
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_text_right wk_border_none wk_bold">
+                  {sumOfQty()}
+                </td>
+              </tr>
+              <tr>
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_border_none wk_pt0">
                   Tax <span className="wk_ternary_color">{tax}%</span>
                 </td>
-                <td className="wk_width_3 wk_primary_color wk_text_right wk_border_none wk_pt0">
-                  {fCurrency(sumSubTotal() * (tax/100), currency)}
+                <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_text_right wk_border_none wk_pt0">
+                  {fCurrency(sumSubTotal() * (tax / 100), currency)}
                 </td>
               </tr>
               <tr className="wk_border_top wk_border_bottom">
-                <td className="wk_width_3 wk_border_top_0 wk_bold wk_primary_color">
-                  Grand Total
-                </td>
-                <td className="wk_width_3 wk_border_top_0 wk_bold wk_primary_color wk_text_right">
+                <td className="wk_width_3 wk_padd_8_20 wk_border_top_0 wk_bold wk_primary_color">Grand Total</td>
+                <td className="wk_width_3 wk_padd_8_20 wk_border_top_0 wk_bold wk_primary_color wk_text_right">
                   {total()}
                 </td>
               </tr>

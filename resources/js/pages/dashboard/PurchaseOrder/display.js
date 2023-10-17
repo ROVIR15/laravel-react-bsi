@@ -41,8 +41,8 @@ const TABLE_HEAD = [
   { id: 'bought_from', label: 'Supplier', alignRight: false },
   { id: 'total_qty', label: 'Qty', alignRight: false },
   { id: 'total_money', label: 'Total', alignRight: false },
+  { id: 'created_at', label: 'Tanggal Dibuat', alignRight: false },
   { id: 'issue_date', label: 'Tanggal Terbit', alignRight: false },
-  { id: 'valid_thru', label: 'Valid Sampai Tgl', alignRight: false },
   { id: 'delivery_date', label: 'ETD', alignRight: false }
 ];
 
@@ -384,7 +384,7 @@ function PurchaseOrder({ placeHolder }) {
                           {sum?.length ? fCurrency(row?.sum[0].total_money, currency) : null}
                         </TableCell>
                         <TableCell align="left">{moment(row?.created_at).format('ll')}</TableCell>
-                        <TableCell align="left">{moment(row?.delivery_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(row?.issue_date).format('ll')}</TableCell>
                         <TableCell align="left">{moment(row?.valid_thru).format('ll')}</TableCell>
                         <TableCell align="right">
                           <MoreMenu

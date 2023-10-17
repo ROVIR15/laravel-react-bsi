@@ -266,6 +266,8 @@ function OutboundDelivery({ placeHolder }) {
                     } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
 
+                    let costing_id = __items?.alt_order_item?.costing?.bom_id ? __items?.alt_order_item?.costing?.bom_id : 0
+
                     let status_item = {
                       status: '',
                       color: '',
@@ -310,7 +312,7 @@ function OutboundDelivery({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{`INSHIP-${costing_id}-${id}`}</TableCell>
                         <TableCell align="left">
                           {__items?.alt_order_item?.costing?.costing?.name}
                         </TableCell>
