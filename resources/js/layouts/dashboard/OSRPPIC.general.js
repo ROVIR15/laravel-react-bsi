@@ -85,7 +85,7 @@ export default function OSRPPIC() {
                   {_row?.buyer_name}
                 </TableCell>
                 <TableCell component="th" align="left">
-                  <img src={_row?.imageUrl} alt="Image" />
+                  <img src={_row?.imageUrl} alt="Image" style={{ height: '112px'}} />
                 </TableCell>
                 <TableCell component="th" align="left">
                   {_row?.sales_order_name}

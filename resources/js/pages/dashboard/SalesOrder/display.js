@@ -360,6 +360,8 @@ function DisplaySalesOrder({ placeHolder }) {
                   let currency;
                   if(currency_id === 2) currency = "idr";
                   else currency = "usd";
+
+                  let costing_id = !isNull(row?.reconcile) ? row?.reconcile?.costing_id : 0
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -370,7 +372,7 @@ function DisplaySalesOrder({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index + 1}</TableCell>
+                      <TableCell align="left">{`SO-${costing_id}-${id}`}</TableCell>
                       {/* <TableCell align="left">{id}</TableCell> */}
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{ChipStatus(status[0]?.status_type)}</TableCell>

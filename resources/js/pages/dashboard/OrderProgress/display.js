@@ -22,19 +22,21 @@ import moment from 'moment';
 import API from '../../../helpers';
 import { fPercent } from '../../../utils/formatNumber';
 
+moment.locale('id')
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'party_id', label: 'Buyer', alignRight: false },
+  { id: 'date', label: 'Tanggal Pengirima', alignRight: false },
+  { id: 'party_id', label: 'Pembeli', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
-  { id: 'qty', label: 'Order Qty', alignRight: false },
+  { id: 'qty', label: 'Qty Order', alignRight: false },
   { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
   { id: 'output_sw', label: 'Output Sewing', alignRight: false },
   { id: 'output_qc', label: 'Output QC', alignRight: false },
   { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
-  { id: 'percentage', label: 'Percentage', alignRight: false },
-  { id: 'difference', label: 'Selisih', alignRight: false }
+  { id: 'percentage', label: 'Persentase Penyelesaian', alignRight: false },
+  { id: 'difference', label: 'Kekurangan', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -87,17 +89,17 @@ function applySortFilter(array, comparator, query) {
       return filter(
         array,
         (_b) =>
-          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
       );  
     } else {
       return filter(
         array,
         (_b) =>
-          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1] && _b.order_id === query[2]
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1] && _b.order_id === query[2]
       );  
     }
   else {
-    return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+    return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   } 
 
   return stabilizedThis.map((el) => el[0]);
@@ -288,6 +290,7 @@ function Display({ placeHolder }) {
                     id,
                     party,
                     order_id,
+                    delivery_date,
                     sum,
                     po_number,
                     monitoring_cutting,
@@ -309,7 +312,8 @@ function Display({ placeHolder }) {
                       // selected={isItemSelected}
                       // aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{`SO-${id}`}</TableCell>
+                      <TableCell align="left">{moment(delivery_date).format('DD MMMM YYYY')}</TableCell>
                       <TableCell align="left">{party?.name}</TableCell>
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{sum[0]?.total_qty}</TableCell>

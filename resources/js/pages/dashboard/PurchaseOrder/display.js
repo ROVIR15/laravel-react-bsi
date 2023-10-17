@@ -350,6 +350,15 @@ function PurchaseOrder({ placeHolder }) {
                       currency_id
                     } = row;
 
+                    let costing_id = 0
+
+                    if (!isNull(row?.order_item)){
+                      if(!isNull(row?.order_item?.costing)){
+                        costing_id = row?.order_item?.costing?.bom_id
+                      }
+                    } else {
+                      costing_id = 0
+                    }
                     let currency;
                     if (currency_id === 2) currency = 'idr';
                     else currency = 'usd';
@@ -363,7 +372,7 @@ function PurchaseOrder({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{row?.id}</TableCell>
+                        <TableCell align="left">{`PO-${costing_id}-${costing_id}`}</TableCell>
                         <TableCell align="left">{row?.po_number}</TableCell>
                         <TableCell align="left">{ChipStatus(row?.status[0]?.status_type)}</TableCell>
                         <TableCell align="left">
