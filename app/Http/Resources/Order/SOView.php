@@ -27,7 +27,8 @@ class SOView extends JsonResource
             'valid_thru' => $this->valid_thru,
             'status' => $this->status,
             'completion_status' => $this->completion_status,
-            'sum' => $this->sum
+            'sum' => $this->sum,
+            'reconcile' => $this->reconcile
         ];
 
     }

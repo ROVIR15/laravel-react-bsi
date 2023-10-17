@@ -71,9 +71,9 @@ class PurchaseOrderController extends Controller
       if (!empty($completion_status) && $completion_status = 2) {
         $query = PurchaseOrder::with('completion_status')->whereHas('completion_status', function ($query2) {
           $query2->where('completion_status_id', 2);
-        })->get();
+        })->orderBy('id', 'desc')->get();
       } else {
-        $query = PurchaseOrder::with('status', 'sum', 'completion_status')->get();
+        $query = PurchaseOrder::with('status', 'sum', 'completion_status')->orderBy('id', 'desc')->get();
       }
 
       return new POViewCollection($query);
@@ -96,29 +96,29 @@ class PurchaseOrderController extends Controller
     switch ($level) {
       case 'approve':
         # code...
-        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function ($query2) {
+        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum', 'order_item_one')->whereHas('status', function ($query2) {
           $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
         })
           ->whereYear('created_at', '=', $year)
-          ->whereMonth('created_at', '=', $month)
+          ->whereMonth('created_at', '=', $month)->orderBy('id', 'desc')
           ->get();
         break;
 
       case 'review':
         # code...
-        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function ($query2) {
+        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum', 'order_item_one')->whereHas('status', function ($query2) {
           $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
         })
           ->whereYear('created_at', '=', $year)
-          ->whereMonth('created_at', '=', $month)
+          ->whereMonth('created_at', '=', $month)->orderBy('id', 'desc')
           ->get();
         break;
 
       default:
         # code...
-        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum')
+        $query = PurchaseOrder::with('order', 'completion_status', 'status', 'sum', 'order_item_one')
           ->whereYear('created_at', '=', $year)
-          ->whereMonth('created_at', '=', $month)
+          ->whereMonth('created_at', '=', $month)->orderBy('id', 'desc')
           ->get();
 
         break;

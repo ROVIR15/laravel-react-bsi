@@ -29,6 +29,10 @@
       return $this->belongsTo('App\Models\Order\Order')->with('status');
     }
 
+    public function order_item_one(){
+      return $this->belongsTo('App\Models\Order\OrderItem', 'order_id', 'order_id')->with('costing');
+    }
+
     public function product_feature(){
       return $this->hasManyThrough('App\Models\Product\ProductFeature', 'App\Models\Order\OrderItem', 'order_id', 'id', 'order_id', 'id')->with('product');
     }

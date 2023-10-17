@@ -70,11 +70,15 @@ class SalesOrderController extends Controller
 
     if (empty($level)) {
       if (!empty($completion_status) && $completion_status = 2) {
-        $query = SalesOrder::with('completion_status')->whereHas('completion_status', function ($query2) {
+        $query = SalesOrder::with('completion_status', 'reconcile')->whereHas('completion_status', function ($query2) {
           $query2->where('completion_status_id', 2);
-        })->get();
+        })
+        ->orderBy('id', 'desc')
+        ->get();
       } else {
-        $query = SalesOrder::with('status', 'sum', 'completion_status')->get();
+        $query = SalesOrder::with('status', 'sum', 'completion_status', 'reconcile')
+        ->orderBy('id', 'desc')
+        ->get();
       }
 
       return new SOViewCollection($query);
@@ -97,29 +101,32 @@ class SalesOrderController extends Controller
     switch ($level) {
       case 'approve':
         # code...
-        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function ($query2) {
+        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum', 'reconcile')->whereHas('status', function ($query2) {
           $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
         })
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
+          ->orderBy('id', 'desc')
           ->get();
         break;
 
       case 'review':
         # code...
-        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')->whereHas('status', function ($query2) {
+        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum', 'reconcile')->whereHas('status', function ($query2) {
           $query2->whereIn('status_type', ['Review', 'Submit', 'Reject Review']);
         })
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
+          ->orderBy('id', 'desc')
           ->get();
         break;
 
       default:
         # code...
-        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum')
+        $query = SalesOrder::with('order', 'completion_status', 'status', 'sum', 'reconcile')
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
+          ->orderBy('id', 'desc')
           ->get();
         break;
     }

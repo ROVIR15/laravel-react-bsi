@@ -26,6 +26,7 @@ class POView extends JsonResource
         'valid_thru' => $this->valid_thru,
         'status' => $this->status,
         'completion_status' => $this->completion_status,
+        'order_item' => $this->order_item_one,
         'sum' => $this->sum
       ];
     }
