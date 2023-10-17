@@ -41,9 +41,9 @@ const TABLE_HEAD = [
   { id: 'bought_from', label: 'Supplier', alignRight: false },
   { id: 'total_qty', label: 'Qty', alignRight: false },
   { id: 'total_money', label: 'Total', alignRight: false },
-  { id: 'issue_date', label: 'Issue Date', alignRight: false },
-  { id: 'valid_thru', label: 'Valid Thru', alignRight: false },
-  { id: 'delivery_date', label: 'Delivery Date', alignRight: false }
+  { id: 'issue_date', label: 'Tanggal Terbit', alignRight: false },
+  { id: 'valid_thru', label: 'Valid Sampai Tgl', alignRight: false },
+  { id: 'delivery_date', label: 'ETD', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -372,7 +372,7 @@ function PurchaseOrder({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{`PO-${costing_id}-${costing_id}`}</TableCell>
+                        <TableCell align="left">{`PO-${costing_id}-${id}`}</TableCell>
                         <TableCell align="left">{row?.po_number}</TableCell>
                         <TableCell align="left">{ChipStatus(row?.status[0]?.status_type)}</TableCell>
                         <TableCell align="left">
@@ -383,7 +383,7 @@ function PurchaseOrder({ placeHolder }) {
                         <TableCell align="left">
                           {sum?.length ? fCurrency(row?.sum[0].total_money, currency) : null}
                         </TableCell>
-                        <TableCell align="left">{moment(row?.issue_date).format('ll')}</TableCell>
+                        <TableCell align="left">{moment(row?.created_at).format('ll')}</TableCell>
                         <TableCell align="left">{moment(row?.delivery_date).format('ll')}</TableCell>
                         <TableCell align="left">{moment(row?.valid_thru).format('ll')}</TableCell>
                         <TableCell align="right">
