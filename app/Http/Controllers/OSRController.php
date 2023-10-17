@@ -25,7 +25,7 @@ class OSRController extends Controller
             $query = ManufacturePlanningItems::with('man_plan', 'bom', 'facility', 'sales_order')
                 ->with([ 'sewing' => function($query) use ($month, $year){
                     return $query
-                    ->select('sales_order_id', 'bom_id', 'order_item_id', 'facility_id', 'date', DB::raw('sum(output) as total_output, avg(output) as average_output, min(date) as real_start_date, max(date) as real_end_date'))
+                    ->select('sales_order_id', 'costing_id', 'order_item_id', 'facility_id', 'date', DB::raw('sum(output) as total_output, avg(output) as average_output, min(date) as real_start_date, max(date) as real_end_date'))
                     ->groupBy('facility_id', 'sales_order_id')            
                     ->whereMonth('date', $month)->whereYear('date', $year);
                 }])
@@ -47,7 +47,7 @@ class OSRController extends Controller
                         'imageUrl' => $goods->imageUrl,
                         'line_start_date' => $query->line_start_date,
                         'line_end_date' => $query->line_end_date,
-                        'costing_id' => $query->bom_id,
+                        'costing_id' => $query->costing_id,
                         'sales_order_id' => $query->sales_order_id,
                         'sales_order_name' => $query->sales_order->po_number,
                         'buyer_name' => $query->sales_order->party->name,
