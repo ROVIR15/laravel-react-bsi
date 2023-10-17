@@ -117,12 +117,12 @@ export default function BasicTable({ payload, tax, currency }) {
                   {fCurrency(sumSubTotal(), currency)}
                 </td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_border_none wk_bold">Jumlah Qty</td>
                 <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_text_right wk_border_none wk_bold">
                   {sumOfQty()}
                 </td>
-              </tr>
+              </tr> */}
               <tr>
                 <td className="wk_width_3 wk_padd_8_20 wk_primary_color wk_border_none wk_pt0">
                   Tax <span className="wk_ternary_color">{tax}%</span>
