@@ -5,7 +5,7 @@ import numeral from 'numeral';
 
 export function fCurrency(number, currency = 'idr') {
   let hasDecimalPlaces = number % 1 !== 0;
-  let formatPattern = hasDecimalPlaces ? '0,0.000' : '0,0';
+  let formatPattern = hasDecimalPlaces ? '0,0.00' : '0,0';
   let res = numeral(number).format(`${formatPattern}`);
 
   if (currency?.toLowerCase() === 'idr') {
