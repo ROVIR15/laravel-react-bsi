@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
     Route::resource('costing', 'BOMController')->only(['index', 'store', 'show', 'update']);
     Route::resource('costing-document', 'BOMDocumentController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store', 'update']);
+    Route::resource('costing-item', 'BOMItemController')->only(['index', 'show', 'store', 'update', 'delete']);
     Route::resource('costing-service', 'BOMServiceController')->only(['index', 'show', 'update', 'store']);
     Route::resource('costing-status', 'BOMStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
 

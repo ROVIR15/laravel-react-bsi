@@ -299,9 +299,9 @@ function BillofMaterial() {
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },
       // { field: 'brand', headerName: 'Brand', editable: false },
-      { field: 'consumption', headerName: 'Konsumsi', editable: editableUser },
+      { field: 'consumption', headerName: 'Konsumsi', editable: editableUser || editableCondition },
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
-      { field: 'unit_price', headerName: 'Harga', editable: editableUser },
+      { field: 'unit_price', headerName: 'Harga', editable: editableUser || editableCondition },
       // { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
       {
         field: 'jumlah',
@@ -333,6 +333,8 @@ function BillofMaterial() {
   );
 
   const deleteDataComponent = React.useCallback((id) => () => {
+    if (!editableUser || !editableCondition) return;
+
     setComponent((prevComponent) => {
       return prevComponent.filter((x) => x.id !== id);
     });
@@ -473,7 +475,6 @@ function BillofMaterial() {
       let item_name = `${goods?.name} ${color} ${size}`;
       const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
 
-      console.log(sku_id)
       return {
         ...goods,
         ...rest,
