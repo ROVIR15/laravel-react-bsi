@@ -37,7 +37,8 @@ class SalesOrder extends JsonResource
             'export_doc' => $this->export_doc,
             'order_proof' => $this->order_proof,
             'completion_status' => $this->completion_status,
-            'status' => $this->status
+            'status' => $this->status,
+            'reconcile' => $this->reconcile
         ];
     }
 }

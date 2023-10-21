@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Page from '../../../components/Page';
 import {
+  Autocomplete,
   Box,
   Card,
   CardHeader,
@@ -55,7 +56,7 @@ import useAuth from '../../../context';
 // utils
 import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { _partyAddress } from '../../../helpers/data';
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 import { fCurrency } from '../../../utils/formatNumber';
 import { enqueueSnackbar } from 'notistack';
 import LoadingPage from '../../../components/LoadingPage';
@@ -225,8 +226,11 @@ function SalesOrder() {
     // transfrom data of order item
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
+      const sku_id = `RM-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
+
       return {
         ...product_feature,
+        sku_id: sku_id,
         product_feature_id: product_feature.id,
         id: key.id,
         name: product_feature?.product?.goods
@@ -273,6 +277,14 @@ function SalesOrder() {
     });
 
     setGeneratedInvoice(_inv);
+    let _cId = load?.reconcile?.costing_id;
+    let _cName = load?.reconcile?.costing2?.name;
+
+    if (!isUndefined(_cId) && !isUndefined(_cName)) {
+      let _choose = `${_cId}-${_cName}`;
+      setChoosen(_choose);
+      setChoosen_alt({ id: _cId, name: _cName });
+    }
   };
 
   useEffect(() => {
@@ -306,6 +318,7 @@ function SalesOrder() {
     setSubmitting,
     handleSubmit,
     setValues,
+    setFieldValue,
     getFieldProps
   } = formik;
 
@@ -426,11 +439,13 @@ function SalesOrder() {
         const productName =
           product_feature?.product?.goods?.name || product_feature?.product?.service?.name;
         const item_name = `${productName} ${product_feature?.size} - ${product_feature?.color}`;
+        const sku_id = `M-${product_feature?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
         const shipment_estimated = new Date(item.shipment_estimated);
         const total_shipped = item.shipment_item[0]?.total_qty_received;
 
         return {
           ...product_feature,
+          sku: sku_id,
           product_feature_id: product_feature.id,
           id: item.id,
           name: productName,
@@ -449,8 +464,7 @@ function SalesOrder() {
   };
   const columns = useMemo(
     () => [
-      { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-      { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
+      { field: 'sku_id', headerName: 'SKU ID', width: 150, editable: false },
       { field: 'name', headerName: 'Name', width: 350, editable: false },
       { field: 'size', headerName: 'Size', editable: false },
       { field: 'color', headerName: 'Color', width: 150, editable: false },
@@ -669,6 +683,62 @@ function SalesOrder() {
   }
   // ----------------------------------------------------------------- //
 
+  //Costing Option
+  // ----------------------------------------------------------------- //
+  const [optionsCosting, setOptionsCosting] = React.useState([]);
+  const loadingCosting = optionsCosting.length === 0;
+
+  const [choosen, setChoosen] = React.useState({});
+  const [choosen_alt, setChoosen_alt] = React.useState({ id: null, name: null });
+
+  const handleAutoComplete = (value) => {
+    if (!isEmpty(value)) {
+      let val = value.split('-')[0];
+      if (!isUndefined(val) && val !== 'undefined') {
+        let val = value.split('-')[0];
+        if (!isEmpty(optionsCosting)){
+          let item = optionsCosting.find((item) => parseInt(item.id) === parseInt(val));
+          setChoosen_alt({ id: val, name: item?.name });
+        }
+        setFieldValue('costing_id', parseInt(val));
+        setChoosen(parseInt(val));  
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loadingCosting) {
+      return undefined;
+    }
+
+    if (optionsCosting.length > 0 || optionsCosting.length != 0) return;
+    else {
+      try {
+        API.getCostingList(function (res) {
+          if (!res.length) return;
+          else {
+            let _data = res.map(function (item) {
+              return {
+                id: item?.id,
+                name: item?.name
+              };
+            });
+            setOptionsCosting(_data);
+          }
+        });
+      } catch (error) {
+        alert('error');
+      }
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [loadingCosting]);
+  // ----------------------------------------------------------------- //
+
   return (
     <Page>
       <Container>
@@ -704,15 +774,26 @@ function SalesOrder() {
                               helperText={touched.id && errors.id}
                               disabled={true}
                             />
-                            <TextField
+                            <Autocomplete
                               fullWidth
-                              autoComplete="po_number"
-                              type="text"
-                              label="Referenced Quote"
-                              {...getFieldProps('po_number')}
-                              error={Boolean(touched.po_number && errors.po_number)}
-                              helperText={touched.po_number && errors.po_number}
-                              disabled={true}
+                              disablePortal
+                              onInputChange={(event, newInputValue) => {
+                                handleAutoComplete(newInputValue);
+                              }}
+                              value={choosen_alt}
+                              options={optionsCosting}
+                              isOptionEqualToValue={(option, value) => {
+                                return option.id === value.id;
+                              }}
+                              getOptionLabel={(option) => `${option.id}-${option.name}`}
+                              renderInput={(params) => (
+                                <TextField
+                                  fullWidth
+                                  error={Boolean(touched.costing_id && errors.costing_id)}
+                                  helperText={touched.costing_id && errors.costing_id}
+                                  {...params}
+                                />
+                              )}
                             />
                           </Stack>
                         </Grid>

@@ -61,7 +61,7 @@ function applySortFilter(array, comparator, query) {
   });
   if (query) {
     return filter(array, (_b) => {
-      let b = `${_b?.name} ${_b?.color} ${_b?.size}`;
+      let b = `${_b?.name} ${_b?.size} ${_b?.color} `;
       return b.toLowerCase().indexOf(query.toLowerCase()) !== -1;
     });
   }
@@ -218,10 +218,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected }) 
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{size}</TableCell>
-                      <TableCell align="left">{color}</TableCell>
-                      <TableCell align="left">{value}</TableCell>
+                      <TableCell align="left">{`${name} ${size} ${color}`}</TableCell>
                     </TableRow>
                   );
                 })}

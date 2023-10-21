@@ -105,7 +105,8 @@ function SalesOrder() {
     po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
     valid_thru: Yup.date().required('city is required'),
-    delivery_date: Yup.date().required('province is required')
+    delivery_date: Yup.date().required('province is required'),
+    costing_id: Yup.number().required('Must be filled!')
   });
 
   const formik = useFormik({
@@ -121,7 +122,8 @@ function SalesOrder() {
       delivery_date: '',
       export_flag: false,
       tax: 0,
-      currency_id: 2
+      currency_id: 2,
+      costing_id: null
     },
     validationSchema: SalesOrderSchema,
     onSubmit: (values) => {

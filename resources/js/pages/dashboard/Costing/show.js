@@ -25,7 +25,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 
 import { useFormik, Form, FormikProvider } from 'formik';
-import { useParams, useLocation, Link as RouterLink } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
@@ -137,6 +137,8 @@ function BillofMaterial() {
       name: ''
     }
   });
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     let active = true;
@@ -292,6 +294,7 @@ function BillofMaterial() {
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
+      { field: 'goods_id', headerName: 'ID Goods', editable: false, visible: 'hide' },
       { field: 'item_name', width: 300, headerName: 'Name', editable: false },
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },
@@ -316,12 +319,39 @@ function BillofMaterial() {
             label="Delete"
             onClick={deleteDataComponent(params.id)}
             showInMenu
+          />,
+          <GridActionsCellItem
+            // icon={<Icon icon={trash2Outline} width={24} height={24} />}
+            label="Edit Material"
+            onClick={editMaterial(params.row.goods_id)}
+            showInMenu
           />
         ]
       }
     ],
-    [deleteDataComponent]
+    [deleteDataComponent, editMaterial]
   );
+
+  const deleteDataComponent = React.useCallback((id) => () => {
+    setComponent((prevComponent) => {
+      return prevComponent.filter((x) => x.id !== id);
+    });
+
+    try {
+      API.deleteABOMItem(id, (res) => {
+        if (res.success) enqueueSnackbar('Item Deleted', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
+
+    handleUpdateAllComponentRows();
+  });
+
+  const editMaterial = React.useCallback((id) => () => {
+    navigate(`../../material/goods/${id}`);
+  });
 
   const operationColumns = useMemo(
     () => [
@@ -441,12 +471,17 @@ function BillofMaterial() {
       } = key;
 
       let item_name = `${goods?.name} ${color} ${size}`;
+      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
+
+      console.log(sku_id)
       return {
         ...goods,
         ...rest,
         size,
         color,
+        sku_id: sku_id,
         item_name,
+        goods_id: key?.product_feature?.product?.goods_id,
         product_id: key?.product_id,
         product_feature_id: key.product_feature_id,
         bom_id: key.bom_id,
@@ -550,23 +585,6 @@ function BillofMaterial() {
   const handleResetComponentRows = () => {
     setComponent([]);
   };
-
-  const deleteDataComponent = React.useCallback((id) => () => {
-    setComponent((prevComponent) => {
-      return prevComponent.filter((x) => x.id !== id);
-    });
-
-    try {
-      API.deleteABOMItem(id, (res) => {
-        if (res.success) enqueueSnackbar('Item Deleted', { variant: 'successAlert' });
-        else enqueueSnackbar('', { variant: 'failedAlert' });
-      });
-    } catch (error) {
-      enqueueSnackbar('', { variant: 'failedAlert' });
-    }
-
-    handleUpdateAllComponentRows();
-  });
 
   /**
    * Handling Data Grid for a Operation BOM

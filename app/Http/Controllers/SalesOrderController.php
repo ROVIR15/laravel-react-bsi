@@ -387,10 +387,35 @@ class SalesOrderController extends Controller
   {
     $salesOrderData = $request->all()['payload'];
     try {
-      SalesOrder::find($id)->update($salesOrderData);
-      return response()->json([
-        'success' => true
-      ], 200);
+      $sales_order = SalesOrder::find($id);
+      
+      if ($sales_order) {
+        $reconcile_payload = [
+          'order_id' => $salesOrderData['order_id'],
+          'sales_order_id' => $id,
+          'costing_id' => $salesOrderData['costing_id']
+        ];
+
+        $reconcile_get = Reconcile::where('sales_order_id', $id)->get();
+
+        if (count($reconcile_get)){
+          Reconcile::where('sales_order_id', $id)->update($reconcile_payload);
+        } else {
+          Reconcile::create($reconcile_payload);
+        }
+
+        $sales_order->update($salesOrderData);
+
+        return response()->json([
+          'success' => true
+        ], 200);  
+
+      } else {
+        return response()->json([
+          'success' => false,
+          'message' => 'Data not found!'
+        ]);
+      }
     } catch (Exception $e) {
       //throw $th;
       return response()->json([

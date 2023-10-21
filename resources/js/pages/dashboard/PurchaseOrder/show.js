@@ -178,12 +178,16 @@ function SalesOrder() {
 
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
+      const sku_id = `M-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`
+      const shipment_date_ = moment(key.shipment_estimated).format('YYYY-MM-DD')
+
       return {
         ...product_feature,
         costing_item_id: key.costing_item_id,
         product_id: product_feature.product_id,
         product_feature_id: product_feature.id,
         id: key.id,
+        sku_id: sku_id,
         name: product_feature?.product?.goods
           ? product_feature?.product?.goods?.name
           : product_feature?.product?.service?.name,
@@ -192,7 +196,7 @@ function SalesOrder() {
             ? product_feature?.product?.goods?.name
             : product_feature?.product?.service?.name
         } ${product_feature?.size} - ${product_feature?.color}`,
-        shipment_estimated: new Date(key.shipment_estimated),
+        shipment_estimated: shipment_date_,
         total_shipped: key.shipment_item[0]?.total_qty_received,
         description: key.description,
         hs_code: key?.import_info?.hs_code,
@@ -350,11 +354,14 @@ function SalesOrder() {
 
     var c = load2.map((key) => {
       const { product_feature } = key;
+      const sku_id = `M-${product_feature?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`
+
       return {
         ...product_feature,
         product_feature_id: product_feature.id,
         costing_item_id: key?.costing_item_id,
         id: key.id,
+        sku_id: sku_id,
         name: product_feature?.product?.goods
           ? product_feature?.product?.goods?.name
           : product_feature?.product?.service?.name,
@@ -380,8 +387,7 @@ function SalesOrder() {
 
   const columns = useMemo(
     () => [
-      { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-      { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
+      { field: 'sku_id', headerName: 'SKU ID', width: 150,editable: false },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
       { field: 'unit_price', headerName: 'Unit Price', editable: editableUser || editableCondition },
