@@ -56,17 +56,13 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt, isUndefined, isNull } from 'lodash';
+import { isUndefined, isEmpty, isNull } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
 function getPathname(array) {
   if (!array.length) console.error('Require an Array type');
   return '/' + array[1] + '/' + array[2] + '/' + array[3];
-}
-
-function isEmpty(data) {
-  return !gt(data, 0);
 }
 
 function totalConsumption(params) {
@@ -139,6 +135,101 @@ function BillofMaterial() {
   });
 
   const navigate = useNavigate();
+
+  const [listPO, setListPO] = useState([]);
+  const [statusCosting, setStatusCosting] = useState({ id: null, status_type: null });
+
+  /**
+   * Handling GET Bill of Material Information from spesific bom_id
+   */
+  useEffect(async () => {
+    if (!id) return;
+
+    const load = await axios
+      .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
+      .then(function ({ data: { data, items } }) {
+        setStatusCosting(data?.status[0]);
+        setListPO(items);
+        return data;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+
+    setValues({
+      id: load.id,
+      currency_id: load.currency_info?.id,
+      party_id: load.party?.id,
+      product_id: load.product_id,
+      product_feature_id: load.product_feature_id,
+      name: load.name,
+      qty: load.qty,
+      margin: load?.margin,
+      starting_price: load?.starting_price,
+      tax: load?.tax,
+      start_date: load.start_date,
+      end_date: load.end_date,
+      company_name: load.company_name
+    });
+
+    setSelectedValueSH(load.party);
+
+    const load2 = load?.bom_items;
+
+    var c = load2.map((key) => {
+      const {
+        product_feature: {
+          size,
+          color,
+          product: { goods }
+        },
+        ...rest
+      } = key;
+
+      let item_name = `${goods?.name} ${color} ${size}`;
+      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
+
+      return {
+        ...goods,
+        ...rest,
+        size,
+        color,
+        sku_id: sku_id,
+        item_name,
+        goods_id: key?.product_feature?.product?.goods_id,
+        product_id: key?.product_id,
+        product_feature_id: key.product_feature_id,
+        bom_id: key.bom_id,
+        qty: key.qty,
+        company_name: key.company_name
+      };
+    });
+    setComponent(c);
+
+    const load3 = load?.bom_services;
+
+    var s = BomServiceList(load3);
+    setService(s);
+
+    const load4 = load?.operations;
+
+    var o = load4.map((key) => {
+      const { work_center_info, seq, id, work_center_id, bom_id } = key;
+      return {
+        ...work_center_info,
+        seq,
+        bom_id,
+        id,
+        work_center_id
+      };
+    });
+    setOperation(o);
+  }, [id]);
+
+  const editableUser = user.id === 2 ? true : false;
+  const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
+
+  console.log(editableUser, statusCosting.status_type, editableCondition)
 
   useEffect(() => {
     let active = true;
@@ -418,99 +509,6 @@ function BillofMaterial() {
     ],
     [deleteDataService]
   );
-
-  const [listPO, setListPO] = useState([]);
-  const [statusCosting, setStatusCosting] = useState({ id: null, status_type: null });
-
-  /**
-   * Handling GET Bill of Material Information from spesific bom_id
-   */
-  useEffect(async () => {
-    if (!id) return;
-
-    const load = await axios
-      .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
-      .then(function ({ data: { data, items } }) {
-        setStatusCosting(data?.status[0]);
-        setListPO(items);
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
-
-    setValues({
-      id: load.id,
-      currency_id: load.currency_info?.id,
-      party_id: load.party?.id,
-      product_id: load.product_id,
-      product_feature_id: load.product_feature_id,
-      name: load.name,
-      qty: load.qty,
-      margin: load?.margin,
-      starting_price: load?.starting_price,
-      tax: load?.tax,
-      start_date: load.start_date,
-      end_date: load.end_date,
-      company_name: load.company_name
-    });
-
-    setSelectedValueSH(load.party);
-
-    const load2 = load?.bom_items;
-
-    var c = load2.map((key) => {
-      const {
-        product_feature: {
-          size,
-          color,
-          product: { goods }
-        },
-        ...rest
-      } = key;
-
-      let item_name = `${goods?.name} ${color} ${size}`;
-      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
-
-      return {
-        ...goods,
-        ...rest,
-        size,
-        color,
-        sku_id: sku_id,
-        item_name,
-        goods_id: key?.product_feature?.product?.goods_id,
-        product_id: key?.product_id,
-        product_feature_id: key.product_feature_id,
-        bom_id: key.bom_id,
-        qty: key.qty,
-        company_name: key.company_name
-      };
-    });
-    setComponent(c);
-
-    const load3 = load?.bom_services;
-
-    var s = BomServiceList(load3);
-    setService(s);
-
-    const load4 = load?.operations;
-
-    var o = load4.map((key) => {
-      const { work_center_info, seq, id, work_center_id, bom_id } = key;
-      return {
-        ...work_center_info,
-        seq,
-        bom_id,
-        id,
-        work_center_id
-      };
-    });
-    setOperation(o);
-  }, [id]);
-
-  const editableUser = user.id === 2 ? true : false;
-  const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
 
   /**
    * Handling Data Grid for a Component BOM
