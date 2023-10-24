@@ -229,7 +229,7 @@ function BillofMaterial() {
   const editableUser = user.id === 2 ? true : false;
   const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
 
-  console.log(editableUser, statusCosting.status_type, editableCondition)
+  console.log(editableUser, editableUser || editableCondition, editableCondition)
 
   useEffect(() => {
     let active = true;
