@@ -138,7 +138,7 @@ function BillofMaterial() {
     }
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     let active = true;
@@ -288,13 +288,10 @@ function BillofMaterial() {
     };
   }, [loading]);
 
-  const editableUser = user.id === 2 ? true : false;
-  const editableCondition = isEmpty(status) ? true : status.status_type === 'Submit' ? true : false;
-
   const goodsColumns = useMemo(
     () => [
       { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-      { field: 'goods_id', headerName: 'ID Goods', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', width: 300, headerName: 'Name', editable: false },
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },
@@ -423,7 +420,7 @@ function BillofMaterial() {
   );
 
   const [listPO, setListPO] = useState([]);
-  const [status, setStatus] = useState({ id: null, status_type: null });
+  const [statusCosting, setStatusCosting] = useState({ id: null, status_type: null });
 
   /**
    * Handling GET Bill of Material Information from spesific bom_id
@@ -434,7 +431,7 @@ function BillofMaterial() {
     const load = await axios
       .get(process.env.MIX_API_URL + '/bom' + `/${id}`)
       .then(function ({ data: { data, items } }) {
-        setStatus(data?.status[0]);
+        setStatusCosting(data?.status[0]);
         setListPO(items);
         return data;
       })
@@ -512,13 +509,15 @@ function BillofMaterial() {
     setOperation(o);
   }, [id]);
 
+  const editableUser = user.id === 2 ? true : false;
+  const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
+
   /**
    * Handling Data Grid for a Component BOM
    */
 
   const handleEditComponentRowsModelChange = React.useCallback(
     (model) => {
-      console.log('edit haha')
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
       if (editedIds.length === 0) {
@@ -531,7 +530,7 @@ function BillofMaterial() {
           data[editedColumnName] = editRowData[editedColumnName].value;
 
           try {
-            API.updateABOMService(editedIds, data, function (res) {
+            API.updateABOMItem(editedIds, data, function (res) {
               if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
               else enqueueSnackbar('', { variant: 'failedAlert' });
             });
@@ -547,9 +546,8 @@ function BillofMaterial() {
             const data = new Object();
             data[editedColumnName] = editRowData[editedColumnName].value;
 
-        if (!editableUser || !editableCondition) return;
             try {
-              API.updateABOMService(editedIds, data, function (res) {
+              API.updateABOMItem(editedIds, data, function (res) {
                 if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
                 else enqueueSnackbar('', { variant: 'failedAlert' });
               });
@@ -588,12 +586,14 @@ function BillofMaterial() {
       } = key;
 
       let item_name = `${goods?.name} ${color} ${size}`;
+      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
 
       return {
         ...goods,
         ...rest,
         size,
         color,
+        sku_id: sku_id,
         item_name,
         product_feature_id: key.product_feature_id,
         bom_id: key.bom_id,
