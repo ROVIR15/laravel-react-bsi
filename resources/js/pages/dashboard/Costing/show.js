@@ -670,21 +670,40 @@ function BillofMaterial() {
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
       if (editedIds.length === 0) {
-        const editedIds = Object.keys(editRowsModel);
-        const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+        if (editableUser) {
+          const editedIds = Object.keys(editRowsModel);
+          const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
-        //update items state
-        const data = new Object();
-        data[editedColumnName] = editRowData[editedColumnName].value;
+          //update items state
+          const data = new Object();
+          data[editedColumnName] = editRowData[editedColumnName].value;
 
-        if (!editableUser || !editableCondition) return;
-        try {
-          API.updateABOMService(editedIds, data, function (res) {
-            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
-            else enqueueSnackbar('', { variant: 'failedAlert' });
-          });
-        } catch (error) {
-          enqueueSnackbar('', { variant: 'failedAlert' });
+          try {
+            API.updateABOMService(editedIds, data, function (res) {
+              if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+              else enqueueSnackbar('', { variant: 'failedAlert' });
+            });
+          } catch (error) {
+            enqueueSnackbar('', { variant: 'failedAlert' });
+          }
+        } else {
+          if (editableCondition) {
+            const editedIds = Object.keys(editRowsModel);
+            const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
+
+            //update items state
+            const data = new Object();
+            data[editedColumnName] = editRowData[editedColumnName].value;
+
+            try {
+              API.updateABOMService(editedIds, data, function (res) {
+                if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+                else enqueueSnackbar('', { variant: 'failedAlert' });
+              });
+            } catch (error) {
+              enqueueSnackbar('', { variant: 'failedAlert' });
+            }
+          }
         }
       } else {
         setEditRowData(model[editedIds[0]]);
