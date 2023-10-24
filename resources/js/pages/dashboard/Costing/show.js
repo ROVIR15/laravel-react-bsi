@@ -230,6 +230,8 @@ function BillofMaterial() {
   const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
   const __editable = editableUser || editableCondition
 
+  console.log(__editable)
+
   useEffect(() => {
     let active = true;
 
@@ -386,9 +388,9 @@ function BillofMaterial() {
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },
       // { field: 'brand', headerName: 'Brand', editable: false },
-      { field: 'consumption', headerName: 'Konsumsi', editable: __editable },
+      { field: 'consumption', headerName: 'Konsumsi', editable: true },
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
-      { field: 'unit_price', headerName: 'Harga', editable: __editable },
+      { field: 'unit_price', headerName: 'Harga', editable: true },
       // { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },
       {
         field: 'jumlah',
