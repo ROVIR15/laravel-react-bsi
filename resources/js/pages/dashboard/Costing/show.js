@@ -56,7 +56,7 @@ import {
   serviceList,
   BomServiceList
 } from '../../../helpers/data';
-import { gt, isArray, isNull } from 'lodash';
+import { gt, isUndefined, isNull } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
 
@@ -518,6 +518,7 @@ function BillofMaterial() {
 
   const handleEditComponentRowsModelChange = React.useCallback(
     (model) => {
+      console.log('edit haha')
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
       if (editedIds.length === 0) {
