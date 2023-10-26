@@ -1161,9 +1161,9 @@ const main = {
         cb(err.response);
       });
   },
-  getOrder(cb) {
+  getOrder(params=null, cb) {
     axios
-      .get(uri + '/order')
+      .get(uri + '/order' + params)
       .then(function (res) {
         cb(res.data);
       })
