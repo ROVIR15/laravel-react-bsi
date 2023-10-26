@@ -53,6 +53,10 @@ class OrderController extends Controller
                 }
             }
 
+            if(count($list_so)){
+                $list_so = array_unique($list_so);
+            }
+
             // $query = Order::all();
             // return new OrderCollection($query);
             $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to', 'delivery_date')

@@ -200,15 +200,15 @@ function Display({ placeHolder }) {
 
           let additi = res.data.reduce(
             function (init, next) {
-              let sum_of_cutting = next.monitoring_cutting[0].output
+              let sum_of_cutting = (next.monitoring_cutting.length > 0)
                 ? next.monitoring_cutting[0].output
                 : 0;
-              let sum_of_sewing = next.monitoring_sewing[0].output
+              let sum_of_sewing = next.monitoring_sewing.length > 0
                 ? next.monitoring_sewing[0].output
                 : 0;
-              let sum_of_qc = next.monitoring_qc[0].output ? next.monitoring_qc[0].output : 0;
-              let sum_of_fg = next.monitoring_fg[0].output ? next.monitoring_fg[0].output : 0;
-              let total_order = next.sum[0].total_qty ? next.sum[0].total_qty : 0;
+              let sum_of_qc = next.monitoring_qc.length > 0 ? next.monitoring_qc[0].output : 0;
+              let sum_of_fg = next.monitoring_fg.length > 0 ? next.monitoring_fg[0].output : 0;
+              let total_order = next.sum.length > 0 ? next.sum[0].total_qty : 0;
 
               return {
                 ...init,
