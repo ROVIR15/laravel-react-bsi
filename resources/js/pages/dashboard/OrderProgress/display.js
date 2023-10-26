@@ -230,11 +230,11 @@ function Display({ placeHolder }) {
 
           additi = {
             ...additi,
-            percentage_c: additi.total_order > 0 ? (additi.cutting / additi.total_order) * 100 : 0,
-            percentage_s: additi.total_order > 0 ? (additi.sewing / additi.total_order) * 100 : 0,
-            percentage_qc: additi.total_order > 0 ? (additi.qc / additi.total_order) * 100 : 0,
+            percentage_c: additi.total_order > 0 ? Math.round((additi.cutting / additi.total_order) * 100) : 0,
+            percentage_s: additi.total_order > 0 ? Math.round(additi.sewing / additi.total_order) * 100 : 0,
+            percentage_qc: additi.total_order > 0 ? Math.round(additi.qc / additi.total_order) * 100 : 0,
             percentage_fg:
-              additi.total_order > 0 ? (additi.finished_goods / additi.total_order) * 100 : 0
+              additi.total_order > 0 ? Math.round(additi.finished_goods / additi.total_order) * 100 : 0
           };
 
           setData(additi);
