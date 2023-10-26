@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { filter, isArray, isEqual, isNull, uniqBy } from 'lodash';
+import { filter, isArray, isEqual, isNull, uniqBy, merge } from 'lodash';
 import {
+  Box,
   Card,
   Checkbox,
+  Paper,
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination
+  TablePagination,
+  Typography,
+  Stack,
+  styled
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../components/Table';
 import ListToolbar from './components/ListToolbar';
+import ReactApexChart from 'react-apexcharts';
 
 //
 import moment from 'moment';
@@ -22,8 +28,24 @@ import moment from 'moment';
 import API from '../../../helpers';
 import { fPercent } from '../../../utils/formatNumber';
 
-moment.locale('id')
+import { BaseOptionChart } from '../../../components/charts';
+import { fNumber } from '../../../utils/formatNumber';
+
+moment.locale('id');
 // ----------------------------------------------------------------------
+const DataQuantity = styled(Paper)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  padding: '24px',
+  fontColor: '#fff',
+  borderRadius: '16px',
+  overflow: 'hidden',
+  position: 'relative',
+  width: '-webkit-fill-available',
+  color: 'rgb(255, 255, 255)',
+  backgroundColor: 'rgb(54, 47, 217)'
+}));
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
@@ -31,10 +53,10 @@ const TABLE_HEAD = [
   { id: 'party_id', label: 'Pembeli', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'qty', label: 'Qty Order', alignRight: false },
-  { id: 'output_cutting', label: 'Output Cutting', alignRight: false },
-  { id: 'output_sw', label: 'Output Sewing', alignRight: false },
-  { id: 'output_qc', label: 'Output QC', alignRight: false },
-  { id: 'output_fg', label: 'Output Finished Goods', alignRight: false },
+  { id: 'output_cutting', label: 'Hasil Cutting', alignRight: false },
+  { id: 'output_sw', label: 'Hasil Sewing', alignRight: false },
+  { id: 'output_qc', label: 'Hasil Finished Goods (QC)', alignRight: false },
+  { id: 'output_fg', label: 'Hasil Garment Terpacking', alignRight: false },
   { id: 'percentage', label: 'Persentase Penyelesaian', alignRight: false },
   { id: 'difference', label: 'Kekurangan', alignRight: false }
 ];
@@ -83,24 +105,29 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
 
-  console.log(query);
   if (query[1] !== 0)
-    if(isEqual(query[2], 0)){
+    if (isEqual(query[2], 0)) {
       return filter(
         array,
         (_b) =>
-          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1]
-      );  
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.party?.id === query[1]
+      );
     } else {
       return filter(
         array,
         (_b) =>
-          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 && _b.party?.id === query[1] && _b.order_id === query[2]
-      );  
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.party?.id === query[1] &&
+          _b.order_id === query[2]
+      );
     }
   else {
-    return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
-  } 
+    return filter(
+      array,
+      (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
+    );
+  }
 
   return stabilizedThis.map((el) => el[0]);
 }
@@ -116,6 +143,18 @@ function Display({ placeHolder }) {
   const [filterDate, setFilterDate] = useState({
     thruDate: moment(new Date()).format('YYYY-MM-DD'),
     fromDate: moment(new Date()).subtract(7, 'days').format('YYYY-MM-DD')
+  });
+
+  const [data, setData] = useState({
+    cutting: 0,
+    sewing: 0,
+    qc: 0,
+    finished_goods: 0,
+    percentage_c: 0,
+    percentage_s: 0,
+    percentage_qc: 0,
+    percentage_fg: 0,
+    total_order: 0
   });
 
   //----------------filter by buyer name----------------------//
@@ -137,30 +176,68 @@ function Display({ placeHolder }) {
   //------------------------------------------------------------//
 
   useEffect(() => {
-    handleUpdateData();
-  }, []);
-
-  useEffect(() => {
     //check first is that order_id was found on recent data list;
-    let isFound = filteredData.filter((item) => (item.order_id === filterByOrder)).length > 0;
-    if(!isFound) setFilterByOrder(0);
-    let _orderList = filteredData.filter((item) => !isNull(item?.po_number)).map((obj) => ({order_id: obj.order_id, po_number: obj.po_number}));
+    let isFound = filteredData.filter((item) => item.order_id === filterByOrder).length > 0;
+    if (!isFound) setFilterByOrder(0);
+    let _orderList = filteredData
+      .filter((item) => !isNull(item?.po_number))
+      .map((obj) => ({ order_id: obj.order_id, po_number: obj.po_number }));
     let _uniqOrderList = uniqBy(_orderList, 'order_id');
-    setOrderList(_uniqOrderList)
-
-  }, [filterBuyer])
+    setOrderList(_uniqOrderList);
+  }, [filterBuyer]);
 
   const handleUpdateData = () => {
     // let params = `?fromDate=${filterDate.fromDate}&thruDate=${filterDate.thruDate}`;
 
     try {
-      API.getOrder((res) => {
+      let params = filterMonthYear ? `?monthYear=${filterMonthYear}` : '';
+      API.getOrder(params, (res) => {
         if (!res?.data) {
           setQuoteData([]);
         } else {
           let _buyerList = res.data.filter((item) => !isNull(item?.party)).map((obj) => obj?.party);
           let _uniqBuyerList = uniqBy(_buyerList, 'id');
 
+          let additi = res.data.reduce(
+            function (init, next) {
+              let sum_of_cutting = next.monitoring_cutting[0].output
+                ? next.monitoring_cutting[0].output
+                : 0;
+              let sum_of_sewing = next.monitoring_sewing[0].output
+                ? next.monitoring_sewing[0].output
+                : 0;
+              let sum_of_qc = next.monitoring_qc[0].output ? next.monitoring_qc[0].output : 0;
+              let sum_of_fg = next.monitoring_fg[0].output ? next.monitoring_fg[0].output : 0;
+              let total_order = next.sum[0].total_qty ? next.sum[0].total_qty : 0;
+
+              return {
+                ...init,
+                cutting: init.cutting + parseInt(sum_of_cutting),
+                sewing: init.sewing + parseInt(sum_of_sewing),
+                qc: init.qc + parseInt(sum_of_qc),
+                finished_goods: init.finished_goods + parseInt(sum_of_fg),
+                total_order: init.total_order + parseInt(total_order)
+              };
+            },
+            {
+              cutting: 0,
+              sewing: 0,
+              qc: 0,
+              finished_goods: 0,
+              total_order: 0
+            }
+          );
+
+          additi = {
+            ...additi,
+            percentage_c: additi.total_order > 0 ? (additi.cutting / additi.total_order) * 100 : 0,
+            percentage_s: additi.total_order > 0 ? (additi.sewing / additi.total_order) * 100 : 0,
+            percentage_qc: additi.total_order > 0 ? (additi.qc / additi.total_order) * 100 : 0,
+            percentage_fg:
+              additi.total_order > 0 ? (additi.finished_goods / additi.total_order) * 100 : 0
+          };
+
+          setData(additi);
           setOptionsBuyer(_uniqBuyerList);
           setQuoteData(res.data);
         }
@@ -244,124 +321,293 @@ function Display({ placeHolder }) {
     });
   };
 
+  //----------------filter by month and year------------------//
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    setFilterMonthYear(value);
+  };
+  //----------------------------------------------------------//
+
+  useEffect(() => {
+    handleUpdateData();
+  }, [filterMonthYear]);
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - quoteData.length) : 0;
 
-  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [filterName, filterBuyer, filterByOrder]);
+  const filteredData = applySortFilter(quoteData, getComparator(order, orderBy), [
+    filterName,
+    filterBuyer,
+    filterByOrder
+  ]);
 
   const isDataNotFound = filteredData.length === 0;
 
-  return (
-    <Card>
-      <ListToolbar
-        numSelected={selected.length}
-        filterName={filterName}
-        filterDate={filterDate}
-        onFilterDate={handleDateChanges}
-        onGo={handleUpdateData}
-        onFilterName={handleFilterByName}
-        placeHolder={placeHolder}
-        buyerFilterActive={true}
-        filterBuyer={filterBuyer}
-        onFilterBuyer={handleBuyerFilter}
-        listOfBuyer={optionsBuyer}
-        filterOrderActive={true}
-        selectedOrder={filterByOrder}
-        onFilterOrder={handleOrderFilter}
-        optionsOrder={orderList}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
-            <ListHead
-              order={order}
-              active={false}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={quoteData.length}
-              numSelected={selected.length}
-              onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const {
-                    id,
-                    party,
-                    order_id,
-                    delivery_date,
-                    sum,
-                    po_number,
-                    monitoring_cutting,
-                    monitoring_sewing,
-                    monitoring_qc,
-                    monitoring_fg
-                  } = row;
-                  let { percentage, difference } = completionOfOrder(
-                    sum[0]?.total_qty,
-                    monitoring_fg[0]?.output
-                  );
+  const chartOptions = merge(BaseOptionChart(), {
+    plotOptions: {
+      radialBar: {
+        hollow: {
+          margin: 15,
+          size: '55%'
+        },
+        colors: ['#fff'],
+        dataLabels: {
+          show: true,
+          label: {
+            show: false
+          },
+          value: {
+            color: '#fff',
+            fontSize: '20px',
+            offsetY: '-10',
+            show: true
+          },
+          total: {
+            show: false,
+            formatter: function (w) {
+              return w.globals.seriesTotals[0] + '%';
+            }
+          }
+        }
+      }
+    },
+    fill: {
+      type: 'solid',
+      colors: ['#fff']
+    },
+    stroke: {
+      lineCap: 'round'
+    },
+    legend: {
+      show: false
+    },
+    labels: ['']
+  });
 
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="checkbox"
-                      // selected={isItemSelected}
-                      // aria-checked={isItemSelected}
-                    >
-                      <TableCell align="left">{`SO-${id}`}</TableCell>
-                      <TableCell align="left">{moment(delivery_date).format('DD MMMM YYYY')}</TableCell>
-                      <TableCell align="left">{party?.name}</TableCell>
-                      <TableCell align="left">{po_number}</TableCell>
-                      <TableCell align="left">{sum[0]?.total_qty}</TableCell>
-                      <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
-                      <TableCell align="left" style={(monitoring_sewing[0]?.output > monitoring_cutting[0]?.output ? { color: 'red'} : null)}>{monitoring_sewing[0]?.output}</TableCell>
-                      <TableCell align="left" style={(monitoring_qc[0]?.output > monitoring_sewing[0]?.output ? { color: 'red'} : null)}>{monitoring_qc[0]?.output}</TableCell>
-                      <TableCell align="left" style={(monitoring_fg[0]?.output > monitoring_qc[0]?.output ? { color: 'red'} : null)}>{monitoring_fg[0]?.output}</TableCell>
-                      <TableCell align="left">{fPercent(percentage)}</TableCell>
-                      <TableCell align="left">{difference}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu
-                          id={order_id}
-                          deleteActive={false}
-                          name="Show"
-                          handleDelete={(event) => handleDeleteData(event, id)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            {isDataNotFound && (
+  return (
+    <Stack direction="column" spacing={2}>
+      <Stack direction="row" spacing={2}>
+        <DataQuantity>
+          <div>
+            <ReactApexChart
+              type="radialBar"
+              series={[data.percentage_c]}
+              options={chartOptions}
+              height={150}
+              width={100}
+            />
+          </div>
+          <Box sx={{ marginLeft: '24px' }}>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.cutting)} pcs</Typography>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.total_order)} pcs</Typography>
+            <Typography variant="body2" component="p">
+              Persentase Penyelesaiaan Cutting
+            </Typography>
+          </Box>
+        </DataQuantity>
+
+        <DataQuantity>
+          <div>
+            <ReactApexChart
+              type="radialBar"
+              series={[data.percentage_s]}
+              options={chartOptions}
+              height={150}
+              width={100}
+            />
+          </div>
+          <Box sx={{ marginLeft: '24px' }}>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.sewing)} pcs</Typography>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.total_order)} pcs</Typography>
+            <Typography variant="body2" component="p">
+              Persentase Penyelesaiaan Sewing
+            </Typography>
+          </Box>
+        </DataQuantity>
+
+        <DataQuantity>
+          <div>
+            <ReactApexChart
+              type="radialBar"
+              series={[data.percentage_qc]}
+              options={chartOptions}
+              height={150}
+              width={100}
+            />
+          </div>
+          <Box sx={{ marginLeft: '24px' }}>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.qc)} pcs</Typography>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.total_order)} pcs</Typography>
+            <Typography variant="body2" component="p">
+              Persentase Penyelesaiaan QC
+            </Typography>
+          </Box>
+        </DataQuantity>
+
+        <DataQuantity>
+          <div>
+            <ReactApexChart
+              type="radialBar"
+              series={[data.percentage_fg]}
+              options={chartOptions}
+              height={150}
+              width={100}
+            />
+          </div>
+          <Box sx={{ marginLeft: '24px' }}>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.finished_goods)} pcs</Typography>
+            <Typography variant="h5" style={{color: 'white'}}>{fNumber(data.total_order)} pcs</Typography>
+            <Typography variant="body2" component="p">
+              Persentase Penyelesaiaan Finished Goods
+            </Typography>
+          </Box>
+        </DataQuantity>
+      </Stack>
+
+      <Card>
+        <ListToolbar
+          monthYearActive={true}
+          filterMonthYear={filterMonthYear}
+          onFilterMonthYear={handleMonthYearChanges}
+          numSelected={selected.length}
+          filterName={filterName}
+          filterDate={filterDate}
+          onFilterDate={handleDateChanges}
+          onGo={handleUpdateData}
+          onFilterName={handleFilterByName}
+          placeHolder={placeHolder}
+          buyerFilterActive={true}
+          filterBuyer={filterBuyer}
+          onFilterBuyer={handleBuyerFilter}
+          listOfBuyer={optionsBuyer}
+          filterOrderActive={true}
+          selectedOrder={filterByOrder}
+          onFilterOrder={handleOrderFilter}
+          optionsOrder={orderList}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table size="small">
+              <ListHead
+                order={order}
+                active={false}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={quoteData.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
               <TableBody>
-                <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
-                  </TableCell>
-                </TableRow>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    const {
+                      id,
+                      party,
+                      order_id,
+                      delivery_date,
+                      sum,
+                      po_number,
+                      monitoring_cutting,
+                      monitoring_sewing,
+                      monitoring_qc,
+                      monitoring_fg
+                    } = row;
+                    let { percentage, difference } = completionOfOrder(
+                      sum[0]?.total_qty,
+                      monitoring_fg[0]?.output
+                    );
+
+                    return (
+                      <TableRow
+                        hover
+                        key={id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        // selected={isItemSelected}
+                        // aria-checked={isItemSelected}
+                      >
+                        <TableCell align="left">{`SO-${id}`}</TableCell>
+                        <TableCell align="left">
+                          {moment(delivery_date).format('DD MMMM YYYY')}
+                        </TableCell>
+                        <TableCell align="left">{party?.name}</TableCell>
+                        <TableCell align="left">{po_number}</TableCell>
+                        <TableCell align="left">{sum[0]?.total_qty}</TableCell>
+                        <TableCell align="left">{monitoring_cutting[0]?.output}</TableCell>
+                        <TableCell
+                          align="left"
+                          style={
+                            monitoring_sewing[0]?.output > monitoring_cutting[0]?.output
+                              ? { color: 'red' }
+                              : null
+                          }
+                        >
+                          {monitoring_sewing[0]?.output}
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          style={
+                            monitoring_qc[0]?.output > monitoring_sewing[0]?.output
+                              ? { color: 'red' }
+                              : null
+                          }
+                        >
+                          {monitoring_qc[0]?.output}
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          style={
+                            monitoring_fg[0]?.output > monitoring_qc[0]?.output
+                              ? { color: 'red' }
+                              : null
+                          }
+                        >
+                          {monitoring_fg[0]?.output}
+                        </TableCell>
+                        <TableCell align="left">{fPercent(percentage)}</TableCell>
+                        <TableCell align="left">{difference}</TableCell>
+                        <TableCell align="right">
+                          <MoreMenu
+                            id={order_id}
+                            deleteActive={false}
+                            name="Show"
+                            handleDelete={(event) => handleDeleteData(event, id)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
               </TableBody>
-            )}
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <TablePagination
-        rowsPerPageOptions={[25, 50, 75]}
-        component="div"
-        count={quoteData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Card>
+              {isDataNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <SearchNotFound searchQuery={filterName} />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <TablePagination
+          rowsPerPageOptions={[25, 50, 75]}
+          component="div"
+          count={quoteData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+    </Stack>
   );
 }
 

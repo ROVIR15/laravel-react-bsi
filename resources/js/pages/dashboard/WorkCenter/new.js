@@ -74,11 +74,10 @@ function WorkCenter() {
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
-      const { prod_capacity } = values 
-      let _new = prod_capacity / 0.85
-      _new = _new.toFloat(1)
+      let _new = values.prod_capacity / 0.85;
+      _new = _new.toFixed(1);
 
-      let newPayload = {...values, prod_capacity: _new}
+      let newPayload = { ...values, prod_capacity: _new };
 
       try {
         API.insertWorkCenter(newPayload, function (res) {
@@ -87,9 +86,9 @@ function WorkCenter() {
         });
       } catch (error) {}
 
-      setSubmitting(false);
       handleReset();
       setSelectedValueSH({ name: '' });
+      setSubmitting(false);
       setImageUrl(null);
     }
   });
@@ -193,169 +192,152 @@ function WorkCenter() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              {/* Select Product */}
-              <Grid item xs={4}>
-                <Card>
-                  <CardContent>
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Product </Typography>
-                        <Button onClick={() => setOpenSH(true)}>Select</Button>
-                      </SpaceBetweenBox>
-                      {imageUrl ? <img src={imageUrl} alt="Image" /> : null}
-                      <div
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <Typography variant="body1">{selectedValueSH?.name}</Typography>
-                      </div>
-                      <DialogBoxParty
-                        options={optionPF}
-                        loading={loadingSH}
-                        open={openSH}
-                        selectedValue={selectedValueSH}
-                        onSelect={handleSelectProduct}
-                        onClose={() => setOpenSH(false)}
-                      />
-                    </ColumnBox>
-                  </CardContent>
-                </Card>
-              </Grid>
-              {/* Work Center Information */}
-              <Grid item xs={8}>
-                <Card>
-                  <CardHeader title="Work Center Information" />
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          autoComplete="name"
-                          type="text"
-                          label="Work Center Name"
-                          {...getFieldProps('name')}
-                          error={Boolean(touched.name && errors.name)}
-                          helperText={touched.name && errors.name}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          autoComplete="company_name"
-                          type="text"
-                          label="Company Name"
-                          {...getFieldProps('company_name')}
-                          error={Boolean(touched.company_name && errors.company_name)}
-                          helperText={touched.company_name && errors.company_name}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-              {/* Work Center Information */}
-              <Grid item xs={12} sm={12}>
-                <Card>
-                  <CardHeader title="Rencana Penggunaan" />
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item sm={12} xs={12}>
-                        <TextField
-                          fullWidth
-                          autoComplete="cost_per_hour"
-                          type="number"
-                          label="Biaya Produksi 1 Line"
-                          {...getFieldProps('cost_per_hour')}
-                          error={Boolean(touched.cost_per_hour && errors.cost_per_hour)}
-                          helperText={touched.cost_per_hour && errors.cost_per_hour}
-                        />
-                      </Grid>
-
-                      <Grid item sm={12} xs={12}>
-                        <TextField
-                          fullWidth
-                          autoComplete="cm_target_price"
-                          type="number"
-                          label="Target Harga CM per PCS"
-                          {...getFieldProps('cm_target_price')}
-                        />
-                      </Grid>
-
-                      <Grid item sm={12} xs={12}>
-                        <TextField
-                          fullWidth
-                          disabled
-                          autoComplete="prod_capacity"
-                          label="Target Kecepatan"
-                          {...getFieldProps('prod_capacity')}
-                        />
-                      </Grid>
-
-                      <Grid item sm={12} xs={12}>
-                        <TextField
-                          fullWidth
-                          autoComplete="qty"
-                          label="Target QTY Produksi"
-                          {...getFieldProps('qty')}
-                        />
-                      </Grid>
-
-                      <Grid item sm={12} xs={12}>
-                        <TextField
-                          fullWidth
-                          disabled
-                          autoComplete="work_hours"
-                          label="Target Hari Penyelesaian"
-                          {...getFieldProps('work_hours')}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item sm={12} xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    autoComplete="description"
-                    type="text"
-                    label="Deskripsi"
-                    {...getFieldProps('description')}
-                    error={Boolean(touched.description && errors.description)}
-                    helperText={touched.description && errors.description}
-                  />
-                </Card>
-              </Grid>
-              {/* Button */}
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-                  <Typography variant="h5" sx={{ flex: 1 }}>
-                    Total Biaya Unit Kerja {values.name} Rp.{' '}
-                    {fCurrency(
-                      costEachDay(values.work_hours, values.cost_per_hour, values.overhead_cost)
-                    )}
-                  </Typography>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
+            <Card>
+              <CardContent>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Product </Typography>
+                    <Button onClick={() => setOpenSH(true)}>Select</Button>
+                  </SpaceBetweenBox>
+                  {imageUrl ? <img src={imageUrl} alt="Image" /> : null}
+                  <div
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
                   >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
-            </Grid>
+                    <Typography variant="body1">{selectedValueSH?.name}</Typography>
+                  </div>
+                  <DialogBoxParty
+                    options={optionPF}
+                    loading={loadingSH}
+                    open={openSH}
+                    selectedValue={selectedValueSH}
+                    onSelect={handleSelectProduct}
+                    onClose={() => setOpenSH(false)}
+                  />
+                </ColumnBox>
+              </CardContent>
+              {/* Work Center Information */}
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="name"
+                      type="text"
+                      label="Work Center Name"
+                      {...getFieldProps('name')}
+                      error={Boolean(touched.name && errors.name)}
+                      helperText={touched.name && errors.name}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="company_name"
+                      type="text"
+                      label="Company Name"
+                      {...getFieldProps('company_name')}
+                      error={Boolean(touched.company_name && errors.company_name)}
+                      helperText={touched.company_name && errors.company_name}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+              {/* Work Center Information */}
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item sm={12} xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="cost_per_hour"
+                      type="number"
+                      label="Biaya Produksi 1 Line"
+                      {...getFieldProps('cost_per_hour')}
+                      error={Boolean(touched.cost_per_hour && errors.cost_per_hour)}
+                      helperText={touched.cost_per_hour && errors.cost_per_hour}
+                    />
+                  </Grid>
+
+                  <Grid item sm={12} xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="cm_target_price"
+                      type="number"
+                      label="Target Harga CM per PCS"
+                      {...getFieldProps('cm_target_price')}
+                    />
+                  </Grid>
+
+                  <Grid item sm={12} xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled
+                      autoComplete="prod_capacity"
+                      label="Target Kecepatan"
+                      {...getFieldProps('prod_capacity')}
+                    />
+                  </Grid>
+
+                  <Grid item sm={12} xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="qty"
+                      label="Target QTY Produksi"
+                      {...getFieldProps('qty')}
+                    />
+                  </Grid>
+
+                  <Grid item sm={12} xs={12}>
+                    <TextField
+                      fullWidth
+                      disabled
+                      autoComplete="work_hours"
+                      label="Target Hari Penyelesaian"
+                      {...getFieldProps('work_hours')}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <CardContent>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  autoComplete="description"
+                  type="text"
+                  label="Deskripsi"
+                  {...getFieldProps('description')}
+                  error={Boolean(touched.description && errors.description)}
+                  helperText={touched.description && errors.description}
+                />
+              </CardContent>
+
+              {/* Button */}
+              <CardContent>
+                <Typography variant="h5" sx={{ flex: 1, textAlign: 'center' }}>
+                  Total Biaya Produksi CM {values.name} Rp.{' '}
+                  {fCurrency(
+                    costEachDay(values.work_hours, values.cost_per_hour, values.overhead_cost)
+                  )}
+                </Typography>
+                <LoadingButton
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  Cancel
+                </Button>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

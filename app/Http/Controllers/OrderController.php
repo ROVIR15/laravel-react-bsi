@@ -1,25 +1,27 @@
 <?php
-  
-  namespace App\Http\Controllers;
 
-  use Carbon\Carbon;
-  use DB;
-  use App\Models\Order\Order;
-  use App\Models\Order\OrderItem;
-  use App\Models\Order\SalesOrder;
-  use App\Models\Order\PurchaseOrder;
-  use App\Models\Monitoring\Cutting;
-  use App\Models\Monitoring\Sewing;
-  use App\Models\Monitoring\Qc;
-  use App\Models\Monitoring\FinishedGoods;
-  use App\Http\Controllers\Controller;
-  use App\Http\Resources\Order\Order as OrderOneCollection;
-  use App\Http\Resources\Order\OrderCollection;
-  use Illuminate\Http\Request;
-  use Illuminate\Support\Facades\Validator;
-  
-  class OrderController extends Controller
-  {  
+namespace App\Http\Controllers;
+
+use Carbon\Carbon;
+use DB;
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
+use App\Models\Order\SalesOrder;
+use App\Models\Order\PurchaseOrder;
+use App\Models\Monitoring\Cutting;
+use App\Models\Monitoring\Sewing;
+use App\Models\Monitoring\Qc;
+use App\Models\Monitoring\FinishedGoods;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Order\Order as OrderOneCollection;
+use App\Http\Resources\Order\OrderCollection;
+use App\Models\Manufacture\ManufacturePlanningItems;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class OrderController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
@@ -29,20 +31,51 @@
     public function index(Request $request)
     {
         $param = $request->all();
-        // $query = Order::all();
-        // return new OrderCollection($query);
-        $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to', 'delivery_date')
+        $monthYear = $request->query('monthYear');
+
+        $monthYear = date_create($monthYear);
+        $month = date_format($monthYear, 'm');
+        $year = date_format($monthYear, 'Y');
+
+        try {
+            //code...
+            $mn = ManufacturePlanningItems::select('sales_order_id')
+                ->whereHas('month_archive', function ($query) use ($month, $year) {
+                    return $query->where('month', $month)->where('year', $year);
+                })->get();
+
+            $list_so = [];
+            if (count($mn)){
+                foreach ($mn as $item) {
+                    if(isset($item->sales_order_id)){
+                        array_push($list_so, $item->sales_order_id);
+                    }
+                }
+            }
+
+            // $query = Order::all();
+            // return new OrderCollection($query);
+            $query = SalesOrder::select('id', 'order_id', 'po_number', 'sold_to', 'delivery_date')
                 ->with('sum', 'status', 'monitoring_sewing', 'monitoring_qc', 'monitoring_fg', 'monitoring_cutting', 'completion_status', 'party')
-                ->whereHas('completion_status', function($query2){
+                ->whereHas('completion_status', function ($query2) {
                     $query2->where('completion_status_id', 2);
                 })
                 ->orderBy('id', 'desc')
+                ->whereIn('id',$list_so)
                 ->get();
+        } catch (Exception $th) {
+            //throw $th;
 
-        return response()->json(['data' => $query]);
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json(['data' => $query, 'mn' => $list_so]);
     }
 
-            /**
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -89,7 +122,6 @@
                 $purchase_order->fill($order->id);
                 $purchase_order->saveOrFail();
             }
-
         } catch (Exception $e) {
             return response()->json(
                 [
@@ -101,7 +133,7 @@
             //throw $th;
         }
 
-        return response()->json(['success'=>true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -115,10 +147,10 @@
         //
         try {
             $sales = SalesOrder::where('order_id', $id)->get();
-            $cutting = Cutting::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
-            $query = Sewing::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order','product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
-            $query2 = Qc::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('product_feature_id', 'po_number')->get();
-            $query3 = FinishedGoods::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order','product_feature')->groupBy('product_feature_id','po_number')->get();
+            $cutting = Cutting::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order', 'product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
+            $query = Sewing::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->with('sales_order', 'product_feature')->where('order_id', $id)->groupBy('product_feature_id', 'po_number')->get();
+            $query2 = Qc::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order', 'product_feature')->groupBy('product_feature_id', 'po_number')->get();
+            $query3 = FinishedGoods::select('sales_order_id', 'product_feature_id', 'po_number', DB::raw('sum(output) as output'))->where('order_id', $id)->with('sales_order', 'product_feature')->groupBy('product_feature_id', 'po_number')->get();
 
             return response()->json([
                 'sales_order' => $sales[0],
@@ -126,7 +158,7 @@
                 'cutting' => $cutting,
                 'qc' => $query2,
                 'fg' => $query3
-             ]);
+            ]);
         } catch (Throwable $th) {
             //throw $th;
             return response()->json([
@@ -200,4 +232,4 @@
 
     // public function salesOrderStore($data){}
 
-  }
+}
