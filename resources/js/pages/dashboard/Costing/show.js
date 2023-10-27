@@ -1041,7 +1041,7 @@ function BillofMaterial() {
                                       <Typography variant="h6">Nomor Payment</Typography>
                                     </TableCell>
                                   </TableRow>
-                                  {isEmpty(listPO) ? (
+                                  {!isEmpty(listPO) ? (
                                     listPO.map(function (item, index) {
                                       return (
                                         <TableRow>
