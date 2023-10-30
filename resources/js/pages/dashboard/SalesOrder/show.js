@@ -471,7 +471,7 @@ function SalesOrder() {
       { field: 'qty', headerName: 'Quantity', editable: true },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
       { field: 'cm_price', headerName: 'CM Price', editable: true },
-      // { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
+      { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
       {
         field: 'actions',
         type: 'actions',
