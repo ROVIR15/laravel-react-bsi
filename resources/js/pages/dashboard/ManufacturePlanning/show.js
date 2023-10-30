@@ -14,10 +14,7 @@ import {
   Card,
   CardHeader,
   CardContent,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
   TableContainer,
   Table,
   TableBody,
@@ -25,10 +22,9 @@ import {
   TableRow,
   TableCell,
   Typography,
-  Select,
   TextField,
   Stack,
-  MenuList
+  MenuList,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { GridActionsCellItem } from '@mui/x-data-grid';
@@ -50,7 +46,6 @@ import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-2-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moment from 'moment';
-import downloadIcon from '@iconify/icons-eva/download-fill';
 
 //utils
 import { countWorkingDays } from './utils';
@@ -476,31 +471,24 @@ function Goods() {
                       handleAddRow={handleOpenModal}
                     />
                   </Grid>
-
-                  <Grid item xs={12}>
-                    <Button
-                      size="large"
-                      variant="contained"
-                      startIcon={<Icon icon={downloadIcon} />}
-                      onClick={handleDownload}
-                    >
-                      Download
-                    </Button>
-
-                    <LoadingButton
-                      size="large"
-                      type="submit"
-                      variant="contained"
-                      loading={isSubmitting}
-                      sx={{ m: 1 }}
-                    >
-                      Save
-                    </LoadingButton>
-                    <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                      Cancel
-                    </Button>
-                  </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="row">
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

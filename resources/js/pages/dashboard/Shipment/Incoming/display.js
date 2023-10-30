@@ -126,7 +126,6 @@ function OutboundDelivery({ placeHolder }) {
             return init; 
           }, []);
 
-          console.log(__costing);
           setOptionsBuyer(__costing);
         }
       });

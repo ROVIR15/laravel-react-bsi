@@ -173,15 +173,16 @@ function OutboundDelivery() {
   });
 
   useEffect(() => {
-    if(isEmpty(id)) return;
+    if (isEmpty(id)) return;
 
     try {
-      API.getAKiteExport(id, function(res){
-        if(!res) return;
-        if(!res.data) throw new Error('None Data');
+      API.getAKiteExport(id, function (res) {
+        if (!res) return;
+        if (!res.data) throw new Error('None Data');
         else {
           let data = res.data[0];
-          setValues({...values, 
+          setValues({
+            ...values,
             po_number: data?.po_number,
             order_id: data?.order_id,
             sales_order_id: data?.sales_order_id,
@@ -194,11 +195,11 @@ function OutboundDelivery() {
           let _bought_from = _partyAddress(data.party);
           setSelectedValueSO(_bought_from);
         }
-      })
+      });
     } catch (error) {
-      alert(error)
+      alert(error);
     }
-  }, [id])
+  }, [id]);
 
   const {
     errors,
@@ -238,7 +239,7 @@ function OutboundDelivery() {
   );
 
   const deleteData = useCallback((id) => () => {
-    alert('cannot')
+    alert('cannot');
     // setItems((prevItems) => {
     //   return [...prevItems.slice(0, rowToDeleteIndex), ...prevItems.slice(rowToDeleteIndex + 1)];
     // });
@@ -251,7 +252,6 @@ function OutboundDelivery() {
       if (editedIds.length === 0) {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
-
 
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
@@ -368,24 +368,24 @@ function OutboundDelivery() {
                       </TabContext>
                     </Box>
                   </Grid>
-
-                  <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-                      <LoadingButton
-                        size="large"
-                        type="submit"
-                        variant="contained"
-                        loading={isSubmitting}
-                        sx={{ m: 1 }}
-                      >
-                        Save
-                      </LoadingButton>
-                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                        Cancel
-                      </Button>
-                    </Box>
-                  </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="column">
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

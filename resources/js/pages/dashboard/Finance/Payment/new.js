@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Container,
   Card,
@@ -34,13 +35,12 @@ import plusSquare from '@iconify/icons-eva/plus-square-fill';
 import { Icon } from '@iconify/react';
 
 //
-import { generateInvSerialNumber_alt } from '../utils'
-
+import { generateInvSerialNumber_alt } from '../utils';
 
 const total = (terms, amount_of_money, tax) => {
   let sub_total = parseFloat(amount_of_money);
 
-  if(terms.length === 0) sub_total2 = sub_total;
+  if (terms.length === 0) sub_total2 = sub_total;
   let sub_total2 = terms.reduce(function (initial, next) {
     let type = next?.value_type?.toLowerCase();
     if (type === 'percentage') return initial * (1 + next?.term_value / 100);
@@ -48,7 +48,7 @@ const total = (terms, amount_of_money, tax) => {
     else return initial;
   }, sub_total);
 
-  if(tax > 0) sub_total2 = sub_total2 * (1 + (tax/100));
+  if (tax > 0) sub_total2 = sub_total2 * (1 + tax / 100);
   return sub_total2.toFixed(0);
 };
 
@@ -105,7 +105,13 @@ function PaymentAccountNew() {
       try {
         const { invoice_id, type, ...item } = values;
 
-        let load = invoice_id.map((i) => ({ ...item, invoice_id: i.id, amount: i.amount, payment_method_type_id: type, imageUrl: file }));
+        let load = invoice_id.map((i) => ({
+          ...item,
+          invoice_id: i.id,
+          amount: i.amount,
+          payment_method_type_id: type,
+          imageUrl: file
+        }));
         API.insertPayment(
           {
             payment_method_type_id: values.type,
@@ -163,7 +169,11 @@ function PaymentAccountNew() {
             const _data = res.data.map(function (item) {
               const { all_invoice_type } = item;
               // calculate total after terms
-              let final_calculation = total(all_invoice_type?.terms, all_invoice_type?.sum[0]?.total_amount, all_invoice_type?.tax);
+              let final_calculation = total(
+                all_invoice_type?.terms,
+                all_invoice_type?.sum[0]?.total_amount,
+                all_invoice_type?.tax
+              );
 
               return {
                 id: item?.invoice_id,
@@ -188,16 +198,20 @@ function PaymentAccountNew() {
     };
   }, [loadingSH]);
 
-  const billedAmount = selected.reduce((initial, next) => initial + parseFloat(next?.total_amount), 0);
+  const billedAmount = selected.reduce(
+    (initial, next) => initial + parseFloat(next?.total_amount),
+    0
+  );
 
   const handleCloseDialog = () => {
     // if (!data) {
     //   setOpenSH(false);
     // } else {
-    // setSelectedValueSH(data);
 
     const a = selected.map((e) => ({
-      id: e.id, type: e.type, amount: parseFloat(e.total_amount)
+      id: e.id,
+      type: e.type,
+      amount: parseFloat(e.total_amount)
     }));
     // const a = selected.map((e) => {
     //   if(e.type === 1) return ({ id: e.id, type: e.type, amount: e.total_amount });
@@ -241,7 +255,7 @@ function PaymentAccountNew() {
     if (file) {
       return (
         <Paper sx={{ padding: 2, height: '100%' }}>
-          <img src={file} alt="Image" sx={{height: '50%', width: '50%', margin: 'auto'}}/>
+          <img src={file} alt="Image" sx={{ height: '50%', width: '50%', margin: 'auto' }} />
           <Button component="label" htmlFor="upload-file">
             <input
               accept="image/*"
@@ -280,7 +294,7 @@ function PaymentAccountNew() {
    * Handle Upload File
    */
 
-   const handleOnFileChange = (event) => {
+  const handleOnFileChange = (event) => {
     setFile(event.target.files[0]);
 
     // Create an object of formData
@@ -304,123 +318,70 @@ function PaymentAccountNew() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              {/* <Grid item xs={5}>
-                <Grid container direction="row">
+            <Card>
+              <CardHeader title="Informasi Realisasi Pembayaran Tagihan" />
+              <CardContent>
+                <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                      <CardContent>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Invoice </Typography>
-                            <Button onClick={() => setOpenSH(true)}>Select</Button>
-                          </SpaceBetweenBox>
-                          <div>
-                            <Typography variant="subtitle1">
-                              {selectedValueSH?.serial_number}
-                            </Typography>
-                            <Typography variant="body2">{selectedValueSH?.billed_to}</Typography>
-                          </div>
-                          <DialogBox
-                            options={optionsInvoice}
-                            loading={loadingSH}
-                            selected={selected}
-                            setSelected={setSelected}
-                            // error={Boolean(touched.facility_id && errors.facility_id)}
-                            // helperText={touched.facility_id && errors.facility_id}
-                            // selectedValue={values.facility_id}
-                            open={openSH}
-                            onClose={(value) => handleCloseDialog(value)}
-                          />
-                        </ColumnBox>
-                      </CardContent>
-                    </Card>
+                    <TextField
+                      fullWidth
+                      name="ref_num"
+                      type="number"
+                      label="Reff Number"
+                      {...getFieldProps('ref_num')}
+                      error={Boolean(touched.ref_num && errors.ref_num)}
+                      helperText={touched.ref_num && errors.ref_num}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} lg={5}>
+                    <FormControl fullWidth>
+                      <InputLabel>Tipe Akun Rekening</InputLabel>
+                      <Select
+                        autoComplete="type"
+                        type="number"
+                        {...getFieldProps('type')}
+                        error={Boolean(touched.type && errors.type)}
+                        helperText={touched.type && errors.type}
+                      >
+                        {!isArray(cat)
+                          ? null
+                          : cat.map(function (x) {
+                              return <MenuItem value={x.id}>{`${x.name}`}</MenuItem>;
+                            })}
+                      </Select>
+                    </FormControl>
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                      <CardContent>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Invoice Amount </Typography>
-                          </SpaceBetweenBox>
-                        </ColumnBox>
-                        <Typography variant="h3" sx={{ color: '#636b6f' }}>
-                          Rp. {fCurrency(billedAmount)}
-                        </Typography>
-                      </CardContent>
-                    </Card>
+                    <TextField
+                      fullWidth
+                      name="effective_date"
+                      type="date"
+                      label="Payment Date"
+                      {...getFieldProps('effective_date')}
+                      error={Boolean(touched.effective_date && errors.effective_date)}
+                      helperText={touched.effective_date && errors.effective_date}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">Rp.</InputAdornment>
+                      }}
+                      type="number"
+                      label="Amount Payment"
+                      {...getFieldProps('amount')}
+                      error={Boolean(touched.amount && errors.amount)}
+                      helperText={touched.amount && errors.amount}
+                    />
                   </Grid>
                 </Grid>
-              </Grid> */}
+              </CardContent>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader title="Payment Information" />
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          name="ref_num"
-                          type="number"
-                          label="Reff Number"
-                          {...getFieldProps('ref_num')}
-                          error={Boolean(touched.ref_num && errors.ref_num)}
-                          helperText={touched.ref_num && errors.ref_num}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} lg={5}>
-                        <FormControl fullWidth>
-                          <InputLabel>Tipe Akun Rekening</InputLabel>
-                          <Select
-                            autoComplete="type"
-                            type="number"
-                            {...getFieldProps('type')}
-                            error={Boolean(touched.type && errors.type)}
-                            helperText={touched.type && errors.type}
-                          >
-                            {!isArray(cat)
-                              ? null
-                              : cat.map(function (x) {
-                                  return <MenuItem value={x.id}>{`${x.name}`}</MenuItem>;
-                                })}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          name="effective_date"
-                          type="date"
-                          label="Payment Date"
-                          {...getFieldProps('effective_date')}
-                          error={Boolean(touched.effective_date && errors.effective_date)}
-                          helperText={touched.effective_date && errors.effective_date}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          InputProps={{
-                            startAdornment: <InputAdornment position="start">Rp.</InputAdornment>
-                          }}
-                          type="number"
-                          label="Amount Payment"
-                          {...getFieldProps('amount')}
-                          error={Boolean(touched.amount && errors.amount)}
-                          helperText={touched.amount && errors.amount}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
+              <CardContent>
                 <DialogBox
                   options={optionsInvoice}
                   loading={loadingSH}
@@ -433,73 +394,65 @@ function PaymentAccountNew() {
                   onClose={(value) => handleCloseDialog(value)}
                 />
 
-                <Card>
-                  <CardContent sx={{ py: '24px', paddingTop: '10px', paddingBottom: '4px' }}>
-                    <GridData>
-                      <Typography variant="h6">Invoice List</Typography>
-                      <IconButton
-                        onClick={() => setOpenSH(true)}
-                        sx={{
-                          height: '36px',
-                          width: '36px',
-                          backgroundColor: 'rgb(255, 255, 255)',
-                          color: 'rgb(54, 179, 126)'
-                        }}
-                      >
-                        <Icon icon={plusSquare} />
-                      </IconButton>
-                    </GridData>
-                  </CardContent>
-                  <CardContent>
-                    <BasicTable payload={selected} total={fCurrency(billedAmount)} />
-                  </CardContent>
-                </Card>
-              </Grid>
+                <Box>
+                  <GridData>
+                    <Typography variant="h6">Invoice List</Typography>
+                    <IconButton
+                      onClick={() => setOpenSH(true)}
+                      sx={{
+                        height: '36px',
+                        width: '36px',
+                        backgroundColor: 'rgb(255, 255, 255)',
+                        color: 'rgb(54, 179, 126)'
+                      }}
+                    >
+                      <Icon icon={plusSquare} />
+                    </IconButton>
+                  </GridData>
+                </Box>
+                <Box>
+                  <BasicTable payload={selected} total={fCurrency(billedAmount)} />
+                </Box>
+              </CardContent>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <TextField
-                      fullWidth
-                      name="comment"
-                      multiline
-                      rows="3"
-                      type="text"
-                      label="Comment"
-                      {...getFieldProps('comment')}
-                      error={Boolean(touched.comment && errors.comment)}
-                      helperText={touched.comment && errors.comment}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader
-                    title="Upload Proof"
+              <CardContent>
+                <Box>
+                  <TextField
+                    fullWidth
+                    name="comment"
+                    multiline
+                    rows="3"
+                    type="text"
+                    label="Comment"
+                    {...getFieldProps('comment')}
+                    error={Boolean(touched.comment && errors.comment)}
+                    helperText={touched.comment && errors.comment}
                   />
-                  <ShowImageWhenItsUploaded />
-                </Card>
-              </Grid>
+                </Box>
+              </CardContent>
 
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
-            </Grid>
+              <CardContent>
+                <Box>
+                  <Typography variant="h6">Upload Proof</Typography>
+                  <ShowImageWhenItsUploaded />
+                </Box>
+              </CardContent>
+
+              <CardContent>
+                <LoadingButton
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  Cancel
+                </Button>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

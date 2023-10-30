@@ -397,11 +397,10 @@ function OutboundDelivery() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={1} direction="row">
-              <Grid item xs={4}>
-                <Card>
-                  <CardHeader title="Delivery Date" />
-                  <CardContent>
+            <Card>
+              <CardContent>
+                <Grid container spacing={2} direction="row">
+                  <Grid item xs={4}>
                     <Stack direction="column" spacing={2}>
                       <TextField
                         fullWidth
@@ -423,13 +422,8 @@ function OutboundDelivery() {
                         helperText={touched.est_delivery_date && errors.est_delivery_date}
                       />
                     </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={8}>
-                <Card>
-                  <CardHeader title="Delivery Information" />
-                  <CardContent>
+                  </Grid>
+                  <Grid item xs={8}>
                     <Grid container direction="row" spacing={2}>
                       <Grid item xs={6} sx={{ padding: 'unset' }}>
                         <AutoComplete
@@ -478,13 +472,20 @@ function OutboundDelivery() {
                         </ColumnBox>
                       </Grid>
                     </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-            <Card sx={{ mt: 2, mb: 2 }}>
+                  </Grid>
+                </Grid>
+              </CardContent>
               <CardContent>
-                <Box sx={{ width: '100%', typography: 'body1' }}>
+                <Divider orientation="horizontal" variant="middle" flexItem />
+              </CardContent>
+              <CardContent>
+                <ColumnBox
+                  style={{
+                    padding: '1em 0.75em',
+                    border: '1px dashed #b8b8b8',
+                    borderRadius: '8px'
+                  }}
+                >
                   <TabContext value={valueTab}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                       <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
@@ -541,22 +542,25 @@ function OutboundDelivery() {
                       ></TextField>
                     </TabPanel>
                   </TabContext>
-                </Box>
+                </ColumnBox>
               </CardContent>
-            </Card>
-            <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
+              <CardContent>
+                <Stack direction="row">
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
+              </CardContent>
             </Card>
           </Form>
         </FormikProvider>

@@ -30,16 +30,6 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleUpdat
         },
       }}
     >
-      <Stack
-        sx={{ width: '100%', mb: 1 }}
-        direction="row"
-        alignItems="flex-start"
-        columnGap={1}
-      >
-        <Button size="small" onClick={handleAddRow}>
-          Add Data
-        </Button>
-      </Stack>
       <DataGrid rows={rows ? rows : mrows } columns={columns ? columns : estColumns} {...rest}/>
     </Box>
   );

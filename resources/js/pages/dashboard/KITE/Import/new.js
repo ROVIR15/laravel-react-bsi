@@ -200,7 +200,7 @@ function OutboundDelivery() {
         qty: key?.qty,
         total: key?.qty * key?.unit_price,
         hs_code: 0,
-        item_serial_number: index+1
+        item_serial_number: index + 1
       };
     });
 
@@ -208,7 +208,7 @@ function OutboundDelivery() {
 
     setValues({
       order_id: data.order_id,
-      purchase_order_id: data.id,
+      purchase_order_id: data.id
     });
 
     let _bought_from = _partyAddress(data.bought_from);
@@ -423,24 +423,24 @@ function OutboundDelivery() {
                       </TabContext>
                     </Box>
                   </Grid>
-
-                  <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-                      <LoadingButton
-                        size="large"
-                        type="submit"
-                        variant="contained"
-                        loading={isSubmitting}
-                        sx={{ m: 1 }}
-                      >
-                        Save
-                      </LoadingButton>
-                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                        Cancel
-                      </Button>
-                    </Box>
-                  </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="column">
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

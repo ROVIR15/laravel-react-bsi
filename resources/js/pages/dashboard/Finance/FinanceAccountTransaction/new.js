@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Container,
   Card,
@@ -71,15 +72,12 @@ function FinanceAccountNew() {
           trx_amount: i.total_amount,
           ref_num: i.ref_num
         }));
-        API.insertFinanceTransactions(
-          _data,
-          function (res) {
-            if (!res) return;
-            if (!res.success) alert('failed');
-            else alert('success');
-            handleReset();
-          }
-        );
+        API.insertFinanceTransactions(_data, function (res) {
+          if (!res) return;
+          if (!res.success) alert('failed');
+          else alert('success');
+          handleReset();
+        });
       } catch (error) {
         alert(error);
       }
@@ -187,65 +185,60 @@ function FinanceAccountNew() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <Stack direction="column" spacing={3}>
-                      <FormControl fullWidth>
-                        <InputLabel>Akun Rekening</InputLabel>
-                        <Select
-                          autoComplete="financial_account_id"
-                          type="number"
-                          {...getFieldProps('financial_account_id')}
-                          error={Boolean(
-                            touched.financial_account_id && errors.financial_account_id
-                          )}
-                          helperText={touched.financial_account_id && errors.financial_account_id}
-                        >
-                          {!isArray(financialAccount)
-                            ? null
-                            : financialAccount.map(function (x) {
-                                return (
-                                  <MenuItem
-                                    value={x.id}
-                                  >{`${x.account_name} - ${x.account_number}`}</MenuItem>
-                                );
-                              })}
-                        </Select>
-                      </FormControl>
+            <Card>
+              <CardContent>
+                <Stack direction="column" spacing={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Akun Rekening</InputLabel>
+                    <Select
+                      autoComplete="financial_account_id"
+                      type="number"
+                      {...getFieldProps('financial_account_id')}
+                      error={Boolean(touched.financial_account_id && errors.financial_account_id)}
+                      helperText={touched.financial_account_id && errors.financial_account_id}
+                    >
+                      {!isArray(financialAccount)
+                        ? null
+                        : financialAccount.map(function (x) {
+                            return (
+                              <MenuItem
+                                value={x.id}
+                              >{`${x.account_name} - ${x.account_number}`}</MenuItem>
+                            );
+                          })}
+                    </Select>
+                  </FormControl>
 
-                      <FormControl>
-                        <FormLabel id="row-radio-buttons-group-label">Transaction Type</FormLabel>
-                        <RadioGroup
-                          row
-                          aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="row-radio-buttons-group"
-                        >
-                          <FormControlLabel
-                            value="1"
-                            onChange={handleRadioChange}
-                            control={<Radio />}
-                            label="Withdrawal"
-                          />
-                          <FormControlLabel
-                            value="2"
-                            onChange={handleRadioChange}
-                            control={<Radio />}
-                            label="Deposit"
-                          />
-                          <FormControlLabel
-                            value="3"
-                            onChange={handleRadioChange}
-                            control={<Radio />}
-                            label="Adjustment"
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    </Stack>
-                  </CardContent>
-                  {/* <Grid item xs={12} lg={5}></Grid>¸ */}
-                  {/* <CardContent>
+                  <FormControl>
+                    <FormLabel id="row-radio-buttons-group-label">Transaction Type</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      name="row-radio-buttons-group"
+                    >
+                      <FormControlLabel
+                        value="1"
+                        onChange={handleRadioChange}
+                        control={<Radio />}
+                        label="Withdrawal"
+                      />
+                      <FormControlLabel
+                        value="2"
+                        onChange={handleRadioChange}
+                        control={<Radio />}
+                        label="Deposit"
+                      />
+                      <FormControlLabel
+                        value="3"
+                        onChange={handleRadioChange}
+                        control={<Radio />}
+                        label="Adjustment"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Stack>
+                {/* <Grid item xs={12} lg={5}></Grid>¸ */}
+                {/* <CardContent>
                     <ColumnBox>
                       <SpaceBetweenBox>
                         <Typography variant="h6"> Payment </Typography>
@@ -265,10 +258,9 @@ function FinanceAccountNew() {
                       />
                     </ColumnBox>
                   </CardContent> */}
-                </Card>
-              </Grid>
+              </CardContent>
 
-              <Grid item xs={12}>
+              <CardContent>
                 <DialogBox
                   options={options}
                   loading={loadingSH}
@@ -280,47 +272,43 @@ function FinanceAccountNew() {
                   open={openSH}
                   onClose={() => setOpenSH(false)}
                 />
+                <Box>
+                  <GridData>
+                    <Typography variant="h6">Payment List</Typography>
+                    <IconButton
+                      onClick={() => setOpenSH(true)}
+                      sx={{
+                        height: '36px',
+                        width: '36px',
+                        backgroundColor: 'rgb(255, 255, 255)',
+                        color: 'rgb(54, 179, 126)'
+                      }}
+                    >
+                      <Icon icon={plusSquare} />
+                    </IconButton>
+                  </GridData>
+                </Box>
+                <Box>
+                  <BasicTable payload={selected} amount={fCurrency(amount)} />
+                </Box>
+              </CardContent>
 
-                <Card>
-                  <CardContent>
-                    <GridData>
-                      <Typography variant="h6">Payment List</Typography>
-                      <IconButton
-                        onClick={() => setOpenSH(true)}
-                        sx={{
-                          height: '36px',
-                          width: '36px',
-                          backgroundColor: 'rgb(255, 255, 255)',
-                          color: 'rgb(54, 179, 126)'
-                        }}
-                      >
-                        <Icon icon={plusSquare} />
-                      </IconButton>
-                    </GridData>
-                  </CardContent>
-                  <CardContent>
-                    <BasicTable payload={selected} amount={fCurrency(amount)} />
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
-            </Grid>
+              <CardContent>
+                <LoadingButton
+                  fullWidth 
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  Cancel
+                </Button>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

@@ -6,21 +6,14 @@ import * as Yup from 'yup';
 
 import { LoadingButton } from '@mui/lab';
 import {
-  Paper,
-  Box,
   Button,
   Container,
   Card,
   CardHeader,
   CardContent,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Typography,
-  Select,
-  TextField,
-  MenuList
+  Stack,
+  TextField
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DataGrid from './components/DataGrid';
@@ -228,22 +221,24 @@ function Goods() {
                       handleAddRow={handleOpenModal}
                     />
                   </Grid>
-
-                  <Grid item xs={12}>
-                    <LoadingButton
-                      size="large"
-                      type="submit"
-                      variant="contained"
-                      loading={isSubmitting}
-                      sx={{ m: 1 }}
-                    >
-                      Save
-                    </LoadingButton>
-                    <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                      Cancel
-                    </Button>
-                  </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="row">
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

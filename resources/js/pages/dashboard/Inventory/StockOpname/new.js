@@ -15,7 +15,10 @@ import {
   RadioGroup,
   TextField,
   Typography,
-  styled
+  Stack,
+  styled,
+  Card,
+  CardContent
 } from '@mui/material';
 import { FormikProvider, Form, useFormik } from 'formik';
 import { Icon } from '@iconify/react';
@@ -37,12 +40,11 @@ const GridData = styled('div')(({ theme }) => ({
   alignItems: 'center'
 }));
 
-function calculate_diff(params){
-  return params.row.current_qty - params.row.counted_qty
+function calculate_diff(params) {
+  return params.row.current_qty - params.row.counted_qty;
 }
 
 function StockAdjustment() {
-
   const { user } = useAuth();
 
   const formik = useFormik({
@@ -90,7 +92,7 @@ function StockAdjustment() {
   useEffect(() => {
     //get facility
     API.getFacility('', (res) => {
-      if(!res) return;
+      if (!res) return;
       if (isEmpty(res.data)) {
         setOptions([]);
       } else {
@@ -159,6 +161,7 @@ function StockAdjustment() {
   const columns = React.useMemo(
     () => [
       { field: 'id', headerName: 'id', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
       // {
       //   field: 'product_feature_id',
       //   headerName: 'Product Feature ID',
@@ -222,14 +225,14 @@ function StockAdjustment() {
     const {
       target: { value }
     } = event;
-    if(isUndefined(value) || isEmpty(value)) return;
+    if (isUndefined(value) || isEmpty(value)) return;
     setFieldValue('adjustment_date', moment().format('YYYY-MM-DD'));
   };
 
   // handle changes of adjustment type
   const handleAdjustmentType = (event) => {
     setFieldValue('adjustment_type', event.target.value);
-  }
+  };
 
   //handle deletion data from datagrid
   const deleteData = React.useCallback((id) => () => {
@@ -246,127 +249,134 @@ function StockAdjustment() {
     <FormikProvider value={formik}>
       <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} />
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Paper elevation={2} style={{ padding: '2em' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>Facility</InputLabel>
-                <Select
-                  onChange={handleFacility}
-                  value={values.facility_id}
-                  label="Facility"
-                  error={Boolean(touched.facility_id && errors.facility_id)}
-                  helperText={touched.facility_id && errors.facility_id}
-                  sx={{ backgroundColor: '#f5f6fa' }}
-                >
-                  {options.map((item) => (
-                    <MenuItem value={item.id}>{item.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
+        <Card>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel>Facility</InputLabel>
+                  <Select
+                    onChange={handleFacility}
+                    value={values.facility_id}
+                    label="Facility"
+                    error={Boolean(touched.facility_id && errors.facility_id)}
+                    helperText={touched.facility_id && errors.facility_id}
+                    sx={{ backgroundColor: '#f5f6fa' }}
+                  >
+                    {options.map((item) => (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            <Grid item xs={6}>
-              <FormControl>
-                <FormLabel>Tipe Penyesuaian</FormLabel>
-                <RadioGroup
-                  row
-                  value={values.adjustment_type}
-                  onChange={handleAdjustmentType}
+              <Grid item xs={6}>
+                <FormControl>
+                  <FormLabel>Tipe Penyesuaian</FormLabel>
+                  <RadioGroup
+                    row
+                    value={values.adjustment_type}
+                    onChange={handleAdjustmentType}
+                    sx={{
+                      borderRadius: '5px',
+                      backgroundColor: '#f5f6fa',
+                      '.&MuiFormControlLabel-root': {
+                        paddingLeft: '4px',
+                        paddingRight: '4px'
+                      }
+                    }}
+                  >
+                    <FormControlLabel
+                      value={1}
+                      control={<Radio />}
+                      label="Penambahan/Pengurangan"
+                    />
+                    <FormControlLabel value={2} control={<Radio />} label="Perhitungan Stok" />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  autoComplete="adjustment_date"
+                  type="date"
+                  label="Tanggal Penyesuaian"
+                  placeholder="adjustment_date"
+                  {...getFieldProps('adjustment_date')}
+                  error={Boolean(touched.adjustment_date) && errors.adjustment_date}
+                  helpers={touched.adjustment_date && errors.adjustment_date}
                   sx={{
-                    borderRadius: '5px',
-                    backgroundColor: '#f5f6fa',
-                    '.&MuiFormControlLabel-root': {
-                      paddingLeft: '4px',
-                      paddingRight: '4px'
+                    '& .MuiInputBase-root': {
+                      backgroundColor: '#f5f6fa'
                     }
                   }}
-                >
-                  <FormControlLabel value={1} control={<Radio />} label="Penambahan/Pengurangan" />
-                  <FormControlLabel value={2} control={<Radio />} label="Perhitungan Stok" />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+                />
+              </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="adjustment_date"
-                type="date"
-                label="Tanggal Penyesuaian"
-                placeholder="adjustment_date"
-                {...getFieldProps('adjustment_date')}
-                error={Boolean(touched.adjustment_date) && errors.adjustment_date}
-                helpers={touched.adjustment_date && errors.adjustment_date}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#f5f6fa'
-                  }
-                }}
-              />
-            </Grid>
+              <Grid item xs={12}>
+                <GridData>
+                  <Typography variant="h6">Material Item</Typography>
+                  <IconButton
+                    onClick={() => setOpenSh(true)}
+                    sx={{
+                      height: '36px',
+                      width: '36px',
+                      backgroundColor: 'rgb(255, 255, 255)',
+                      color: 'rgb(54, 179, 126)'
+                    }}
+                  >
+                    <Icon icon={plusSquare} />
+                  </IconButton>
+                </GridData>
 
-            <Grid item xs={12}>
-              <GridData>
-                <Typography variant="h6">Material Item</Typography>
-                <IconButton
-                  onClick={() => setOpenSh(true)}
+                <DataGrid
+                  columns={columns}
+                  rows={items}
+                  onEditRowsModelChange={handleEditComponentRowsModelChange}
+                  // handleResetRows={handleResetComponentRows}
+                />
+              </Grid>
+
+              <Grid item xs={12} style={{ marginTop: '2.5em' }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={2}
+                  maxRows={5}
+                  {...getFieldProps('description')}
+                  placeholder="deskripsi"
+                  label="deskripsi/catatan ke gudang"
+                  error={Boolean(touched.description) && errors.description}
+                  helpers={touched.description && errors.description}
                   sx={{
-                    height: '36px',
-                    width: '36px',
-                    backgroundColor: 'rgb(255, 255, 255)',
-                    color: 'rgb(54, 179, 126)'
+                    '& .MuiInputBase-root': {
+                      backgroundColor: '#f5f6fa'
+                    }
                   }}
-                >
-                  <Icon icon={plusSquare} />
-                </IconButton>
-              </GridData>
-
-              <DataGrid
-                columns={columns}
-                rows={items}
-                onEditRowsModelChange={handleEditComponentRowsModelChange}
-                // handleResetRows={handleResetComponentRows}
-              />
+                />
+              </Grid>
             </Grid>
+          </CardContent>
 
-            <Grid item xs={12} style={{ marginTop: '2.5em' }}>
-              <TextField
-                fullWidth
-                multiline
-                minRows={2}
-                maxRows={5}
-                {...getFieldProps('description')}
-                placeholder="deskripsi"
-                label="deskripsi/catatan ke gudang"
-                error={Boolean(touched.description) && errors.description}
-                helpers={touched.description && errors.description}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#f5f6fa'
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+          <CardContent>
+            <Stack direction="column">
               <LoadingButton
+                fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={false}
+                loading={isSubmitting}
                 sx={{ m: 1 }}
               >
                 Save
               </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                 Cancel
               </Button>
-            </Box>
-          </Grid>
-        </Paper>
+            </Stack>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

@@ -215,7 +215,8 @@ function OutboundDelivery() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
+      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 450, editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
       { field: 'qty', headerName: 'Qty Kirim', editable: false },
@@ -573,11 +574,7 @@ function OutboundDelivery() {
                           <Stack direction="row" spacing={4} alignItems="center">
                             <FormControl fullWidth>
                               <InputLabel>Selet Status</InputLabel>
-                              <Select
-                                value={status}
-                                label="Status"
-                                onChange={handleChangeStatus}
-                              >
+                              <Select value={status} label="Status" onChange={handleChangeStatus}>
                                 <MenuItem value={3}>In Delivery</MenuItem>
                                 <MenuItem value={4}>Cancelled</MenuItem>
                                 <MenuItem value={5}>Delivered</MenuItem>
@@ -608,32 +605,34 @@ function OutboundDelivery() {
                       </TabContext>
                     </ColumnBox>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                      <Button
-                        size="large"
-                        color="primary"
-                        variant="contained"
-                        onClick={handleItemIssuance}
-                        sx={{ m: 1 }}
-                      >
-                        Issue to Warehouse
-                      </Button>
-                      <LoadingButton
-                        size="large"
-                        type="submit"
-                        variant="contained"
-                        loading={isSubmitting}
-                        sx={{ m: 1 }}
-                      >
-                        Save
-                      </LoadingButton>
-                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                        Cancel
-                      </Button>
-                    </Box>
-                  </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="row">
+                  <Button
+                    fullWidth
+                    size="large"
+                    color="primary"
+                    variant="contained"
+                    onClick={handleItemIssuance}
+                    sx={{ m: 1 }}
+                  >
+                    Issue to Warehouse
+                  </Button>
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

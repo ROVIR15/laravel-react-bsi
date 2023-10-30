@@ -1,6 +1,16 @@
-import React, {useMemo, useCallback, useState} from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import Page from '../../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Typography } from '@mui/material'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Container,
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Stack
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -13,33 +23,33 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 //API
-import API from '../../../../helpers'
+import API from '../../../../helpers';
 
 // Data Grid
 import DataGrid from './DataGrid';
 import Modal from './Modal';
 import DialogBox from '../../../../components/DialogBox/dialog.list';
+import { isUndefined } from 'lodash';
 
-const ColumnBox = styled('div')(({theme}) => ({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%"
-}))
+const ColumnBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%'
+}));
 
-const SpaceBetweenBox = styled('div')(({theme}) => ({
-  display: "flex", 
-  flexDirection: "row", 
-  alignItems: "center", 
-  justifyContent: "space-between", 
-  marginBottom: "8px"
-}))
+const SpaceBetweenBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '8px'
+}));
 
 function WorkCenter() {
-
   const WorkCenterSchema = Yup.object().shape({
     sales_order_id: Yup.string().required('is required'),
     line: Yup.number().required('is required'),
-    date: Yup.date().required('is required'),
+    date: Yup.date().required('is required')
   });
 
   const formik = useFormik({
@@ -51,19 +61,25 @@ function WorkCenter() {
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
-      const {line, sales_order_id, date} = values
-      let data = items.map(({id, brand, name, size, color, numbering, qty_left, ...x}) => ({ ...x, line, facility_id: line+6, sales_order_id, date}));
+      const { line, sales_order_id, date } = values;
+      let data = items.map(({ id, brand, name, size, color, numbering, qty_left, ...x }) => ({
+        ...x,
+        line,
+        facility_id: line + 6,
+        sales_order_id,
+        date
+      }));
       try {
-        API.insertMonitoringSewing(data, function(res){
-          if(!res) return;
-          if(!res.success) throw new Error('failed to save');
+        API.insertMonitoringSewing(data, function (res) {
+          if (!res) return;
+          if (!res.success) throw new Error('failed to save');
           setItems([]);
           handleReset();
           setSelectedValueSO({
             po_number: '',
-            sold_to: '',
+            sold_to: ''
           });
-        })          
+        });
       } catch (error) {
         alert(error);
       }
@@ -71,39 +87,65 @@ function WorkCenter() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, handleReset, getFieldProps, setFieldValue } = formik;
+  const {
+    errors,
+    touched,
+    values,
+    isSubmitting,
+    setSubmitting,
+    handleSubmit,
+    handleReset,
+    getFieldProps,
+    setFieldValue
+  } = formik;
 
-// columns - Data grid
-  const deleteData = useCallback(
-   (id) => () => {
-     ;
-     setItems((prevItems) => {
-       return prevItems.filter(function(x){
-         return x.id != id
-       })
-     })
-   })
+  // columns - Data grid
+  const deleteData = useCallback((id) => () => {
+    setItems((prevItems) => {
+      return prevItems.filter(function (x) {
+        return x.id != id;
+      });
+    });
+  });
 
-  const columns = useMemo(() => [
-    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', width: 550, editable: false},
-    { field: 'po_number', headerName: 'PO', editable: true },
-    { field: 'qty_loading', type: 'number', headerName: 'Qty Loading', type: 'number', editable: true },
-    { field: 'output', type: 'number', headerName: 'Output Sewing', type: 'number', editable: true },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-          onClick={deleteData(params.id)}
-          showInMenu
-        />
-      ]
-    }
-  ], [deleteData]);
+  const columns = useMemo(
+    () => [
+      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'name', headerName: 'Name', width: 550, editable: false },
+      { field: 'po_number', headerName: 'PO', editable: true },
+      {
+        field: 'qty_loading',
+        type: 'number',
+        headerName: 'Qty Loading',
+        type: 'number',
+        editable: true
+      },
+      {
+        field: 'output',
+        type: 'number',
+        headerName: 'Output Sewing',
+        type: 'number',
+        editable: true
+      },
+      {
+        field: 'actions',
+        type: 'actions',
+        width: 100,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<Icon icon={trash2Outline} width={24} height={24} />}
+            label="Delete"
+            onClick={deleteData(params.id)}
+            showInMenu
+          />
+        ]
+      }
+    ],
+    [deleteData]
+  );
 
   // Sales Order Items storage variable on Data Grid
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
 
   //Data Grid
   const [editRowsModel, setEditRowsModel] = React.useState({});
@@ -125,36 +167,35 @@ function WorkCenter() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-    
+
           return prevItems.map((row, index) => {
-            if(row.id === parseInt(itemToUpdateIndex)){
-              if(editRowData[editedColumnName].value > row.qty_loading ) {
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              if (editRowData[editedColumnName].value > row.qty_loading) {
                 alert('You trying to do something wrong! please check your input');
                 return row;
               }
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
-              return row
+              return row;
             }
           });
         });
-
       } else {
         setEditRowData(model[editedIds[0]]);
       }
-  
+
       setEditRowsModel(model);
     },
     [editRowData]
   );
 
-//   Dialog Box
+  //   Dialog Box
 
-const [options, setOptions] = useState([]);
-const [openSO, setOpenSO] = useState(false);
-const loading = (openSO) && options.length === 0;
-const [selectedValueSO, setSelectedValueSO] = React.useState({});
-const [id, setId] = React.useState(0);
+  const [options, setOptions] = useState([]);
+  const [openSO, setOpenSO] = useState(false);
+  const loading = openSO && options.length === 0;
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [id, setId] = React.useState(0);
 
   React.useEffect(() => {
     let active = true;
@@ -168,80 +209,73 @@ const [id, setId] = React.useState(0);
     (async () => {
       if (active) {
         API.getSalesOrder('?completion_status=2', (res) => {
-          if(!res) return
+          if (!res) return;
           else {
-            let _data = res.data.filter(item => {
+            let _data = res.data.filter((item) => {
               return item.completion_status[0]?.completion_status_id === 2;
-            })
+            });
 
             setOptions(_data);
-          } 
-        })  
+          }
+        });
       }
     })();
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
   const handleClose = (name, value) => {
-    setOpenSO(false)
+    setOpenSO(false);
     setSelectedValueSO(value);
     setFieldValue(name, value.id);
     setOptions([]);
     setId(value.id);
   };
 
-// Modal
+  // Modal
   const handleAddItems = (values) => {
     setItems(values);
-  }
+  };
 
   const [selected, setSelected] = React.useState([]);
-  
+
   return (
     <Page>
       <Container>
-      <Modal 
-        open={openM}
-        onAddItems={handleAddItems}
-        so_id={selectedValueSO?.id}
-        order_id={selectedValueSO?.order_id}
-        handleClose={handleCloseModal}
-        selected={items}
-        setSelected={setItems}
-      />
-      <FormikProvider value={formik}>
-        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          {/* Work Center Information */}
-          <Grid item xs={12}>
-            <Card >
+        <Modal
+          open={openM}
+          onAddItems={handleAddItems}
+          so_id={selectedValueSO?.id}
+          order_id={selectedValueSO?.order_id}
+          handleClose={handleCloseModal}
+          selected={items}
+          setSelected={setItems}
+        />
+        <FormikProvider value={formik}>
+          <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+            <Card>
+              {/* Work Center Information */}
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item
-                    xs={6}
-                  >
-                    <ColumnBox>
+                  <Grid item xs={12}>
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px',
+                        background: '#b6b6b62b'
+                      }}
+                    >
                       <SpaceBetweenBox>
                         <Typography variant="h6"> Sales Order </Typography>
-                        <Button
-                          onClick={() => setOpenSO(true)}
-                        >
-                          Select
-                        </Button>
+                        <Button onClick={() => setOpenSO(true)}>Select</Button>
                       </SpaceBetweenBox>
                       <div>
-                        <Typography variant="body1">
-                          {selectedValueSO.id}
-                        </Typography>
-                        <Typography variant="span">
-                          {selectedValueSO.po_number}
-                        </Typography>
-                        <Typography variant="body2">
-                          {selectedValueSO.sold_to}
-                        </Typography>
+                        <Typography variant="body1">{selectedValueSO.id}</Typography>
+                        <Typography variant="span">{selectedValueSO.po_number}</Typography>
+                        <Typography variant="body2">{selectedValueSO.sold_to}</Typography>
                       </div>
                       <DialogBox
                         title="Choose Sales Order"
@@ -255,9 +289,7 @@ const [id, setId] = React.useState(0);
                       />
                     </ColumnBox>
                   </Grid>
-                  <Grid item
-                    xs={6}
-                  >
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="line"
@@ -269,9 +301,7 @@ const [id, setId] = React.useState(0);
                     />
                   </Grid>
 
-                  <Grid item
-                    xs={6}
-                  >
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="date"
@@ -282,10 +312,8 @@ const [id, setId] = React.useState(0);
                       helperText={touched.date && errors.date}
                     />
                   </Grid>
-
-                  <Grid item
-                    xs={6}
-                  >
+                  {/* 
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="hours"
@@ -295,57 +323,51 @@ const [id, setId] = React.useState(0);
                       error={Boolean(touched.hours && errors.hours)}
                       helperText={touched.hours && errors.hours}
                     />
-                  </Grid>
-
-
-                </Grid>      
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          {/* Work Center Information */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Grid item xs={12}>
-                  <DataGrid 
-                    columns={columns} 
-                    rows={items}
-                    onEditRowsModelChange={handleEditRowsModelChange}
-                    handleAddRow={handleOpenModal}
-                  />
+                  </Grid> */}
                 </Grid>
               </CardContent>
+
+              {/* Work Center Information */}
+              <CardContent>
+                <Stack spacing={2}>
+                  <Button
+                    fullWidth
+                    disabled={isUndefined(selectedValueSO.id)}
+                    variant="contained"
+                    onClick={handleOpenModal}
+                  >
+                    Pilih Style Item
+                  </Button>
+                  <DataGrid
+                    columns={columns}
+                    rows={items}
+                    onEditRowsModelChange={handleEditRowsModelChange}
+                  />
+                </Stack>
+              </CardContent>
+
+              {/* Button */}
+              <CardContent>
+                <LoadingButton
+                  fullWidth 
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  Cancel
+                </Button>
+              </CardContent>
             </Card>
-          </Grid>
-          {/* Button */}
-          <Grid item xs={12}>
-            <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button
-                size="large"
-                color="grey"
-                variant="contained"
-                sx={{ m: 1 }}
-              >
-                Cancel
-              </Button>
-            </Card>
-          </Grid>
-        </Grid>
-        </Form>
-      </FormikProvider>
+          </Form>
+        </FormikProvider>
       </Container>
     </Page>
-  )
+  );
 }
 
-export default WorkCenter
+export default WorkCenter;

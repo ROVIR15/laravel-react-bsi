@@ -128,8 +128,11 @@ export function adjustment_data_prep(array) {
       product?.goods ? product?.goods?.name : product?.service?.name
     } ${size} - ${color}`;
 
+    const sku_id = `${product?.goods_id}-${product?.id}-${product_feature_id}`;
+
     return {
       id: index + 1,
+      sku_id: sku_id,
       adjustment_id,
       product_id,
       product_feature_id,

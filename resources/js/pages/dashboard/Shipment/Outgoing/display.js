@@ -15,6 +15,8 @@ import Scrollbar from '../../../../components/Scrollbar';
 import SearchNotFound from '../../../../components/SearchNotFound';
 import { ListHead, MoreMenu } from '../../../../components/Table';
 import ListToolbar from './components/ListToolbar';
+import PinStatus from '../../../../components/PinStatus';
+
 moment.locale('id');
 
 // api
@@ -240,6 +242,40 @@ function OutboundDelivery({ placeHolder }) {
                       status
                     } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
+                    let status_item = {
+                      status: '',
+                      color: '',
+                      backgroundColor: ''
+                    };
+                    if (status[0]?.shipment_type_status_id == 4) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Cancelled',
+                        color: 'rgb(183, 29, 24)',
+                        backgroundColor: 'rgba(255, 86, 48, 0.16)'
+                      };
+                    } else if (status[0]?.shipment_type_status_id == 5) {
+                      status_item = {
+                        ...status_item,
+                        status: 'Completed',
+                        color: 'rgb(27, 128, 106)',
+                        backgroundColor: 'rgba(54, 179, 126, 0.16)'
+                      };
+                    } else if (status[0]?.shipment_type_status_id == 3) {
+                      status_item = {
+                        ...status_item,
+                        status: 'In Delivery',
+                        color: 'rgb(183, 110, 0)',
+                        backgroundColor: 'rgba(255, 171, 0, 0.16)'
+                      };
+                    } else {
+                      status_item = {
+                        ...status_item,
+                        status: 'Scheduled',
+                        color: 'rgb(54, 47, 217)',
+                        backgroundColor: 'rgba(255, 171, 0, 0.16)'
+                      };
+                    }
                     return (
                       <TableRow
                         hover
@@ -251,7 +287,13 @@ function OutboundDelivery({ placeHolder }) {
                       >
                         <TableCell align="left">{id}</TableCell>
                         <TableCell align="left">
-                          <b>{status[0]?.status_type?.name}</b>
+                          <PinStatus
+                            status={status_item.status}
+                            style={{
+                              color: status_item.color,
+                              backgroundColor: status_item.backgroundColor
+                            }}
+                          />
                         </TableCell>
                         <TableCell align="left">{serial_number}</TableCell>
                         <TableCell align="left">{order?.sales_order?.po_number}</TableCell>

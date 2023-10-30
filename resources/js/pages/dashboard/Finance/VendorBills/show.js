@@ -352,21 +352,16 @@ function Invoice() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={1} direction="row">
-          <Grid item xs={6}>
-            <Card>
-              <CardHeader title="Invoice Info" />
+        <Card>
+          <CardHeader title="Invoice Info" />
 
-              <CardContent>
+          <CardContent>
+            <Grid container spacing={2} direction="row">
+              <Grid item xs={6}>
                 <TextField disabled fullWidth value={values.po_number} />
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
 
-          <Grid item xs={6}>
-            <Card>
-              <CardHeader title="Invoice Date" />
-              <CardContent>
+              <Grid item xs={6}>
                 <Stack direction="row" spacing={2}>
                   <TextField
                     fullWidth
@@ -390,70 +385,73 @@ function Invoice() {
                     }}
                   />
                 </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title="Invoice Information" />
-              <CardContent>
-                <Paper>
-                  <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Pembeli </Typography>
-                        <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
-                      </SpaceBetweenBox>
-                      {selectedValueSO?.name ? (
-                        <div>
-                          <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                          <Typography component="span" variant="caption">
-                            {selectedValueSO?.address}
-                          </Typography>
-                          <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
-                        </div>
-                      ) : null}
-                      <DialogBox
-                        options={options}
-                        loading={loading}
-                        error={Boolean(touched.sold_to && errors.sold_to)}
-                        helperText={touched.sold_to && errors.sold_to}
-                        selectedValue={values.sold_to}
-                        open={openDialogBox}
-                        onClose={(value) => handleClose('sold_to', value)}
-                      />
-                    </ColumnBox>
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Penerima </Typography>
-                        <Button disabled>Select</Button>
-                      </SpaceBetweenBox>
-                      <div>
-                        <Typography variant="body1">{selectedValueSH.name}</Typography>
-                        <Typography variant="body1">{selectedValueSH.address}</Typography>
-                        <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
-                      </div>
-                    </ColumnBox>
-                  </Stack>
-                </Paper>
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Pembeli </Typography>
+                    <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
+                  </SpaceBetweenBox>
+                  {selectedValueSO?.name ? (
+                    <div>
+                      <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                      <Typography component="span" variant="caption">
+                        {selectedValueSO?.address}
+                      </Typography>
+                      <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
+                    </div>
+                  ) : null}
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    selectedValue={values.sold_to}
+                    open={openDialogBox}
+                    onClose={(value) => handleClose('sold_to', value)}
+                  />
+                </ColumnBox>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penerima </Typography>
+                    <Button disabled>Select</Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">{selectedValueSH.name}</Typography>
+                    <Typography variant="body1">{selectedValueSH.address}</Typography>
+                    <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
+                  </div>
+                </ColumnBox>
+              </Stack>
+            </ColumnBox>
+          </CardContent>
 
           {/* Data Grid for Invoice Item */}
-          <Grid item xs={12}>
-            <Card>
-              <DataGrid rows={items} columns={columns} />
-            </Card>
-          </Grid>
+          <CardContent>
+            <DataGrid rows={items} columns={columns} />
+          </CardContent>
 
           {/* Tab Panel */}
-
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
+          <CardContent>
+            <Grid item xs={12}>
+              <ColumnBox
+                style={{
+                  padding: '1em 0.75em',
+                  border: '1px dashed #b8b8b8',
+                  borderRadius: '8px'
+                }}
+              >
                 <TabContext value={valueTab}>
                   <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
@@ -565,36 +563,36 @@ function Invoice() {
                     </Paper>
                   </TabPanel>
                 </TabContext>
-              </CardContent>
-            </Card>
-          </Grid>
+              </ColumnBox>
+            </Grid>
+          </CardContent>
 
-          <Grid item xs={12}>
-            <Card sx={{ display: 'flex', justifyContent: 'end' }}>
-              <Button
-                size="large"
-                color="grey"
-                variant="contained"
-                onClick={() => navigate(`/dashboard/finance/vendor-bills/document/${id}`)}
-                sx={{ m: 1 }}
-              >
-                Show Document
-              </Button>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
-            </Card>
-          </Grid>
-        </Grid>
+          <CardContent>
+            <Button
+              fullWidth
+              size="large"
+              color="grey"
+              variant="contained"
+              onClick={() => navigate(`/dashboard/finance/vendor-bills/document/${id}`)}
+              sx={{ m: 1 }}
+            >
+              Show Document
+            </Button>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              Cancel
+            </Button>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

@@ -178,8 +178,8 @@ function SalesOrder() {
 
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
-      const sku_id = `M-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`
-      const shipment_date_ = moment(key.shipment_estimated).format('YYYY-MM-DD')
+      const sku_id = `M-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
+      const shipment_date_ = moment(key.shipment_estimated).format('YYYY-MM-DD');
 
       return {
         ...product_feature,
@@ -292,7 +292,8 @@ function SalesOrder() {
   const postIncomingGoods = (order_id) => {
     try {
       API.postIncomingGoods({ id: order_id, user_id: user?.id }, function (res) {
-        if (res.success) enqueueSnackbar('Successfully created incoming shipment!', { variant: 'successAlert' });
+        if (res.success)
+          enqueueSnackbar('Successfully created incoming shipment!', { variant: 'successAlert' });
         else enqueueSnackbar('WTF', { variant: 'failedAlert' });
       });
     } catch (error) {
@@ -354,7 +355,7 @@ function SalesOrder() {
 
     var c = load2.map((key) => {
       const { product_feature } = key;
-      const sku_id = `M-${product_feature?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`
+      const sku_id = `M-${product_feature?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
 
       return {
         ...product_feature,
@@ -381,17 +382,23 @@ function SalesOrder() {
 
   const editableUser = user.id !== 2 ? true : false;
   const roles = !isEmpty(user) ? user?.role : [];
-  const editableCondition = isArray(roles) ? (roles.some(function (item) {
-    return (item.name === 'purchase-order' && item.review);
-  })) : false;
+  const editableCondition = isArray(roles)
+    ? roles.some(function (item) {
+        return item.name === 'purchase-order' && item.review;
+      })
+    : false;
 
   const columns = useMemo(
     () => [
-      { field: 'sku_id', headerName: 'SKU ID', width: 150,editable: false },
+      { field: 'sku_id', headerName: 'SKU ID', width: 150, editable: false },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: true },
-      { field: 'unit_price', headerName: 'Unit Price', editable: editableUser || editableCondition },
-      { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
+      {
+        field: 'unit_price',
+        headerName: 'Unit Price',
+        editable: editableUser || editableCondition
+      },
+      // { field: 'shipment_estimated', headerName: 'Est. Estimated', type: 'date', editable: true },
       { field: 'description', headerName: 'Description', type: 'text', width: 400, editable: true },
       {
         field: 'actions',
@@ -534,9 +541,10 @@ function SalesOrder() {
         />
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            {
-              isSubmitting ? (<LoadingPage/>) : (
-                <Grid container column spacing={1}>
+            {isSubmitting ? (
+              <LoadingPage />
+            ) : (
+              <Grid container column spacing={1}>
                 {/* New */}
                 <Grid item xs={12}>
                   <Card>
@@ -557,7 +565,7 @@ function SalesOrder() {
                             disabled={false}
                           />
                         </Grid>
-  
+
                         {/* Pembeli dan Penerima */}
                         <Grid item xs={8}>
                           <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
@@ -568,7 +576,9 @@ function SalesOrder() {
                               </SpaceBetweenBox>
                               {selectedValueSO?.name ? (
                                 <div>
-                                  <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                                  <Typography variant="subtitle1">
+                                    {selectedValueSO?.name}
+                                  </Typography>
                                   <Typography component="span" variant="caption">
                                     {selectedValueSO?.street}
                                   </Typography>
@@ -584,7 +594,9 @@ function SalesOrder() {
                               </SpaceBetweenBox>
                               {selectedValueSH?.name ? (
                                 <div>
-                                  <Typography variant="subtitle1">{selectedValueSH?.name}</Typography>
+                                  <Typography variant="subtitle1">
+                                    {selectedValueSH?.name}
+                                  </Typography>
                                   <Typography component="span" variant="caption">
                                     {selectedValueSH?.street}
                                   </Typography>
@@ -596,7 +608,7 @@ function SalesOrder() {
                         </Grid>
                         {/* End of Quotation and "Pembeli and Penerima" Section */}
                         <Divider variant="middle" style={{ width: 'inherit', margin: 0 }} />
-  
+
                         <Grid item xs={10}>
                           {/* Issue Date, Valid Thru and Delivery Date */}
                           <ColumnBox
@@ -640,7 +652,7 @@ function SalesOrder() {
                             </Stack>
                           </ColumnBox>
                         </Grid>
-  
+
                         <Grid item xs={2}>
                           <FormControl>
                             <FormLabel id="Improt">Import</FormLabel>
@@ -655,7 +667,7 @@ function SalesOrder() {
                             </RadioGroup>
                           </FormControl>
                         </Grid>
-  
+
                         <Grid item xs={12}>
                           <ColumnBox
                             style={{
@@ -666,7 +678,10 @@ function SalesOrder() {
                           >
                             <TabContext value={valueTab}>
                               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                                <TabList
+                                  onChange={handleChangeTab}
+                                  aria-label="lab API tabs example"
+                                >
                                   <Tab label="Overview" value="1" />
                                   <Tab label="Description" value="2" />
                                   <Tab label="Shipment Tracking" value="3" />
@@ -674,7 +689,7 @@ function SalesOrder() {
                                   <Tab label="Invoice List" value="5" />
                                 </TabList>
                               </Box>
-  
+
                               <TabPanel value="1">
                                 <Stack direction="column" spacing={2}>
                                   <Stack direction="row">
@@ -702,7 +717,7 @@ function SalesOrder() {
                                     <Button onClick={handlePopulate}>Populate</Button>
                                   </Stack>
                                 </Stack>
-  
+
                                 <DataGrid
                                   columns={columns}
                                   rows={items}
@@ -711,7 +726,7 @@ function SalesOrder() {
                                   handleAddRow={handleOpenModal}
                                 />
                               </TabPanel>
-  
+
                               <TabPanel value="2">
                                 <Stack direction="row" alignItems="center">
                                   <TextField
@@ -727,11 +742,11 @@ function SalesOrder() {
                                   Save
                                 </Button>
                               </TabPanel>
-  
+
                               <TabPanel value="3">
                                 <DataGrid columns={columnShipment} rows={items} />
                               </TabPanel>
-  
+
                               <TabPanel value="4">
                                 <Stack direction="column" spacing={2}>
                                   <Stack direction="row" spacing={4} alignItems="center">
@@ -748,7 +763,7 @@ function SalesOrder() {
                                       }}
                                     />
                                   </Stack>
-  
+
                                   <FormControl>
                                     <FormLabel id="demo-row-radio-buttons-group-label">
                                       Select Currency
@@ -768,7 +783,7 @@ function SalesOrder() {
                                       />
                                     </RadioGroup>
                                   </FormControl>
-  
+
                                   <Button
                                     onClick={handleUpdateTax}
                                     variant="outlined"
@@ -778,7 +793,7 @@ function SalesOrder() {
                                   </Button>
                                 </Stack>
                               </TabPanel>
-  
+
                               <TabPanel value="5">
                                 <Table>
                                   <TableRow>
@@ -827,52 +842,63 @@ function SalesOrder() {
                           </ColumnBox>
                         </Grid>
                         {/* END Tab */}
-  
-                        {/* Button */}
-                        <Grid item xs={12}>
-                          <Box sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}>
-                            <Button
-                              size="large"
-                              color="grey"
-                              variant="contained"
-                              sx={{ m: 1 }}
-                              onClick={() => {
-                                setOrderId(values?.order_id);
-                                setOpenGenerateVendorBillsModal(true);
-                              }}
-                            >
-                              Post Vendor Bills
-                            </Button>
-                            <Button
-                              size="large"
-                              color="grey"
-                              variant="contained"
-                              sx={{ m: 1 }}
-                              onClick={() => postIncomingGoods(values?.order_id)}
-                            >
-                              Post Incoming Goods
-                            </Button>
-                            <LoadingButton
-                              size="large"
-                              type="submit"
-                              variant="contained"
-                              loading={isSubmitting}
-                              sx={{ m: 1 }}
-                            >
-                              Save
-                            </LoadingButton>
-                            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                              Cancel
-                            </Button>
-                          </Box>
-                        </Grid>
                       </Grid>
+                    </CardContent>
+                    <CardContent>
+                      <Stack direction="column" spacing={4}>
+                        <Stack direction="row" spacing={2}>
+                          <LoadingButton
+                            fullWidth
+                            size="large"
+                            type="submit"
+                            variant="contained"
+                            loading={isSubmitting}
+                          >
+                            Save
+                          </LoadingButton>
+                          <Button
+                            fullWidth
+                            component={RouterLink}
+                            to={`../document/${id}`}
+                            size="large"
+                            color="grey"
+                            variant="contained"
+                          >
+                            Show Document
+                          </Button>
+                          <Button fullWidth size="large" color="grey" variant="contained">
+                            Cancel
+                          </Button>
+                        </Stack>
+                        <Stack direction="row" spacing={2}>
+                          <Button
+                            fullWidth
+                            size="large"
+                            color="grey"
+                            variant="contained"
+                            onClick={() => {
+                              setOrderId(values?.order_id);
+                              setOpenGenerateVendorBillsModal(true);
+                            }}
+                          >
+                            Post Vendor Bills
+                          </Button>
+                          <Button
+                            fullWidth
+                            size="large"
+                            color="grey"
+                            variant="contained"
+                            onClick={() => postIncomingGoods(values?.order_id)}
+                          >
+                            Post Incoming Goods
+                          </Button>
+                        </Stack>
+                      </Stack>
                     </CardContent>
                   </Card>
                 </Grid>
-              </Grid>  
-              )
-            }
+              </Grid>
+            )}
           </Form>
         </FormikProvider>
       </Container>

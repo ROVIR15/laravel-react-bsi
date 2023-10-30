@@ -20,12 +20,12 @@ import {
   Select,
   TextField,
   MenuList,
-  InputAdornment
+  InputAdornment,
+  Stack
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { fNumber } from '../../../utils/formatNumber';
-import CustomMultiSelect from '../../../components/CustomMultiSelect';
 
 import { isArray } from 'lodash';
 //API
@@ -206,14 +206,14 @@ function Goods() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={5}>
-                <ShowImageWhenItsUploaded />
-              </Grid>
-              <Grid item xs={7}>
-                <Card>
-                  <CardHeader title="Product Information" />
-                  <CardContent>
+            <Card>
+              <CardHeader title="Product Information" />
+              <CardContent>
+                <Grid container spacing={3}>
+                  <Grid item xs={5}>
+                    <ShowImageWhenItsUploaded />
+                  </Grid>
+                  <Grid item xs={7}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <TextField
@@ -290,47 +290,38 @@ function Goods() {
                         />
                       </Grid>
                     </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader title="Product Feature" />
-                  <CardContent>
-                    <Grid container spacing={3}>
-                      <Grid item xs={8}>
-                        <TextField
-                          fullWidth
-                          autoComplete="feature_one"
-                          type="text"
-                          placeholder="Input ukuran pisah dengan koma"
-                          label="Size"
-                          {...getFieldProps('feature_one')}
-                          error={Boolean(touched.feature_one && errors.feature_one)}
-                          helperText={touched.feature_one && errors.feature_one}
-                        />
-                      </Grid>
-                      <Grid item xs={8}>
-                        <TextField
-                          fullWidth
-                          autoComplete="feature_two"
-                          type="text"
-                          placeholder="Input warna pisah dengan koma"
-                          label="Warna"
-                          {...getFieldProps('feature_two')}
-                          error={Boolean(touched.feature_two && errors.feature_two)}
-                          helperText={touched.feature_two && errors.feature_two}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="feature_one"
+                      type="text"
+                      placeholder="Input ukuran pisah dengan koma"
+                      label="Size"
+                      {...getFieldProps('feature_one')}
+                      error={Boolean(touched.feature_one && errors.feature_one)}
+                      helperText={touched.feature_one && errors.feature_one}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      autoComplete="feature_two"
+                      type="text"
+                      placeholder="Input warna pisah dengan koma"
+                      label="Warna"
+                      {...getFieldProps('feature_two')}
+                      error={Boolean(touched.feature_two && errors.feature_two)}
+                      helperText={touched.feature_two && errors.feature_two}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="column">
                   <LoadingButton
+                    fullWidth
                     size="large"
                     type="submit"
                     variant="contained"
@@ -339,12 +330,12 @@ function Goods() {
                   >
                     Save
                   </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                     Cancel
                   </Button>
-                </Card>
-              </Grid>
-            </Grid>
+                </Stack>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

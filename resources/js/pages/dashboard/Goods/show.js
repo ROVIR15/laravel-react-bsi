@@ -18,6 +18,7 @@ import {
   InputLabel,
   Paper,
   Select,
+  Stack,
   MenuItem,
   Typography
 } from '@mui/material';
@@ -284,15 +285,15 @@ function Goods() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={5}>
-                <ShowImageWhenItsUploaded />
-              </Grid>
+            <Card>
+              <CardHeader title="Product Information" />
+              <CardContent>
+                <Grid container spacing={3}>
+                  <Grid item xs={5}>
+                    <ShowImageWhenItsUploaded />
+                  </Grid>
 
-              <Grid item xs={7}>
-                <Card>
-                  <CardHeader title="Product Information" />
-                  <CardContent>
+                  <Grid item xs={7}>
                     <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <TextField
@@ -363,14 +364,9 @@ function Goods() {
                         />
                       </Grid>
                     </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader title="Product Feature" />
-                  <CardContent>
+                  <Grid item xs={12}>
                     <DataGrid
                       columns={columns}
                       rows={items}
@@ -378,13 +374,14 @@ function Goods() {
                       handleUpdateAllRows={handleUpdateAllRows}
                       handleAddRow={handleAddRow}
                     />
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
+                </Grid>
+              </CardContent>
 
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+              <CardContent>
+                <Stack direction="column">
                   <LoadingButton
+                    fullWidth
                     size="large"
                     type="submit"
                     variant="contained"
@@ -393,12 +390,12 @@ function Goods() {
                   >
                     Save
                   </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                     Cancel
                   </Button>
-                </Card>
-              </Grid>
-            </Grid>
+                </Stack>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

@@ -227,8 +227,13 @@ function BillofMaterial() {
   }, [id]);
 
   const editableUser = user.id === 2 ? true : false;
-  const editableCondition = isEmpty(statusCosting) ? true : statusCosting.status_type === 'Submit' ? true : false;
-  const __editable = editableUser || editableCondition
+  const editableCondition = isEmpty(statusCosting)
+    ? true
+    : statusCosting.status_type === 'Submit'
+    ? true
+    : false;
+  const __editable = editableUser || editableCondition;
+
 
   useEffect(() => {
     let active = true;
@@ -1122,36 +1127,42 @@ function BillofMaterial() {
                             </TabContext>
                           </Box>
                         </Grid>
-
-                        <Grid item xs={12}>
-                          <Box
-                            sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}
-                          >
-                            <LoadingButton
-                              size="large"
-                              type="submit"
-                              variant="contained"
-                              loading={isSubmitting}
-                              sx={{ m: 1 }}
-                            >
-                              Save
-                            </LoadingButton>
-                            <Button
-                              component={RouterLink}
-                              to={getPathname(pathname.split('/')) + `/document/${id}`}
-                              size="large"
-                              color="grey"
-                              variant="contained"
-                              sx={{ m: 1 }}
-                            >
-                              Show
-                            </Button>
-                            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                              Cancel
-                            </Button>
-                          </Box>
-                        </Grid>
                       </Grid>
+                    </CardContent>
+
+                    <CardContent>
+                      <Stack direction="row">
+                        <LoadingButton
+                          fullWidth
+                          size="large"
+                          type="submit"
+                          variant="contained"
+                          loading={isSubmitting}
+                          sx={{ m: 1 }}
+                        >
+                          Save
+                        </LoadingButton>
+                        <Button
+                          fullWidth
+                          component={RouterLink}
+                          to={getPathname(pathname.split('/')) + `/document/${id}`}
+                          size="large"
+                          color="grey"
+                          variant="contained"
+                          sx={{ m: 1 }}
+                        >
+                          Show
+                        </Button>
+                        <Button
+                          fullWidth
+                          size="large"
+                          color="grey"
+                          variant="contained"
+                          sx={{ m: 1 }}
+                        >
+                          Cancel
+                        </Button>
+                      </Stack>
                     </CardContent>
                   </Card>
                 </Grid>

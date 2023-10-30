@@ -187,7 +187,13 @@ class BOMItemController extends Controller
                 $product = $query->product ? $query->product : null;
                 $goods = $product ? $product->goods : null;
 
-                $query3 = BOMItem::select('unit_price', 'id as costing_item_id')->where('bom_id', $costing_id)->where('product_id', $query->product_id)->get();
+                $query3 = BOMItem::select('unit_price', 'bom_id', 'id as costing_item_id')
+                            ->with(['costing' => function($item){
+                                return $item->with('currency_info');
+                            }])
+                            ->where('bom_id', $costing_id)
+                            ->where('product_id', $query->product_id)
+                            ->get();
                 return
                     [
                         'id' => $query['id'],
@@ -200,6 +206,7 @@ class BOMItemController extends Controller
                         'category_name' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
                         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
                         'unit_price' => count($query3) ? $query3[0]['unit_price'] : 0,
+                        'currency_id' => count($query3) ? $query3[0]['costing']['currency_id'] : null,
                         'costing_item_id' => count($query3) ? $query3[0]['costing_item_id'] : 0
                     ];
             });

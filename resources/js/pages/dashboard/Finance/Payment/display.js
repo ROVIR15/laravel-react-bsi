@@ -87,7 +87,8 @@ function FinanceAccountDisplay({ placeHolder }) {
             const { invoice } = item;
             return {
               id: item?.id,
-              payment_method_type_id: item?.type?.name,
+              payment_method_type_id: item?.type?.id,
+              payment_method_type_name: item?.type?.name,
               invoice_id: generateInvSerialNumber_alt(invoice[0], invoice[0]?.type?.invoice_type_id),
               ref_num: item?.ref_num,
               effective_date: item?.effective_date,
@@ -214,7 +215,7 @@ function FinanceAccountDisplay({ placeHolder }) {
                 .map((row) => {
                   const {
                     id,
-                    type,
+                    payment_method_type_name,
                     invoice_id,
                     ref_num,
                     effective_date,
@@ -232,11 +233,11 @@ function FinanceAccountDisplay({ placeHolder }) {
                       aria-checked={isItemSelected}
                     >
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{type?.name}</TableCell>
+                      <TableCell align="left">{payment_method_type_name}</TableCell>
                       <TableCell align="left">{invoice_id}</TableCell>
                       <TableCell align="left">{ref_num}</TableCell>
                       <TableCell align="left">{moment(effective_date).format('LL')}</TableCell>
-                      <TableCell align="left">Rp. {fCurrency(amount)}</TableCell>
+                      <TableCell align="left">{fCurrency(amount)}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>

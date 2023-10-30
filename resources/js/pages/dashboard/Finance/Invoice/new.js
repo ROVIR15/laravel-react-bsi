@@ -385,11 +385,11 @@ function Invoice() {
       />
 
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={1} direction="row">
-          <Grid item xs={12} lg={4}>
-            <Card >
-              <CardHeader title="Invoice Date" />
-              <CardContent>
+        <Card>
+          <CardHeader title="Invoice Date" />
+          <CardContent>
+            <Grid container spacing={1} direction="row">
+              <Grid item xs={12} lg={4}>
                 <Stack direction="row" spacing={2}>
                   <TextField
                     fullWidth
@@ -409,21 +409,20 @@ function Invoice() {
                     error={Boolean(touched.due_date && errors.due_date)}
                     helperText={touched.due_date && errors.due_date}
                     InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">Hari</InputAdornment>
-                      )
+                      endAdornment: <InputAdornment position="end">Hari</InputAdornment>
                     }}
                   />
                 </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
 
-          <Grid item lg={8} xs={12}>
-            <Card >
-              <CardHeader title="Invoice Information" />
-              <CardContent>
-                <Paper>
+              <Grid item lg={8} xs={12}>
+                <ColumnBox
+                  style={{
+                    padding: '1em 0.75em',
+                    border: '1px dashed #b8b8b8',
+                    borderRadius: '8px'
+                  }}
+                >
                   <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                     <ColumnBox>
                       <SpaceBetweenBox>
@@ -462,15 +461,21 @@ function Invoice() {
                       </div>
                     </ColumnBox>
                   </Stack>
-                </Paper>
-              </CardContent>
-            </Card>
-          </Grid>
+                </ColumnBox>
+              </Grid>
+            </Grid>
+          </CardContent>
 
           {/* Data Grid for Invoice Item */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent sx={{ paddingBottom: 0 }}>
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <Box sx={{ paddingBottom: 0 }}>
                 <GridData>
                   <Typography variant="h6">Shipment</Typography>
                   <IconButton
@@ -485,86 +490,81 @@ function Invoice() {
                     <Icon icon={plusSquare} />
                   </IconButton>
                 </GridData>
-              </CardContent>
-              <CardContent>
+              </Box>
+              <Box>
                 <DataGrid rows={items} columns={columns} />
-              </CardContent>
-            </Card>
-          </Grid>
+              </Box>
+            </ColumnBox>
+          </CardContent>
 
           {/* Tab Panel */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <TabContext value={valueTab}>
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                      <Tab label="Description" value="1" />
-                      <Tab label="Finance" value="2" />
-                      <Tab label="Terms" value="3" />
-                    </TabList>
-                  </Box>
+          <CardContent>
+            <TabContext value={valueTab}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                  <Tab label="Description" value="1" />
+                  <Tab label="Finance" value="2" />
+                  <Tab label="Terms" value="3" />
+                </TabList>
+              </Box>
 
-                  <TabPanel value="1">
-                    <Stack direction="row" alignItems="center">
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={6}
-                        type="text"
-                        {...getFieldProps('description')}
-                        error={Boolean(touched.description && errors.description)}
-                        helperText={touched.description && errors.description}
-                      />
-                    </Stack>
-                  </TabPanel>
+              <TabPanel value="1">
+                <Stack direction="row" alignItems="center">
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={6}
+                    type="text"
+                    {...getFieldProps('description')}
+                    error={Boolean(touched.description && errors.description)}
+                    helperText={touched.description && errors.description}
+                  />
+                </Stack>
+              </TabPanel>
 
-                  <TabPanel value="2">
-                    <Stack direction="row" spacing={4} alignItems="center">
-                      <Typography variant="body1">Tax</Typography>
-                      <TextField
-                        autoComplete="tax"
-                        type="number"
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end">%</InputAdornment>
-                        }}
-                        {...getFieldProps('tax')}
-                        error={Boolean(touched.tax && errors.tax)}
-                        helperText={touched.tax && errors.tax}
-                      />
-                    </Stack>
-                  </TabPanel>
+              <TabPanel value="2">
+                <Stack direction="row" spacing={4} alignItems="center">
+                  <Typography variant="body1">Tax</Typography>
+                  <TextField
+                    autoComplete="tax"
+                    type="number"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">%</InputAdornment>
+                    }}
+                    {...getFieldProps('tax')}
+                    error={Boolean(touched.tax && errors.tax)}
+                    helperText={touched.tax && errors.tax}
+                  />
+                </Stack>
+              </TabPanel>
 
-                  <TabPanel value="3">
-                    <DataGrid
-                      columns={columnsInvoiceTerm}
-                      rows={rowsInvoiceTerm}
-                      handleAddRow={handleAddInvoiceTerm}
-                      onEditRowsModelChange={handleEditRowsModelChange}
-                    />
-                  </TabPanel>
-                </TabContext>
-              </CardContent>
-            </Card>
-          </Grid>
+              <TabPanel value="3">
+                <DataGrid
+                  columns={columnsInvoiceTerm}
+                  rows={rowsInvoiceTerm}
+                  handleAddRow={handleAddInvoiceTerm}
+                  onEditRowsModelChange={handleEditRowsModelChange}
+                />
+              </TabPanel>
+            </TabContext>
+          </CardContent>
 
-          <Grid item xs={12}>
-            <Card sx={{ display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
-            </Card>
-          </Grid>
-        </Grid>
+          <CardContent>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              Cancel
+            </Button>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

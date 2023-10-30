@@ -68,7 +68,15 @@ function Invoice() {
       tax: 0
     },
     onSubmit: (values) => {
-      let _data = { ...values, items, type: 2, tax: 11, description: '', shipment_id: null, terms: rowsInvoiceTerm };
+      let _data = {
+        ...values,
+        items,
+        type: 2,
+        tax: 11,
+        description: '',
+        shipment_id: null,
+        terms: rowsInvoiceTerm
+      };
       try {
         API.insertVendorBills(_data, (res) => {
           if (!res) return undefined;
@@ -276,7 +284,7 @@ function Invoice() {
     let invoiceItems = orderItemToVendorBillItems(payload.order_item);
     setFieldValue('purchase_order_id', payload.id);
     setFieldValue('order_id', payload.order_id);
-    setFieldValue('sold_to', payload.bought_from.id)
+    setFieldValue('sold_to', payload.bought_from.id);
     setSelectedValueSO({
       name: payload.bought_from.name,
       address: `${payload.bought_from.address.street} ${payload.bought_from.address.city} ${payload.bought_from.address.province} ${payload.bought_from.address.country}`,
@@ -300,12 +308,11 @@ function Invoice() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3} direction="row">
-          <Grid item xs={6}>
-            <Card>
-              <CardHeader title="Invoice Info" />
-
-              <CardContent>
+        <Card>
+          <CardHeader title="Invoice Info" />
+          <CardContent>
+            <Grid container spacing={3} direction="row">
+              <Grid item xs={6}>
                 <AutoComplete
                   fullWidth
                   autoComplete="shipment_id"
@@ -318,14 +325,9 @@ function Invoice() {
                   loading={loadingAutoComplete}
                   changeData={changeData}
                 />
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
 
-          <Grid item xs={6}>
-            <Card>
-              <CardHeader title="Invoice Date" />
-              <CardContent>
+              <Grid item xs={6}>
                 <Stack direction="row" spacing={2}>
                   <TextField
                     fullWidth
@@ -349,125 +351,127 @@ function Invoice() {
                     }}
                   />
                 </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
 
-          <Grid item xs={12}>
-            <Card sx={{ '& .MuiTextField-root': { m: 1 } }}>
-              <CardHeader title="Invoice Information" />
-              <CardContent>
-                <Paper>
-                  <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagihan ke </Typography>
-                        <Button disabled>Select</Button>
-                      </SpaceBetweenBox>
-                      <div>
-                        <Typography variant="body1">{selectedValueSH.name}</Typography>
-                        <Typography variant="body1">{selectedValueSH.address}</Typography>
-                        <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
-                      </div>
-                    </ColumnBox>
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Penagih </Typography>
-                        <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
-                      </SpaceBetweenBox>
-                      {selectedValueSO?.name ? (
-                        <div>
-                          <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                          <Typography component="span" variant="caption">
-                            {selectedValueSO?.address}
-                          </Typography>
-                          <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
-                        </div>
-                      ) : null}
-                      <DialogBox
-                        options={options}
-                        loading={loading}
-                        error={Boolean(touched.sold_to && errors.sold_to)}
-                        helperText={touched.sold_to && errors.sold_to}
-                        selectedValue={values.sold_to}
-                        open={openDialogBox}
-                        onClose={(value) => handleClose('sold_to', value)}
-                      />
-                    </ColumnBox>
-                  </Stack>
-                </Paper>
-              </CardContent>
-            </Card>
-          </Grid>
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penagihan ke </Typography>
+                    <Button disabled>Select</Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">{selectedValueSH.name}</Typography>
+                    <Typography variant="body1">{selectedValueSH.address}</Typography>
+                    <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
+                  </div>
+                </ColumnBox>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penagih </Typography>
+                    <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
+                  </SpaceBetweenBox>
+                  {selectedValueSO?.name ? (
+                    <div>
+                      <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                      <Typography component="span" variant="caption">
+                        {selectedValueSO?.address}
+                      </Typography>
+                      <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
+                    </div>
+                  ) : null}
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    selectedValue={values.sold_to}
+                    open={openDialogBox}
+                    onClose={(value) => handleClose('sold_to', value)}
+                  />
+                </ColumnBox>
+              </Stack>
+            </ColumnBox>
+          </CardContent>
 
           {/* Data Grid for Invoice Item */}
-          <Grid item xs={12}>
-            <Card>
-              <DataGrid rows={items} columns={columns} />
-            </Card>
-          </Grid>
-
+          <CardContent>
+            <DataGrid rows={items} columns={columns} />
+          </CardContent>
           {/* Tab Panel */}
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <TabContext value={valueTab}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                    <Tab label="Description" value="1" />
+                    <Tab label="Finance" value="2" />
+                    <Tab label="Terms" value="3" />
+                  </TabList>
+                </Box>
 
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <TabContext value={valueTab}>
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                      <Tab label="Description" value="1" />
-                      <Tab label="Finance" value="2" />
-                      <Tab label="Terms" value="3" />
-                    </TabList>
-                  </Box>
-
-                  <TabPanel value="1">
-                    <Stack direction="row" alignItems="center">
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={6}
-                        type="text"
-                        {...getFieldProps('description')}
-                        error={Boolean(touched.description && errors.description)}
-                        helperText={touched.description && errors.description}
-                      />
-                    </Stack>
-                  </TabPanel>
-
-                  <TabPanel value="2">
-                    <Stack direction="row" spacing={4} alignItems="center">
-                      <Typography variant="body1">Tax</Typography>
-                      <TextField
-                        autoComplete="tax"
-                        type="number"
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end">%</InputAdornment>
-                        }}
-                        {...getFieldProps('tax')}
-                        error={Boolean(touched.tax && errors.tax)}
-                        helperText={touched.tax && errors.tax}
-                      />
-                    </Stack>
-                  </TabPanel>
-
-                  <TabPanel value="3">
-                    <DataGrid
-                      columns={columnsInvoiceTerm}
-                      rows={rowsInvoiceTerm}
-                      handleAddRow={handleAddInvoiceTerm}
-                      onEditRowsModelChange={handleEditRowsModelChange}
+                <TabPanel value="1">
+                  <Stack direction="row" alignItems="center">
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={6}
+                      type="text"
+                      {...getFieldProps('description')}
+                      error={Boolean(touched.description && errors.description)}
+                      helperText={touched.description && errors.description}
                     />
-                  </TabPanel>
-                </TabContext>
-              </CardContent>
-            </Card>
-          </Grid>
+                  </Stack>
+                </TabPanel>
 
-          <Grid item xs={12}>
-            <Card sx={{ display: 'flex', justifyContent: 'end' }}>
+                <TabPanel value="2">
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <Typography variant="body1">Tax</Typography>
+                    <TextField
+                      autoComplete="tax"
+                      type="number"
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>
+                      }}
+                      {...getFieldProps('tax')}
+                      error={Boolean(touched.tax && errors.tax)}
+                      helperText={touched.tax && errors.tax}
+                    />
+                  </Stack>
+                </TabPanel>
+
+                <TabPanel value="3">
+                  <DataGrid
+                    columns={columnsInvoiceTerm}
+                    rows={rowsInvoiceTerm}
+                    handleAddRow={handleAddInvoiceTerm}
+                    onEditRowsModelChange={handleEditRowsModelChange}
+                  />
+                </TabPanel>
+              </TabContext>
+            </ColumnBox>
+          </CardContent>
+
+          <CardContent>
+            <Stack direction="row">
               <LoadingButton
+                fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
@@ -476,12 +480,12 @@ function Invoice() {
               >
                 Save
               </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                 Cancel
               </Button>
-            </Card>
-          </Grid>
-        </Grid>
+            </Stack>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

@@ -202,7 +202,8 @@ function OutboundDelivery() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
+      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 500, editable: false },
       { field: 'qty_order', headerName: 'Qty Order', editable: false },
       { field: 'deliv_qty', headerName: 'Delivery Qty', editable: false },
@@ -368,48 +369,67 @@ function OutboundDelivery() {
                     </Stack>
                   </Grid>
                   <Grid item xs={8}>
-                    <Grid container direction="row" spacing={2}>
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
-                        <TextField fullWidth label="PO Number" value={po_number} disabled />
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px'
+                      }}
+                    >
+                      <Grid container direction="row" spacing={2}>
+                        <Grid item xs={6} sx={{ padding: 'unset' }}>
+                          <TextField fullWidth label="PO Number" value={po_number} disabled />
 
-                        <Typography
-                          variant="body1"
-                          href={`../../order/sales-order/${SOID}`}
-                          component="a"
-                        >
-                          {`SO-0${SOID}`}
-                        </Typography>
-                      </Grid>
+                          <Typography
+                            variant="body1"
+                            href={`../../order/sales-order/${SOID}`}
+                            component="a"
+                          >
+                            {`SO-0${SOID}`}
+                          </Typography>
+                        </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
-                        <TextField
-                          variant="outlined"
-                          type="text"
-                          fullWidth
-                          disabled
-                          autoComplete="serial_number"
-                          placeholder="Delivery Serial Number"
-                          {...getFieldProps('serial_number')}
-                          error={Boolean(touched.serial_number && errors.serial_number)}
-                          helperText={touched.serial_number && errors.serial_number}
-                        />
-                      </Grid>
+                        <Grid item xs={6} sx={{ padding: 'unset' }}>
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            disabled
+                            autoComplete="serial_number"
+                            placeholder="Delivery Serial Number"
+                            {...getFieldProps('serial_number')}
+                            error={Boolean(touched.serial_number && errors.serial_number)}
+                            helperText={touched.serial_number && errors.serial_number}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12}>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Buyer </Typography>
-                            <Button disabled>Select</Button>
-                          </SpaceBetweenBox>
-                          <div>
-                            <Typography variant="body1">{selectedValueSO.name}</Typography>
-                          </div>
-                        </ColumnBox>
+                        <Grid item xs={12}>
+                          <ColumnBox>
+                            <SpaceBetweenBox>
+                              <Typography variant="h6"> Buyer </Typography>
+                              <Button disabled>Select</Button>
+                            </SpaceBetweenBox>
+                            <div>
+                              <Typography variant="body1">{selectedValueSO.name}</Typography>
+                            </div>
+                          </ColumnBox>
+                        </Grid>
                       </Grid>
-                    </Grid>
+                    </ColumnBox>
                   </Grid>
+
                   <Grid item xs={12}>
-                    <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <Divider orientation="horizontal" variant="middle" flexItem />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px'
+                      }}
+                    >
                       <TabContext value={valueTab}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                           <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
@@ -460,34 +480,36 @@ function OutboundDelivery() {
                           ></TextField>
                         </TabPanel>
                       </TabContext>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                      <Button
-                        size="large"
-                        color="primary"
-                        variant="contained"
-                        onClick={handleItemIssuance}
-                        sx={{ m: 1 }}
-                      >
-                        Issue from Warehouse
-                      </Button>
-                      <LoadingButton
-                        size="large"
-                        type="submit"
-                        variant="contained"
-                        loading={isSubmitting}
-                        sx={{ m: 1 }}
-                      >
-                        Save
-                      </LoadingButton>
-                      <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                        Cancel
-                      </Button>
-                    </Box>
+                    </ColumnBox>
                   </Grid>
                 </Grid>
+              </CardContent>
+              <CardContent>
+                <Stack direction="row">
+                  <Button
+                    fullWidth
+                    size="large"
+                    color="success"
+                    variant="contained"
+                    onClick={handleItemIssuance}
+                    sx={{ m: 1 }}
+                  >
+                    Issue From Warehouse
+                  </Button>
+                  <LoadingButton
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    Cancel
+                  </Button>
+                </Stack>
               </CardContent>
             </Card>
           </Form>

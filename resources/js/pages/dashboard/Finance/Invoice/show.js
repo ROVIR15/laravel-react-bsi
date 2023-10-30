@@ -205,9 +205,8 @@ function Invoice() {
    * Handling Data Grid for a InvoiceTerm BOM
    */
 
-   const [editRowsModel, setEditRowsModel] = React.useState({});
-   const [editRowData, setEditRowData] = React.useState({});
- 
+  const [editRowsModel, setEditRowsModel] = React.useState({});
+  const [editRowData, setEditRowData] = React.useState({});
 
   const handleEditInvoiceTermRowsModelChange = React.useCallback(
     (model) => {
@@ -243,11 +242,11 @@ function Invoice() {
       value_type: 'Percentage'
     };
     try {
-      API.insertInvoiceTerm(a, function(res){
-        if(!res) return;
-        if(!res.success) throw new Error('failed to add invoice term');
-        else alert('success')
-      })
+      API.insertInvoiceTerm(a, function (res) {
+        if (!res) return;
+        if (!res.success) throw new Error('failed to add invoice term');
+        else alert('success');
+      });
     } catch (error) {
       alert(error);
     }
@@ -256,17 +255,17 @@ function Invoice() {
 
   const handleUpdateInvoiceTerm = () => {
     try {
-      API.getInvoiceTermByInvoice(id, function(res){
-        if(!res) return;
-        if(isEmpty(res.data)) throw new Error('failed to get data');
+      API.getInvoiceTermByInvoice(id, function (res) {
+        if (!res) return;
+        if (isEmpty(res.data)) throw new Error('failed to get data');
         else {
           setRowsInvoiceTerm(res.data);
         }
-      })
+      });
     } catch (error) {
       alert(error);
     }
-  }
+  };
 
   const deleteData = React.useCallback((id) => () => {
     setItems((prevItems) => {
@@ -343,24 +342,18 @@ function Invoice() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={2} direction="row">
-          <Grid item xs={6}>
-            <Card >
-              <CardHeader title="Invoice Info" />
-
-              <CardContent>
+        <Card>
+          <CardContent>
+            <Grid container spacing={2} direction="row">
+              <Grid item xs={6}>
                 <TextField disabled fullWidth value={values.po_number} />
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
 
-          <Grid item xs={6}>
-            <Card >
-              <CardHeader title="Invoice Date" />
-              <CardContent>
+              <Grid item xs={6}>
                 <Stack direction="row" spacing={2}>
                   <TextField
                     fullWidth
+                    label="Tanggal Invoice"
                     autoComplete="invoice_date"
                     type="date"
                     placeholder="invoice_date"
@@ -370,6 +363,7 @@ function Invoice() {
                   />
                   <TextField
                     fullWidth
+                    label="Termin Pembayaran"
                     autoComplete="due_date"
                     type="number"
                     placeholder="due_date"
@@ -381,166 +375,167 @@ function Invoice() {
                     }}
                   />
                 </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
 
-          <Grid item xs={12}>
-            <Card >
-              <CardHeader title="Invoice Information" />
-              <CardContent>
-                <Paper>
-                  <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Pembeli </Typography>
-                        <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
-                      </SpaceBetweenBox>
-                      {selectedValueSO?.name ? (
-                        <div>
-                          <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
-                          <Typography component="span" variant="caption">
-                            {selectedValueSO?.address}
-                          </Typography>
-                          <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
-                        </div>
-                      ) : null}
-                      <DialogBox
-                        options={options}
-                        loading={loading}
-                        error={Boolean(touched.sold_to && errors.sold_to)}
-                        helperText={touched.sold_to && errors.sold_to}
-                        selectedValue={values.sold_to}
-                        open={openDialogBox}
-                        onClose={(value) => handleClose('sold_to', value)}
-                      />
-                    </ColumnBox>
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <ColumnBox>
-                      <SpaceBetweenBox>
-                        <Typography variant="h6"> Penerima </Typography>
-                        <Button disabled>Select</Button>
-                      </SpaceBetweenBox>
-                      <div>
-                        <Typography variant="body1">{selectedValueSH.name}</Typography>
-                        <Typography variant="body1">{selectedValueSH.address}</Typography>
-                        <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
-                      </div>
-                    </ColumnBox>
-                  </Stack>
-                </Paper>
-              </CardContent>
-            </Card>
-          </Grid>
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Pembeli </Typography>
+                    <Button onClick={() => setOpenDialogBox(true)}>Select</Button>
+                  </SpaceBetweenBox>
+                  {selectedValueSO?.name ? (
+                    <div>
+                      <Typography variant="subtitle1">{selectedValueSO?.name}</Typography>
+                      <Typography component="span" variant="caption">
+                        {selectedValueSO?.address}
+                      </Typography>
+                      <Typography variant="body2">{`${selectedValueSO?.postal_code}`}</Typography>
+                    </div>
+                  ) : null}
+                  <DialogBox
+                    options={options}
+                    loading={loading}
+                    error={Boolean(touched.sold_to && errors.sold_to)}
+                    helperText={touched.sold_to && errors.sold_to}
+                    selectedValue={values.sold_to}
+                    open={openDialogBox}
+                    onClose={(value) => handleClose('sold_to', value)}
+                  />
+                </ColumnBox>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <ColumnBox>
+                  <SpaceBetweenBox>
+                    <Typography variant="h6"> Penerima </Typography>
+                    <Button disabled>Select</Button>
+                  </SpaceBetweenBox>
+                  <div>
+                    <Typography variant="body1">{selectedValueSH.name}</Typography>
+                    <Typography variant="body1">{selectedValueSH.address}</Typography>
+                    <Typography variant="body1">{selectedValueSH.postal_code}</Typography>{' '}
+                  </div>
+                </ColumnBox>
+              </Stack>
+            </ColumnBox>
+          </CardContent>
 
           {/* Data Grid for Invoice Item */}
-          <Grid item xs={12}>
-            <Card>
-              <DataGrid rows={items} columns={columns} />
-            </Card>
-          </Grid>
+          <CardContent>
+            <DataGrid rows={items} columns={columns} />
+          </CardContent>
 
           {/* Tab Panel */}
 
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <TabContext value={valueTab}>
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                      <Tab label="Description" value="1" />
-                      <Tab label="Finance" value="2" />
-                      <Tab label="Invoice Status" value="3" />
-                      <Tab label="Invoice Term" value="4" />
-                    </TabList>
-                  </Box>
+          <CardContent>
+            <ColumnBox
+              style={{
+                padding: '1em 0.75em',
+                border: '1px dashed #b8b8b8',
+                borderRadius: '8px'
+              }}
+            >
+              <TabContext value={valueTab}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                    <Tab label="Description" value="1" />
+                    <Tab label="Finance" value="2" />
+                    <Tab label="Invoice Status" value="3" />
+                    <Tab label="Invoice Term" value="4" />
+                  </TabList>
+                </Box>
 
-                  <TabPanel value="1">
-                    <Stack direction="row" alignItems="center">
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={6}
-                        type="text"
-                        {...getFieldProps('description')}
-                        error={Boolean(touched.description && errors.description)}
-                        helperText={touched.description && errors.description}
-                      />
-                    </Stack>
-                  </TabPanel>
-
-                  <TabPanel value="2">
-                    <Stack direction="row" spacing={4} alignItems="center">
-                      <Typography variant="body1">Tax</Typography>
-                      <TextField
-                        autoComplete="tax"
-                        type="number"
-                        InputProps={{
-                          endAdornment: <InputAdornment position="end">%</InputAdornment>
-                        }}
-                        {...getFieldProps('tax')}
-                        error={Boolean(touched.tax && errors.tax)}
-                        helperText={touched.tax && errors.tax}
-                      />
-                    </Stack>
-                  </TabPanel>
-
-                  <TabPanel value="3">
-                    <Stack direction="row" spacing={4} alignItems="center">
-                      <FormControl fullWidth>
-                        <InputLabel>Update Invoice Status</InputLabel>
-                        <Select value={status} label="Status" onChange={handleChangeStatus}>
-                          <MenuItem value={4}>None</MenuItem>
-                          <MenuItem value={1}>Paid</MenuItem>
-                          <MenuItem value={2}>Unpaid</MenuItem>
-                          <MenuItem value={3}>Partial</MenuItem>
-                        </Select>
-                      </FormControl>
-
-                      <Button onClick={handleSubmitCompletionStatus}> Update </Button>
-                    </Stack>
-                  </TabPanel>
-
-                  <TabPanel value="4">
-                    <DataGrid
-                      columns={columnsInvoiceTerm}
-                      rows={rowsInvoiceTerm}
-                      handleUpdateAllRows={handleUpdateInvoiceTerm}
-                      handleAddRow={handleAddInvoiceTerm}
-                      onEditRowsModelChange={handleEditInvoiceTermRowsModelChange}
+                <TabPanel value="1">
+                  <Stack direction="row" alignItems="center">
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={6}
+                      type="text"
+                      {...getFieldProps('description')}
+                      error={Boolean(touched.description && errors.description)}
+                      helperText={touched.description && errors.description}
                     />
-                  </TabPanel>
-                </TabContext>
-              </CardContent>
-            </Card>
-          </Grid>
+                  </Stack>
+                </TabPanel>
 
-          <Grid item xs={12}>
-            <Card sx={{ display: 'flex', justifyContent: 'end' }}>
-              <Button
-                size="large"
-                color="grey"
-                variant="contained"
-                onClick={() => navigate(`/dashboard/finance/invoice/document/${id}`)}
-                sx={{ m: 1 }}
-              >
-                Show Document
-              </Button>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                Cancel
-              </Button>
-            </Card>
-          </Grid>
-        </Grid>
+                <TabPanel value="2">
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <Typography variant="body1">Tax</Typography>
+                    <TextField
+                      autoComplete="tax"
+                      type="number"
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>
+                      }}
+                      {...getFieldProps('tax')}
+                      error={Boolean(touched.tax && errors.tax)}
+                      helperText={touched.tax && errors.tax}
+                    />
+                  </Stack>
+                </TabPanel>
+
+                <TabPanel value="3">
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <FormControl fullWidth>
+                      <InputLabel>Update Invoice Status</InputLabel>
+                      <Select value={status} label="Status" onChange={handleChangeStatus}>
+                        <MenuItem value={4}>None</MenuItem>
+                        <MenuItem value={1}>Paid</MenuItem>
+                        <MenuItem value={2}>Unpaid</MenuItem>
+                        <MenuItem value={3}>Partial</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <Button onClick={handleSubmitCompletionStatus}> Update </Button>
+                  </Stack>
+                </TabPanel>
+
+                <TabPanel value="4">
+                  <DataGrid
+                    columns={columnsInvoiceTerm}
+                    rows={rowsInvoiceTerm}
+                    handleUpdateAllRows={handleUpdateInvoiceTerm}
+                    handleAddRow={handleAddInvoiceTerm}
+                    onEditRowsModelChange={handleEditInvoiceTermRowsModelChange}
+                  />
+                </TabPanel>
+              </TabContext>
+            </ColumnBox>
+          </CardContent>
+
+          <CardContent>
+            <Button
+              size="large"
+              color="grey"
+              variant="contained"
+              onClick={() => navigate(`/dashboard/finance/invoice/document/${id}`)}
+              sx={{ m: 1 }}
+            >
+              Show Document
+            </Button>
+            <LoadingButton
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              sx={{ m: 1 }}
+            >
+              Save
+            </LoadingButton>
+            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              Cancel
+            </Button>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

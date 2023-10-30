@@ -47,6 +47,8 @@ import { isEmpty } from 'lodash';
 import LoadingPage from '../../../components/LoadingPage';
 import { enqueueSnackbar } from 'notistack';
 
+import useCurrencyExchange from '../../../context/currency';
+
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -87,6 +89,9 @@ function RFQ() {
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
+
+  // Contextual currency
+  const { exchanger } = useCurrencyExchange();
 
   /**
    * TAB Panel
@@ -240,7 +245,7 @@ function RFQ() {
             if (row.id === parseInt(itemToUpdateIndex)) {
               if (
                 editedColumnName === 'unit_price' &&
-                editRowData[editedColumnName].value > parseFloat(row.unit_price)
+                editRowData[editedColumnName].value > parseFloat(row.unit_price) * 1.1
               ) {
                 enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' });
                 return row;
@@ -315,6 +320,20 @@ function RFQ() {
     setFieldValue('currency_id', event.target.value);
   };
 
+  React.useEffect(() => {
+    setItems((prevItems) => {
+      return prevItems.map((item) => {
+        if (item.currency_id !== values.currency_id) {
+          let current_value = item.unit_price;
+          let initialCurrency = item.currency_id === 1 ? 'usd' : 'idr';
+          let convertedCurrency = parseInt(values.currency_id) === 1 ? 'usd' : 'idr';
+          let converted_val = exchanger(current_value, initialCurrency, convertedCurrency);
+          return { ...item, unit_price: converted_val };
+        }
+      });
+    });
+  }, [values.currency_id]);
+
   return (
     <Page>
       <Container>
@@ -323,6 +342,7 @@ function RFQ() {
           open={openM}
           handleClose={handleCloseModal}
           items={items}
+          currency={values.currency_id}
           setItems={setItems}
         />
 
@@ -331,11 +351,10 @@ function RFQ() {
             {isSubmitting ? (
               <LoadingPage />
             ) : (
-              <Grid container direction="row" spacing={2}>
-                <Grid item xs={4}>
-                  <Card>
-                    <CardHeader title="Choose Quotation" />
-                    <CardContent sx={{ paddingBottom: '6px' }}>
+              <Card>
+                <CardContent>
+                  <Grid container direction="row" spacing={2}>
+                    <Grid item xs={4}>
                       <TextField
                         fullWidth
                         autoComplete="po_number"
@@ -345,13 +364,8 @@ function RFQ() {
                         error={Boolean(touched.po_number && errors.po_number)}
                         helperText={touched.po_number && errors.po_number}
                       />
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={8}>
-                  <Card>
-                    <CardHeader title="Quotation Information" />
-                    <CardContent>
+                    </Grid>
+                    <Grid item xs={8}>
                       <Paper>
                         <Stack direction="row" spacing={2} pl={2} pr={2} pb={3}>
                           <ColumnBox>
@@ -405,59 +419,60 @@ function RFQ() {
                           </ColumnBox>
                         </Stack>
                       </Paper>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    </Grid>
 
-                <Grid item xs={12}>
-                  <Card>
-                    <CardContent>
-                      <Stack direction="row" spacing={2}>
-                        <TextField
-                          fullWidth
-                          autoComplete="issue_date"
-                          type="date"
-                          placeholder="valid"
-                          label="PO Date"
-                          {...getFieldProps('issue_date')}
-                          error={Boolean(touched.issue_date && errors.issue_date)}
-                          helperText={touched.issue_date && errors.issue_date}
-                        />
-                        <TextField
-                          fullWidth
-                          autoComplete="valid_thru"
-                          type="date"
-                          label="Valid to"
-                          placeholder="valid"
-                          {...getFieldProps('valid_thru')}
-                          error={Boolean(touched.valid_thru && errors.valid_thru)}
-                          helperText={touched.valid_thru && errors.valid_thru}
-                        />
-                        <TextField
-                          fullWidth
-                          autoComplete="delivery_date"
-                          type="date"
-                          label="Tanggal Pengiriman"
-                          {...getFieldProps('delivery_date')}
-                          error={Boolean(touched.delivery_date && errors.delivery_date)}
-                          helperText={touched.delivery_date && errors.delivery_date}
-                        />
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={12}>
-                  <Card>
-                    <TabContext value={valueTab}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} pt={2} pl={2} pr={2}>
-                        <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
-                          <Tab label="Overview" value="1" />
-                          <Tab label="Finance" value="2" />
-                        </TabList>
-                      </Box>
+                    <Grid item xs={12}>
+                      <ColumnBox
+                        style={{
+                          padding: '1em 0.75em',
+                          border: '1px dashed #b8b8b8',
+                          borderRadius: '8px',
+                          background: '#b6b6b62b'
+                        }}
+                      >
+                        <Stack direction="row" spacing={2}>
+                          <TextField
+                            fullWidth
+                            autoComplete="issue_date"
+                            type="date"
+                            placeholder="valid"
+                            label="PO Date"
+                            {...getFieldProps('issue_date')}
+                            error={Boolean(touched.issue_date && errors.issue_date)}
+                            helperText={touched.issue_date && errors.issue_date}
+                          />
+                          <TextField
+                            fullWidth
+                            autoComplete="valid_thru"
+                            type="date"
+                            label="Valid to"
+                            placeholder="valid"
+                            {...getFieldProps('valid_thru')}
+                            error={Boolean(touched.valid_thru && errors.valid_thru)}
+                            helperText={touched.valid_thru && errors.valid_thru}
+                          />
+                          <TextField
+                            fullWidth
+                            autoComplete="delivery_date"
+                            type="date"
+                            label="Tanggal Pengiriman"
+                            {...getFieldProps('delivery_date')}
+                            error={Boolean(touched.delivery_date && errors.delivery_date)}
+                            helperText={touched.delivery_date && errors.delivery_date}
+                          />
+                        </Stack>
+                      </ColumnBox>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TabContext value={valueTab}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }} pt={2} pl={2} pr={2}>
+                          <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
+                            <Tab label="Overview" value="1" />
+                            <Tab label="Finance" value="2" />
+                          </TabList>
+                        </Box>
 
-                      <TabPanel value="1" sx={{ paddingTop: 'unset' }}>
-                        <CardContent sx={{ paddingBottom: 'unset' }}>
+                        <TabPanel value="1" sx={{ paddingTop: '8px', paddingBottom: '8px' }}>
                           <Stack direction="row" spacing={1}>
                             <TextField
                               type="number"
@@ -475,20 +490,18 @@ function RFQ() {
                             />
                             <Button onClick={handlePopulate}>Populate</Button>
                           </Stack>
-                        </CardContent>
 
-                        <DataGrid
-                          columns={columns}
-                          rows={items}
-                          onEditRowsModelChange={handleEditRowsModelChange}
-                          handleAddRow={handleOpenModal}
-                          handleReset={handleResetRows}
-                          handleUpdateAllRows={false}
-                        />
-                      </TabPanel>
+                          <DataGrid
+                            columns={columns}
+                            rows={items}
+                            onEditRowsModelChange={handleEditRowsModelChange}
+                            handleAddRow={handleOpenModal}
+                            handleReset={handleResetRows}
+                            handleUpdateAllRows={false}
+                          />
+                        </TabPanel>
 
-                      <TabPanel value="2" sx={{ paddingTop: 'unset' }}>
-                        <CardContent>
+                        <TabPanel value="2" sx={{ paddingTop: 'unset' }}>
                           <Stack direction="column" spacing={4}>
                             <FormControl sx={{ width: '25ch' }}>
                               <FormLabel>Tax</FormLabel>
@@ -520,15 +533,16 @@ function RFQ() {
                               </RadioGroup>
                             </FormControl>
                           </Stack>
-                        </CardContent>
-                      </TabPanel>
-                    </TabContext>
-                  </Card>
-                </Grid>
+                        </TabPanel>
+                      </TabContext>
+                    </Grid>
+                  </Grid>
+                </CardContent>
 
-                <Grid item xs={12}>
-                  <Card>
+                <CardContent>
+                  <Stack direction="row">
                     <LoadingButton
+                      fullWidth 
                       size="large"
                       type="submit"
                       variant="contained"
@@ -537,12 +551,13 @@ function RFQ() {
                     >
                       Save
                     </LoadingButton>
-                    <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                    <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                       Cancel
                     </Button>
-                  </Card>
-                </Grid>
-              </Grid>
+                  </Stack>
+                </CardContent>
+
+              </Card>
             )}
           </Form>
         </FormikProvider>

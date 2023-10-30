@@ -380,7 +380,7 @@ function BillofMaterial() {
         getActions: (params) => [
           <GridActionsCellItem
             icon={<Icon icon={trash2Outline} width={24} height={24} />}
-            label="Delete"
+            labelprs="Delete"
             onClick={deleteDataService(params.id)}
             showInMenu
           />
@@ -559,7 +559,7 @@ function BillofMaterial() {
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
             {isSubmitting ? (
-              <LoadingPage/>
+              <LoadingPage />
             ) : (
               <Grid container direction="column" spacing={3}>
                 {/* <Grid item xs={4}>
@@ -810,25 +810,31 @@ function BillofMaterial() {
                             </TabContext>
                           </Box>
                         </Grid>
-                        <Grid item xs={12}>
-                          <Box
-                            sx={{ paddingTop: 2, px: 0, display: 'flex', justifyContent: 'end' }}
-                          >
-                            <LoadingButton
-                              size="large"
-                              type="submit"
-                              variant="contained"
-                              loading={isSubmitting}
-                              sx={{ m: 1 }}
-                            >
-                              Save
-                            </LoadingButton>
-                            <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                              Cancel
-                            </Button>
-                          </Box>
-                        </Grid>
                       </Grid>
+                    </CardContent>
+
+                    <CardContent>
+                      <Stack direction="row">
+                        <LoadingButton
+                          fullWidth
+                          size="large"
+                          type="submit"
+                          variant="contained"
+                          loading={isSubmitting}
+                          sx={{ m: 1 }}
+                        >
+                          Save
+                        </LoadingButton>
+                        <Button
+                          fullWidth
+                          size="large"
+                          color="grey"
+                          variant="contained"
+                          sx={{ m: 1 }}
+                        >
+                          Cancel
+                        </Button>
+                      </Stack>
                     </CardContent>
                   </Card>
                 </Grid>

@@ -15,19 +15,22 @@ import {
   Select,
   TextField,
   MenuItem,
+  Card,
+  CardContent,
+  Stack,
   styled
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { FormikProvider, Form, useFormik } from 'formik';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 
 import API from '../../../../helpers';
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
 
 //utils
-import { material_transfer_items } from '../utils'
+import { material_transfer_items } from '../utils';
 
 import { Icon } from '@iconify/react';
 import plusSquare from '@iconify/icons-eva/plus-square-fill';
@@ -43,15 +46,14 @@ const GridData = styled('div')(({ theme }) => ({
 }));
 
 function MaterialTransfer() {
-
   // get user information
   const { user } = useAuth();
 
   // get id of parameter
-  const { id } = useParams()
+  const { id } = useParams();
 
   // check whether data of a resoruces already load
-  const [statusLoad, setStatusLoad] = useState({ completed: false, timestamps: ''});
+  const [statusLoad, setStatusLoad] = useState({ completed: false, timestamps: '' });
 
   const formik = useFormik({
     initialValues: {
@@ -61,14 +63,14 @@ function MaterialTransfer() {
     },
     onSubmit: (values) => {
       try {
-        let _payload = {...values, user_id: user.id}
-        API.updateMaterialTransfer(id, _payload, function(res){
-          if(!res) return;
-          if(!res.success) throw new Error('failed');
+        let _payload = { ...values, user_id: user.id };
+        API.updateMaterialTransfer(id, _payload, function (res) {
+          if (!res) return;
+          if (!res.success) throw new Error('failed');
           else {
             alert('success');
           }
-        })
+        });
       } catch (error) {
         alert(error);
       }
@@ -100,14 +102,13 @@ function MaterialTransfer() {
   // get data when parameter id on url shown up
   useEffect(() => {
     //get api on spesific material transfer resources
-    if(!id) return;
-    if(statusLoad.completed) return;
+    if (!id) return;
+    if (statusLoad.completed) return;
     try {
       API.getAMaterialTransfer(id, (res) => {
-        if(!res) return;
-        if(!res.data) throw new Error('failed');
+        if (!res) return;
+        if (!res.data) throw new Error('failed');
         else {
-
           let _date = moment(res.data?.date).format('YYYY-MM-DD');
 
           setValues({
@@ -115,14 +116,14 @@ function MaterialTransfer() {
             to_facility_id: res.data?.to_facility_id,
             est_transfer_date: _date,
             description: res.data?.description
-          })
-  
+          });
+
           let _items = material_transfer_items(res.data?.items);
           setItems(_items);
 
-          setStatusLoad({...statusLoad, completed: true, timestamps: moment.format('L T')});
+          setStatusLoad({ ...statusLoad, completed: true, timestamps: moment.format('L T') });
         }
-      })  
+      });
     } catch (error) {
       alert(error);
     }
@@ -257,111 +258,113 @@ function MaterialTransfer() {
     <FormikProvider value={formik}>
       <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} />
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Paper elevation={2} style={{ padding: '2em' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>Facility</InputLabel>
-                <Select
-                  onChange={handleFacility}
-                  value={values.to_facility_id}
-                  label="Facility"
-                  error={Boolean(touched.to_facility_id && errors.to_facility_id)}
-                  helperText={touched.to_facility_id && errors.to_facility_id}
-                  sx={{ backgroundColor: '#f5f6fa' }}
-                >
-                  {options.map((item) => (
-                    <MenuItem value={item.id}>{item.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
+        <Card>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel>Facility</InputLabel>
+                  <Select
+                    onChange={handleFacility}
+                    value={values.to_facility_id}
+                    label="Facility"
+                    error={Boolean(touched.to_facility_id && errors.to_facility_id)}
+                    helperText={touched.to_facility_id && errors.to_facility_id}
+                    sx={{ backgroundColor: '#f5f6fa' }}
+                  >
+                    {options.map((item) => (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            <Grid item xs={6}>
-              <FormControl>
-                <FormLabel>Estimasi Kebutuhan</FormLabel>
-                <RadioGroup
-                  row
-                  onChange={handleEstTransferDate}
+              <Grid item xs={6}>
+                <FormControl>
+                  <FormLabel>Estimasi Kebutuhan</FormLabel>
+                  <RadioGroup
+                    row
+                    onChange={handleEstTransferDate}
+                    sx={{
+                      borderRadius: '5px',
+                      backgroundColor: '#f5f6fa',
+                      '.&MuiFormControlLabel-root': {
+                        paddingLeft: '4px',
+                        paddingRight: '4px'
+                      }
+                    }}
+                  >
+                    <FormControlLabel value={true} control={<Radio />} label="Kirim Hari Ini" />
+                    <FormControlLabel value={false} control={<Radio />} label="Hari Berbeda" />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  autoComplete="est_transfer_date"
+                  type="date"
+                  placeholder="est_transfer_date"
+                  {...getFieldProps('est_transfer_date')}
+                  error={Boolean(touched.est_transfer_date) && errors.est_transfer_date}
+                  helpers={touched.est_transfer_date && errors.est_transfer_date}
                   sx={{
-                    borderRadius: '5px',
-                    backgroundColor: '#f5f6fa',
-                    '.&MuiFormControlLabel-root': {
-                      paddingLeft: '4px',
-                      paddingRight: '4px'
+                    '& .MuiInputBase-root': {
+                      backgroundColor: '#f5f6fa'
                     }
                   }}
-                >
-                  <FormControlLabel value={true} control={<Radio />} label="Kirim Hari Ini" />
-                  <FormControlLabel value={false} control={<Radio />} label="Hari Berbeda" />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+                />
+              </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                autoComplete="est_transfer_date"
-                type="date"
-                placeholder="est_transfer_date"
-                {...getFieldProps('est_transfer_date')}
-                error={Boolean(touched.est_transfer_date) && errors.est_transfer_date}
-                helpers={touched.est_transfer_date && errors.est_transfer_date}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#f5f6fa'
-                  }
-                }}
-              />
-            </Grid>
+              <Grid item xs={12}>
+                <GridData>
+                  <Typography variant="h6">Material Item</Typography>
+                  <IconButton
+                    onClick={() => setOpenSh(true)}
+                    sx={{
+                      height: '36px',
+                      width: '36px',
+                      backgroundColor: 'rgb(255, 255, 255)',
+                      color: 'rgb(54, 179, 126)'
+                    }}
+                  >
+                    <Icon icon={plusSquare} />
+                  </IconButton>
+                </GridData>
 
-            <Grid item xs={12}>
-              <GridData>
-                <Typography variant="h6">Material Item</Typography>
-                <IconButton
-                  onClick={() => setOpenSh(true)}
+                <DataGrid
+                  columns={columns}
+                  rows={items}
+                  onEditRowsModelChange={handleEditComponentRowsModelChange}
+                  // handleResetRows={handleResetComponentRows}
+                />
+              </Grid>
+
+              <Grid item xs={12} style={{ marginTop: '2.5em' }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={2}
+                  maxRows={5}
+                  {...getFieldProps('description')}
+                  placeholder="deskripsi"
+                  label="deskripsi/catatan ke gudang"
+                  error={Boolean(touched.description) && errors.description}
+                  helpers={touched.description && errors.description}
                   sx={{
-                    height: '36px',
-                    width: '36px',
-                    backgroundColor: 'rgb(255, 255, 255)',
-                    color: 'rgb(54, 179, 126)'
+                    '& .MuiInputBase-root': {
+                      backgroundColor: '#f5f6fa'
+                    }
                   }}
-                >
-                  <Icon icon={plusSquare} />
-                </IconButton>
-              </GridData>
-
-              <DataGrid
-                columns={columns}
-                rows={items}
-                onEditRowsModelChange={handleEditComponentRowsModelChange}
-                // handleResetRows={handleResetComponentRows}
-              />
+                />
+              </Grid>
             </Grid>
-
-            <Grid item xs={12} style={{ marginTop: '2.5em' }}>
-              <TextField
-                fullWidth
-                multiline
-                minRows={2}
-                maxRows={5}
-                {...getFieldProps('description')}
-                placeholder="deskripsi"
-                label="deskripsi/catatan ke gudang"
-                error={Boolean(touched.description) && errors.description}
-                helpers={touched.description && errors.description}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    backgroundColor: '#f5f6fa'
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+          </CardContent>
+          <CardContent>
+            <Stack direction="column">
               <LoadingButton
+                fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
@@ -370,12 +373,12 @@ function MaterialTransfer() {
               >
                 Save
               </LoadingButton>
-              <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+              <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
                 Cancel
               </Button>
-            </Box>
-          </Grid>
-        </Paper>
+            </Stack>
+          </CardContent>
+        </Card>
       </Form>
     </FormikProvider>
   );

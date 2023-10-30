@@ -1,6 +1,16 @@
-import React, {useMemo, useCallback, useState} from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import Page from '../../../../components/Page';
-import { Card, CardHeader, CardContent, Container, Grid, TextField, Button, Typography } from '@mui/material'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Container,
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Stack
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -13,33 +23,33 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 
 //API
-import API from '../../../../helpers'
+import API from '../../../../helpers';
 
 // Data Grid
 import DataGrid from './DataGrid';
 import Modal from './Modal';
 import DialogBox from './DialogBox';
+import { isUndefined } from 'lodash';
 
-const ColumnBox = styled('div')(({theme}) => ({
-  display: "flex",
-  flexDirection: "column",
-  width: "100%"
-}))
+const ColumnBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%'
+}));
 
-const SpaceBetweenBox = styled('div')(({theme}) => ({
-  display: "flex", 
-  flexDirection: "row", 
-  alignItems: "center", 
-  justifyContent: "space-between", 
-  marginBottom: "8px"
-}))
+const SpaceBetweenBox = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '8px'
+}));
 
 function WorkCenter() {
-
   const WorkCenterSchema = Yup.object().shape({
     sales_order_id: Yup.string().required('is required'),
     line: Yup.number().required('is required'),
-    date: Yup.date().required('is required'),
+    date: Yup.date().required('is required')
   });
 
   const formik = useFormik({
@@ -50,47 +60,65 @@ function WorkCenter() {
     },
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
-      const {line, sales_order_id, date} = values
-      let data = items.map(({id, brand, name, size, color, ...x}) => ({ ...x, line, sales_order_id, date}));
-      API.insertMonitoringSupermarket(data, function(res){
+      const { line, sales_order_id, date } = values;
+      let data = items.map(({ id, brand, name, size, color, ...x }) => ({
+        ...x,
+        line,
+        sales_order_id,
+        date
+      }));
+      API.insertMonitoringSupermarket(data, function (res) {
         alert(JSON.stringify(res));
-      })
+      });
       setSubmitting(false);
     }
   });
 
-  const { errors, touched, values, isSubmitting, setSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const {
+    errors,
+    touched,
+    values,
+    isSubmitting,
+    setSubmitting,
+    handleSubmit,
+    getFieldProps,
+    setFieldValue
+  } = formik;
 
-// columns - Data grid
-  const deleteData = useCallback(
-   (id) => () => {
-     ;
-     setItems((prevItems) => {
-       return prevItems.filter(function(x){
-         return x.id != id
-       })
-     })
-   })
+  // columns - Data grid
+  const deleteData = useCallback((id) => () => {
+    setItems((prevItems) => {
+      return prevItems.filter(function (x) {
+        return x.id != id;
+      });
+    });
+  });
 
-  const columns = useMemo(() => [
-    { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
-    { field: 'name', headerName: 'Name', editable: false, width: 400},
-    { field: 'numbering', headerName: 'Numbering', type: 'text', editable: true },
-    { field: 'qty', headerName: 'Qty', type: 'number', editable: true, width: 150 },
-    { field: 'actions', type: 'actions', width: 100, 
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Icon icon={trash2Outline} width={24} height={24} />}
-          label="Delete"
-          onClick={deleteData(params.id)}
-          showInMenu
-        />
-      ]
-    }
-  ], [deleteData]);
+  const columns = useMemo(
+    () => [
+      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'name', headerName: 'Name', editable: false, width: 400 },
+      { field: 'numbering', headerName: 'Numbering', type: 'text', editable: true },
+      { field: 'qty', headerName: 'Qty', type: 'number', editable: true, width: 150 },
+      {
+        field: 'actions',
+        type: 'actions',
+        width: 100,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<Icon icon={trash2Outline} width={24} height={24} />}
+            label="Delete"
+            onClick={deleteData(params.id)}
+            showInMenu
+          />
+        ]
+      }
+    ],
+    [deleteData]
+  );
 
   // Sales Order Items storage variable on Data Grid
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState([]);
 
   //Data Grid
   const [editRowsModel, setEditRowsModel] = React.useState({});
@@ -112,54 +140,53 @@ function WorkCenter() {
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
-    
+
           return prevItems.map((row, index) => {
-            if(row.id === parseInt(itemToUpdateIndex)){
-              return {...row, [editedColumnName]: editRowData[editedColumnName].value}
+            if (row.id === parseInt(itemToUpdateIndex)) {
+              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
-              return row
+              return row;
             }
           });
         });
-
       } else {
         setEditRowData(model[editedIds[0]]);
       }
-  
+
       setEditRowsModel(model);
     },
     [editRowData]
   );
 
   const handleUpdateAllRows = () => {
-    API.getAQuote(values.quote_id, function(res){
-      if(!res) alert("Something went wrong!");
+    API.getAQuote(values.quote_id, function (res) {
+      if (!res) alert('Something went wrong!');
       var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function(_d){
+      temp = res.data.quote_items.map(function (_d) {
         return {
-          'id': index,
-          'quote_item_id' : key.id,
-          'product_id' : key.product.id,
-          'product_feature_id' : key.product_feature_id,
-          'name' : key.product.name,
-          'size' : key.product.size,
-          'color' : key.product.color,
-          'qty' : key.qty,
-          'shipment_estimated': null,
-          'unit_price' : key.unit_price
-        }
-      })
+          id: index,
+          quote_item_id: key.id,
+          product_id: key.product.id,
+          product_feature_id: key.product_feature_id,
+          name: key.product.name,
+          size: key.product.size,
+          color: key.product.color,
+          qty: key.qty,
+          shipment_estimated: null,
+          unit_price: key.unit_price
+        };
+      });
       setItems(temp);
-    })
+    });
   };
 
-//   Dialog Box
+  //   Dialog Box
 
-const [options, setOptions] = useState([]);
-const [openSO, setOpenSO] = useState(false);
-const loading = (openSO) && options.length === 0;
-const [selectedValueSO, setSelectedValueSO] = React.useState({});
-const [id, setId] = React.useState(0);
+  const [options, setOptions] = useState([]);
+  const [openSO, setOpenSO] = useState(false);
+  const loading = openSO && options.length === 0;
+  const [selectedValueSO, setSelectedValueSO] = React.useState({});
+  const [id, setId] = React.useState(0);
 
   React.useEffect(() => {
     let active = true;
@@ -173,74 +200,66 @@ const [id, setId] = React.useState(0);
     (async () => {
       if (active) {
         API.getSalesOrder('', (res) => {
-          if(!res) return
+          if (!res) return;
           else setOptions(res.data);
-        })  
+        });
       }
     })();
 
     return () => {
       active = false;
     };
-  }, [loading])
+  }, [loading]);
 
   const handleClose = (name, value) => {
-    setOpenSO(false)
+    setOpenSO(false);
     setSelectedValueSO(value);
     setFieldValue(name, value.id);
     setOptions([]);
     setId(value.id);
   };
 
-// Modal
+  // Modal
   const handleAddItems = (values) => {
     setItems(values);
-  }
+  };
 
   const [selected, setSelected] = React.useState([]);
-  
+
   return (
     <Page>
       <Container>
-      <Modal 
-        open={openM}
-        onAddItems={handleAddItems}
-        order_id={selectedValueSO.order_id}
-        so_id={selectedValueSO.sales_order_id}
-        handleClose={handleCloseModal}
-        selected={items}
-        setSelected={setItems}
-      />
-      <FormikProvider value={formik}>
-        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          {/* Work Center Information */}
-          <Grid item xs={12}>
-            <Card >
+        <Modal
+          open={openM}
+          onAddItems={handleAddItems}
+          order_id={selectedValueSO.order_id}
+          so_id={selectedValueSO.sales_order_id}
+          handleClose={handleCloseModal}
+          selected={items}
+          setSelected={setItems}
+        />
+        <FormikProvider value={formik}>
+          <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+            <Card>
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item
-                    xs={6}
-                  >
-                    <ColumnBox>
+                  <Grid item xs={12}>
+                    <ColumnBox
+                      style={{
+                        padding: '1em 0.75em',
+                        border: '1px dashed #b8b8b8',
+                        borderRadius: '8px',
+                        background: '#b6b6b62b'
+                      }}
+                    >
                       <SpaceBetweenBox>
                         <Typography variant="h6"> Sales Order </Typography>
-                        <Button
-                          onClick={() => setOpenSO(true)}
-                        >
-                          Select
-                        </Button>
+                        <Button onClick={() => setOpenSO(true)}>Select</Button>
                       </SpaceBetweenBox>
                       <div>
-                        <Typography variant="body1">
-                          {selectedValueSO.id}
-                        </Typography>
-                        <Typography variant="span">
-                          {selectedValueSO.po_number}
-                        </Typography>
-                        <Typography variant="body2">
-                          {selectedValueSO.sold_to}
-                        </Typography>
+                        <Typography variant="body1">{selectedValueSO.id}</Typography>
+                        <Typography variant="span">{selectedValueSO.po_number}</Typography>
+                        <Typography variant="body2">{selectedValueSO.sold_to}</Typography>
                       </div>
                       <DialogBox
                         options={options}
@@ -253,9 +272,7 @@ const [id, setId] = React.useState(0);
                       />
                     </ColumnBox>
                   </Grid>
-                  <Grid item
-                    xs={6}
-                  >
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="line"
@@ -267,9 +284,7 @@ const [id, setId] = React.useState(0);
                     />
                   </Grid>
 
-                  <Grid item
-                    xs={6}
-                  >
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       autoComplete="date"
@@ -280,58 +295,50 @@ const [id, setId] = React.useState(0);
                       helperText={touched.date && errors.date}
                     />
                   </Grid>
-
-                </Grid>      
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          {/* Work Center Information */}
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader
-                
-              />
-              <CardContent>
-                <Grid item xs={12}>
-                  <DataGrid 
-                    columns={columns} 
-                    rows={items}
-                    onEditRowsModelChange={handleEditRowsModelChange}
-                    handleAddRow={handleOpenModal}
-                  />
                 </Grid>
               </CardContent>
+
+              {/* Work Center Information */}
+              <CardContent>
+                <Stack spacing={2}>
+                  <Button
+                    fullWidth
+                    disabled={isUndefined(selectedValueSO.id)}
+                    variant="contained"
+                    onClick={handleOpenModal}
+                  >
+                    Pilih Style Item
+                  </Button>
+                  <DataGrid
+                    columns={columns}
+                    rows={items}
+                    onEditRowsModelChange={handleEditRowsModelChange}
+                  />
+                </Stack>
+              </CardContent>
+
+              {/* Button */}
+              <CardContent>
+                <LoadingButton
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  loading={isSubmitting}
+                  sx={{ m: 1 }}
+                >
+                  Save
+                </LoadingButton>
+                <Button fullWidth size="large" color="grey" variant="contained" sx={{ m: 1 }}>
+                  Cancel
+                </Button>
+              </CardContent>
             </Card>
-          </Grid>
-          {/* Button */}
-          <Grid item xs={12}>
-            <Card sx={{ p:2, display: 'flex', justifyContent: 'end' }}>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
-              >
-                Save
-              </LoadingButton>
-              <Button
-                size="large"
-                color="grey"
-                variant="contained"
-                sx={{ m: 1 }}
-              >
-                Cancel
-              </Button>
-            </Card>
-          </Grid>
-        </Grid>
-        </Form>
-      </FormikProvider>
+          </Form>
+        </FormikProvider>
       </Container>
     </Page>
-  )
+  );
 }
 
-export default WorkCenter
+export default WorkCenter;
