@@ -311,7 +311,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
     Route::get('report-osr-ppic', 'OSRController@get_osr_ppic_report');
     Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
-
+    
     // kite import 
     Route::resource('kite-export', 'KITEExportController')->only(['index', 'store', 'update', 'show', 'destroy']);
     Route::resource('kite-import', 'KITEImportController')->only(['index', 'store', 'update', 'show', 'destroy']);
@@ -319,13 +319,14 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::put('kite-import-item/{id}', 'KITEImportController@update_item');
     Route::get('get-export-so', 'SalesOrderController@get_export_so');
     Route::get('get-sales-order-item/{order_id}', 'OrderItemController@getFinishedGoodsOrderItemWithStock');
-
+    
     Route::get('notification/{user_id}', 'NotificationController@showFew');
     Route::put('notification/{notif_id}', 'NotificationController@update');
     Route::put('notification-mark-all/{user_id}', 'NotificationController@markAllAsRead');
 });
 
 // Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+Route::get('report-osr-ver-helmi', 'OSRController@get_osr_ver_helmi');
 Route::resource('logs', 'LogController')->only(['index']);
 
 // Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);
