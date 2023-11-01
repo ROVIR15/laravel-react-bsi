@@ -172,7 +172,7 @@ class OSRController extends Controller
                         $__order = OrderItem::with(['order' => function($query){
                             return $query->with('purchase_order');
                         }])->where('costing_item_id', $__found_bom_item->id)->get();
-                        $__fabric_mill_name = $__order[0]->order->purchase_order->party->name;
+                        $__fabric_mill_name = count($__order) ? $__order[0]->order->purchase_order->party->name : "Belum Ada";
                     }
 
                     return [
