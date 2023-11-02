@@ -113,10 +113,16 @@ export default function OSRPPIC() {
                   {`${_row?.order_qty} pcs`}
                 </TableCell>
                 <TableCell component="th" align="left">
+                  {_row?.garment_delivery_date}
+                </TableCell>
+                <TableCell component="th" align="left">
                   {`${_row?.fabric_mill}`}
                 </TableCell>
                 <TableCell component="th" align="left">
                   {`${_row?.fabric_etd}`}
+                </TableCell>
+                <TableCell component="th" align="left">
+                  {_row?.date_po_received}
                 </TableCell>
                 <TableCell component="th" align="left">
                   {_row?.line}
