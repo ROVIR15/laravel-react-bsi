@@ -124,7 +124,7 @@ export default function ShipmentReport() {
                       {`${_row?.order_qty} pcs`}
                     </TableCell>
                     <TableCell component="th" align="left">
-                      {`${_row?.total_delivery_qty} pcs`}
+                      {`${parseInt(_row?.total_delivery_qty)} pcs`}
                     </TableCell>
                   </TableRow>
                 ))
