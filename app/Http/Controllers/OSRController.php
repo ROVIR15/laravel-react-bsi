@@ -160,7 +160,7 @@ class OSRController extends Controller
 
                     $__items = BOMItem::whereHas('product_feature', function($query){
                         return $query->whereHas('product_category', function($query){
-                            return $query->where('product_category_id', 2);
+                            return $query->where('product_category_id', 4);
                         });
                     })
                     ->where('bom_id', $query->bom_id)->get();
