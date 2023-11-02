@@ -283,6 +283,7 @@ class OSRController extends Controller
                 ->with('sum')
                 ->whereMonth('delivery_date', $month)
                 ->whereYear('delivery_date', $year)
+                ->orderBy('delivery_date', 'asc')
                 ->get()
                 ->map(function ($query) {
                     $info = count($query->sum) ? $query->sum[0] : null;
@@ -320,6 +321,7 @@ class OSRController extends Controller
                 ->whereMonth('delivery_date', '>=', 7)
                 ->whereMonth('delivery_date', '<', $month)
                 ->whereYear('delivery_date', $year)
+                ->orderBy('delivery_date', 'asc')
                 ->get()
                 ->map(function ($query) {
                     $info = count($query->sum) ? $query->sum[0] : null;
@@ -342,14 +344,17 @@ class OSRController extends Controller
                         $order_qty =  $info->total_qty;
                         $image_url = $info->product_feature->product->goods->imageUrl;
                     }
-                    return [
-                        'id' => $query->id,
-                        'sales_order_name' => $query->po_number,
-                        'delivery_date' => $query->delivery_date,
-                        'order_qty' => $order_qty,
-                        'image_url' => $image_url,
-                        'total_delivery_qty' => $qty_shipped
-                    ];
+
+                    if ($qty_shipped > 0){
+                        return [
+                            'id' => $query->id,
+                            'sales_order_name' => $query->po_number,
+                            'delivery_date' => $query->delivery_date,
+                            'order_qty' => $order_qty,
+                            'image_url' => $image_url,
+                            'total_delivery_qty' => $qty_shipped
+                        ];    
+                    }
                 });
         } catch (\Throwable $th) {
             //throw $th;
