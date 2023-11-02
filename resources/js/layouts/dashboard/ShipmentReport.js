@@ -96,7 +96,7 @@ export default function ShipmentReport() {
               {!isEmpty(currentMonth) ? (
                 currentMonth?.map((_row) => (
                   <TableRow
-                    key={_row.id}
+                    key={_row?.id}
                     sx={{
                       '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
                     }}
@@ -174,7 +174,7 @@ export default function ShipmentReport() {
               {!isEmpty(prevMonth) ? (
                 prevMonth?.map((_row) => (
                   <TableRow
-                    key={_row.id}
+                    key={_row?.id}
                     sx={{
                       '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
                     }}
