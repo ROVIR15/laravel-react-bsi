@@ -33,7 +33,7 @@ export default function ShipmentReport() {
         else {
           setCurrentMonth(res.data);
 
-          let _filtered = res.data_prev?.filter((item) => parseInt(item?.total_delivery_qty) === 0)
+          let _filtered = res.data_prev?.filter((item) => parseInt(item?.total_delivery_qty) === 0);
           setPrevMonth(_filtered);
 
           if (!isEmpty(res.data)) {
@@ -118,7 +118,7 @@ export default function ShipmentReport() {
                       {_row?.sales_order_name}
                     </TableCell>
                     <TableCell component="th" align="left">
-                      {_row?.delivery_date}
+                      {moment(_row?.delivery_date).format('DD MMMM YYYY')}
                     </TableCell>
                     <TableCell component="th" align="left">
                       {`${_row?.order_qty} pcs`}
@@ -196,7 +196,7 @@ export default function ShipmentReport() {
                       {_row?.sales_order_name}
                     </TableCell>
                     <TableCell component="th" align="left">
-                      {_row?.delivery_date}
+                      {moment(_row?.delivery_date).format('DD MMMM YYYY')}
                     </TableCell>
                     <TableCell component="th" align="left">
                       {`${_row?.order_qty} pcs`}
