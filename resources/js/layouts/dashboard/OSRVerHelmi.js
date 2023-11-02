@@ -73,8 +73,8 @@ export default function OSRPPIC() {
             <TableCell className="wk_primary_color wk_gray_bg">Nama Pesanan</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Order Qty</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Tanggal Terima PO</TableCell>
-            <TableCell className="wk_primary_color wk_gray_bg">Farbic Mills</TableCell>
-            <TableCell className="wk_primary_color wk_gray_bg">Farbic ETD</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg">Fabric Mills</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg">Fabric ETD</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Garment Delivery</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Line yg Digunakan</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Jumlah Mesin</TableCell>
