@@ -193,7 +193,7 @@ class OSRController extends Controller
                         'line_end_date' => $query->line_end_date,
                         'sales_order_id' => $query->sales_order->id,
                         'sales_order_name' => $query->sales_order->po_number,
-                        'garment_date' => $query->sales_order->delivery_date,
+                        'garment_delivery_date' => $query->sales_order->delivery_date,
                         'buyer_name' => $query->sales_order->party->name,
                         'order_qty' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->total_qty) : null,
                         'avg_price' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->avg_unit_price) : null,
@@ -215,7 +215,6 @@ class OSRController extends Controller
             $groupedData->each(function ($group) use (&$transformedData) {
                 $item = [
                     'id' => $group[0]['id'],
-                    'bom_id' => $group[0]['bom_id'],
                     'imageUrl' => $group[0]['imageUrl'],
                     'buyer_name' => $group[0]['buyer_name'],
                     'imageUrl' => $group[0]['imageUrl'],
@@ -225,6 +224,7 @@ class OSRController extends Controller
                     'date_po_received' => $group[0]['date_po_received'],
                     'sales_order_id' => $group[0]['sales_order_id'],
                     'sales_order_name' => $group[0]['sales_order_name'],
+                    'garment_delivery_date' => $group[0]['garment_delivery_date'],
                     'order_qty' => (int)$group[0]['order_qty'],
                     'avg_price' => (float)$group[0]['avg_price'],
                     'line' => $group[0]['line'],
