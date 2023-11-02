@@ -4626,6 +4626,16 @@ const main = {
         cb(err.response);
       });
   },
+  getOSRShipment(params = null, cb) {
+    axios
+      .get(uri + '/report-shipment' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getNewAPIOfNewFeature(params = null, cb) {
     axios
       .get(uri + '/running-buyer-order' + params)

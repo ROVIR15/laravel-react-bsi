@@ -327,6 +327,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
 // Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 Route::get('report-osr-ver-helmi', 'OSRController@get_osr_ver_helmi');
+Route::get('report-shipment', 'OSRController@get_shipment_report');
 Route::resource('logs', 'LogController')->only(['index']);
 
 // Route::resource('bom', 'BOMController')->only(['index', 'store', 'show', 'update']);

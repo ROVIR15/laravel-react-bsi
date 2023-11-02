@@ -12,7 +12,9 @@ use App\Models\Manufacture\ManufacturePlanningItems;
 use App\Models\Monitoring\Sewing;
 use App\Models\Order\OrderItem;
 use App\Models\Order\POBuyerProof;
+use App\Models\Order\SalesOrder;
 use App\Models\Reconcile\ReconcileHasSalesOrder;
+use App\Models\Shipment\Shipment;
 
 class OSRController extends Controller
 {
@@ -151,19 +153,19 @@ class OSRController extends Controller
                 ->map(function ($query) {
 
                     $goods = count($query->sales_order->sum) ? $query->sales_order->sum[0]->product_feature->product->goods : null;
-                    
+
                     $totalOutput = count($query->ckck) ? $query->ckck[0]->total_output : 0;
 
                     $po_proof = POBuyerProof::where('sales_order_id', $query->sales_order_id)->get();
 
                     $po_date = count($po_proof) ? $po_proof[0]->tanggal_po : 'Belum Ada';
 
-                    $__items = BOMItem::whereHas('product_feature', function($query){
-                        return $query->whereHas('product_category', function($query){
+                    $__items = BOMItem::whereHas('product_feature', function ($query) {
+                        return $query->whereHas('product_category', function ($query) {
                             return $query->where('product_category_id', 4);
                         });
                     })
-                    ->where('bom_id', $query->bom_id)->get();
+                        ->where('bom_id', $query->bom_id)->get();
 
                     $__found_bom_item = count($__items) ? $__items[0] : null;
                     $__fabric_mill_name = null;
@@ -171,10 +173,10 @@ class OSRController extends Controller
                     $__fabric_po_issued = null;
 
                     if (!is_null($__found_bom_item)) {
-                        $__order = OrderItem::with(['order' => function($query){
+                        $__order = OrderItem::with(['order' => function ($query) {
                             return $query->with('purchase_order');
                         }])->where('costing_item_id', $__found_bom_item->id)
-                        ->get();
+                            ->get();
 
                         $__fabric_mill_name = count($__order) ? $__order[0]->order->purchase_order->party->name : "Belum Ada";
                         $__fabric_etd = count($__order) ? $__order[0]->order->purchase_order->delivery_date : "Belum Ada";
@@ -265,6 +267,101 @@ class OSRController extends Controller
         return response()->json([
             'success' => true,
             'data' => $transformedData
+        ]);
+    }
+
+    public function get_shipment_report(Request $request)
+    {
+        $monthYear = $request->query('monthYear');
+
+        try {
+            $monthYear = date_create($monthYear);
+            $month = date_format($monthYear, 'm');
+            $year = date_format($monthYear, 'Y');
+
+            $query = SalesOrder::select('id', 'order_id', 'po_number', 'delivery_date')
+                ->with('sum')
+                ->whereMonth('delivery_date', $month)
+                ->whereYear('delivery_date', $year)
+                ->get()
+                ->map(function ($query) {
+                    $info = count($query->sum) ? $query->sum[0] : null;
+
+                    $shipment = Shipment::with('sum')->where('order_id', $query->order_id)->get();
+
+                    $_shipment = count($shipment) ? $shipment[0] : null;
+
+                    if (is_null($_shipment)) {
+                        $qty_shipped =  0;
+                    } else {
+                        $_shipment_sum = count($_shipment->sum) ? $_shipment->sum[0] : null;
+                        $qty_shipped =  $_shipment_sum->total_qty;
+                    }
+
+                    if (is_null($info)) {
+                        $order_qty = 0;
+                        $image_url = null;
+                    } else {
+                        $order_qty =  $info->total_qty;
+                        $image_url = $info->product_feature->product->goods->imageUrl;
+                    }
+                    return [
+                        'id' => $query->id,
+                        'sales_order_name' => $query->po_number,
+                        'delivery_date' => $query->delivery_date,
+                        'order_qty' => $order_qty,
+                        'image_url' => $image_url,
+                        'total_delivery_qty' => $qty_shipped
+                    ];
+                });
+
+            $query_alt_so = SalesOrder::select('id', 'order_id', 'po_number', 'delivery_date')
+                ->with('sum')
+                ->whereMonth('delivery_date', '>=', 7)
+                ->whereMonth('delivery_date', '<', $month)
+                ->whereYear('delivery_date', $year)
+                ->get()
+                ->map(function ($query) {
+                    $info = count($query->sum) ? $query->sum[0] : null;
+
+                    $shipment = Shipment::with('sum')->where('order_id', $query->order_id)->get();
+
+                    $_shipment = count($shipment) ? $shipment[0] : null;
+
+                    if (is_null($_shipment)) {
+                        $qty_shipped =  0;
+                    } else {
+                        $_shipment_sum = count($_shipment->sum) ? $_shipment->sum[0] : null;
+                        $qty_shipped =  $_shipment_sum->total_qty;
+                    }
+
+                    if (is_null($info)) {
+                        $order_qty = 0;
+                        $image_url = null;
+                    } else {
+                        $order_qty =  $info->total_qty;
+                        $image_url = $info->product_feature->product->goods->imageUrl;
+                    }
+                    return [
+                        'id' => $query->id,
+                        'sales_order_name' => $query->po_number,
+                        'delivery_date' => $query->delivery_date,
+                        'order_qty' => $order_qty,
+                        'image_url' => $image_url,
+                        'total_delivery_qty' => $qty_shipped
+                    ];
+                });
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'error' => $th->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $query,
+            'data_prev' => $query_alt_so
         ]);
     }
 }

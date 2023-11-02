@@ -26,6 +26,7 @@ function numericMonthToName(numericMonth) {
 export default function OSRPPIC() {
   const [OSRRows, setOSRRows] = useState([]);
   const [month, setMonth] = useState(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     try {
@@ -36,6 +37,14 @@ export default function OSRPPIC() {
         if (!res) return;
         else {
           setOSRRows(res.data);
+
+          if (!isEmpty(res.data)) {
+            let _total = res.data.reduce(function (init, next) {
+              let qty = next.filter((item) => item.value > 0);
+              return init + parseInt(qty);
+            }, 0);
+            setTotal(_total);
+          }
         }
       });
     } catch (error) {
@@ -113,7 +122,7 @@ export default function OSRPPIC() {
                   {`${_row?.order_qty} pcs`}
                 </TableCell>
                 <TableCell component="th" align="left">
-                  {_row?.garment_delivery_date}
+                  {moment(_row?.garment_delivery_date).format('DD MMMM YYYY')}
                 </TableCell>
                 <TableCell component="th" align="left">
                   {`${_row?.fabric_mill}`}
@@ -122,7 +131,7 @@ export default function OSRPPIC() {
                   {`${_row?.fabric_etd}`}
                 </TableCell>
                 <TableCell component="th" align="left">
-                  {_row?.date_po_received}
+                  {moment(_row?.date_po_recieved).format('DD MMMM YYYY')}
                 </TableCell>
                 <TableCell component="th" align="left">
                   {_row?.line}
@@ -159,6 +168,19 @@ export default function OSRPPIC() {
           ) : (
             <TableCell>No Data</TableCell>
           )}
+          <TableRow
+            key={'Total'}
+            sx={{
+              '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
+            }}
+          >
+            <TableCell component="th" align="right" colSpan={16}>
+              <b>Total</b>
+            </TableCell>{' '}
+            <TableCell component="th" align="left">
+              {`${total} pcs`}
+            </TableCell>{' '}
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>

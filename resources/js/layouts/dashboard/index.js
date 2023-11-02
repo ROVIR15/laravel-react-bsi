@@ -15,6 +15,8 @@ import { useSnackbar } from 'notistack';
 import { isEmpty } from 'lodash';
 import OSRPPIC from './OSRPPIC.general';
 import OSRPPICHelmi from './OSRVerHelmi';
+import ReportShipment from './ShipmentReport'
+import ShipmentReport from './ShipmentReport';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -72,6 +74,7 @@ export default function DashboardLayout() {
       return (
         <Stack direction="column" spacing={2}>
           <Welcoming />
+          <ShipmentReport/>
           <OSRPPICHelmi />
         </Stack>
       );
