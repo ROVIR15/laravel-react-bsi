@@ -168,13 +168,17 @@ class OSRController extends Controller
                     $__found_bom_item = count($__items) ? $__items[0] : null;
                     $__fabric_mill_name = null;
                     $__fabric_etd = null;
+                    $__fabric_po_issued = null;
 
                     if (!is_null($__found_bom_item)) {
                         $__order = OrderItem::with(['order' => function($query){
                             return $query->with('purchase_order');
-                        }])->where('costing_item_id', $__found_bom_item->id)->get();
+                        }])->where('costing_item_id', $__found_bom_item->id)
+                        ->get();
+
                         $__fabric_mill_name = count($__order) ? $__order[0]->order->purchase_order->party->name : "Belum Ada";
                         $__fabric_etd = count($__order) ? $__order[0]->order->purchase_order->delivery_date : "Belum Ada";
+                        $__fabric_po_issued = count($__order) ? $__order[0]->order->purchase_order->issue_date : "Belum Ada";
                     }
 
                     return [
@@ -183,11 +187,13 @@ class OSRController extends Controller
                         'imageUrl' => $goods->imageUrl,
                         'date_po_received' => $po_date,
                         'fabric_mill' => $__fabric_mill_name,
+                        'fabric_po_issued' => $__fabric_po_issued,
+                        'fabric_etd' => $__fabric_etd,
                         'line_start_date' => $query->line_start_date,
                         'line_end_date' => $query->line_end_date,
-                        'sales_order_id' => $query->sales_order_id,
+                        'sales_order_id' => $query->sales_order->id,
                         'sales_order_name' => $query->sales_order->po_number,
-                        'fabric_etd' => $__fabric_etd,
+                        'garment_date' => $query->sales_order->delivery_date,
                         'buyer_name' => $query->sales_order->party->name,
                         'order_qty' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->total_qty) : null,
                         'avg_price' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->avg_unit_price) : null,
@@ -209,10 +215,12 @@ class OSRController extends Controller
             $groupedData->each(function ($group) use (&$transformedData) {
                 $item = [
                     'id' => $group[0]['id'],
+                    'bom_id' => $group[0]['bom_id'],
                     'imageUrl' => $group[0]['imageUrl'],
                     'buyer_name' => $group[0]['buyer_name'],
                     'imageUrl' => $group[0]['imageUrl'],
                     'fabric_mill' => $group[0]['fabric_mill'],
+                    'fabric_po_issued' => $group[0]['fabric_po_issued'],
                     'fabric_etd' => $group[0]['fabric_etd'],
                     'date_po_received' => $group[0]['date_po_received'],
                     'sales_order_id' => $group[0]['sales_order_id'],
