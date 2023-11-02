@@ -213,6 +213,7 @@ class OSRController extends Controller
                     'buyer_name' => $group[0]['buyer_name'],
                     'imageUrl' => $group[0]['imageUrl'],
                     'fabric_mill' => $group[0]['fabric_mill'],
+                    'fabric_etd' => $group[0]['fabric_etd'],
                     'date_po_received' => $group[0]['date_po_received'],
                     'sales_order_id' => $group[0]['sales_order_id'],
                     'sales_order_name' => $group[0]['sales_order_name'],
