@@ -4606,6 +4606,16 @@ const main = {
         cb(err.response);
       });
   },
+  getOSRVerHelmi(params = null, cb) {
+    axios
+      .get(uri + '/report-osr-ver-helmi' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getOSRPPIC(params = null, cb) {
     axios
       .get(uri + '/report-osr-ppic' + params)
