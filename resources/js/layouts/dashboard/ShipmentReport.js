@@ -32,7 +32,9 @@ export default function ShipmentReport() {
         if (!res) return;
         else {
           setCurrentMonth(res.data);
-          setPrevMonth(res.data_prev);
+
+          let _filtered = res.data_prev?.filter((item) => parseInt(item?.total_delivery_qty) === 0)
+          setPrevMonth(_filtered);
 
           if (!isEmpty(res.data)) {
             let total_current_month = res.data.reduce(
@@ -50,7 +52,7 @@ export default function ShipmentReport() {
           }
 
           if (!isEmpty(res.data_prev)) {
-            let total_prev_month = res.data_prev.reduce(
+            let total_prev_month = _filtered.reduce(
               function (init, next) {
                 return {
                   ...init,

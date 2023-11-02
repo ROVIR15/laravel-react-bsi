@@ -345,16 +345,14 @@ class OSRController extends Controller
                         $image_url = $info->product_feature->product->goods->imageUrl;
                     }
 
-                    if ($qty_shipped > 0){
-                        return [
-                            'id' => $query->id,
-                            'sales_order_name' => $query->po_number,
-                            'delivery_date' => $query->delivery_date,
-                            'order_qty' => $order_qty,
-                            'image_url' => $image_url,
-                            'total_delivery_qty' => $qty_shipped
-                        ];    
-                    }
+                    return [
+                        'id' => $query->id,
+                        'sales_order_name' => $query->po_number,
+                        'delivery_date' => $query->delivery_date,
+                        'order_qty' => $order_qty,
+                        'image_url' => $image_url,
+                        'total_delivery_qty' => $qty_shipped
+                    ];
                 });
         } catch (\Throwable $th) {
             //throw $th;
