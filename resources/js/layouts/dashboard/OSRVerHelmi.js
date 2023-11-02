@@ -94,7 +94,7 @@ export default function OSRPPIC() {
                     <Typography
                       variant="body1"
                       component="a"
-                      href={`/order/sales-order/${_row?.sales_order_id}`}
+                      href={`/dashboard/order/sales-order/${_row?.sales_order_id}`}
                     >
                       {`SO-${_row?.sales_order_id}`}
                     </Typography>
