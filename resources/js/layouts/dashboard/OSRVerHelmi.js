@@ -58,6 +58,7 @@ export default function OSRPPIC() {
             </TableCell>
           </TableRow>
           <TableRow>
+            <TableCell className="wk_primary_color wk_gray_bg">Sales Order ID</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Nama Buyer</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Gambar</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Nama Pesanan</TableCell>
