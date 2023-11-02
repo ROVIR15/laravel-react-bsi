@@ -167,12 +167,14 @@ class OSRController extends Controller
 
                     $__found_bom_item = count($__items) ? $__items[0] : null;
                     $__fabric_mill_name = null;
+                    $__fabric_etd = null;
 
                     if (!is_null($__found_bom_item)) {
                         $__order = OrderItem::with(['order' => function($query){
                             return $query->with('purchase_order');
                         }])->where('costing_item_id', $__found_bom_item->id)->get();
                         $__fabric_mill_name = count($__order) ? $__order[0]->order->purchase_order->party->name : "Belum Ada";
+                        $__fabric_etd = count($__order) ? $__order[0]->order->purchase_order->delivery_date : "Belum Ada";
                     }
 
                     return [
@@ -185,6 +187,7 @@ class OSRController extends Controller
                         'line_end_date' => $query->line_end_date,
                         'sales_order_id' => $query->sales_order_id,
                         'sales_order_name' => $query->sales_order->po_number,
+                        'fabric_etd' => $__fabric_etd,
                         'buyer_name' => $query->sales_order->party->name,
                         'order_qty' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->total_qty) : null,
                         'avg_price' => count($query->sales_order->sum) ? ($query->sales_order->sum[0]->avg_unit_price) : null,
