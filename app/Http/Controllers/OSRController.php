@@ -318,7 +318,7 @@ class OSRController extends Controller
 
             $query_alt_so = SalesOrder::select('id', 'order_id', 'po_number', 'delivery_date')
                 ->with('sum')
-                ->whereMonth('delivery_date', '>=', 7)
+                ->whereMonth('delivery_date', '>=', 10)
                 ->whereMonth('delivery_date', '<', $month)
                 ->whereYear('delivery_date', $year)
                 ->orderBy('delivery_date', 'asc')
