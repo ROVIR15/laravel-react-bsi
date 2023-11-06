@@ -100,30 +100,7 @@ function renderContent(notification) {
     </Typography>
   );
 
-  // if (notification.type === 'order_placed') {
-  //   return {
-  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
-  //     title
-  //   };
-  // }
-  // if (notification.type === 'order_shipped') {
-  //   return {
-  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
-  //     title
-  //   };
-  // }
-  // if (notification.type === 'mail') {
-  //   return {
-  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
-  //     title
-  //   };
-  // }
-  // if (notification.type === 'chat_message') {
-  //   return {
-  //     avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
-  //     title
-  //   };
-  // }
+
   return {
     avatar: <img alt={notification.title} src={notification.avatar} />,
     title,
@@ -303,7 +280,7 @@ export default function NotificationsPopover({ content = [] }) {
         <Divider />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple component={RouterLink} to="#">
+          <Button fullWidth disableRipple component={RouterLink} to="./notifications">
             View All
           </Button>
         </Box>

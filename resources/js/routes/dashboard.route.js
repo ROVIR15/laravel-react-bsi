@@ -275,6 +275,7 @@ import AddExport from '../pages/dashboard/KITE/Export/new';
 import ShowExport from '../pages/dashboard/KITE/Export/show';
 import DisplayExport from '../pages/dashboard/KITE/Export/display';
 
+import NotificationList from '../layouts/dashboard/NotificationList';
 
 import InventoryAdjustment from '../pages/dashboard/Inventory/StockOpname';
 
@@ -297,6 +298,10 @@ export default function TestRouter() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
+        {
+          path: 'notifications',
+          element: <NotificationList />
+        },
         { 
           path: 'order/buyer',
           element: <BuyerLayout />,

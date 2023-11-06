@@ -4817,9 +4817,9 @@ const main = {
         cb(err.response);
       });
   },
-  getNotificationLimit(user_id, cb) {
+  getNotificationLimit(user_id, param, cb) {
     axios
-      .get(uri + '/notification/' + user_id)
+      .get(uri + '/notification/' + user_id + param)
       .then(function (res) {
         cb(res.data);
       })

@@ -16,6 +16,9 @@ export const NotificationProvider = ({ children }) => {
   // store loading state
   const [loading, setLoading] = useState(false);
 
+  const [totalPage, setTotalPage] = useState(0);
+  const [totalUnread, setTotalUnread] = useState(0);
+
   // check initial loading whether the data is being loaded
   // with NotificationData is empty and loading state is true
   let initialLoading = isEmpty(NotificationData) || loading;
@@ -28,14 +31,16 @@ export const NotificationProvider = ({ children }) => {
     getNewNotification();
   }, []);
 
-  function getNewNotification(){
+  function getNewNotification(param='?page=1'){
     try {
       if(!isNull(id)){
-        API.getNotificationLimit(id, function(res) {
-          if(!res) throw new Error("Something wrong!");
+        API.getNotificationLimit(id, param, function(res) {
+          if(!res) return;
           if(!res.data) throw new Error("Something wrong!");
           else {
-            setNotificationData(res.data);
+            setTotalUnread(res.total_unread)
+            setTotalPage(res.data.last_page);
+            setNotificationData(res.data.data);
           }
         })
       } else {
@@ -59,6 +64,8 @@ export const NotificationProvider = ({ children }) => {
     () => ({
       data: NotificationData,
       initialLoading,
+      totalPage,
+      totalUnread,
       getNewNotification
     }),
     [NotificationData, loading]

@@ -24,7 +24,12 @@ import {
   Select,
   Stack,
   Button,
-  Grid
+  Grid,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { styled } from '@mui/material/styles';
@@ -52,7 +57,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { PurchaseOrderSchema } from '../../../helpers/FormerSchema';
 import { _partyAddress } from '../../../helpers/data';
-import { isArray, isEmpty } from 'lodash';
+import { isArray, isEmpty, isNull } from 'lodash';
 import { generateInvSerialNumber_alt } from '../../dashboard/Finance/utils';
 import { fCurrency } from '../../../utils/formatNumber';
 import LoadingPage from '../../../components/LoadingPage';
@@ -106,6 +111,8 @@ function SalesOrder() {
   const [openM, setOpenM] = React.useState(false);
   const handleOpenModal = () => setOpenM(true);
   const handleCloseModal = () => setOpenM(false);
+
+  const [comments, setComments] = React.useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -162,6 +169,7 @@ function SalesOrder() {
       import_flag: load?.import_flag
     });
 
+    setComments(load.status);
     setIsImport(Boolean(load?.import_flag));
     setDescription(load.order.description);
     setTax(load.order.tax);
@@ -844,6 +852,61 @@ function SalesOrder() {
                         {/* END Tab */}
                       </Grid>
                     </CardContent>
+
+                    <Divider />
+
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="subtitle1">Comments</Typography>
+                        </Box>
+                      </Box>
+                      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                        {comments.length > 0
+                          ? comments.map(function (item) {
+                              return (
+                                <>
+                                  <ListItem alignItems="flex-start">
+                                    <ListItemAvatar>
+                                      <Avatar
+                                        alt={item.user_info.name}
+                                        src="/static/images/avatar/1.jpg"
+                                      />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                      primary={item.status_type}
+                                      secondary={
+                                        <React.Fragment>
+                                          <Typography
+                                            sx={{ display: 'inline' }}
+                                            component="span"
+                                            variant="body2"
+                                            color="text.primary"
+                                          >
+                                            {item.user_info.name}
+                                          </Typography>
+                                          <Typography
+                                            sx={{ display: 'inline' }}
+                                            component="span"
+                                            variant="body2"
+                                            color="text.primary"
+                                          >
+                                            {isNull(item.description)
+                                              ? ' - Hubungi saya jika ada pertanyaan!'
+                                              : `${item.description}`}
+                                          </Typography>
+                                        </React.Fragment>
+                                      }
+                                    />
+                                  </ListItem>
+                                  <Divider variant="inset" component="li" />
+                                </>
+                              );
+                            })
+                          : 'Kosong'}
+                      </List>
+                    </CardContent>
+
                     <CardContent>
                       <Stack direction="column" spacing={4}>
                         <Stack direction="row" spacing={2}>

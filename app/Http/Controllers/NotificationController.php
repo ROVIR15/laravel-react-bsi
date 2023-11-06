@@ -14,12 +14,15 @@ class NotificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function showFew($userId)
+    public function showFew($userId, Request $request)
     {
+        $limit = $request->query('limit') ? $request->query('limit') : 10;
 
         try {
             //code...
-            $query = Notification::where('user_id', $userId)->orderBy('id', 'desc')->limit(10)->get();
+            $query_notification  = Notification::where('user_id', $userId)->where('is_read', true)->orderBy('id', 'desc')->count();
+            $totalUnread = $query_notification;
+            $query = Notification::where('user_id', $userId)->orderBy('id', 'desc')->paginate($limit);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
@@ -28,7 +31,7 @@ class NotificationController extends Controller
         }
 
         return response()->json([
-            'data' => $query
+            'data' => $query, 'total_unread' => $totalUnread
         ], 200);
     }
 
