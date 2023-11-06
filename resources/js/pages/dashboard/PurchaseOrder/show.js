@@ -893,7 +893,7 @@ function SalesOrder() {
                                           >
                                             {isNull(item.description)
                                               ? ' - Hubungi saya jika ada pertanyaan!'
-                                              : `${item.description}`}
+                                              : ` - ${item.description}`}
                                           </Typography>
                                         </React.Fragment>
                                       }
