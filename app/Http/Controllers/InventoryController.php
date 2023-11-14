@@ -666,6 +666,12 @@ class InventoryController extends Controller
     $thruDate = $request->query('thruDate');
     $type = $request->query('type_of_facility');
 
+    function change_date_format($str){
+      $timestamp = strtotime($str);
+      $formatted_date = strftime('%e %B %Y', $timestamp);
+      return $formatted_date;
+    }
+
     try {
       if (!isset($fromDate) && !isset($thruDate)) {
         throw new Exception("Error Processing Request", 1);
@@ -708,7 +714,8 @@ class InventoryController extends Controller
             'product_id' => $productFeature->product->id,
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
-            'qty' => $item->qty
+            'qty' => $item->qty,
+            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
 
@@ -719,8 +726,9 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
-            'document_number' => $item['document_number'],
-            'document_date' => $item['document_date'],
+            'document_number' => str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
+            'document_date' => change_date_format($item['document_date']),
+            'sku_id' => $item['sku_id'],
             'facility_id' => $item['facility_id'],
             "item_name" => $item['item_name'],
             "product_id" => $item['product_id'],
