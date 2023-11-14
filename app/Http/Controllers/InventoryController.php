@@ -278,7 +278,7 @@ class InventoryController extends Controller
             'qty' => $orderItem->qty,
             'unit_price' => $orderItem->unit_price,
             'valuation' => $orderItem->qty * $orderItem->unit_price,
-            'customs_item_number' => $importItem->item_serial_number,
+            'customs_item_number' => str_pad($importItem->item_serial_number, 6, '0', STR_PAD_LEFT),
             'customs_doc' => $doc_type,
             'hs_code_item' => $importItem->hs_code,
             'customs_document_number' => $importDoc->document_number,
