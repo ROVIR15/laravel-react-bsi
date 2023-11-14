@@ -197,6 +197,12 @@ class InventoryController extends Controller
     $thru_date = $request->query('thruDate');
 
 
+    function change_date_format($str){
+      $timestamp = strtotime($date);
+      $formatted_date = strftime('%e %B %Y', $timestamp);
+      return $formatted_date
+    }
+
     try {
       if (!isset($from_date) && !isset($thru_date)) {
         // Throw an exception if the $from_date and $thru_date variables are not set
@@ -263,8 +269,8 @@ class InventoryController extends Controller
             'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => 'INSHIP-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
-            'recoded_date' => $item->shipment->delivery_date,
-            'shipment_date' => $item->shipment->delivery_date,
+            'recoded_date' => change_date_format($item->shipment->delivery_date),
+            'shipment_date' => change_date_format($item->shipment->delivery_date),
             'product_id' => $product->id,
             'product_feature_id' => $productFeature->id,
             'goods_id' => $goods->id,
@@ -282,7 +288,7 @@ class InventoryController extends Controller
             'customs_doc' => $doc_type,
             'hs_code_item' => $importItem->hs_code,
             'customs_document_number' => $importDoc->document_number,
-            'customs_document_date' => $importDoc->date,
+            'customs_document_date' => change_date_format($importDoc->date),
             'currency' => $order->currency_id
           ];
         });
