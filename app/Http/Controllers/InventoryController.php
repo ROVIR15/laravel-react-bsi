@@ -198,7 +198,7 @@ class InventoryController extends Controller
 
 
     function change_date_format($str){
-      $timestamp = strtotime($date);
+      $timestamp = strtotime($str);
       $formatted_date = strftime('%e %B %Y', $timestamp);
       return $formatted_date;
     }
