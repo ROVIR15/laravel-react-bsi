@@ -260,9 +260,9 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
-            'sku_id' => $goods->id . '-' . $product->id . '-' . $productFeature->id,
+            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
-            'serial_number' => 'INSHIP-' . $item->shipment->id,
+            'serial_number' => 'INSHIP-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
             'recoded_date' => $item->shipment->delivery_date,
             'shipment_date' => $item->shipment->delivery_date,
             'product_id' => $product->id,
