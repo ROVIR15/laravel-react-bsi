@@ -76,7 +76,7 @@ export function rearrange_data_material_transfer(array){
 
 
 export function generalizeSKU(order_item_id, product_feature_id, product_id){
-  return `MT-${order_item_id}${product_feature_id}${product_id}`
+  return `${order_item_id}-${product_feature_id}-${product_id}`
 }
 
 function generalizeSOPO(order_id, document_id, type){
