@@ -301,7 +301,8 @@ function Inbound() {
                       <TableCell> {row.serial_number} </TableCell>
                       <TableCell> {row.shipment_date}</TableCell>
 
-                      <TableCell> {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} </TableCell>
+                      <TableCell> {row?.sku_id} </TableCell>
+                      {/* <TableCell> {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} </TableCell> */}
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.qty}</TableCell>
