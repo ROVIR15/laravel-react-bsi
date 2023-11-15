@@ -163,7 +163,7 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -246,14 +246,16 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell colSpan={1}></TableCell>
                   <TableCell align="center" colSpan={2}>
                     Bukti Pengeluaran
                   </TableCell>
                   <TableCell colSpan={3}> </TableCell>
-                  <TableCell colSpan={2}>Jumlah</TableCell>
+                  <TableCell align="center" colSpan={2}>Jumlah</TableCell>
                   <TableCell colSpan={1}></TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>No </TableCell>
                   <TableCell>Nomor </TableCell>
                   <TableCell>Tanggal </TableCell>
                   <TableCell>Kode BB</TableCell>
@@ -261,7 +263,7 @@ function Inbound() {
                   <TableCell>Satuan</TableCell>
                   <TableCell>Digunakan</TableCell>
                   <TableCell>Disubkontrakan</TableCell>
-                  <TableCell>Nama Penerima Subkrontrak</TableCell>
+                  <TableCell>Gudang</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -269,6 +271,7 @@ function Inbound() {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row, index) => (
                     <TableRow>
+                      <TableCell>{row.id}</TableCell>
                       <TableCell>{row.document_number}</TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
@@ -300,14 +303,14 @@ function Inbound() {
                 <Typography variant="p" style={{ marginRight: '3em' }}>
                   Dari Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.start_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.start_date}`}</Typography>
               </div>
 
               <div>
                 <Typography variant="p" style={{ marginRight: '1.4em' }}>
                   Sampai Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.end_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.end_date}`}</Typography>
               </div>
             </Stack>
           </Grid>
@@ -319,6 +322,9 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          No
+                        </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor Bukti Pengeluaran Barang
                         </th>
@@ -335,22 +341,20 @@ function Inbound() {
                           Satuan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Saldo Awal
-                        </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Jumlah Pemakaian Barang
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Jumlah Barang yang di subkontrakan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nama Penerima Subkrontrak
+                          Gudang
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {payloadData?.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{row.id}</td>
                           <td className="wk_width_2">{row.document_number}</td>
                           <td className="wk_width_2">{row.document_date}</td>
                           <td className="wk_width_3">

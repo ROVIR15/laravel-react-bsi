@@ -182,6 +182,12 @@ class InventoryController extends Controller
     ]);
   }
 
+  public function change_date_format($str){
+    $timestamp = strtotime($str);
+    $formatted_date = strftime('%e %B %Y', $timestamp);
+    return $formatted_date;
+  }
+
   /** 
    * Display Laporan Barang Masuk coming from
    * Shipment resouces
@@ -195,13 +201,6 @@ class InventoryController extends Controller
     // $monthYear = $request->query('monthYear');
     $from_date = $request->query('fromDate');
     $thru_date = $request->query('thruDate');
-
-
-    function change_date_format($str){
-      $timestamp = strtotime($str);
-      $formatted_date = strftime('%e %B %Y', $timestamp);
-      return $formatted_date;
-    }
 
     try {
       if (!isset($from_date) && !isset($thru_date)) {
@@ -269,8 +268,8 @@ class InventoryController extends Controller
             'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => 'INSHIP-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
-            'recoded_date' => change_date_format($item->shipment->delivery_date),
-            'shipment_date' => change_date_format($item->shipment->delivery_date),
+            'recoded_date' => $this->change_date_format($item->shipment->delivery_date),
+            'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
             'product_id' => $product->id,
             'product_feature_id' => $productFeature->id,
             'goods_id' => $goods->id,
@@ -288,7 +287,7 @@ class InventoryController extends Controller
             'customs_doc' => $doc_type,
             'hs_code_item' => $importItem->hs_code,
             'customs_document_number' => $importDoc->document_number,
-            'customs_document_date' => change_date_format($importDoc->date),
+            'customs_document_date' => $this->change_date_format($importDoc->date),
             'currency' => $order->currency_id
           ];
         });
@@ -351,10 +350,10 @@ class InventoryController extends Controller
           $exportDoc  = $salesOrder->export_doc ? $salesOrder->export_doc : null;
 
           return [
-            'id' => $index,
+            'id' => $index+1,
             'shipment_id' => $item->shipment->id,
             'serial_number' => $item->shipment->serial_number,
-            'shipment_date' => $item->shipment->delivery_date,
+            'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
             'product_id' => $product->id,
             'product_feature_id' => $productFeature->id,
             'goods_id' => $goods->id,
@@ -369,7 +368,7 @@ class InventoryController extends Controller
             'unit_price' => $orderItem->unit_price,
             'valuation' => $orderItem->qty * $orderItem->unit_price,
             'export_document_number' => $exportDoc ? $exportDoc->document_number : null,
-            'export_document_date' => $exportDoc ? $exportDoc->date : null,
+            'export_document_date' => $exportDoc ? $this->change_date_format($exportDoc->date) : null,
             'currency' => $order->currency_id
           ];
         });
@@ -666,12 +665,6 @@ class InventoryController extends Controller
     $thruDate = $request->query('thruDate');
     $type = $request->query('type_of_facility');
 
-    function change_date_format($str){
-      $timestamp = strtotime($str);
-      $formatted_date = strftime('%e %B %Y', $timestamp);
-      return $formatted_date;
-    }
-
     try {
       if (!isset($fromDate) && !isset($thruDate)) {
         throw new Exception("Error Processing Request", 1);
@@ -727,7 +720,7 @@ class InventoryController extends Controller
           $organizedData[$itemName] = array(
             'id' => $item['id'],
             'document_number' => str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
-            'document_date' => change_date_format($item['document_date']),
+            'document_date' => $this->change_date_format($item['document_date']),
             'sku_id' => $item['sku_id'],
             'facility_id' => $item['facility_id'],
             "item_name" => $item['item_name'],
@@ -834,8 +827,8 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
-            'document_number' => $item['document_number'],
-            'document_date' => $item['document_date'],
+            'document_number' => str_pad($item['document_number'], 8, '0', STR_PAD_LEFT),
+            'document_date' => $this->change_date_format($item['document_date']),
             'facility_id' => $item['facility_id'],
             "item_name" => $item['item_name'],
             "product_id" => $item['product_id'],

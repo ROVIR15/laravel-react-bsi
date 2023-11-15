@@ -40,7 +40,7 @@ const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'
 
 function Inbound() {
   const xlsRef = useRef(null);
-  const [payloadData, setPayloadData] = useState(__payload);
+  const [payloadData, setPayloadData] = useState([]);
 
   // get pathname
   const { pathname } = useLocation();
@@ -129,7 +129,7 @@ function Inbound() {
   }
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -200,23 +200,6 @@ function Inbound() {
                   value={rangeDate.end_date}
                   onChange={handleChangeDate}
                 />
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  size="small"
-                  value={valueOfSelect}
-                  fullWidth
-                  label="Kategori"
-                  // onChange={handleSelectChange}
-                  input={<OutlinedInput label="Name" />}
-                  // MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
               </Stack>
 
               <Button onClick={getData}> Go </Button>
@@ -249,6 +232,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell colSpan={1}> </TableCell>
                   <TableCell align="center" colSpan={2}>
                     PEB
                   </TableCell>
@@ -258,6 +242,7 @@ function Inbound() {
                   <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>No</TableCell>
                   {/*  */}
                   <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
@@ -281,9 +266,10 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
+                      <TableCell>{row?.id}</TableCell>
                       <TableCell>{row?.export_document_number}</TableCell>
                       <TableCell>{row?.export_document_date}</TableCell>
-                      <TableCell>{row?.shipment_id} </TableCell>
+                      <TableCell>{`OBSHIP-${row?.order_id}-${row?.shipment_id}`} </TableCell>
                       <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>
@@ -293,7 +279,7 @@ function Inbound() {
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.qty}</TableCell>
-                      <TableCell>{row.currency}</TableCell>
+                      <TableCell>{row.currency === 2 ? 'Rupiah' : 'Dollar US'}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
                       {/* <TableCell>{fCurrency(row.valuation, 'id')}</TableCell> */}
                     </TableRow>
@@ -334,6 +320,7 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="wk_text_center" colSpan={1}></th>
                         <th
                           className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
                           colSpan={2}
@@ -349,30 +336,22 @@ function Inbound() {
                       </tr>
 
                       <tr>
-                        <th
-                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
-                        >
+                        <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
+                          No
+                        </th>
+                        <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor Dokumen
                         </th>
-                        <th
-                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
-                        >
+                        <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
-                      </tr>
-                      <tr>
-                        <th
-                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
-                        >
+
+                        <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor Dokumen
                         </th>
-                        <th
-                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
-                        >
+                        <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
-                      </tr>
-                      <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Penerima
                         </th>
@@ -402,9 +381,10 @@ function Inbound() {
                     <tbody>
                       {payloadData.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{row?.id}</td>
                           <td className="wk_width_2">{row?.export_document_number}</td>
                           <td className="wk_width_2">{row?.export_document_date}</td>
-                          <td className="wk_width_2">{row?.shipment_id} </td>
+                          <td className="wk_width_2">{`OBSHIP-${row?.order_id}-${row?.shipment_id}`} </td>
                           <td className="wk_width_2">{row?.shipment_date} </td>
                           <td className="wk_width_2">{row.buyer_name}</td>
                           <td className="wk_width_2">{row.country}</td>
@@ -414,7 +394,7 @@ function Inbound() {
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>
                           <td className="wk_width_2">{row.qty}</td>
-                          <td className="wk_width_2">{row.currency}</td>
+                          <td className="wk_width_2">{row.currency === 2 ? 'Rupiah' : 'Dollar US'}</td>
                           <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
                         </tr>
                       ))}

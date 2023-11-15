@@ -164,7 +164,8 @@ function PurchaseOrder({ placeHolder }) {
         if (!res.data) {
           setpurchaseOrderData([]);
         } else {
-          let buyer = res?.data?.filter(function (item, index, arr) {
+          let buyer = res?.data
+            ?.filter(function (item, index, arr) {
               return !isNull(item.party);
             })
             .map(function (obj) {
@@ -262,12 +263,14 @@ function PurchaseOrder({ placeHolder }) {
 
     try {
       API.deletePurchaseOrder(id, function (res) {
-        if (res.success) setpurchaseOrderData([]);
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
-    } catch (error) {
-      alert(error);
-    }
 
+      handleUpdateData();
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
     handleUpdateData();
   };
 
@@ -350,14 +353,14 @@ function PurchaseOrder({ placeHolder }) {
                       currency_id
                     } = row;
 
-                    let costing_id = 0
+                    let costing_id = 0;
 
-                    if (!isNull(row?.order_item)){
-                      if(!isNull(row?.order_item?.costing)){
-                        costing_id = row?.order_item?.costing?.bom_id
+                    if (!isNull(row?.order_item)) {
+                      if (!isNull(row?.order_item?.costing)) {
+                        costing_id = row?.order_item?.costing?.bom_id;
                       }
                     } else {
-                      costing_id = 0
+                      costing_id = 0;
                     }
                     let currency;
                     if (currency_id === 2) currency = 'idr';
@@ -374,12 +377,16 @@ function PurchaseOrder({ placeHolder }) {
                       >
                         <TableCell align="left">{`PO-${costing_id}-${id}`}</TableCell>
                         <TableCell align="left">{row?.po_number}</TableCell>
-                        <TableCell align="left">{ChipStatus(row?.status[0]?.status_type)}</TableCell>
+                        <TableCell align="left">
+                          {ChipStatus(row?.status[0]?.status_type)}
+                        </TableCell>
                         <TableCell align="left">
                           {ChipStatusProduction(row?.completion_status[0]?.status?.name)}
                         </TableCell>
                         <TableCell align="left">{row?.bought_from}</TableCell>
-                        <TableCell align="left">{row?.sum?.length ? sum[0].total_qty : null}</TableCell>
+                        <TableCell align="left">
+                          {row?.sum?.length ? sum[0].total_qty : null}
+                        </TableCell>
                         <TableCell align="left">
                           {sum?.length ? fCurrency(row?.sum[0].total_money, currency) : null}
                         </TableCell>

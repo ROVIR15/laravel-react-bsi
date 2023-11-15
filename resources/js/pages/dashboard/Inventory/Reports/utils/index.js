@@ -1,3 +1,5 @@
+import { isString } from "lodash";
+
 export function rearrange_data_in(array) {
   return array.map(function(x){
     const { id, order_item, qty_shipped } = x;
@@ -74,9 +76,16 @@ export function rearrange_data_material_transfer(array){
   })
 }
 
+function strPadLeft(value, length, padChar) {
+  value = isString(value) ? value : String(value)
+  while (value.length < length) {
+      value = padChar + value;
+  }
+  return value;
+}
 
 export function generalizeSKU(order_item_id, product_feature_id, product_id){
-  return `${order_item_id}-${product_feature_id}-${product_id}`
+  return `${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(product_id, 4, 0)}`
 }
 
 function generalizeSOPO(order_id, document_id, type){

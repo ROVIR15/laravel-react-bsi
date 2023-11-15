@@ -50,8 +50,6 @@ function Inbound() {
   const { pathname } = useLocation();
   const pagename = pathname.split('/')[3]?.replaceAll('-', ' ');
 
-  const [valueOfSelect, setValueofSelect] = React.useState('');
-
   // range of date
   const [values, setValues] = useState({
     start_date: '',
@@ -70,7 +68,9 @@ function Inbound() {
       if (isEmpty(values.start_date) || isEmpty(values.start_date) || isEmpty(values.category))
         new Error('Error processing your request!');
 
-      let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}&type_of_facility=${2}`;
+      let param = `?fromDate=${rangeDate.start_date}&thruDate=${
+        rangeDate.end_date
+      }&type_of_facility=${2}`;
 
       API.getReportMutasi_alt(param, function (res) {
         if (!res) return;
@@ -163,17 +163,11 @@ function Inbound() {
   };
 
   useEffect(() => {
-
-    if(searchParams.get('cat') === 'bahan_jadi'){
-      setPayloadData(__payload2)
-    } else {
-      setPayloadData(__payload1)
-    }
-    // handleGo();
+    handleGo();
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -256,6 +250,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell>No</TableCell>
                   <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
@@ -267,23 +262,28 @@ function Inbound() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {payloadData
-                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  ?.map((row, index) => (
-                    <TableRow>
-                      <TableCell>
-                        {/* {row.sku_barang} */}
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
-                      </TableCell>
-                      <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.unit_measurement}</TableCell>
-                      <TableCell>{row.initial_stock}</TableCell>
-                      <TableCell>{row.qty_in}</TableCell>
-                      <TableCell>{row.qty_out}</TableCell>
-                      <TableCell>{(row?.initial_stock+row?.qty_in)+row?.qty_out}</TableCell>
-                      <TableCell>{row?.facility_name}</TableCell>
-                    </TableRow>
-                  ))}
+                {payloadData.length > 0 ? (
+                  payloadData
+                    ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    ?.map((row, index) => (
+                      <TableRow>
+                        <TableCell>{row.id}</TableCell>
+                        <TableCell>
+                          {/* {row.sku_barang} */}
+                          {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                        </TableCell>
+                        <TableCell>{row.item_name}</TableCell>
+                        <TableCell>{row.unit_measurement}</TableCell>
+                        <TableCell>{row.initial_stock}</TableCell>
+                        <TableCell>{row.qty_in}</TableCell>
+                        <TableCell>{row.qty_out}</TableCell>
+                        <TableCell>{row?.initial_stock + row?.qty_in + row?.qty_out}</TableCell>
+                        <TableCell>{row?.facility_name}</TableCell>
+                      </TableRow>
+                    ))
+                ) : (
+                  <TableRow>Tidak Ada</TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -293,7 +293,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Mutasi Barang</Typography>
+            <Typography variant="h3">Laporan Mutasi Hasil Produksi</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -302,14 +302,14 @@ function Inbound() {
                 <Typography variant="p" style={{ marginRight: '3em' }}>
                   Dari Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.start_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.start_date}`}</Typography>
               </div>
 
               <div>
                 <Typography variant="p" style={{ marginRight: '1.4em' }}>
                   Sampai Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.end_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.end_date}`}</Typography>
               </div>
             </Stack>
           </Grid>
@@ -321,6 +321,7 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Kode BB
                         </th>
@@ -350,6 +351,7 @@ function Inbound() {
                     <tbody>
                       {payloadData?.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{row.id}</td>
                           <td className="wk_width_3">
                             {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                           </td>
@@ -358,7 +360,9 @@ function Inbound() {
                           <td className="wk_width_1">{row.initial_stock}</td>
                           <td className="wk_width_1">{row.qty_in}</td>
                           <td className="wk_width_1">{row.qty_out}</td>
-                          <td className="wk_width_1">{(row?.initial_stock+row?.qty_in)+row?.qty_out}</td>
+                          <td className="wk_width_1">
+                            {row?.initial_stock + row?.qty_in + row?.qty_out}
+                          </td>
                           <td className="wk_width_1">{row?.facility_name}</td>
                         </tr>
                       ))}

@@ -264,6 +264,7 @@ function Inbound() {
 
                     return (
                       <TableRow>
+                        <TableCell>{row.id}</TableCell>
                         <TableCell>{row.document_number}</TableCell>
                         <TableCell>{row.document_date}</TableCell>
                         <TableCell>

@@ -53,6 +53,14 @@ class ScrapController extends Controller
         ], 200);
     }
 
+    public function change_date_format($str)
+    {
+        setlocale(LC_TIME, 'id_ID');
+        $timestamp = strtotime($str);
+        $formatted_date = strftime('%e %B %Y', $timestamp);
+        return $formatted_date;
+    }
+
     public function reportScrap(Request $request)
     {
         $param = $request->all();
@@ -75,13 +83,13 @@ class ScrapController extends Controller
                 ->get()
                 ->map(function ($item, $index) {
                     $productFeature = $item->product_feature;
-                    $product = $productFeature ? $productFeature->product : null;
+                    $product = $item->product ? $item->product : null;
                     $goods = $product ? $product->goods : null;
 
                     return [
                         'id' => $index + 1,
-                        'document_number' => $item->scrap->document_number,
-                        'document_date' => $item->scrap->date,
+                        'document_number' => $item->scrap['document_number'],
+                        'document_date' => $this->change_date_format($item->scrap['date']),
                         'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
                         'product_id' => $productFeature->product->id,
                         'product_feature_id' => $item->product_feature_id,

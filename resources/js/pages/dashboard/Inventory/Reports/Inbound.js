@@ -47,7 +47,7 @@ function Inbound() {
   const [valueOfSelect, setValueofSelect] = React.useState('');
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -164,7 +164,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{titleCase("Laporan Pemasukan Bahan Baku")}</Typography>
+              <Typography variant="h5">{titleCase('Laporan Pemasukan Bahan Baku')}</Typography>
               <Button
                 variant="contained"
                 onClick={handleDownload}
@@ -197,23 +197,6 @@ function Inbound() {
                   value={rangeDate.end_date}
                   onChange={handleChangeDate}
                 />
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  size="small"
-                  value={valueOfSelect}
-                  fullWidth
-                  label="Kategori"
-                  // onChange={handleSelectChange}
-                  input={<OutlinedInput label="Name" />}
-                  // MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
               </Stack>
 
               <Button onClick={() => getData()}> Go </Button>
@@ -306,9 +289,9 @@ function Inbound() {
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.qty}</TableCell>
-                      <TableCell>{(row.currency === 2 ? 'Rupiah' : 'Dollar US')}</TableCell>
+                      <TableCell>{row.currency === 2 ? 'Rupiah' : 'Dollar US'}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
-                      <TableCell>{"Gudang"}</TableCell>
+                      <TableCell>{'Gudang'}</TableCell>
                       <TableCell>{firstLetterUpperCase(row.buyer_name)}</TableCell>
                       <TableCell>{firstLetterUpperCase(row.country)}</TableCell>
                     </TableRow>
@@ -322,7 +305,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">{titleCase("Laporan Pemasukan Bahan Baku ")}</Typography>
+            <Typography variant="h3">{titleCase('Laporan Pemasukan Bahan Baku ')}</Typography>
           </Grid>
           <Grid item xs={12}>
             <Stack direction="column" spacing={2}>
@@ -350,74 +333,108 @@ function Inbound() {
                     <thead>
                       <tr>
                         <th
+                          colSpan="1"
+                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          {''}
+                        </th>
+                        <th
                           colSpan="4"
                           className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
                         >
-                          Bea Cukai
+                          Jenis Dokumen
                         </th>
                         <th
                           colSpan="2"
                           className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
                         >
-                          Purchase Order
+                          Bukti Penerimaan Barang
+                        </th>
+                        <th
+                          colSpan="9"
+                          className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Bukti Penerimaan Barang
                         </th>
                       </tr>
                       <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Tanggal
+                          Tanggal Rekam
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Jenis Dokumen
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Bea Cukai
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Seri Barang
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No SO
+                          Kode HS
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode Barang
+                          Nomor Seri Barang
+                        </th>
+
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Item Name
+                          Tanggal
+                        </th>
+
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Kode BB
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Category Name
+                          Nama Barang
                         </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">Qty</th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Satuan
                         </th>
-                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nilai
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Jumlah
                         </th>
-                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Total
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Mata Uang
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nilai Barang
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Gudang
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Penerimaan Subkontrak
+                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Negara Asal BB
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {payloadData.map((row, index) => (
                         <tr>
-                          <td className="wk_width_2"> 12/12/2023 </td>
-                          <td className="wk_width_2"> {`BC ${12389 + index}`} </td>
-                          <td className="wk_width_2">{row?.po_date} </td>
-                          <td className="wk_width_2">{row?.po_serial} </td>
-                          <td className="wk_width_3">{row.material_code}</td>
-                          <td className="wk_width_2">{row.item_name}</td>
-                          <td className="wk_width_2">{row.category}</td>
-                          <td className="wk_width_1">{row.qty}</td>
-                          <td className="wk_width_1">{row.unit_measurement}</td>
-                          <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
-                          <td className="wk_width_2 wk_text_right">
-                            {fCurrency(Math.floor(row.qty * row.unit_price), 'id')}
+                          <td className="wk_width_2">{row?.recoded_date}</td>
+                          <td className="wk_width_2">{row?.customs_doc}</td>
+                          <td className="wk_width_2">{row?.customs_document_number}</td>
+                          <td className="wk_width_2">{row?.customs_document_date}</td>
+                          <td className="wk_width_2">{row?.hs_code_item}</td>
+                          <td className="wk_width_2">{row?.customs_item_number}</td>
+                          <td className="wk_width_2">{row?.serial_number}</td>
+                          <td className="wk_width_2">{row?.shipment_date}</td>
+                          <td className="wk_width_2">{row?.sku_id}</td>
+                          <td className="wk_width_2">{row?.item_name}</td>
+                          <td className="wk_width_2">{row?.unit_measurement}</td>
+                          <td className="wk_width_2">{row?.qty}</td>
+                          <td className="wk_width_2">
+                            {row.currency === 2 ? 'Rupiah' : 'Dollar US'}
                           </td>
+                          <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
+                          <td className="wk_width_2">{'Gudang'}</td>
+                          <td className="wk_width_2">{firstLetterUpperCase(row.buyer_name)}</td>
+                          <td className="wk_width_2">{firstLetterUpperCase(row.country)}</td>
                         </tr>
                       ))}
                     </tbody>

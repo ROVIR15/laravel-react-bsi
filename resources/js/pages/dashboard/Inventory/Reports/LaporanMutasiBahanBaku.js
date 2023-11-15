@@ -172,7 +172,7 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -255,6 +255,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell>No</TableCell>
                   <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
@@ -270,9 +271,10 @@ function Inbound() {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row, index) => (
                     <TableRow>
+                      <TableCell>{row.id}</TableCell>
                       <TableCell>
                         {/* {row.sku_barang} */}
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                        {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
@@ -292,7 +294,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Mutasi Barang</Typography>
+            <Typography variant="h3">Laporan Mutasi Bahan Baku</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -301,14 +303,14 @@ function Inbound() {
                 <Typography variant="p" style={{ marginRight: '3em' }}>
                   Dari Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.start_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.start_date}`}</Typography>
               </div>
 
               <div>
                 <Typography variant="p" style={{ marginRight: '1.4em' }}>
                   Sampai Tanggal
                 </Typography>
-                <Typography variant="p">{`: ${values.end_date}`}</Typography>
+                <Typography variant="p">{`: ${rangeDate.end_date}`}</Typography>
               </div>
             </Stack>
           </Grid>
@@ -320,7 +322,10 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          No
+                        </th>
+                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
                           Kode BB
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
@@ -349,15 +354,17 @@ function Inbound() {
                     <tbody>
                       {payloadData?.map((row, index) => (
                         <tr>
-                          <td className="wk_width_2">{row.document_number}</td>
-                          <td className="wk_width_2">{row.document_date}</td>
+                          <td className="wk_width_1">{row.id}</td>
                           <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                            {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
-                          <td className="wk_width_3">{row.unit_measurement}</td>
-                          <td className="wk_width_1">{row.qty}</td>
-                          <td className="wk_width_1">{row.subcontractor_name}</td>{' '}
+                          <td className="wk_width_2">{row.unit_measurement}</td>
+                          <td className="wk_width_3">{row.initial_stock}</td>
+                          <td className="wk_width_1">{row.qty_in}</td>
+                          <td className="wk_width_1">{row.qty_out}</td>
+                          <td className="wk_width_1">{row?.initial_stock + row?.qty_in + row?.qty_out}</td>
+                          <td className="wk_width_1">{row.facility_name}</td>
                         </tr>
                       ))}
                     </tbody>

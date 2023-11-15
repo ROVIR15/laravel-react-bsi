@@ -86,6 +86,7 @@ export const AuthProvider = ({ children }) => {
   // loading state is over.
   function login(email, password) {
     setLoading(true);
+    setError(null);
 
     try {
       AUTHAPI.login(email, password, function(res){

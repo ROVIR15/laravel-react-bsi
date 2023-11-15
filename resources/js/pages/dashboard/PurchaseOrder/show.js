@@ -342,9 +342,14 @@ function SalesOrder() {
             break;
         }
         // update on firebase
-        API.updatePurchaseOrderItem(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updatePurchaseOrderItem(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -476,11 +481,11 @@ function SalesOrder() {
       if (isEmpty(description)) throw new Error('description is zero');
       API.updateOrder(values.order_id, { description }, function (res) {
         if (!res) return;
-        if (res.success) alert('success');
-        else throw new Error('error occured failed store data');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -494,11 +499,11 @@ function SalesOrder() {
     try {
       API.updateOrder(values.order_id, { tax, currency_id: values.currency_id }, function (res) {
         if (!res) return;
-        if (res.success) alert('success');
-        else throw new Error('error occured failed store data');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 

@@ -163,7 +163,7 @@ function Inbound() {
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -182,7 +182,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{`${titleCase("Laporan Pemakaian Bahan Baku")}`}</Typography>
+              <Typography variant="h5">{`${titleCase('Laporan Pemakaian Bahan Baku')}`}</Typography>
               <Button
                 variant="contained"
                 startIcon={<Icon icon={downloadIcon} />}
@@ -246,14 +246,18 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell align="center" colSpan={1}></TableCell>
                   <TableCell align="center" colSpan={2}>
-                    Bukti Pengeluaran 
+                    Bukti Pengeluaran
                   </TableCell>
-                  <TableCell colSpan={3}>{' '}</TableCell>
-                  <TableCell colSpan={2}>Jumlah</TableCell>
+                  <TableCell colSpan={3}> </TableCell>
+                  <TableCell align="center" colSpan={2}>
+                    Jumlah
+                  </TableCell>
                   <TableCell colSpan={1}></TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>No </TableCell>
                   <TableCell>Nomor </TableCell>
                   <TableCell>Tanggal</TableCell>
                   <TableCell>Kode BB</TableCell>
@@ -269,6 +273,7 @@ function Inbound() {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row, index) => (
                     <TableRow>
+                      <TableCell>{row.id}</TableCell>
                       <TableCell>{row.document_number}</TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
@@ -319,6 +324,7 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor Bukti Pengeluaran Barang
                         </th>
@@ -335,9 +341,6 @@ function Inbound() {
                           Satuan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Saldo Awal
-                        </th>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Jumlah Pemakaian Barang
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
@@ -351,9 +354,10 @@ function Inbound() {
                     <tbody>
                       {payloadData?.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{row.id}</td>
                           <td className="wk_width_2">{row.document_number}</td>
                           <td className="wk_width_2">{row.document_date}</td>
-                          <td className="wk_width_3">{generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}</td>
+                          <td className="wk_width_3">{row.sku_id}</td>
                           <td className="wk_width_1">{row.item_name}</td>
                           <td className="wk_width_1">{row.unit_measurement}</td>
                           <td className="wk_width_1">{row.qty_digunakan}</td>

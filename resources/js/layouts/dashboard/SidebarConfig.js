@@ -178,11 +178,11 @@ const sidebarConfig = [
         title: 'Laporan Waste/Scrap',
         path: '/dashboard/laporan-kite/laporan-skrap-barang'
       },
-      {
+      // {
         // done completing columns per 5 table nomo 8
-        title: 'Laporan Mutasi Waste/Scrap',
-        path: '/dashboard/laporan-kite/laporan-mutasi-skrap'
-      },
+        // title: 'Laporan Mutasi Waste/Scrap',
+        // path: '/dashboard/laporan-kite/laporan-mutasi-skrap'
+      // },
       {
         title: 'CCTV Pengawasan',
         path: '/dashboard/laporan-kite/cctv-factory'

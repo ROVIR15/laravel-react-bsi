@@ -70,11 +70,13 @@ function Inbound() {
       if (isEmpty(values.start_date) || isEmpty(values.start_date) || isEmpty(values.category))
         new Error('Error processing your request!');
 
-      let param = `?fromDate=${rangeDate.start_date}&thruDate=${rangeDate.end_date}&type_of_facility=${15}`;
+      let param = `?fromDate=${rangeDate.start_date}&thruDate=${
+        rangeDate.end_date
+      }&type_of_facility=${15}`;
 
       API.getReportMutasi_alt(param, function (res) {
         if (!res) return;
-        if (!res.data) new Error('Error processing request');
+        if (!res.success) new Error('Error processing request');
         else {
           // let _res = rearrange_data_material_transfer(res.data);
           setPayloadData(res.data);
@@ -163,17 +165,16 @@ function Inbound() {
   };
 
   useEffect(() => {
-
-    if(searchParams.get('cat') === 'bahan_jadi'){
-      setPayloadData(__payload2)
+    if (searchParams.get('cat') === 'bahan_jadi') {
+      setPayloadData(__payload2);
     } else {
-      setPayloadData(__payload1)
+      setPayloadData(__payload1);
     }
     // handleGo();
   }, []);
 
   const [rangeDate, setRangeDate] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
 
@@ -267,23 +268,27 @@ function Inbound() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {payloadData
-                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  ?.map((row, index) => (
-                    <TableRow>
-                      <TableCell>
-                        {/* {row.sku_barang} */}
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
-                      </TableCell>
-                      <TableCell>{row.item_name}</TableCell>
-                      <TableCell>{row.unit_measurement}</TableCell>
-                      <TableCell>{row.initial_stock}</TableCell>
-                      <TableCell>{row.qty_in}</TableCell>
-                      <TableCell>{row.qty_out}</TableCell>
-                      <TableCell>{(row?.initial_stock+row?.qty_in)+row?.qty_out}</TableCell>
-                      <TableCell>{row?.facility_name}</TableCell>
-                    </TableRow>
-                  ))}
+                {payloadData.length > 0 ? (
+                  payloadData
+                    ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    ?.map((row, index) => (
+                      <TableRow>
+                        <TableCell>
+                          {/* {row.sku_barang} */}
+                          {generalizeSKU(row.goods_id, row?.product_id, row.product_feature_id)}
+                        </TableCell>
+                        <TableCell>{row.item_name}</TableCell>
+                        <TableCell>{row.unit_measurement}</TableCell>
+                        <TableCell>{row.initial_stock}</TableCell>
+                        <TableCell>{row.qty_in}</TableCell>
+                        <TableCell>{row.qty_out}</TableCell>
+                        <TableCell>{row?.initial_stock + row?.qty_in + row?.qty_out}</TableCell>
+                        <TableCell>{row?.facility_name}</TableCell>
+                      </TableRow>
+                    ))
+                ) : (
+                  <TableRow>Tidak Ada</TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -358,7 +363,9 @@ function Inbound() {
                           <td className="wk_width_1">{row.initial_stock}</td>
                           <td className="wk_width_1">{row.qty_in}</td>
                           <td className="wk_width_1">{row.qty_out}</td>
-                          <td className="wk_width_1">{(row?.initial_stock+row?.qty_in)+row?.qty_out}</td>
+                          <td className="wk_width_1">
+                            {row?.initial_stock + row?.qty_in + row?.qty_out}
+                          </td>
                           <td className="wk_width_1">{row?.facility_name}</td>
                         </tr>
                       ))}

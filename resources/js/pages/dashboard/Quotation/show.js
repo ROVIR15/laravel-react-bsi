@@ -241,7 +241,6 @@ function Quotation() {
         } catch (error) {
           enqueueSnackbar('', { variant: 'failedAlert' });
         }
-
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -303,7 +302,7 @@ function Quotation() {
 
     try {
       API.getAQuote(id, function (res) {
-        if(!res) return
+        if (!res) return;
         if (!res.data) throw new Error('Error');
         else {
           const quoteItem = res.data.quote_items.map(function (key, index) {
@@ -319,7 +318,7 @@ function Quotation() {
               unit_price: key.unit_price
             };
           });
-    
+
           setValues({
             id: res.data.id,
             po_number: res.data.po_number,
@@ -331,17 +330,16 @@ function Quotation() {
             currency_id: res.data.currency_id,
             valid_thru: res.data.valid_thru
           });
-    
+
           setSelectedValueSO(res.data.party);
           setSelectedValueSH(res.data.ship);
-    
-          setItems(quoteItem);  
-        }
-      });      
-    } catch (error) {
-      alert(error)
-    }
 
+          setItems(quoteItem);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
   }, [id]);
 
   // Populate
@@ -351,12 +349,11 @@ function Quotation() {
     let payload = { items: populateState, quote_id: parseInt(id) };
     try {
       API.updateQuoteItem(0, payload, (res) => {
-        if (!res.success) alert('failed');
-        alert('success');
-        handleUpdateAllRows();
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
-    } catch (e) {
-      alert(e);
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -374,11 +371,11 @@ function Quotation() {
     try {
       API.updateQuote(id, { currency_id: event.target.value }, function (res) {
         if (!res) return;
-        if (!res.success) throw new Error('failed to update quote');
-        else throw new Error('success');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
@@ -387,11 +384,11 @@ function Quotation() {
     try {
       API.updateQuote(id, { tax: values.tax }, function (res) {
         if (!res) return;
-        if (!res.success) throw new Error('failed to update quote');
-        else throw new Error('success');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
   };
 
