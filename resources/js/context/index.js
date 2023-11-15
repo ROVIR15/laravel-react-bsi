@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.clear();
         if(!res) {
           alert('error');
-          return
+          return false
         };
         const { success, access_token, user, ...rest } = res?.data;
         if(success) {
@@ -101,16 +101,19 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('user', JSON.stringify(user));
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
           navigate('/dashboard');
+          return true
         } else {
           setError(rest.error);
+          return false;
         }
       });
     } catch(error) {
       setError(error);
+      return false
     }
 
     setLoading(false);
-    return;
+    return true;
   }
 
   // Sends sign up details to the server. On success we just apply

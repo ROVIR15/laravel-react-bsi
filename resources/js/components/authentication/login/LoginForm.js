@@ -20,6 +20,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 
 import useAuth from '../../../context';
+import { isNull } from 'lodash'
 
 // ----------------------------------------------------------------------
 
@@ -44,7 +45,12 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: (values) => {
       const { email, password } = values;
-      login(email, password);
+      let res = login(email, password);
+
+      setSubmitting(false);
+      if (!res || !isNull(error)){
+        alert('Please try again!')
+      }
     }
   });
 

@@ -22,23 +22,32 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($loginValidator)) {
+        try {
+            if (!Auth::attempt($loginValidator)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid credentials'
+                ], 401);
+            }
+    
+            $accessToken = Auth::user()->createToken('auth-token')->accessToken;
+            $user = User::where('id', Auth::user()->id)->with('pages', 'role')->first();
+    
             return response()->json([
-                'success' => false,
-                'error' => 'Invalid credentials'
-            ], 401);
+                'data' => [
+                  'success' => true,
+                  'access_token' => $accessToken,
+                  'user' => $user  
+                ]
+            ], 200);    
+        } catch (\Throwable $th) {
+            return response()->json([
+                'data' => [
+                  'success' => false,
+                  'error' => 'failed login'
+                ]
+            ], 500);
         }
-
-        $accessToken = Auth::user()->createToken('auth-token')->accessToken;
-        $user = User::where('id', Auth::user()->id)->with('pages', 'role')->first();
-
-        return response()->json([
-            'data' => [
-              'success' => true,
-              'access_token' => $accessToken,
-              'user' => $user  
-            ]
-        ], 200);
     }
 
     public function register(Request $request){
