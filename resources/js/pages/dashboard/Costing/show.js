@@ -59,6 +59,7 @@ import {
 import { isUndefined, isEmpty, isNull } from 'lodash';
 import LoadingPage from './components/LoadingPage';
 import useAuth from '../../../context';
+import { generalizeSKU } from '../../../utils/formatProduct';
 
 function getPathname(array) {
   if (!array.length) console.error('Require an Array type');
@@ -187,8 +188,8 @@ function BillofMaterial() {
       } = key;
 
       let item_name = `${goods?.name} ${color} ${size}`;
-      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
-
+      const sku_id = generalizeSKU(key?.product_feature?.product?.goods_id, key?.product_feature?.product?.id, key?.product_feature?.id);
+      
       return {
         ...goods,
         ...rest,
@@ -588,7 +589,7 @@ function BillofMaterial() {
       } = key;
 
       let item_name = `${goods?.name} ${color} ${size}`;
-      const sku_id = `RM-${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
+      const sku_id = `${key?.product_feature?.product?.goods_id}-${key?.product_feature?.product?.id}-${key?.product_feature?.id}`;
 
       return {
         ...goods,

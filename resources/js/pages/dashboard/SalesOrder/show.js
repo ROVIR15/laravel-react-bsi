@@ -61,6 +61,7 @@ import { fCurrency } from '../../../utils/formatNumber';
 import { enqueueSnackbar } from 'notistack';
 import LoadingPage from '../../../components/LoadingPage';
 import { UploadPaper } from './components/UploadPaper';
+import { generalizeSKU } from '../../../utils/formatProduct';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -226,7 +227,7 @@ function SalesOrder() {
     // transfrom data of order item
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
-      const sku_id = `RM-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
+      const sku_id = generalizeSKU(product_feature?.product?.goods_id, product_feature?.product?.id, product_feature?.id);
 
       return {
         ...product_feature,

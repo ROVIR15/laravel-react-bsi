@@ -1,5 +1,6 @@
 import { isArray, sum } from 'lodash';
 import moment from 'moment';
+import { generalizeSKU } from '../../utils/formatProduct';
 import { dateDifference } from '../../utils/formatTime';
 
 export function isEmpty(array) {
@@ -374,7 +375,7 @@ export function inventoryItemWithStock(array, filter) {
     let current_qty = _stock_in && _stock_out ? (stock_in[0]?.qty - stock_shipped_out[0]?.qty) : 0
     let counted_qty = 0
 
-    const sku_id = `RM-${product?.goods_id}-${product?.id}-${id}`;
+    const sku_id = generalizeSKU(product?.goods_id, product?.id, id);
 
     return {
       id,
@@ -1088,7 +1089,7 @@ export function _shipmentItem(array) {
       order_item?.product_feature?.product?.goods ? order_item?.product_feature?.product?.goods?.name : order_item?.product_feature?.product?.service?.name
     } - ${order_item?.product_feature?.size} -  ${order_item?.product_feature?.color}`;
     
-    const sku_id = `${order_item?.product_feature?.product?.goods_id}-${order_item?.product_feature?.product?.id}-${order_item?.product_feature?.id}`;
+    const sku_id = generalizeSKU(order_item?.product_feature?.product?.goods_id, order_item?.product_feature?.product?.id, order_item?.product_feature?.id);
 
     let _qty = qty > 0 ? qty : order_item?.qty 
     return {

@@ -64,6 +64,7 @@ import LoadingPage from '../../../components/LoadingPage';
 
 // Snackbar
 import { enqueueSnackbar } from 'notistack';
+import { generalizeSKU } from '../../../utils/formatProduct';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -186,7 +187,8 @@ function SalesOrder() {
 
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
-      const sku_id = `M-${product_feature?.product?.goods_id}-${product_feature?.product?.id}-${product_feature?.id}`;
+
+      const sku_id = generalizeSKU(product_feature?.product?.goods_id, product_feature?.product?.id, product_feature?.id);
       const shipment_date_ = moment(key.shipment_estimated).format('YYYY-MM-DD');
 
       return {
