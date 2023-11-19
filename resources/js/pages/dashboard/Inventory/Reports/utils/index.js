@@ -89,7 +89,7 @@ export function generalizeSKU(order_item_id, product_feature_id, product_id){
 }
 
 function generalizeSOPO(order_id, document_id, type){
-  if('po' === type) return `PO-${order_id}${document_id}`
-  if('so' === type) return `SO-${order_id}${document_id}`
-  return `${order_id}00`
+  if('po' === type) return `PO-${strPadLeft(order_id, 4, 0)}${strPadLeft(document_id, 4, 0)}`
+  if('so' === type) return `SO-${strPadLeft(order_id, 4, 0)}${strPadLeft(document_id, 4, 0)}`
+  return `${strPadLeft(order_id, 4, 0)}`
 }
