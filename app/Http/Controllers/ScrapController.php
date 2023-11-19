@@ -79,10 +79,10 @@ class ScrapController extends Controller
 
         try {
             $query = ScrapItem::with('scrap', 'order_item', 'product_feature', 'product')
-                // ->whereHas('scrap', function ($query) use ($fromDate, $thruDate){
-                //     return $query
-                //     ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
-                // })
+                ->whereHas('scrap', function ($query) use ($fromDate, $thruDate){
+                    return $query
+                    ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
+                })
                 ->get()
                 ->map(function ($item, $index) {
                     $productFeature = $item->product_feature;
