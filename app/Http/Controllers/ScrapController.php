@@ -10,6 +10,8 @@ use App\Models\Inventory\Scrap;
 use App\Models\Inventory\ScrapItem;
 use App\Models\Product\Goods;
 use App\Models\Product\Product;
+use App\Models\Product\ProductFeature;
+use App\Models\Product\ProductHasCategory;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +29,7 @@ class ScrapController extends Controller
         $param = $request->all();
         try {
             //code...
-            $query = Scrap::with('items')->get()->map(function ($query) {
+            $query = Scrap::with('items')->orderBy('id', 'DESC')->get()->map(function ($query) {
                 $arr = $query->items;
 
                 return ([
@@ -39,6 +41,7 @@ class ScrapController extends Controller
                     'jumlah_barang' => $arr->sum('qty')
                 ]);
             });
+
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
@@ -158,12 +161,44 @@ class ScrapController extends Controller
             $__items = [];
 
             foreach ($param['items'] as $item) {
+                $product_master = Product::find($item['product_id']);
+                $goods_item = Goods::find($product_master['goods_id']);
+                $product_variant = ProductFeature::find($item['product_feature_id']);
+
+                $goods_scrap = Goods::create([
+                    'name' => $goods_item['name'] . ' Scrap',
+                    'satuan' => $item['unit_measurement'],
+                    'value' => $goods_item['value'],
+                    'brand' => $goods_item['brand'],
+                    'imageUrl' => $goods_item['imageUrl']
+                ]);
+
+                $product_scrap = Product::create([
+                    'goods_id' => $goods_scrap['id'],
+                ]);
+                DB::commit();
+
+                ProductHasCategory::create([
+                    'product_id' => $product_scrap['id'],
+                    'product_category_id' => 10
+                ]);
+                DB::commit();
+
+                $temp = [
+                    'product_id' => $product_scrap['id'],
+                    'color' => $product_variant['color'],
+                    'size' => $product_variant['size']
+                ];
+
+                $product_variant_scrap = ProductFeature::create($temp);
+                DB::commit();
+
                 array_push($__items, [
                     'unit_measurement' => $item['unit_measurement'],
-                    'product_id' => $item['product_id'],
-                    'product_feature_id' => $item['product_feature_id'],
+                    'product_id' => $product_scrap['id'],
+                    'product_feature_id' => $product_variant_scrap['id'],
                     'order_id' => isset($item['order_id']) ? $item['order_id'] : null,
-                    'order_item_id' => isset($item['order_item_id']) ? $item[order_item_id] : null,
+                    'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null,
                     'qty' => $item['qty'],
                     'scrap_id' => $query->id
                 ]);
@@ -173,8 +208,8 @@ class ScrapController extends Controller
                 $_temp = [
                     'costing_item_id' => $_item_costing_id,
                     'material_transfer_id' => $mt['id'],
-                    'product_id' => $item['product_id'],
-                    'product_feature_id' => $item['product_feature_id'],
+                    'product_id' => $product_scrap['id'],
+                    'product_feature_id' => $product_variant_scrap['id'],
                     'transfer_qty' => $item['qty']
                 ];
 
@@ -205,9 +240,9 @@ class ScrapController extends Controller
                     'material_transfer_item_id' => $mti['id'],
                     'material_transfer_item_realisation_id' => $mtr['id'],
                     'facility_id' => 4,
-                    'goods_id' => $goods,
-                    'product_id' => $item['product_id'],
-                    'product_feature_id' => $item['product_feature_id'],
+                    'goods_id' => $goods_scrap['id'],
+                    'product_id' => $product_scrap['id'],
+                    'product_feature_id' => $product_variant_scrap['id'],
                     'type_movement' => 2, // 1 for incoming and 2 outbound
                     'qty' => $item['qty'] * -1,
                 ]);
@@ -220,9 +255,9 @@ class ScrapController extends Controller
                     'material_transfer_item_id' => $mti['id'],
                     'material_transfer_item_realisation_id' => $mtr['id'],
                     'facility_id' => 15,
-                    'goods_id' => $goods,
-                    'product_id' => $item['product_id'],
-                    'product_feature_id' => $item['product_feature_id'],
+                    'goods_id' => $goods_scrap['id'],
+                    'product_id' => $product_scrap['id'],
+                    'product_feature_id' => $product_variant_scrap['id'],
                     'type_movement' => 1, // 1 for incoming and 2 outbound
                     'qty' => $item['qty']
                 ]);
