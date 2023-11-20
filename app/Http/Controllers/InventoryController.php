@@ -609,43 +609,70 @@ class InventoryController extends Controller
       if (!isset($fromDate) && !isset($thruDate)) {
         throw new Exception("Error Processing Request", 1);
       }
-      $query = GoodsMovement::with('product', 'product_feature', 'goods', 'material_transfer')
-        ->where('facility_id', $type)
-        ->whereHas('material_transfer', function ($query) {
-          return $query->whereHas('relation_to_shipment', function ($query) {
-            return $query->whereHas('shipment', function ($query) {
-              return $query->where('subcontract_flag', 1);
-            });
-          });
-        })
-        // ->whereHas('relations_with_shipment', function($query) {
-        //   return $query->whereHas('shipment', function($query) {
-        //     return $query->where('shipment_type_id', 1);
-        //   });
-        // })
-        // ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
-        ->get()
-        ->map(function ($item, $index) {
-          $materialTransfer = $item->material_transfer ? $item->material_transfer : null;
-          $productFeature = $item->product_feature;
-          $product = $productFeature ? $productFeature->product : null;
-          $goods = $product ? $product->goods : null;
+      // $query = GoodsMovement::with('product', 'product_feature', 'goods', 'material_transfer')
+      //   ->where('facility_id', $type)
+      //   ->whereHas('material_transfer', function ($query) {
+      //     return $query->whereHas('relation_to_shipment', function ($query) {
+      //       return $query->whereHas('shipment', function ($query) {
+      //         return $query->where('subcontract_flag', 1);
+      //       });
+      //     });
+      //   })
+      //   // ->whereHas('relations_with_shipment', function($query) {
+      //   //   return $query->whereHas('shipment', function($query) {
+      //   //     return $query->where('shipment_type_id', 1);
+      //   //   });
+      //   // })
+      //   // ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+      //   ->get()
+      //   ->map(function ($item, $index) {
+      //     $materialTransfer = $item->material_transfer ? $item->material_transfer : null;
+      //     $productFeature = $item->product_feature;
+      //     $product = $productFeature ? $productFeature->product : null;
+      //     $goods = $product ? $product->goods : null;
 
-          $mtsr = MaterialTransferShipmentRelationship::with('shipment')
-            ->where('material_transfer_id', $materialTransfer->id)->get();
-          return [
-            'id' => $index + 1,
-            'document_number' => $materialTransfer->id,
-            'document_date' => $materialTransfer->est_transfer_date,
-            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
-            'goods_id' => $goods->id,
-            'product_id' => $productFeature->product->id,
-            'product_feature_id' => $item->product_feature_id,
-            'unit_measurement' => $goods ? $goods->satuan : null,
-            'subcontractor_name' => count($mtsr) ? $mtsr[0]->shipment->order->sales_order->ship->name : null,
-            'qty' => $item->qty
-          ];
-        });
+      //     $mtsr = MaterialTransferShipmentRelationship::with('shipment')
+      //       ->where('material_transfer_id', $materialTransfer->id)->get();
+      //     return [
+      //       'id' => $index + 1,
+      //       'document_number' => $materialTransfer->id,
+      //       'document_date' => $materialTransfer->est_transfer_date,
+      //       'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+      //       'goods_id' => $goods->id,
+      //       'product_id' => $productFeature->product->id,
+      //       'product_feature_id' => $item->product_feature_id,
+      //       'unit_measurement' => $goods ? $goods->satuan : null,
+      //       'subcontractor_name' => count($mtsr) ? $mtsr[0]->shipment->order->sales_order->ship->name : null,
+      //       'qty' => $item->qty
+      //     ];
+      //   });
+
+      $query = ShipmentItem::with(['shipment' => function ($query) {
+        return $query->with('ship_to');
+      }])->with('order_item')->whereHas('shipment', function ($query) {
+        return $query->where('shipment_type_id', 4);
+      })->groupBy('order_item_id')
+      ->get()
+      ->map(function ($item, $index) {
+        $productFeature = $item->order_item ? $item->order_item->product_feature : null;
+        $product = $productFeature ? $productFeature->product : null;
+        $goods = $product ? $product->goods : null;
+
+        $ship_to = $item->shipment->ship_to ? $item->shipment->ship_to['name'] : null;
+
+        return [
+          'id' => $index + 1,
+          'document_number' => 'SUBCONT-OUT-'.$item->shipment->id,
+          'document_date' => $item->shipment->delivery_date,
+          'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+          'goods_id' => $goods->id,
+          'product_id' => $product->id,
+          'product_feature_id' => $productFeature->id,
+          'unit_measurement' => $goods ? $goods->satuan : null,
+          'subcontractor_name' => $ship_to,
+          'qty' => $item->qty_shipped
+        ];
+      });
     } catch (Exception $th) {
       //throw $th;
       return response()->json([
