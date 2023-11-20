@@ -30,6 +30,7 @@ use App\Models\Inventory\MaterialTransferShipmentRelationship;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
+use Throwable;
 
 class InventoryController extends Controller
 {
@@ -183,7 +184,8 @@ class InventoryController extends Controller
     ]);
   }
 
-  public function change_date_format($str){
+  public function change_date_format($str)
+  {
     $timestamp = strtotime($str);
     $formatted_date = strftime('%e %B %Y', $timestamp);
     return $formatted_date;
@@ -268,7 +270,7 @@ class InventoryController extends Controller
             'id' => $index + 1,
             'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
-            'serial_number' => 'INSHIP-'. str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
+            'serial_number' => 'INSHIP-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
             'recoded_date' => $this->change_date_format($item->shipment->delivery_date),
             'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
             'product_id' => $product->id,
@@ -351,7 +353,7 @@ class InventoryController extends Controller
           $exportDoc  = $salesOrder->export_doc ? $salesOrder->export_doc : null;
 
           return [
-            'id' => $index+1,
+            'id' => $index + 1,
             'shipment_id' => $item->shipment->id,
             'serial_number' => $item->shipment->serial_number,
             'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
@@ -649,31 +651,32 @@ class InventoryController extends Controller
 
       $query = ShipmentItem::with(['shipment' => function ($query) {
         return $query->with('party');
-      }])->with('order_item')->whereHas('shipment', function ($query) {
-        return $query->where('shipment_type_id', 4);
+      }])->with('order_item')->whereHas('shipment', function ($query) use ($fromDate, $thruDate){
+        return $query->where('shipment_type_id', 4)
+          ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
       })
-      // ->groupBy('order_item_id')
-      ->get()
-      ->map(function ($item, $index) {
-        $productFeature = $item->order_item ? $item->order_item->product_feature : null;
-        $product = $productFeature ? $productFeature->product : null;
-        $goods = $product ? $product->goods : null;
+        // ->groupBy('order_item_id')
+        ->get()
+        ->map(function ($item, $index) {
+          $productFeature = $item->order_item ? $item->order_item->product_feature : null;
+          $product = $productFeature ? $productFeature->product : null;
+          $goods = $product ? $product->goods : null;
 
-        $ship_to = $item->shipment->ship_to ? $item->shipment->party['name'] : null;
+          $ship_to = $item->shipment->ship_to ? $item->shipment->party['name'] : null;
 
-        return [
-          'id' => $index + 1,
-          'document_number' => 'SUBCONT-OUT-'.$item->shipment->id,
-          'document_date' => $item->shipment->delivery_date,
-          'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
-          'goods_id' => $goods->id,
-          'product_id' => $product->id,
-          'product_feature_id' => $productFeature->id,
-          'unit_measurement' => $goods ? $goods->satuan : null,
-          'subcontractor_name' => $ship_to,
-          'qty' => $item->qty_shipped
-        ];
-      });
+          return [
+            'id' => $index + 1,
+            'document_number' => 'SUBCONT-OUT-' . $item->shipment->id,
+            'document_date' => $item->shipment->delivery_date,
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'goods_id' => $goods->id,
+            'product_id' => $product->id,
+            'product_feature_id' => $productFeature->id,
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'subcontractor_name' => $ship_to,
+            'qty' => $item->qty_shipped
+          ];
+        });
     } catch (\Throwable $th) {
       //throw $th;
       return response()->json([
