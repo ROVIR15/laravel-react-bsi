@@ -240,6 +240,7 @@ function Inbound() {
                   <TableCell colSpan={5}></TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>No </TableCell>
                   <TableCell>Nomor </TableCell>
                   <TableCell>Tanggal </TableCell>
                   <TableCell>Kode BB</TableCell>
