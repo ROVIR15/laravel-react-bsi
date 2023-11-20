@@ -386,8 +386,7 @@ function BillofMaterial() {
 
   const goodsColumns = useMemo(
     () => [
-      { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, width: 150, visible: 'hide' },
       { field: 'item_name', width: 300, headerName: 'Name', editable: false },
       // { field: 'size', headerName: 'Size', editable: true },
       // { field: 'color', headerName: 'Color', editable: true },

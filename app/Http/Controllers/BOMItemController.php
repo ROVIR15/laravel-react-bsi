@@ -10,6 +10,7 @@ use App\Models\Manufacture\BOMItem;
 
 use App\Http\Resources\Manufacture\BOMItem as BOMItemOneCollection;
 use App\Http\Resources\Manufacture\BOMItemCollection;
+use App\Models\Manufacture\CostingItemRevised;
 use App\Models\Order\OrderItem;
 use App\Models\Product\ProductFeature;
 use Illuminate\Http\Request;
@@ -372,7 +373,21 @@ class BOMItemController extends Controller
         $param = $request->all()['payload'];
         try {
             //code...
-            $query = BOMItem::find($id)->update($param);
+            $query_item = BOMItem::find($id);
+
+            CostingItemRevised::create([
+                'costing_id' => $query_item['bom_id'],
+                'costing_item_id' => $id,
+                'product_id' => $query_item['product_id'],
+                'product_feature_id' => $query_item['product_feature_id'],
+                'qty' => $query_item['qty'],
+                'consumption' => $query_item['consumption'],
+                'allowance' => $query_item['allowance'],
+                'unit_price' => $query_item['unit_price']
+            ]);
+
+            BOMItem::find($id)->update($param);
+
         } catch (Exception $th) {
             //throw $th;
             return response()->json([
