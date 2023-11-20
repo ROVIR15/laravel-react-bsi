@@ -648,7 +648,7 @@ class InventoryController extends Controller
       //   });
 
       $query = ShipmentItem::with(['shipment' => function ($query) {
-        return $query->with('ship_to');
+        return $query->with('party');
       }])->with('order_item')->whereHas('shipment', function ($query) {
         return $query->where('shipment_type_id', 4);
       })
