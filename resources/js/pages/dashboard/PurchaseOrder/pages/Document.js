@@ -378,7 +378,8 @@ function FirstPage() {
           <Button onClick={() => handleDialog('submit')} disabled={!submit || isSubmitted}>
             Submit
           </Button>
-          <Button onClick={() => handleDialog('review')} disabled={!review || isReviewed}>
+          <Button onClick={() => handleDialog('review')}>
+          {/* <Button onClick={() => handleDialog('review')} disabled={!review || isReviewed}> */}
             Review
           </Button>
           <Button onClick={() => handleDialog('approve')} disabled={!approve}>
