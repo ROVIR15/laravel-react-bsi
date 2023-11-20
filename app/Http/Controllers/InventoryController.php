@@ -659,7 +659,7 @@ class InventoryController extends Controller
         $product = $productFeature ? $productFeature->product : null;
         $goods = $product ? $product->goods : null;
 
-        $ship_to = $item->shipment->ship_to ? $item->shipment->ship_to['name'] : null;
+        $ship_to = $item->shipment->ship_to ? $item->shipment->party['name'] : null;
 
         return [
           'id' => $index + 1,
