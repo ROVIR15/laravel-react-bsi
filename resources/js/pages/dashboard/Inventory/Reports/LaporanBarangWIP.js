@@ -235,6 +235,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell colSpan={1}></TableCell>
                   <TableCell colSpan={2}> Bukti Pengeluaran</TableCell>
 
                   <TableCell colSpan={5}></TableCell>
