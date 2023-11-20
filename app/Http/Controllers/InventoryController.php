@@ -220,15 +220,15 @@ class InventoryController extends Controller
         }]);
       }, 'import_info'])
         ->whereHas('import_info')
-        // ->whereHas('shipment', function ($query) use ($from_date, $thru_date) {
-        //   return $query
-        //     ->where('shipment_type_id', 1)
-        //     ->whereHas('status', function ($query) {
-        //       // Filter shipments that have a status with shipment_type_status_id = 5 and group by shipment_id
-        //       return $query->where('shipment_type_status_id', 5)->groupBy('shipment_id');
-        //     })
-        //     ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
-        // })
+        ->whereHas('shipment', function ($query) use ($from_date, $thru_date) {
+          return $query
+            ->where('shipment_type_id', 1)
+            ->whereHas('status', function ($query) {
+              // Filter shipments that have a status with shipment_type_status_id = 5 and group by shipment_id
+              return $query->where('shipment_type_status_id', 5)->groupBy('shipment_id');
+            })
+            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
+        })
         ->get()
         ->map(function ($item, $index) {
           $orderItem = $item->order_item ? $item->order_item : null;
