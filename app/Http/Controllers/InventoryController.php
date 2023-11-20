@@ -674,7 +674,7 @@ class InventoryController extends Controller
           'qty' => $item->qty_shipped
         ];
       });
-    } catch (Exception $th) {
+    } catch (\Throwable $th) {
       //throw $th;
       return response()->json([
         'success' => false,
