@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\KITE\ExportDoc;
 use App\Models\KITE\ExportDocItem;
 
+use DB;
+
 class KITEExportController extends Controller
 {
     public function index(Request $request)
