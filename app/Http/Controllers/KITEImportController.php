@@ -6,6 +6,8 @@ use App\Models\KITE\ImportDoc;
 use App\Models\KITE\ImportDocItem;
 use Illuminate\Http\Request;
 
+use DB;
+
 class KITEImportController extends Controller
 {
     //
