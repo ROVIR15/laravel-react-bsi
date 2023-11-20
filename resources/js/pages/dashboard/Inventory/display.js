@@ -18,7 +18,8 @@ import API from '../../../helpers'; // Assume API methods are defined in helpers
 import { isArray, isEmpty, isEqual } from 'lodash';
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  // { id: 'id', label: 'ID', alignRight: false },
+  { id: 'sku_id', label: 'SKU ID', alignRight: false },
   { id: 'item_name', label: 'Item Name', alignRight: false },
   { id: 'current_stock', label: 'Current Stock', alignRight: false }
 ];
@@ -234,7 +235,7 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, item_name, stock_in, stock_out, current_stock } = row;
+                  const { id, item_name, sku_id, unit_measurement, stock_in, stock_out, current_stock } = row;
 
                   const isItemSelected = selected.includes(id);
 
@@ -248,9 +249,10 @@ function DisplayInventory({ placeHolder }) {
                       aria-checked={isItemSelected}
                       onClick={(event) => handleClick(event, id)}
                     >
-                      <TableCell align="left">{id}</TableCell>
+                      {/* <TableCell align="left">{id}</TableCell> */}
+                      <TableCell align="left">{sku_id}</TableCell>
                       <TableCell align="left">{item_name}</TableCell>
-                      <TableCell align="left">{current_stock}</TableCell>
+                      <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
                       <TableCell align="right">
                         <MoreMenu
                           scrapActive={true}

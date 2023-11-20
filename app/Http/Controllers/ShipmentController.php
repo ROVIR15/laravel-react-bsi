@@ -44,7 +44,7 @@ class ShipmentController extends Controller
 
         if (isset($type)) {
           if ($type === "34") {
-            $query = Shipment::with('order', 'type', 'status', 'sum', 'ship_to')
+            $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', 'ship_to')
               ->whereHas('type', function ($query) {
                 $query->whereIn('id', [3, 4]);
               })
@@ -53,7 +53,7 @@ class ShipmentController extends Controller
               ->orderBy('id', 'desc')
               ->get();
           } else {
-            $query = Shipment::with('order', 'type', 'status', 'sum', '__items')
+            $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items')
               ->whereHas('type', function ($query) use ($type) {
                 $query->where('id', $type);
               })
@@ -63,7 +63,7 @@ class ShipmentController extends Controller
               ->get();
           }
         } else {
-          $query = Shipment::with('order', 'type', 'status', 'sum')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum')
             ->with('__items')
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
@@ -72,7 +72,7 @@ class ShipmentController extends Controller
         }
       } else {
         if (isset($type)) {
-          $query = Shipment::with('order', 'type', 'status', 'sum', '__items')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items')
             // ->with(['__items' => function ($query){
             //   return $query->select('costing_item_id');
             // }])
@@ -80,7 +80,7 @@ class ShipmentController extends Controller
             ->orderBy('order_id', 'asc')
             ->get();
         } else {
-          $query = Shipment::with('order', 'type', 'status', 'sum')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum')
             ->orderBy('id', 'asc')
             ->get();
         }
@@ -95,6 +95,32 @@ class ShipmentController extends Controller
     }
 
     return response()->json(['data' => $query]);
+  }
+
+  public function shipmentListSubcontract(Request $request)
+  {
+
+    try {
+      //code...
+      $query = Shipment::with('order')
+        ->whereHas('type', function ($query) {
+          $query->whereIn('id', [4]);
+        })
+        ->orderBy('id', 'desc')
+        ->get();
+
+    } catch (\Throwable $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ]);
   }
 
   public function shipmentInvoicing(Request $request)
@@ -229,13 +255,13 @@ class ShipmentController extends Controller
   {
     try {
       $query = Shipment::with('items', 'order', 'type', 'status', 'ship_to')->find($id);
-      return response()->json(['data' => $query]);
     } catch (Exception $th) {
       return response()->json([
         'success' => false,
         'errors' => $th->getMessage()
       ], 500);
     }
+    return response()->json(['data' => $query]);
   }
 
   /**

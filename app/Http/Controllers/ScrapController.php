@@ -302,6 +302,7 @@ class ScrapController extends Controller
 
                 return [
                     'id' => $query->id,
+                    'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
                     'product_id' => $query->product_id,
                     'product_feature_id' => $query->product_feature_id,
                     'order_id' => $query->order_id,

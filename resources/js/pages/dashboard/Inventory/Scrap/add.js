@@ -114,6 +114,8 @@ function Scrap() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
+
+        console.log(editedIds)
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
@@ -126,6 +128,8 @@ function Scrap() {
             }
           });
         });
+
+        console.log(items);
 
         // update on field value
       } else {

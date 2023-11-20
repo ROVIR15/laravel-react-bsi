@@ -153,6 +153,7 @@ class InventoryController extends Controller
           return
             [
               'id' => $query['id'],
+              'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($query['id'], 4, '0', STR_PAD_LEFT),
               'product_id' => $query['product_id'],
               'product_feature_id' => $query['id'],
               'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
@@ -267,7 +268,7 @@ class InventoryController extends Controller
             'id' => $index + 1,
             'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
-            'serial_number' => 'INSHIP-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
+            'serial_number' => 'INSHIP-'. str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
             'recoded_date' => $this->change_date_format($item->shipment->delivery_date),
             'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
             'product_id' => $product->id,

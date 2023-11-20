@@ -27,37 +27,51 @@ class Shipment extends Model
         'ship_to'
     ];
 
-    public function items(){
+    public function items()
+    {
         return $this->hasMany('App\Models\Shipment\ShipmentItem')->with('order_item');
     }
 
-    public function __items(){
+    public function __items()
+    {
         return $this->belongsTo('App\Models\Shipment\ShipmentItem', 'id', 'shipment_id')->with('alt_order_item');
     }
 
-    public function sum(){
+    public function sum()
+    {
         return $this->hasMany('App\Models\Shipment\ShipmentItem')->select('id', 'shipment_id', DB::raw('sum(qty_shipped) as total_qty'))->groupBy('shipment_id');
     }
 
-    public function order(){
+    public function order()
+    {
         return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order', 'purchase_order');
     }
 
-    public function type(){
+    public function reconcile_based_sales_order()
+    {
+        return $this->belongsTo('App\Models\Reconcile\Reconcile', 'order_id', 'order_id')->with('costing2');
+    }
+
+
+    public function type()
+    {
         return $this->belongsTo('App\Models\Shipment\ShipmentType', 'shipment_type_id');
     }
 
-    public function status(){
+    public function status()
+    {
         return $this->hasMany('App\Models\Shipment\ShipmentStatus', 'shipment_id', 'id')
-        ->with('status_type')
-        ->orderBy('created_at', 'desc');
+            ->with('status_type')
+            ->orderBy('created_at', 'desc');
     }
 
-    public function hasInvoice(){
+    public function hasInvoice()
+    {
         return $this->belongsTo('App\Modes\Invoice\InvoiceHasShipment', 'id');
     }
 
-    public function ship_to(){
+    public function ship_to()
+    {
         return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
     }
 }

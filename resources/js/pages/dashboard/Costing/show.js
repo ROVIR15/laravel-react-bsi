@@ -386,6 +386,7 @@ function BillofMaterial() {
 
   const goodsColumns = useMemo(
     () => [
+      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
       { field: 'sku_id', headerName: 'SKU ID', editable: false, width: 150, visible: 'hide' },
       { field: 'item_name', width: 300, headerName: 'Name', editable: false },
       // { field: 'size', headerName: 'Size', editable: true },
@@ -1022,7 +1023,7 @@ function BillofMaterial() {
                                 <Table>
                                   <TableRow>
                                     <TableCell>
-                                      <Typography variant="h6">No</Typography>
+                                      <Typography variant="h6">SKU ID</Typography>
                                     </TableCell>
                                     <TableCell>
                                       <Typography variant="h6">Nama Barang</Typography>
@@ -1050,7 +1051,7 @@ function BillofMaterial() {
                                     listPO.map(function (item, index) {
                                       return (
                                         <TableRow>
-                                          <TableCell variant="subtitle">{index + 1}</TableCell>
+                                          <TableCell variant="subtitle">{item.sku_id}</TableCell>
                                           <TableCell variant="subtitle">
                                             <Typography variant="body1">
                                               {`${item.item_name}`}

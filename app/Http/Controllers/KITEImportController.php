@@ -127,6 +127,7 @@ class KITEImportController extends Controller
 
                             $kite_items[] =  [
                                 'id' => $next->id,
+                                'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
                                 'order_item_id' => $next->order_item_id,
                                 'product_id' => $product->id,
                                 'product_feature_id' => $productFeature->id,

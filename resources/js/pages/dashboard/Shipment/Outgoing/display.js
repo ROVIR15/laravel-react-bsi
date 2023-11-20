@@ -24,6 +24,8 @@ import API from '../../../../helpers';
 
 //
 import Test4 from '../../../../components/Test4';
+
+import { strPadLeft } from '../../../../utils/formatProduct';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -239,8 +241,15 @@ function OutboundDelivery({ placeHolder }) {
                       est_delivery_date,
                       sum,
                       order,
+                      order_id,
                       status
                     } = row;
+                    let costing_id = row?.reconcile_based_sales_order
+                      ? row?.reconcile_based_sales_order.costing_id
+                      : null;
+                    let id_shipment_code = isNull(order_id)
+                      ? `OUTSHIP-0000-${strPadLeft(id, 4, 0)}`
+                      : `OUTSHIP-${strPadLeft(order?.sales_order_id, 4, 0)}-${strPadLeft(id, 4, 0)}`;
                     const isItemSelected = selected.indexOf(name) !== -1;
                     let status_item = {
                       status: '',
@@ -285,7 +294,7 @@ function OutboundDelivery({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{id_shipment_code}</TableCell>
                         <TableCell align="left">
                           <PinStatus
                             status={status_item.status}

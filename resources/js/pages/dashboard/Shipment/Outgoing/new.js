@@ -197,8 +197,8 @@ function OutboundDelivery() {
       { field: 'name', headerName: 'Name', width: 350, editable: false },
       { field: 'size', headerName: 'Size', editable: false },
       { field: 'color', headerName: 'Color', editable: false },
-      { field: 'qty_order', headerName: 'Qty Order', editable: false },
-      { field: 'deliv_qty', headerName: 'Delivery Qty', editable: true },
+      { field: 'qty_order', headerName: 'Qty Pesanan', editable: false },
+      { field: 'deliv_qty', headerName: 'Qty Dikirim', editable: true },
       { field: 'description', headerName: 'Description', editable: true },
       {
         field: 'actions',

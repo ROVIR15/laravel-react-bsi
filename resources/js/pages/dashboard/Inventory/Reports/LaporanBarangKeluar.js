@@ -35,6 +35,7 @@ import { isEmpty } from 'lodash';
 
 import { generalizeSKU, rearrange_data_out } from './utils';
 import moment from 'moment';
+import { strPadLeft } from '../../../../utils/formatProduct';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
@@ -269,7 +270,8 @@ function Inbound() {
                       <TableCell>{row?.id}</TableCell>
                       <TableCell>{row?.export_document_number}</TableCell>
                       <TableCell>{row?.export_document_date}</TableCell>
-                      <TableCell>{`OBSHIP-${row?.order_id}-${row?.shipment_id}`} </TableCell>
+                      {/* <TableCell>{row?.serial_number}</TableCell> */}
+                      <TableCell>{`OUTSHIP-${strPadLeft(row?.sales_order_id, 4, 0)}-${strPadLeft(row?.shipment_id, 4, 0)}`} </TableCell>
                       <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>

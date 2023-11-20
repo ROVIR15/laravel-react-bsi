@@ -227,10 +227,10 @@ function OutboundDelivery() {
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
       { field: 'name', headerName: 'Name', width: 350, editable: false },
       { field: 'color', headerName: 'Color', editable: false },
-      { field: 'qty_order', headerName: 'Qty Order', editable: false },
-      { field: 'qty', headerName: 'Qty Kirim', editable: true },
+      { field: 'qty_order', headerName: 'Qty Pesanan', editable: false },
+      { field: 'qty', headerName: 'Qty Dikirim', editable: true },
       { field: 'satuan', headerName: 'Satuan', editable: false },
-      { field: 'deliv_qty', headerName: 'Qty Delivery', editable: true },
+      { field: 'deliv_qty', headerName: 'Qty On-hand', editable: true },
       { field: 'description', width: 400, headerName: 'Description', editable: true },
       {
         field: 'actions',

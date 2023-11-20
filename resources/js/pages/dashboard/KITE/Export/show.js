@@ -217,6 +217,7 @@ function OutboundDelivery() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', width: 150, headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 350, align: 'left' },
       { field: 'qty', headerName: 'Qty', align: 'left' },
       { field: 'unit_price', headerName: 'Harga', align: 'left' },

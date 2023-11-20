@@ -1,6 +1,6 @@
 import { isString } from 'lodash';
 
-function strPadLeft(value, length, padChar) {
+export function strPadLeft(value, length, padChar) {
   value = isString(value) ? value : String(value);
   while (value.length < length) {
     value = padChar + value;

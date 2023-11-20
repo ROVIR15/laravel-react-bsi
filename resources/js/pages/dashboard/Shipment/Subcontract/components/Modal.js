@@ -58,26 +58,34 @@ export default function BasicModal({
     let active = true;
 
     try {
-      if (category === 3) {
-        API.getSalesOrderV2('', (res) => {
-          if (!res) return;
-          if (!res.data) {
-            setCostingData([]);
-          } else {
-            setCostingData(res.data);
-          }
-        });
-      } else if (category === 4) {
-        API.getPurchaseOrderV2('', (res) => {
-          if (!res) return;
-          if (!res.data) {
-            setCostingData([]);
-          } else {
-            setCostingData(res.data);
-          }
-        });
-      } else {
-      }
+      API.getPurchaseOrderV2('', (res) => {
+        if (!res) return;
+        if (!res.data) {
+          setCostingData([]);
+        } else {
+          setCostingData(res.data);
+        }
+      });
+      // if (category === 3) {
+      //   API.getSalesOrderV2('', (res) => {
+      //     if (!res) return;
+      //     if (!res.data) {
+      //       setCostingData([]);
+      //     } else {
+      //       setCostingData(res.data);
+      //     }
+      //   });
+      // } else if (category === 4) {
+      //   API.getPurchaseOrderV2('', (res) => {
+      //     if (!res) return;
+      //     if (!res.data) {
+      //       setCostingData([]);
+      //     } else {
+      //       setCostingData(res.data);
+      //     }
+      //   });
+      // } else {
+      // }
     } catch (error) {
       alert(error);
     }

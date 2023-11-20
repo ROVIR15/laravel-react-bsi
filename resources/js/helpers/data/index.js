@@ -447,8 +447,11 @@ export function optionProductFeature(array, filter) {
 }
 
 export function productItemArrangedData(x) {
+  let sku_id = generalizeSKU(x?.product?.goods_id, x?.product_id, x?.id);
+
   return {
     id: x?.id,
+    sku_id: sku_id,
     product_id: x?.product_id,
     name: x?.product?.goods?.name,
     color: x?.color,

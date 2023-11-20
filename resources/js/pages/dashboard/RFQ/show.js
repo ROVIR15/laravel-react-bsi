@@ -252,9 +252,10 @@ function RFQ() {
       if (!res) alert('Something went wrong!');
       var temp = res.data.quote_items;
       temp = res.data.quote_items.map(function (key, index) {
-        const { id, product_id, name, size, color } = productItemArrangedData(key.product);
+        const { id, sku_id, product_id, name, size, color } = productItemArrangedData(key.product);
         return {
           id: key.id,
+          sku_id: sku_id,
           inquiry_item_id: key?.request_item_id,
           product_id: product_id,
           product_feature_id: key.product_feature_id,
@@ -273,8 +274,8 @@ function RFQ() {
 
   const columns = useMemo(
     () => [
-      { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-      { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
+      { field: 'sku_id', headerName: 'SKU ID', width: 150, editable: false},
+      // { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Quantity', editable: false },
       { field: 'unit_price', headerName: 'Unit Price', editable: true },
@@ -300,9 +301,10 @@ function RFQ() {
     API.getAQuote(id, function (res) {
       if (!res.data) alert('Something went wrong!');
       const quoteItem = res.data.quote_items.map(function (key, index) {
-        const { id, product_id, name, size, color } = productItemArrangedData(key.product);
+        const { id, sku_id, product_id, name, size, color } = productItemArrangedData(key.product);
         return {
           id: key.id,
+          sku_id: sku_id,
           inquiry_item_id: key?.request_item_id,
           product_id: product_id,
           product_feature_id: key.product_feature_id,

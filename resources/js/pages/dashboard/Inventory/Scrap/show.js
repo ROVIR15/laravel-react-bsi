@@ -68,6 +68,7 @@ function Scrap() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Item ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', width: 150, headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 350, editable: false },
       { field: 'qty', headerName: 'Qty', editable: true },
       { field: 'unit_measurement', headerName: 'Satuan', editable: true },

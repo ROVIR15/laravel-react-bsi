@@ -328,6 +328,7 @@ class BOMController extends Controller
           $payment = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
 
           return [
+            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
             'import_item_id' => $import_info ? $import_info->id : null,
             'import_id' => $import_info ? $import_info->kite_import_doc_id : null,
@@ -342,7 +343,7 @@ class BOMController extends Controller
             'shipment_item_id' => $shipmentItem ? $shipmentItem->id : null,
             'shipment_id' => $shipment ? $shipment->id : null,
             'invoice_id' => $invoice ? $invoice->id : null,
-            'payment_id' => $payment ? $payment['payment_id'] : 0
+            'payment_id' => $payment ? $payment['payment_id'] : null
           ];
         });
 

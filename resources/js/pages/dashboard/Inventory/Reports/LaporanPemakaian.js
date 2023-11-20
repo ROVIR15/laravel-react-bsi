@@ -274,7 +274,7 @@ function Inbound() {
                   ?.map((row, index) => (
                     <TableRow>
                       <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.document_number}</TableCell>
+                      <TableCell>{`MT-${row.document_number}`}</TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
                         {row.sku_id}

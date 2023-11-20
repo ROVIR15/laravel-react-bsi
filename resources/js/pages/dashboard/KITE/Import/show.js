@@ -218,6 +218,7 @@ function OutboundDelivery() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', width: 150, headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'hs_code', headerName: 'Kode HS', editable: false },
       {
         field: 'item_serial_number',

@@ -20,6 +20,7 @@ import API from '../../../../helpers';
 //
 import Test4 from '../../../../components/Test4';
 import PinStatus from '../../../../components/PinStatus';
+import { strPadLeft } from '../../../../utils/formatProduct';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -311,7 +312,7 @@ function OutboundDelivery({ placeHolder }) {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell align="left">{`INSHIP-${costing_id}-${id}`}</TableCell>
+                        <TableCell align="left">{`INSHIP-${strPadLeft(order?.purchase_order_id, 4, 0)}-${strPadLeft(id, 4, 0)}`}</TableCell>
                         <TableCell align="left">
                           {__items?.alt_order_item?.costing?.costing?.name}
                         </TableCell>

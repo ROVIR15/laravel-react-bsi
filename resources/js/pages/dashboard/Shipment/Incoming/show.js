@@ -216,12 +216,12 @@ function OutboundDelivery() {
   const columns = useMemo(
     () => [
       { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
-      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
+      { field: 'sku_id', width: 150, headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 450, editable: false },
-      { field: 'qty_order', headerName: 'Qty Order', editable: false },
-      { field: 'qty', headerName: 'Qty Kirim', editable: false },
+      { field: 'qty_order', headerName: 'Qty Dipesan', editable: false },
+      { field: 'qty', headerName: 'Qty Dikirim', editable: false },
       { field: 'satuan', headerName: 'Satuan', editable: false },
-      { field: 'qty_shipped', headerName: 'Qty Delivery', editable: true },
+      { field: 'qty_shipped', headerName: 'Qty On-hand', editable: true },
       { field: 'description', width: 400, headerName: 'Description', editable: true },
       {
         field: 'actions',

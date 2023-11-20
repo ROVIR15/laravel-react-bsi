@@ -205,8 +205,8 @@ function OutboundDelivery() {
       { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
       { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Name', width: 500, editable: false },
-      { field: 'qty_order', headerName: 'Qty Order', editable: false },
-      { field: 'deliv_qty', headerName: 'Delivery Qty', editable: false },
+      { field: 'qty_order', headerName: 'Qty Pesanan', editable: false },
+      { field: 'deliv_qty', headerName: 'Qty Terkirim', editable: false },
       {
         field: 'actions',
         type: 'actions',

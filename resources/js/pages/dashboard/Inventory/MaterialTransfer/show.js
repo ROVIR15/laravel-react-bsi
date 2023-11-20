@@ -168,6 +168,7 @@ function MaterialTransfer() {
   const columns = React.useMemo(
     () => [
       { field: 'id', headerName: 'id', editable: false, visible: 'hide' },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide', width: 150 },
       { field: 'item_name', headerName: 'Nama Material', width: 450, editable: false },
       { field: 'transfer_qty', headerName: 'Quantity', type: 'number', editable: true, flex: 1 },
       {

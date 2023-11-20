@@ -251,30 +251,37 @@ function Quotation() {
   );
 
   const handleUpdateAllRows = () => {
-    API.getAQuote(id, function (res) {
-      if (!res) alert('Something went wrong!');
-      var temp = res.data.quote_items;
-      temp = res.data.quote_items.map(function (key) {
-        const { id, product_id, name, size, color } = productItemArrangedData(key.product);
-        return {
-          id: key.id,
-          product_id: product_id,
-          product_feature_id: key.product_feature_id,
-          name: name,
-          size: size,
-          color: color,
-          qty: key.qty,
-          unit_price: key.unit_price
-        };
+    try {
+      API.getAQuote(id, function (res) {
+        if (!res) alert('Something went wrong!');
+        var temp = res.data.quote_items;
+        temp = res.data.quote_items.map(function (key) {
+          const { id, sku_id, product_id, name, size, color } = productItemArrangedData(
+            key.product
+          );
+          return {
+            id: key.id,
+            sku_id: sku_id,
+            product_id: product_id,
+            product_feature_id: key.product_feature_id,
+            name: name,
+            size: size,
+            color: color,
+            qty: key.qty,
+            unit_price: key.unit_price
+          };
+        });
+
+        setItems(temp);
       });
-      setItems(temp);
-    });
+    } catch (error) {
+      alert('Something went wrong!');
+    }
   };
 
   const columns = useMemo(
     () => [
-      { field: 'product_id', headerName: 'Product ID', editable: false, visible: 'hide' },
-      { field: 'product_feature_id', headerName: 'Variant ID', editable: true },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, width: 150, visible: 'hide' },
       { field: 'name', width: 350, headerName: 'Name', editable: false },
       { field: 'size', headerName: 'Size', editable: false },
       { field: 'color', headerName: 'Color', editable: false },
@@ -306,9 +313,12 @@ function Quotation() {
         if (!res.data) throw new Error('Error');
         else {
           const quoteItem = res.data.quote_items.map(function (key, index) {
-            const { id, product_id, name, size, color } = productItemArrangedData(key.product);
+            const { id, sku_id, product_id, name, size, color } = productItemArrangedData(
+              key.product
+            );
             return {
               id: key.id,
+              sku_id: sku_id,
               product_id: product_id,
               product_feature_id: key.product_feature_id,
               name: name,
