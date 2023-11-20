@@ -40,7 +40,7 @@ export function material_transfer_items(array, filter) {
     const transferred_qty = isEmpty(transferred) || isUndefined(transferred) ? 0 : transferred.reduce((initial, next) => initial + parseFloat(next.transferred_qty), 0);
 
     let item_name = `${product?.goods?.name} ${product_feature?.color} - ${product_feature?.size}`;
-    const sku_id = generalizeSKU(product?.goods_id, product_feature?.product?.id, product_feature?.id);
+    const sku_id = generalizeSKU(product?.goods_id, product?.id, product_feature?.id);
 
     return {
       id,
