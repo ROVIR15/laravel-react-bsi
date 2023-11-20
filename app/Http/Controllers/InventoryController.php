@@ -653,7 +653,7 @@ class InventoryController extends Controller
         return $query->with('party');
       }])->with('order_item')->whereHas('shipment', function ($query) use ($fromDate, $thruDate){
         return $query->where('shipment_type_id', 4)
-          ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
+          ->whereBetween(DB::raw('DATE(delivery_date)'), [$fromDate, $thruDate]);
       })
         // ->groupBy('order_item_id')
         ->get()
