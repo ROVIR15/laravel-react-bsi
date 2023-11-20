@@ -41,7 +41,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../helpers/data';
 import { RFQSchema } from '../../../helpers/FormerSchema';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 
 // Loading Page
 import LoadingPage from '../../../components/LoadingPage';
