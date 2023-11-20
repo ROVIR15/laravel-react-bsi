@@ -651,7 +651,8 @@ class InventoryController extends Controller
         return $query->with('ship_to');
       }])->with('order_item')->whereHas('shipment', function ($query) {
         return $query->where('shipment_type_id', 4);
-      })->groupBy('order_item_id')
+      })
+      // ->groupBy('order_item_id')
       ->get()
       ->map(function ($item, $index) {
         $productFeature = $item->order_item ? $item->order_item->product_feature : null;
