@@ -48,7 +48,8 @@ export default function BasicModal({
   handleClose,
   selected,
   category = 3,
-  setSelected
+  setSelected,
+  setFieldValue
 }) {
   const [value, setValue] = React.useState([]);
   const loading = openX && options.length === 0;
@@ -117,6 +118,8 @@ export default function BasicModal({
             setValue(listed);
           }
         });
+
+        setFieldValue('order_id', selectedCosting)
       } else {
         // API.getProductFeature((res) => {
         //   if (!res) return;

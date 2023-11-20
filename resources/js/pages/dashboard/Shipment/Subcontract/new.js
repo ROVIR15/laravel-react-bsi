@@ -155,6 +155,7 @@ function OutboundDelivery() {
     onSubmit: (values) => {
       const _data = {
         ...values,
+        subcontract_type: selectType,
         user_id: user.id,
         OD_items: items,
         imageUrl: file
@@ -378,6 +379,7 @@ function OutboundDelivery() {
             selected={items}
             setSelected={setItems}
             category={selectType}
+            setFieldValue={setFieldValue}
           />
           <FormikProvider value={formik}>
             <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
