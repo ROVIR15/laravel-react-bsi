@@ -243,14 +243,18 @@ function RFQ() {
 
           return prevItems.map((row, index) => {
             if (row.id === parseInt(itemToUpdateIndex)) {
-              if (
+              if (isNull(row.costing_item_id)) {
+                return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
+              }
+              else if (
                 editedColumnName === 'unit_price' &&
                 editRowData[editedColumnName].value > parseFloat(row.unit_price) * 1.1
               ) {
                 enqueueSnackbar(`Cannot more than ${row.unit_price}`, { variant: 'failedAlert' });
                 return row;
+              } else {
+                return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
               }
-              return { ...row, [editedColumnName]: editRowData[editedColumnName].value };
             } else {
               return row;
             }
