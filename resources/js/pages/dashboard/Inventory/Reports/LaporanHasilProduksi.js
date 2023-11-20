@@ -248,7 +248,7 @@ function Inbound() {
                 <TableRow>
                   <TableCell colSpan={1}></TableCell>
                   <TableCell align="center" colSpan={2}>
-                    Bukti Pengeluaran
+                    Dokumen
                   </TableCell>
                   <TableCell colSpan={3}> </TableCell>
                   <TableCell align="center" colSpan={2}>Jumlah</TableCell>
