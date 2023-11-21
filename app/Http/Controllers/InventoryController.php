@@ -878,7 +878,7 @@ class InventoryController extends Controller
         if ($facility == 2) {
           $organizedData[$itemName]['qty_digunakan'] += $item['qty'];
         } elseif ($facility == 17) {
-          $organizedData[$itemName]['qty_subcontract'] += $item['qty'] * -1;
+          $organizedData[$itemName]['qty_subcontract'] = 0;
         }
       }
 
