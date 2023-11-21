@@ -232,7 +232,7 @@ function Inbound() {
                   <TableCell align="center" colspan>
                     {' '}
                   </TableCell>
-                  <TableCell align="center" colSpan={1}>
+                  <TableCell align="center" colSpan={1}/>
                   <TableCell align="center" colSpan={1}>
                     Jenis Dokumen
                   </TableCell>
