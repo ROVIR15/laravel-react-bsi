@@ -233,6 +233,7 @@ function Inbound() {
                     {' '}
                   </TableCell>
                   <TableCell align="center" colSpan={1}>
+                  <TableCell align="center" colSpan={1}>
                     Jenis Dokumen
                   </TableCell>
                   <TableCell align="center" colSpan={4}>
@@ -244,6 +245,7 @@ function Inbound() {
                   <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>No</TableCell>
                   <TableCell>Tanggal Rekam</TableCell>
 
                   <TableCell>Jenis Dokumen</TableCell>
