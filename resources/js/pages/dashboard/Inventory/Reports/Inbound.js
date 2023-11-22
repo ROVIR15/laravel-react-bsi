@@ -274,6 +274,7 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
+                      <TableCell> {row.id} </TableCell>
                       <TableCell> {row.recoded_date} </TableCell>
 
                       <TableCell> {row.customs_doc} </TableCell>
