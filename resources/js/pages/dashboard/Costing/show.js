@@ -233,6 +233,13 @@ function BillofMaterial() {
     : statusCosting.status_type === 'Submit'
     ? true
     : false;
+
+  const editableColumn = user.id === 2 ? true : isEmpty(statusCosting)
+  ? true
+  : statusCosting.status_type === 'Submit'
+  ? true
+  : false;
+
   const __editable = editableUser || editableCondition;
 
 
@@ -497,7 +504,7 @@ function BillofMaterial() {
     () => [
       { field: 'id', headerName: 'ID', editable: false, hideable: false, width: 30 },
       { field: 'name', headerName: 'Service Name', editable: false, width: 250 },
-      { field: 'unit_price', headerName: 'Harga', editable: editableCondition },
+      { field: 'unit_price', headerName: 'Harga', editable: editableColumn },
       {
         field: 'actions',
         type: 'actions',
