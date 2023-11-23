@@ -331,7 +331,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
-            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => '02-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => 'INSHIP-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
             'recoded_date' => $this->change_date_format($item->shipment->delivery_date),
@@ -766,6 +766,7 @@ class InventoryController extends Controller
       }
       $query = GoodsMovement::select(
         'id',
+        'import_flag',
         'product_id',
         'product_feature_id',
         'goods_id',
@@ -791,6 +792,8 @@ class InventoryController extends Controller
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
 
+          $import_flag = $item->import_flag ? 2 : 1;
+
           return [
             'id' => $index + 1,
             'facility_id' => $item->facility_id,
@@ -803,7 +806,7 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
             'qty' => $item->qty,
-            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
+            'sku_id' => str_pad($import_flag, 4, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
 
