@@ -183,22 +183,26 @@ class InventoryController extends Controller
 
           $import_flag = $query->import_flag ? 2 : 1;
 
+          $unit_price = OrderItem::select('product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
+
           return
             [
               'id' => $query->id,
-              'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
+              // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
               'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
-              'import_flag' => $query->import_flag,
-              'product_id' => $product->id,
-              'product_feature_id' => $product_feature->id,
+              'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
+              // 'product_id' => $product->id,
+              // 'product_feature_id' => $product_feature->id,
               'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
               'unit_measurement' => $goods ? $goods->satuan : null,
-              'brand' => $goods ? $goods->brand : null,
+              // 'brand' => $goods ? $goods->brand : null,
               'facility_id' => $query->facility_id,
               'facility_name' => $query->facility->name,
               'category_id' => $query->product_category->product_category_id,
               'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-              'current_stock' => $query->current_stock
+              'current_stock' => $query->current_stock,
+              'unit_price' => count($unit_price) ? $unit_price : 0,
+              'total_price' => count($unit_price) ? $unit_price * $query->current_stock : 0
             ];
         })
         ->filter(function ($item) {
