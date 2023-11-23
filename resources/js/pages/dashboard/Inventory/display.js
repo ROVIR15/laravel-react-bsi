@@ -22,6 +22,7 @@ import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
 
 import jsonexport from 'jsonexport';
+import { fCurrency } from '../../../utils/formatNumber';
 
 const TABLE_HEAD = [
   // { id: 'id', label: 'ID', alignRight: false },
@@ -291,6 +292,9 @@ function DisplayInventory({ placeHolder }) {
                       <TableCell align="left">{facility_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
+                      <TableCell align="left">{fCurrency(unit_price, 'idr')}</TableCell>
+                      <TableCell align="left">{fCurrency(total_price, 'idr')}</TableCell>
+                      <TableCell align="left">{category}</TableCell>
                       <TableCell align="right">
                         <MoreMenu
                           scrapActive={true}

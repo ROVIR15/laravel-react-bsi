@@ -28,6 +28,7 @@ use App\Models\Inventory\GoodsMovement;
 use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferShipmentRelationship;
 use App\Models\Manufacture\BOMItem;
+use App\Models\Order\Order;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
 use Throwable;
@@ -183,7 +184,27 @@ class InventoryController extends Controller
 
           $import_flag = $query->import_flag ? 2 : 1;
 
-          $unit_price = OrderItem::select('product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
+          $order_item_c = OrderItem::select('order_id', 'product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
+          $order_item = count($order_item_c) ? $order_item_c[0] : null;
+          if ($order_item) {
+            $order_c = Order::select('currency_id')->where('id', $order_item->order_id)->get();
+            if(count($order_c)) {
+              $currency = $order_c[0]->currency_id;
+
+              if ($currency === 1){
+                $unit_price = $order_item->unit_price * 15000;
+              } else {
+                $unit_price = $order_item->unit_price;
+              }
+
+            } else {
+              $currency = 2;
+              $unit_price = $order_item->unit_price;
+            }
+          } else {
+            $currency = 2;
+            $unit_price = 0;
+          }
 
           return
             [
@@ -201,8 +222,9 @@ class InventoryController extends Controller
               'category_id' => $query->product_category->product_category_id,
               'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
               'current_stock' => $query->current_stock,
-              'unit_price' => count($unit_price) ? $unit_price : 0,
-              'total_price' => count($unit_price) ? $unit_price * $query->current_stock : 0
+              'currency' => $currency === 2 ? 'Rupiah' : 'USD',
+              'unit_price' => $unit_price,
+              'total_price' => $unit_price * $query->current_stock
             ];
         })
         ->filter(function ($item) {
