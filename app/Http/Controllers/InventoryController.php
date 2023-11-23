@@ -222,7 +222,7 @@ class InventoryController extends Controller
               'category_id' => $query->product_category->product_category_id,
               'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
               'current_stock' => $query->current_stock,
-              'currency' => $currency === 2 ? 'Rupiah' : 'USD',
+              'origin_currency' => $currency === 2 ? 'Rupiah' : 'USD',
               'unit_price' => $unit_price,
               'total_price' => $unit_price * $query->current_stock
             ];

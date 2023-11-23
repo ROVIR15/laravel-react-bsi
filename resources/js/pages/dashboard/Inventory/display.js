@@ -30,7 +30,10 @@ const TABLE_HEAD = [
   { id: 'item_name', label: 'Nama Item', alignRight: false },
   { id: 'facility_name', label: 'Fasilitas Name', alignRight: false },
   { id: 'category_name', label: 'Kategori Barang', alignRight: false },
-  { id: 'current_stock', label: 'Qty', alignRight: false }
+  { id: 'current_stock', label: 'Qty', alignRight: false },
+  { id: 'origin_currency', label: 'Mata Uang Asli', alignRight: false },
+  { id: 'unit_price', label: 'Harga', alignRight: false },
+  { id: 'total_price', label: 'Total Harga', alignRight: false }
 ];
 
 function descendingComparator(a, b, orderBy) {
