@@ -1099,6 +1099,7 @@ export function _shipmentItem(array) {
       id,
       sku_id,
       item_name,
+      order_item_id: order_item?.id,
       goods_id: order_item?.product_feature?.product?.goods?.id,
       product_feature_id: order_item?.product_feature?.id,
       product_id: order_item?.product_feature?.product?.id,

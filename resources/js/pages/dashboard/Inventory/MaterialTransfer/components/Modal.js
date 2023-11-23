@@ -112,7 +112,7 @@ export default function BasicModal({
     // console.log(selectedCosting)
     if (selectedCosting !== 0) {
       try {
-        API.getBOMItemV4(selectedCosting,`?from_facility=${params}`, (res) => {
+        API.getBOMItemV5(selectedCosting,`?from_facility=${params}`, (res) => {
           if (!res) return;
           if (!res.data) {
             setSelectionOptions([]);

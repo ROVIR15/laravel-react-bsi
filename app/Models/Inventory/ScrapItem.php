@@ -22,6 +22,8 @@ class ScrapItem extends Model
         'qty',
         'from_facility_id',
         'to_facility_id',
+        'material_transfer_id',
+        'import_flag_id',
         'unit_measurement'
     ];
 

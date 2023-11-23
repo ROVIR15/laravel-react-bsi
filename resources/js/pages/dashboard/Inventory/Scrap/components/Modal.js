@@ -19,6 +19,7 @@ import closeCircle from '@iconify/icons-eva/close-outline';
 // Components
 import API from '../../../../../helpers';
 import Table from './Table';
+import { isArray, isEmpty, isUndefined } from 'lodash';
 
 // Helpers
 // import { optionProductFeature, productItemArrangedData } from '../../../../../helpers/data';
@@ -47,10 +48,46 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
   const loading = open && options.length === 0;
   const [type, setType] = React.useState(0);
 
+  const [selectedFacility, setSelectedFacility] = React.useState(0);
+  
   const handleSelectType = (e) => {
     setSelectedCosting(0);
-    setOptions([])
+    setOptions([]);
+    if (e.target.value === 2){
+      setSelectedFacility(2);
+    }
     setType(e.target.value);
+  };
+  
+  const [facilityList, setFacilityList] = React.useState([]);
+  
+  React.useEffect(() => {
+    try {
+      API.getFacility(``, function (res) {
+        if (isUndefined(res)) return;
+        else {
+          if (!isArray(res.data)) throw new 'No Data'();
+          else {
+            let _a = res.data.map(function (item) {
+              return {
+                id: item.id,
+                facility_name: item.name,
+                facility_type_id: item.type.id,
+                facility_type_name: item.type.name
+              };
+            });
+            setFacilityList(_a);
+          }
+        }
+      });
+    } catch (error) {
+      alert("error :", error)
+    }
+  }, [])
+
+  const handleSelectFacility = (e) => {
+    if (!type) alert('select on left side field first!');
+    else setSelectedFacility(e.target.value);
   };
 
   React.useEffect(() => {
@@ -58,7 +95,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
 
     try {
       switch (type) {
-        case "1":
+        case 1:
           API.getCostingV2((res) => {
             if (!res) return;
             if (!res.data) {
@@ -69,7 +106,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
           });
           break;
 
-        case "2":
+        case 2:
           API.getSalesOrderV2('', (res) => {
             if (!res) return;
             if (!res.data) {
@@ -104,14 +141,15 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
   React.useEffect(() => {
     // console.log(selectedCosting)
     setOptions([]);
-    if (selectedCosting !== 0) {
+    if (selectedCosting !== 0 && selectedFacility !== 0) {
       try {
         switch (type) {
-          case "1":
-            API.getBOMItemV3(selectedCosting, (res) => {
+          case 1:
+            API.getBOMItemV3_alt(selectedCosting, `?from_facility=${selectedFacility}`, (res) => {
               if (!res) return;
               if (!res.data) {
                 setOptions([]);
+
               } else {
                 // console.log(data);
                 setOptions(res.data);
@@ -119,7 +157,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
             });
             break;
 
-          case "2":
+          case 2:
             API.getSalesOrderItemV2(selectedCosting, '', function (res) {
               if (!res) return;
               if (res.success) {
@@ -129,7 +167,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
             break;
 
           default:
-            setOptions([])
+            setOptions([]);
             break;
         }
       } catch (error) {
@@ -164,11 +202,29 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
               size="small"
               fullWidth
             >
-              <MenuItem value="1">CBD</MenuItem>
-              <MenuItem value="2">Sales Order</MenuItem>
+              <MenuItem value={0}>None</MenuItem>
+              <MenuItem value={1}>CBD</MenuItem>
+              <MenuItem value={2}>Sales Order</MenuItem>
             </Select>
+            <Select
+              onChange={handleSelectFacility}
+              value={selectedFacility}
+              input={<OutlinedInput label="Name" />}
+              size="small"
+              fullWidth
+            >
+              <MenuItem value={0}>None</MenuItem>
+              {isEmpty(facilityList)
+                ? null
+                : facilityList.map(function (item) {
+                    return <MenuItem value={item.id}>{item.facility_name}</MenuItem>;
+                  })}
+            </Select>
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
             <FormControl fullWidth>
-              <InputLabel id="costing_name">Pilih Sales Order</InputLabel>
+              <InputLabel id="costing_name">Pilih {(type === 1 ? 'Costing' : ((type===2) ? 'Sales Order' : null))}</InputLabel>
               <Select
                 onChange={handleSelect}
                 value={selectedCosting}

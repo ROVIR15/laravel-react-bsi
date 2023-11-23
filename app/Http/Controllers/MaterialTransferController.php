@@ -152,6 +152,7 @@ class MaterialTransferController extends Controller
                 // substract qty from from_facility_id and make record on goods movement
                 GoodsMovement::create([
                     'date' => $key['date'],
+                    'import_flag' => $key['import_flag'],
                     'material_transfer_id' => $mtr['material_transfer_id'],
                     'material_transfer_item_id' => $key['material_transfer_item_id'],
                     'material_transfer_item_realisation_id' => $mtr['id'],
@@ -166,6 +167,7 @@ class MaterialTransferController extends Controller
                 //add qty from to_facility_id and make record on goods_movement;
                 GoodsMovement::create([
                     'date' => $key['date'],
+                    'import_flag' => $key['import_flag'],
                     'material_transfer_id' => $key['material_transfer_id'],
                     'material_transfer_item_id' => $key['material_transfer_item_id'],
                     'material_transfer_item_realisation_id' => $mtr->id,
@@ -220,6 +222,7 @@ class MaterialTransferController extends Controller
             $_data = [];
             foreach ($param['items'] as $key) {
                 $_mti = MaterialTransferItem::create([
+                    'import_flag' => $key['import_flag'],
                     'material_transfer_id' => $_mt['id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
@@ -242,6 +245,7 @@ class MaterialTransferController extends Controller
                 // substract qty from from_facility_id and make record on goods movement
                 GoodsMovement::create([
                     'date' => $param['est_transfer_date'],
+                    'import_flag' => $key['import_flag'],
                     'material_transfer_id' => $_mt['id'],
                     'material_transfer_item_id' => $_mti['id'],
                     'material_transfer_item_realisation_id' => $mtr['id'],
@@ -257,6 +261,7 @@ class MaterialTransferController extends Controller
                 //add qty from to_facility_id and make record on goods_movement;
                 GoodsMovement::create([
                     'date' => $param['est_transfer_date'],
+                    'import_flag' => $key['import_flag'],
                     'material_transfer_id' => $_mt['id'],
                     'material_transfer_item_id' => $_mti['id'],
                     'material_transfer_item_realisation_id' => $mtr['id'],

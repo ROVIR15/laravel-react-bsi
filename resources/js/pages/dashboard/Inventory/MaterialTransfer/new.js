@@ -354,7 +354,7 @@ function MaterialTransfer() {
                 <DataGrid
                   columns={columns}
                   rows={items}
-                  onEditRowsModelChange={handleEditComponentRowsModelChange}
+                  onRowModesModelChange={handleEditComponentRowsModelChange}
                   // handleResetRows={handleResetComponentRows}
                 />
               </Grid>

@@ -151,7 +151,7 @@ const sidebarConfig = [
       {
         // done completing columns per 5 table nomor 3
         title: 'Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak',
-        path: '/dashboard/laporan-kite/laporan-barang-wip'
+        path: '/dashboard/laporan-kite/laporan-barang-pemakaian-subcontract'
       },
       {
         // done completing columns per 5 table nomor 4
@@ -177,6 +177,11 @@ const sidebarConfig = [
         // done completing columns per 5 table nomo 8
         title: 'Laporan Waste/Scrap',
         path: '/dashboard/laporan-kite/laporan-skrap-barang'
+      },
+      {
+        // done completing columns per 5 table nomor 3
+        title: 'Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak',
+        path: '/dashboard/laporan-kite/laporan-barang-pemasukan-subcontract'
       },
       // {
         // done completing columns per 5 table nomo 8

@@ -260,6 +260,7 @@ import NotifMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer
 import Inbound from '../pages/dashboard/Inventory/Reports/Inbound';
 import Outbound from '../pages/dashboard/Inventory/Reports/LaporanBarangKeluar';
 import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
+import WIPReport_Pemasukkan from '../pages/dashboard/Inventory/Reports/LaporanBarangWIPPemasukan';
 import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
 import MutasiBahanBaku from '../pages/dashboard/Inventory/Reports/LaporanMutasiBahanBaku';
 import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkrap';
@@ -504,8 +505,12 @@ export default function TestRouter() {
           element: <Outbound/>
         },
         {
-          path: 'laporan-kite/laporan-barang-wip',
+          path: 'laporan-kite/laporan-barang-pemakaian-subcontract',
           element: <WIPReport/>
+        },
+        {
+          path: 'laporan-kite/laporan-barang-pemasukan-subcontract',
+          element: <WIPReport_Pemasukkan/>
         },
         {
           path: 'laporan-kite/laporan-mutasi-hasil-produksi',

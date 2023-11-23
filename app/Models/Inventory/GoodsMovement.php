@@ -17,6 +17,7 @@ class GoodsMovement extends Model
 
     protected $fillable = [
         'date',
+        'import_flag',
         'material_transfer_id',
         'material_transfer_item_id',
         'material_transfer_item_realisation_id',
@@ -41,6 +42,11 @@ class GoodsMovement extends Model
     public function goods()
     {
         return $this->belongsTo('App\Models\Product\Goods', 'goods_id', 'id');
+    }
+
+    public function product_category()
+    {
+        return $this->hasOneThrough('App\Models\Product\ProductHasCategory', 'App\Models\Product\Product', 'id', 'product_id', 'product_id', 'id')->with('category');
     }
 
     public function facility(){

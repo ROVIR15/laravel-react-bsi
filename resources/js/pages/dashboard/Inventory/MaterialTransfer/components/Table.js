@@ -207,10 +207,11 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  const isItemSelected = selected.map(e => e.sku_id).indexOf(row.sku_id) !== -1;
                   const disabled=(isItemSelected && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
+                    sku_id,
                     category,
                     sub_category,
                     unit_measurement,
@@ -232,7 +233,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{sku_id}</TableCell>
                       <TableCell align="left"> {row?.item_name}
                       </TableCell>
                       <TableCell align="left">{category}</TableCell>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Button,
   Card,
   Table,
   TableBody,
@@ -15,13 +16,20 @@ import ListToolbar from './components/ListToolbar';
 import MoreMenu from './components/MoreMenu';
 import ScrapModal from './components/ScrapCard';
 import API from '../../../helpers'; // Assume API methods are defined in helpers/api.js
-import { isArray, isEmpty, isEqual } from 'lodash';
+import { filter, isArray, isEmpty, isEqual } from 'lodash';
+
+import downloadIcon from '@iconify/icons-eva/download-fill';
+import { Icon } from '@iconify/react';
+
+import jsonexport from 'jsonexport';
 
 const TABLE_HEAD = [
   // { id: 'id', label: 'ID', alignRight: false },
   { id: 'sku_id', label: 'SKU ID', alignRight: false },
-  { id: 'item_name', label: 'Item Name', alignRight: false },
-  { id: 'current_stock', label: 'Current Stock', alignRight: false }
+  { id: 'item_name', label: 'Nama Item', alignRight: false },
+  { id: 'facility_name', label: 'Fasilitas Name', alignRight: false },
+  { id: 'category_name', label: 'Kategori Barang', alignRight: false },
+  { id: 'current_stock', label: 'Qty', alignRight: false }
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -35,7 +43,6 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  console.log(array)
   const stabilizedThis = array?.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -59,21 +66,21 @@ function DisplayInventory({ placeHolder }) {
   const [modalManageScrap, setModalManageScrap] = useState(false);
 
   const fetchData = () => {
-    if(isEqual(filterCosting, 0) && isEqualfilterFacility,0) alert('Please select cbd/sales-order and facility');
-    else {
-      let param = `?costing=${filterCosting}&facility=${filterFacility}`
-      try {
-        API.getInventoryStock_alt(param, (res) => {
-          if (!res) return;
-          if (!res.data) throw new Error('failed');
-          else setData(res.data);
-        });
-      } catch (error) {
-        setData([]);
-        alert('Error fetching inventory data:', error);
-        // Handle error
-      }  
+    // if(isEqual(filterCosting, 0) && isEqualfilterFacility,0) alert('Please select cbd/sales-order and facility');
+    // else {
+    let param = `?costing=${filterCosting}&facility=${filterFacility}`;
+    try {
+      API.getInventoryStock_alt(param, (res) => {
+        if (!res) return;
+        if (!res.data) throw new Error('failed');
+        else setData(res.data);
+      });
+    } catch (error) {
+      setData([]);
+      alert('Error fetching inventory data:', error);
+      // Handle error
     }
+    // }
   };
   const [optionsFilter, setOptionsFilter] = useState([]);
   const [optionsCosting, setCostingOptions] = useState([]);
@@ -125,6 +132,24 @@ function DisplayInventory({ placeHolder }) {
       setSelected([]);
     }
   };
+
+  const handleDownload = () => {
+    // Convert JSON to CSV
+    jsonexport(data, function (err, csv) {
+      if (err) return console.error(err);
+      
+      // Create a Blob containing the CSV data
+      const blob = new Blob([csv], { type: 'text/csv' });
+      
+      // Create a link to download the file
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'master_data_barang.csv';
+      
+      // Trigger the download
+      link.click();
+    });
+  }
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -194,6 +219,10 @@ function DisplayInventory({ placeHolder }) {
 
   return (
     <Card>
+      <Button variant="contained" startIcon={<Icon icon={downloadIcon} />} onClick={handleDownload}>
+        Download
+      </Button>
+
       <ScrapModal id={selectedData} modalOpen={modalManageScrap} onCloseModal={handleCloseModal} />
       <ListToolbar
         // filter costing
@@ -215,7 +244,6 @@ function DisplayInventory({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
-
         onGo={fetchData}
       />
       <Scrollbar>
@@ -235,7 +263,15 @@ function DisplayInventory({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, item_name, sku_id, unit_measurement, stock_in, stock_out, current_stock } = row;
+                  const {
+                    id,
+                    item_name,
+                    sku_id,
+                    unit_measurement,
+                    facility_name,
+                    category,
+                    current_stock
+                  } = row;
 
                   const isItemSelected = selected.includes(id);
 
@@ -252,6 +288,8 @@ function DisplayInventory({ placeHolder }) {
                       {/* <TableCell align="left">{id}</TableCell> */}
                       <TableCell align="left">{sku_id}</TableCell>
                       <TableCell align="left">{item_name}</TableCell>
+                      <TableCell align="left">{facility_name}</TableCell>
+                      <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
                       <TableCell align="right">
                         <MoreMenu

@@ -416,11 +416,17 @@ function OutboundDelivery() {
         from_facility_id: 16
       };
 
-      API.insertItemIssuance(_obj, function (res) {
+      API.insertItemIssuanceV2(_obj, function (res) {
         if (res.success)
           enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
         else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
       });
+
+      // API.insertItemIssuance(_obj, function (res) {
+      //   if (res.success)
+      //     enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
+      //   else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
+      // });
     } catch (error) {
       enqueueSnackbar('', { variant: 'failedAlert' });
     }

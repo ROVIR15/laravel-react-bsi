@@ -124,7 +124,9 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
     //Shipment
     Route::resource('shipment', 'ShipmentController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('shipment-subcontract', 'ShipmentController@shipmentListSubcontract');
     Route::resource('item-issuance', 'ItemIssuanceController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('item-issuance-v2', 'ItemIssuanceController@storeV2');
     Route::resource('shipment-status', 'ShipmentStatusController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-item', 'ShipmentItemController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('shipment-receipt', 'ShipmentReceiptController')->only(['index', 'show', 'store', 'update', 'destroy']);
@@ -301,8 +303,10 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('stock-scrap', 'InventoryController@get_scrap');
 
     Route::get('bom-item-alt-v3/{costing_id}', 'BOMItemController@findItemsByCostingId');
+    Route::get('bom-item-alt-v6/{costing_id}', 'BOMItemController@findItemsByCostingId_test');
     Route::get('final-goods', 'ProductFeatureController@justFinishedGoods');
     Route::get('bom-item-alt-v4/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock');
+    Route::get('bom-item-alt-v5/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock_test');
     Route::get('get-costing', 'BOMItemController@getCostingId');
     Route::get('sales-order-v2', 'SalesOrderController@get_sales_order');
     Route::get('purchase-order-v2', 'PurchaseOrderController@get_purchse_order');
@@ -335,3 +339,12 @@ Route::resource('logs', 'LogController')->only(['index']);
 // Route::get('bom-detail-report/{id}', 'BOMItemController@findItemOrderItemCostingId');
 Route::get('notification/{user_id}', 'NotificationController@showFew');
 Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
+
+Route::resource('goods', 'V2\GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+
+Route::get('shipment-subcontract', 'ShipmentController@shipmentListSubcontract');
+Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
+Route::post('item-issuance-v2', 'ItemIssuanceController@storeV2');
+
+Route::get('bom-item-alt-v5/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock_test');
+Route::get('bom-item-alt-v6/{costing_id}', 'BOMItemController@findItemsByCostingId_test');

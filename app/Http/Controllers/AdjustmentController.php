@@ -104,6 +104,15 @@ class AdjustmentController extends Controller
                      }])
                     //  ->with('status')
                      ->get();
+            
+            $results = [];
+            foreach ($item as $query) {
+                # code...
+                $result = [
+                    ''
+                ]
+
+            }
         } catch (\Throwable $th) {
             //throw $th;
             return response()-json([

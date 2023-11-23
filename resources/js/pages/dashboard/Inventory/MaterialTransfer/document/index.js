@@ -87,6 +87,7 @@ function MaterialTransfer() {
           to_facility_id: values.to_facility_id,
           from_facility_id: values.from_facility_id,
           date: values?.est_transfer_date,
+          import_flag: data?.import_flag,
           product_feature_id: data?.product_feature_id,
           product_id: data?.product_id,
           goods_id: data?.goods_id

@@ -1347,6 +1347,20 @@ const main = {
         cb(err.response);
       });
   },
+  getBOMItemV3_alt(costing_id, params, cb) {
+    if (!costing_id) {
+      return;
+    }
+
+    axios
+      .get(uri + `/bom-item-alt-v6/${costing_id}` + `${params}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getBOMItemV3(costing_id, cb) {
     if (!costing_id) {
       return;
@@ -1368,6 +1382,20 @@ const main = {
 
     axios
       .get(uri + `/bom-item-alt-v4/${costing_id}` + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getBOMItemV5(costing_id, params, cb) {
+    if (!costing_id) {
+      return;
+    }
+
+    axios
+      .get(uri + `/bom-item-alt-v5/${costing_id}` + params)
       .then(function (res) {
         cb(res.data);
       })
@@ -1405,7 +1433,6 @@ const main = {
         cb(err.response);
       });
   },
-
   //BOM
   getCostingV2(cb) {
     axios
@@ -3515,6 +3542,20 @@ const main = {
     }
     axios
       .post(uri + '/item-issuance', { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  // Item Issuance - V2
+  insertItemIssuanceV2(_data, cb) {
+    if (!_data) {
+      console.error('data not found');
+    }
+    axios
+      .post(uri + '/item-issuance-v2', { payload: _data })
       .then(function (res) {
         cb(res.data);
       })

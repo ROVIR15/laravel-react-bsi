@@ -15,6 +15,7 @@ class Scrap extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'material_transfer_id',
         'document_number',
         'date'
     ];

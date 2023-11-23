@@ -17,6 +17,27 @@ import useAuth from '../../../../context';
 // api
 import API from '../../../../helpers';
 
+// function transformData(data) {
+//   const transformedData = [];
+
+//   // Group the data by 'cat'
+//   const groupedData = data.reduce((acc, obj) => {
+//     const { facility_id } = obj;
+//     if (!acc[facility_id]) {
+//       acc[facility_id] = [];
+//     }
+//     acc[facility_id].push(obj);
+//     return acc;
+//   }, {});
+
+//   // Convert the grouped data into the desired format
+//   for (const facility_id in groupedData) {
+//     transformedData.push({ facility_id: parseInt(facility_id), data: groupedData[facility_id] });
+//   }
+
+//   return transformedData;
+// }
+
 function Scrap() {
   const { user } = useAuth();
 

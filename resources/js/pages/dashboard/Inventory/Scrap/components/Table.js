@@ -22,10 +22,11 @@ import { isEditCondition } from '../../../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
-  { id: 'item_name', label: 'Style', alignRight: false },
-  { id: 'category_name', label: 'Kategori', alignRight: false },
+  { id: 'sku_id', label: 'SKU ID', alignRight: false },
+  { id: 'item_name', label: 'Style Name', alignRight: false },
   { id: 'unit_measurement', label: 'Satuan', alignRight: false },
+  { id: 'category_name', label: 'Kategori', alignRight: false },
+  { id: 'facility_name', label: 'Fasilitas', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -105,8 +106,8 @@ function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
   const handleClick = (event, name) => {
     name = { ...name, qty: 0 };
     const selectedIndex = selected
-      .map((e) => e.product_feature_id)
-      .indexOf(name.product_feature_id);
+      .map((e) => e.id)
+      .indexOf(name.id);
     let newSelected = [];
     if (selectedIndex === -1) {
       if (isEditCondition(pathname.split('/'), id)) {
@@ -206,7 +207,7 @@ function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
                   const isItemSelected =
                     selected.map((e) => e.id).indexOf(row.id) !== -1;
                   const disabled = isItemSelected && isEditCondition(pathname.split('/'), paramsId);
-                  const { id, item_name, category_name, unit_measurement } = row;
+                  const { id, sku_id, item_name, category_name, facility_name, unit_measurement } = row;
                   return (
                     <TableRow
                       hover
@@ -223,10 +224,11 @@ function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{sku_id}</TableCell>
                       <TableCell align="left">{item_name}</TableCell>
-                      <TableCell align="left">{category_name}</TableCell>
                       <TableCell align="left">{unit_measurement}</TableCell>
+                      <TableCell align="left">{category_name}</TableCell>
+                      <TableCell align="left">{facility_name}</TableCell>
                     </TableRow>
                   );
                 })}

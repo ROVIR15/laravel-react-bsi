@@ -142,6 +142,8 @@ function OutboundDelivery() {
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Purchase Order is required'),
     document_number: Yup.string().required('Serial Number is required'),
+    bl_number: Yup.string().required('Bill of Lading is required'),
+    pl_number: Yup.string().required('Packing List is required'),
     date: Yup.date().required('Date is required')
   });
 
@@ -149,6 +151,8 @@ function OutboundDelivery() {
     initialValues: {
       type: 0,
       document_number: '',
+      bl_number: '',
+      pl_number: '',
       po_number: 'None',
       purchase_order_id: 0,
       date: moment(new Date()).format('YYYY-MM-DD')
@@ -156,7 +160,7 @@ function OutboundDelivery() {
     validationSchema: OutboundDeliverySchema,
     onSubmit: (values) => {
       try {
-        API.updateKiteImport(values, (res) => {
+        API.updateKiteImport(id, values, (res) => {
           if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
           else enqueueSnackbar('', { variant: 'failedAlert' });
         });
@@ -165,10 +169,6 @@ function OutboundDelivery() {
       }
 
       setSubmitting(false);
-      handleReset();
-      setSelectedValueSO({});
-      setItems([]);
-      setFile(null);
     }
   });
 
@@ -188,7 +188,9 @@ function OutboundDelivery() {
             purchase_order_id: data?.purchase_order_id,
             date: data?.date,
             type: data?.type,
-            document_number: data?.document_number
+            document_number: data?.document_number,
+            bl_number: data?.bl_number,
+            pl_number: data?.pl_number
           });
 
           setItems(data?.items);
@@ -354,6 +356,40 @@ function OutboundDelivery() {
                             {...getFieldProps('document_number')}
                             error={Boolean(touched.document_number && errors.document_number)}
                             helperText={touched.document_number && errors.document_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">BL Number</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="bl_number"
+                            placeholder="Nomor BL"
+                            {...getFieldProps('bl_number')}
+                            error={Boolean(touched.bl_number && errors.bl_number)}
+                            helperText={touched.bl_number && errors.bl_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">PL Number</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="pl_number"
+                            placeholder="Nomor PL"
+                            {...getFieldProps('pl_number')}
+                            error={Boolean(touched.pl_number && errors.pl_number)}
+                            helperText={touched.pl_number && errors.pl_number}
                           />
                         </FormControl>
                       </Grid>

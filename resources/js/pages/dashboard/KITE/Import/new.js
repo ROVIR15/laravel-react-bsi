@@ -138,6 +138,8 @@ function OutboundDelivery() {
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Purchase Order is required'),
     document_number: Yup.string().required('Serial Number is required'),
+    bl_number: Yup.string().required('Bill of Lading is required'),
+    pl_number: Yup.string().required('Packing List is required'),
     date: Yup.date().required('Date is required')
   });
 
@@ -145,6 +147,8 @@ function OutboundDelivery() {
     initialValues: {
       customs_document_type: 0,
       document_number: '',
+      bl_number: '',
+      pl_number: '',
       purchase_order_id: 0,
       date: moment(new Date()).format('YYYY-MM-DD')
     },
@@ -338,7 +342,7 @@ function OutboundDelivery() {
                               touched.customs_document_type && errors.customs_document_type
                             }
                           >
-                            <MenuItem value="">
+                            <MenuItem value={0}>
                               <em>None</em>
                             </MenuItem>
                             <MenuItem value={1}>BC 2.0</MenuItem>
@@ -378,6 +382,40 @@ function OutboundDelivery() {
                             {...getFieldProps('document_number')}
                             error={Boolean(touched.document_number && errors.document_number)}
                             helperText={touched.document_number && errors.document_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">BL Number</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="bl_number"
+                            placeholder="Nomor BL"
+                            {...getFieldProps('bl_number')}
+                            error={Boolean(touched.bl_number && errors.bl_number)}
+                            helperText={touched.bl_number && errors.bl_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">PL Number</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="pl_number"
+                            placeholder="Nomor PL"
+                            {...getFieldProps('pl_number')}
+                            error={Boolean(touched.pl_number && errors.pl_number)}
+                            helperText={touched.pl_number && errors.pl_number}
                           />
                         </FormControl>
                       </Grid>

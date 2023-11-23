@@ -8,12 +8,20 @@ export function strPadLeft(value, length, padChar) {
   return value;
 }
 
-export function generalizeSKU(order_item_id, product_feature_id, product_id) {
-  return `${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(
-    product_id,
-    4,
-    0
-  )}`;
+export function generalizeSKU(order_item_id, product_feature_id, product_id, import_flag=false) {
+  if (import_flag) {
+    return `02-${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(
+      product_id,
+      4,
+      0
+    )}`;
+  } else {
+    return `01-${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(
+      product_id,
+      4,
+      0
+    )}`;
+  }
 }
 
 export function generalizeSOPO(order_id, document_id, type) {

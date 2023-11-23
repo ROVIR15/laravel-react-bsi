@@ -298,11 +298,15 @@ class SalesOrderController extends Controller
 
         return [
           'id' => $query['id'],
+          'import_flag' => 0, // means its all local
+          'sku_id' => str_pad(1, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
           'order_item_id' => $query['id'],
           'order_id' => $query['order_id'],
           'product_feature_id' => $productFeature['id'],
           'product_id' => $product['id'],
           'goods_id' => $goods['id'],
+          'facility_id' => 2,
+          'facility_name' => 'Warehouse (Finished Goods)',
           'qty' => $query['qty'],
           'unit_measurement' => $goods ? $goods->satuan : null,
           'category_id' => $productCategory ? $productCategory->category->id : null,
@@ -314,6 +318,10 @@ class SalesOrderController extends Controller
           'color' => $productFeature ? $productFeature->color : null
         ];
       });
+
+      // foreach ($query as $item) {
+      //   array_push($list, $item['product_feature_id']);
+      // }      
     } catch (\Throwable $th) {
       //throw $th;
       return response()->json([

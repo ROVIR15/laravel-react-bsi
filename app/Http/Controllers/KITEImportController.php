@@ -70,6 +70,8 @@ class KITEImportController extends Controller
 
             $kite = ImportDoc::create([
                 'date' => $param['date'],
+                'bl_number' => $param['bl_number'],
+                'pl_number' => $param['pl_number'],
                 'document_number' => $param['document_number'],
                 'type' => $param['customs_document_type'],
                 'order_id' => $param['order_id'],
@@ -145,6 +147,8 @@ class KITEImportController extends Controller
 
                     return [
                         'id' => $query->id,
+                        'bl_number' => $query->bl_number,
+                        'pl_number' => $query->pl_number,
                         'document_number' => $query->document_number,
                         'type' => $query->type,
                         'date' => date_format(date_create($query->date), 'Y-m-d'),

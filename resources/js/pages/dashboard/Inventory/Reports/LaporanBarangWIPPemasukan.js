@@ -67,7 +67,7 @@ function Inbound() {
     try {
       if (isEmpty(values.start_date) || isEmpty(values.start_date))
         new Error('Error processing your request!');
-      let param = `?fromDate=${values.start_date}&thruDate=${values.end_date}&type_of_shipment=4`;
+      let param = `?fromDate=${values.start_date}&thruDate=${values.end_date}&type_of_shipment=3`;
       API.getReportWIP_beta(param, function (res) {
         if (!res) return;
         if (!res.data) new Error('Error processing request');
@@ -170,7 +170,7 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{titleCase('Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak ')}</Typography>
+              <Typography variant="h5">{titleCase('Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak ')}</Typography>
               <Button
                 variant="contained"
                 onClick={handleDownload}
@@ -236,7 +236,7 @@ function Inbound() {
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
                   <TableCell colSpan={1}></TableCell>
-                  <TableCell colSpan={2}> Bukti Pengeluaran</TableCell>
+                  <TableCell colSpan={2}> Bukti Pemasukan </TableCell>
 
                   <TableCell colSpan={5}></TableCell>
                 </TableRow>
@@ -288,7 +288,7 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak</Typography>
+            <Typography variant="h3">Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak</Typography>
           </Grid>
 
           <Grid item xs={12}>

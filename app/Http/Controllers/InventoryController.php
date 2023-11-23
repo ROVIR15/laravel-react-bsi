@@ -131,44 +131,81 @@ class InventoryController extends Controller
 
     try {
 
-      $_items = BOMItem::select('product_feature_id')
-        ->where('bom_id', $costingId)
-        ->get()
-        ->map(function ($item) {
-          return $item->product_feature_id;
-        });
+      // $_items = BOMItem::select('product_feature_id')
+      //   ->where('bom_id', $costingId)
+      //   ->get()
+      //   ->map(function ($item) {
+      //     return $item->product_feature_id;
+      //   });
 
-      $query = ProductFeature::with('product', 'product_category')
-        ->with(['movement' => function ($query) use ($_items, $facilityId) {
-          return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))
-            ->where('facility_id', $facilityId)
-            ->whereIn('product_feature_id', $_items)
-            ->groupBy('product_feature_id');
-        }])
-        ->whereHas('movement')
+      // $query = ProductFeature::with('product', 'product_category')
+      //   ->with(['movement' => function ($query) use ($_items, $facilityId) {
+      //     return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))
+      //       ->where('facility_id', $facilityId)
+      //       ->whereIn('product_feature_id', $_items)
+      //       ->groupBy('product_feature_id');
+      //   }])
+      //   ->whereHas('movement')
+      //   ->get()
+      //   ->map(function ($query) {
+      //     $product = $query->product ? $query->product : null;
+      //     $goods = $product ? $product->goods : null;
+
+      //     return
+      //       [
+      //         'id' => $query['id'],
+      //         'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($query['id'], 4, '0', STR_PAD_LEFT),
+      //         'product_id' => $query['product_id'],
+      //         'product_feature_id' => $query['id'],
+      //         'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+      //         'unit_measurement' => $goods ? $goods->satuan : null,
+      //         'brand' => $goods ? $goods->brand : null,
+      //         'category_id' => $query->product_category->product_category_id,
+      //         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+      //         'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0
+      //       ];
+      //   })
+      //   ->filter(function ($item) {
+      //     return $item['current_stock'] > 0;
+      //   })
+      //   ->values();
+
+      $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
+        ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
+        // ->where('facility_id', $facilityId)
+        // ->whereIn('product_id', $query)
+        ->groupBy('product_feature_id', 'import_flag', 'facility_id')
         ->get()
         ->map(function ($query) {
-          $product = $query->product ? $query->product : null;
-          $goods = $product ? $product->goods : null;
+          $product_feature = $query->product_feature ? $query->product_feature : null;
+          $product = $query['product'] ? $query['product'] : null;
+          $goods = $query->goods ? $query->goods : null;
+
+          $import_flag = $query->import_flag ? 2 : 1;
 
           return
             [
-              'id' => $query['id'],
-              'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($query['id'], 4, '0', STR_PAD_LEFT),
-              'product_id' => $query['product_id'],
-              'product_feature_id' => $query['id'],
-              'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+              'id' => $query->id,
+              'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
+              'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+              'import_flag' => $query->import_flag,
+              'product_id' => $product->id,
+              'product_feature_id' => $product_feature->id,
+              'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
               'unit_measurement' => $goods ? $goods->satuan : null,
               'brand' => $goods ? $goods->brand : null,
+              'facility_id' => $query->facility_id,
+              'facility_name' => $query->facility->name,
               'category_id' => $query->product_category->product_category_id,
               'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-              'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0
+              'current_stock' => $query->current_stock
             ];
         })
         ->filter(function ($item) {
-          return $item['current_stock'] > 0;
+          return $item['current_stock'] >= 0;
         })
         ->values();
+
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -605,7 +642,7 @@ class InventoryController extends Controller
   {
     $fromDate = $request->query('fromDate');
     $thruDate = $request->query('thruDate');
-    $type = $request->query('type_of_facility');
+    $type = $request->query('type_of_shipment');
 
     try {
       if (!isset($fromDate) && !isset($thruDate)) {
@@ -651,8 +688,8 @@ class InventoryController extends Controller
 
       $query = ShipmentItem::with(['shipment' => function ($query) {
         return $query->with('party');
-      }])->with('order_item')->whereHas('shipment', function ($query) use ($fromDate, $thruDate){
-        return $query->where('shipment_type_id', 4)
+      }])->with('order_item')->whereHas('shipment', function ($query) use ($fromDate, $thruDate, $type) {
+        return $query->where('shipment_type_id', $type)
           ->whereBetween(DB::raw('DATE(delivery_date)'), [$fromDate, $thruDate]);
       })
         // ->groupBy('order_item_id')
@@ -860,7 +897,7 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
-            'document_number' => 'MT-'.str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
+            'document_number' => 'MT-' . str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
             'document_date' => $this->change_date_format($item['document_date']),
             'facility_id' => $item['facility_id'],
             "item_name" => $item['item_name'],

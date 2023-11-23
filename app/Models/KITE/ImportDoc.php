@@ -18,6 +18,8 @@ class ImportDoc extends Model
     protected $fillable = [
         'date',
         'document_number',
+        'bl_number',
+        'pl_number',
         'type',
         'order_id',
         'purchase_order_id'
