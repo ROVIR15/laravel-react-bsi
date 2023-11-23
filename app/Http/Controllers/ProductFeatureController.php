@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\Product\ProductFeature;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductFeatureCollection;
+use App\Models\Inventory\GoodsMovement;
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class ProductFeatureController extends Controller
 {
@@ -32,11 +36,47 @@ class ProductFeatureController extends Controller
    * @param 
    * @return \Illuminate\Http\Response
    */
-  public function checkInventoryItemWithStock()
+  public function checkInventoryItemWithStock(Request $request)
   {
 
+    $facilityId = $request->query('facility_id');
+
     try {
-      $query = ProductFeature::with('product', 'product_category', 'stock_in', 'stock_shipped_out', 'stock_transfer_out')->get();
+      // $query = ProductFeature::with('product', 'product_category', 'stock_in', 'stock_shipped_out', 'stock_transfer_out')->get();
+
+      $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
+        ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
+        ->where('facility_id', $facilityId)
+        // ->whereIn('product_id', $query)
+        ->groupBy('product_feature_id', 'import_flag', 'facility_id')
+        ->get()
+        ->map(function ($query) {
+          $product_feature = $query->product_feature ? $query->product_feature : null;
+          $product = $query['product'] ? $query['product'] : null;
+          $goods = $query->goods ? $query->goods : null;
+
+          $import_flag = $query->import_flag ? 2 : 1;
+
+          return
+            [
+              'id' => $query->id,
+              // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
+              'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+              'import_flag' => $query->import_flag,
+              'goods_id' => $goods->id,
+              'product_id' => $product->id,
+              'product_feature_id' => $product_feature->id,
+              'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
+              'unit_measurement' => $goods ? $goods->satuan : null,
+              // 'brand' => $goods ? $goods->brand : null,
+              'facility_id' => $query->facility_id,
+              'facility_name' => $query->facility->name,
+              'category_id' => $query->product_category->product_category_id,
+              'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+              'current_qty' => $query->current_stock
+            ];
+        })
+        ->values();
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -65,20 +105,20 @@ class ProductFeatureController extends Controller
 
           // $query3 = BOMItem::select('unit_price', 'id as costing_item_id')->where('bom_id', $costing_id)->where('product_id', $query->product_id)->get();
           return
-              [
-                  'id' => $query['id'],
-                  'product_id' => $query['product_id'],
-                  'product_feature_id' => $query['id'],
-                  'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
-                  'unit_measurement' => $goods ? $goods->satuan : null,
-                  'brand' => $goods ? $goods->brand : null,
-                  'category_id' => $query->product_category->product_category_id,
-                  'category_name' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-                  'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-                  'unit_price' => 0,
-                  'costing_item_id' => NULL
-              ];
-      });
+            [
+              'id' => $query['id'],
+              'product_id' => $query['product_id'],
+              'product_feature_id' => $query['id'],
+              'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+              'unit_measurement' => $goods ? $goods->satuan : null,
+              'brand' => $goods ? $goods->brand : null,
+              'category_id' => $query->product_category->product_category_id,
+              'category_name' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+              'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+              'unit_price' => 0,
+              'costing_item_id' => NULL
+            ];
+        });
     } catch (\Throwable $th) {
       //throw $th;
       return response()->json([

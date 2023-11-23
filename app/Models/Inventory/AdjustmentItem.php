@@ -19,7 +19,8 @@ class AdjustmentItem extends Model
         'product_id',
         'product_feature_id',
         'initial_qty',
-        'changes'
+        'changes',
+        'import_flag'
     ];
 
     public function product()

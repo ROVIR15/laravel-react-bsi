@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Inventory\Adjustment;
 use App\Models\Inventory\AdjustmentItem;
+use App\Models\Inventory\GoodsMovement;
+use Illuminate\Support\Facades\DB;
 
 class AdjustmentController extends Controller
 {
@@ -24,7 +26,7 @@ class AdjustmentController extends Controller
         //                 'success' => true,
         //                 'data' => $query
         //             ]);
-            
+
         // } catch (\Throwable $th) {
         //     //throw $th;
         //     return response()-json([
@@ -34,13 +36,12 @@ class AdjustmentController extends Controller
         // }
 
         $query = Adjustment::with('facility', 'user')
-        ->get();
+            ->get();
 
         return response()->json([
-           'success' => true,
-           'data' => $query
-       ]);
-
+            'success' => true,
+            'data' => $query
+        ]);
     }
 
     /**
@@ -63,17 +64,36 @@ class AdjustmentController extends Controller
 
             $_data = [];
             foreach ($param['items'] as $key) {
-                array_push($_data, [
+                AdjustmentItem::create([
                     'adjustment_id' => $_main['id'],
+                    'import_flag' => $key['import_flag'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'initial_qty' => $key['current_qty'],
                     'changes' => $key['counted_qty']
                 ]);
+                DB::commit();
+
+                $diff = $key['counted_qty'] - $key['current_qty'];
+                $type_movement = $diff > 0 ? 1 : 2;
+
+                GoodsMovement::create([
+                    'date' => $param['adjustment_date'],
+                    'import_flag' => $key['import_flag'],
+                    'material_transfer_id' => null,
+                    'material_transfer_item_id' => null,
+                    'material_transfer_item_realisation_id' => null,
+                    'facility_id' => $key['facility_id'],
+                    'goods_id' => $key['goods_id'],
+                    'product_id' => $key['product_id'],
+                    'product_feature_id' => $key['product_feature_id'],
+                    'type_movement' => $type_movement, // 1 for incoming and 2 outbound
+                    'qty' => $diff
+                ]);
+                DB::commit();
             }
 
             AdjustmentItem::insert($_data);
-
         } catch (\Throwable $th) {
             //throw $th;
 
@@ -88,7 +108,7 @@ class AdjustmentController extends Controller
         ]);
     }
 
-        /**
+    /**
      * Show a resource
      * 
      * @param Interger $id
@@ -98,24 +118,14 @@ class AdjustmentController extends Controller
     public function show($id)
     {
         try {
-            $query = Adjustment::where('id', $id)
-                     ->with(['items' => function($query){
-                        return $query->with('product', 'product_feature');
-                     }])
-                    //  ->with('status')
-                     ->get();
-            
-            $results = [];
-            foreach ($item as $query) {
-                # code...
-                $result = [
-                    ''
-                ]
-
-            }
+            $query = Adjustment::with(['items' => function ($query) {
+                    return $query->with('product', 'product_feature');
+                }])
+                //  ->with('status')
+                ->find($id);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()-json([
+            return response() - json([
                 'success' => false,
                 'error' => $th->getMessage()
             ], 500);
@@ -123,7 +133,7 @@ class AdjustmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $query[0]
+            'data' => $query
         ]);
     }
 
@@ -177,5 +187,4 @@ class AdjustmentController extends Controller
             'success' => true
         ]);
     }
-
 }

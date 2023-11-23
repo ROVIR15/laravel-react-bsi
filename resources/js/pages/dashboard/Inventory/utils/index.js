@@ -118,6 +118,7 @@ export function adjustment_data_prep(array) {
     const {
       id,
       adjustment_id,
+      import_flag,
       product_id,
       product_feature_id,
       initial_qty,
@@ -132,8 +133,7 @@ export function adjustment_data_prep(array) {
       product?.goods ? product?.goods?.name : product?.service?.name
     } ${size} - ${color}`;
 
-    const sku_id = `${product?.goods_id}-${product?.id}-${product_feature_id}`;
-
+    const sku_id = generalizeSKU(product?.goods_id, product?.id, product_feature_id, import_flag)
     return {
       id: index + 1,
       sku_id: sku_id,
@@ -143,7 +143,7 @@ export function adjustment_data_prep(array) {
       current_qty: initial_qty,
       counted_qty: changes,
       item_name,
-      satuan: product?.goods?.satua
+      unit_measurement: product?.goods?.satuan
     };
   });
 

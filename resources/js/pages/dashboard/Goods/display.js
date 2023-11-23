@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
@@ -25,11 +25,8 @@ import { machineList } from '../../../helpers/data';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'category', label: 'Kategori', alignRight: false },
-  { id: 'sub_category', label: 'Sub Kategori', alignRight: false },
-  { id: 'value', label: 'Value', alignRight: false },
   { id: 'unit_measurement', label: 'Satuan', alignRight: false },
-  { id: 'brand', label: 'Brand', alignRight: false },
+  { id: 'category', label: 'Kategori', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -51,32 +48,29 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  
+
   if (isArray(query) && query[1] > 0) {
     return filter(array, (_b) => {
       return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-        && _b.category_id === query[1]
-      )
+        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+        _b.category_id === query[1]
+      );
     });
   } else {
     return filter(array, (_b) => {
-      return (
-        _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1
-      )
+      return _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1;
     });
   }
 }
 
 function DisplayBuyer({ placeHolder }) {
-
   const [goodsData, setGoodsData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -87,23 +81,22 @@ function DisplayBuyer({ placeHolder }) {
   const [filterCategory, setFilterCategory] = useState(0);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
+    function isEmpty(array) {
+      if (!Array.isArray(array)) return true;
       return !array.length;
     }
 
-    if(isEmpty(goodsData)) {
+    if (isEmpty(goodsData)) {
       API.getGoods((res) => {
-		if(!res) return
-		if(!res.success) {
+        if (!res) return;
+        if (!res.success) {
           setGoodsData([]);
         } else {
-          let data = machineList(res.data);
-          setGoodsData(data);
+          setGoodsData(res.data);
         }
       });
     }
-  }, [])
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -153,22 +146,25 @@ function DisplayBuyer({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteGoods(id, function(res){
-      if(res.success) setGoodsData([]);
-    }).catch(function(error){
-      alert('error')
+    API.deleteGoods(id, function (res) {
+      if (res.success) setGoodsData([]);
+    }).catch(function (error) {
+      alert('error');
     });
-  }
+  };
 
   const handleFilterCategoryAndSub = (event) => {
-    setFilterCategory(event.target.value)
-  }
+    setFilterCategory(event.target.value);
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsData.length) : 0;
 
-  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), [filterName, filterCategory]);
+  const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), [
+    filterName,
+    filterCategory
+  ]);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -198,7 +194,7 @@ function DisplayBuyer({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const { id, name, satuan, category, sub_category, value, brand} = row;
+                  const { id, sku_id, name, unit_measurement, category_name, value } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
                     <TableRow
@@ -211,11 +207,8 @@ function DisplayBuyer({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{value}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
-                      <TableCell align="left">{brand}</TableCell>
+                      <TableCell align="left">{unit_measurement}</TableCell>
+                      <TableCell align="left">{category_name}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
@@ -250,7 +243,7 @@ function DisplayBuyer({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
-export default DisplayBuyer
+export default DisplayBuyer;

@@ -57,7 +57,6 @@ function StockAdjustment() {
     onSubmit: (values) => {
       try {
         let _payload = { ...values, items, user_id: user.id };
-        console.log(_payload);
         API.insertAdjustment(_payload, function (res) {
           if (!res) return;
           if (!res.success) throw new Error('failed');
@@ -173,7 +172,7 @@ function StockAdjustment() {
       { field: 'item_name', headerName: 'Nama Material', width: 450, editable: false },
       {
         field: 'current_qty',
-        headerName: 'Quantity Sistem',
+        headerName: 'Qty Tercatat',
         width: 250,
         type: 'number',
         editable: true,
@@ -181,7 +180,7 @@ function StockAdjustment() {
       },
       {
         field: 'counted_qty',
-        headerName: 'Quantity Aktual',
+        headerName: 'Qty Aktual',
         width: 250,
         type: 'number',
         editable: true,
@@ -197,7 +196,7 @@ function StockAdjustment() {
         flex: 1
       },
       {
-        field: 'satuan',
+        field: 'unit_measurement',
         type: 'number',
         headerName: 'Satuan',
         editable: false,
@@ -247,7 +246,7 @@ function StockAdjustment() {
 
   return (
     <FormikProvider value={formik}>
-      <Modal open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} />
+      <Modal facility={values.facility_id} open={openSh} handleClose={() => setOpenSh(false)} items={items} setItems={setItems} />
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Card>
           <CardContent>

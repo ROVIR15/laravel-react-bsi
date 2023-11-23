@@ -158,8 +158,8 @@ function StockAdjustment() {
       { field: 'order_item_id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
       { field: 'item_name', headerName: 'Nama Material', width: 450, editable: false },
       {
-        field: 'current_qty',
-        headerName: 'Quantity Sistem',
+        field: 'current_stock',
+        headerName: 'Qty Sistem',
         width: 250,
         type: 'number',
         editable: true,
@@ -167,7 +167,7 @@ function StockAdjustment() {
       },
       {
         field: 'counted_qty',
-        headerName: 'Quantity Aktual',
+        headerName: 'Qty Aktual',
         width: 250,
         type: 'number',
         editable: true,

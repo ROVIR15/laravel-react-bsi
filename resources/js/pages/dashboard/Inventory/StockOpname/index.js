@@ -7,7 +7,7 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 
 // components
-// import Display from './display';
+import Display from './display';
 import Layout from '../../../../layouts/Layout';
 
 import Breadcumbs from '../../../../components/Breadcumbs';
@@ -20,13 +20,13 @@ function getPathname(array) {
 function MaterialTransfer() {
   const { pathname } = useLocation();
 
-  // const isBeginning = () => {
-  //   if (pathname.split('/').length === 4) {
-  //     return <Display />;
-  //   } else {
-  //     return <Outlet />;
-  //   }
-  // };
+  const isBeginning = () => {
+    if (pathname.split('/').length === 4) {
+      return <Display />;
+    } else {
+      return <Outlet />;
+    }
+  };
 
   return (
     <Layout>

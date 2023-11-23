@@ -24,10 +24,12 @@ import { isEditCondition } from '../../../../../helpers/data';
 
 const TABLE_HEAD = [
     { id: 'id', label: 'ID', alignRight: false },
-    { id: 'name', label: 'Style', alignRight: false },
+    { id: 'sku_id', label: 'SKU ID', alignRight: false },
+    { id: 'item_name', label: 'Nama Item', alignRight: false },
     { id: 'category', label: 'Kategori', alignRight: false },
-    { id: 'sub_category', label: 'Sub Kategori', alignRight: false },  
-    { id: 'satuan', label: 'Satuan', alignRight: false }
+    { id: 'facility_name', label: 'Nama Fasilitas', alignRight: false },  
+    { id: 'current_qty', label: 'Stok Tersedia', alignRight: false },
+    { id: 'unit_measurement', label: 'Satuan', alignRight: false }
   ];
 
 // ----------------------------------------------------------------------
@@ -103,8 +105,6 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id}
-    console.log(name)
     const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -209,14 +209,17 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = selected.map(e => e.product_feature_id).indexOf(row.id) !== -1;
+                  const isItemSelected = selected.map(e => e.id).indexOf(row.id) !== -1;
                   const disabled=isItemSelected 
                     // && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
+                    sku_id,
+                    item_name,
                     category,
-                    sub_category,
-                    satuan
+                    facility_name,
+                    unit_measurement,
+                    current_qty
                   } = row;
                   return (
                     <TableRow
@@ -235,12 +238,12 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                         />
                       </TableCell>
                       <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">
-                        {`${row.name} ${row.color === '1' ? '' : row.color} ${row.size === '1' ? '' : `- ${row.size}`}`} 
-                      </TableCell>
+                      <TableCell align="left">{sku_id}</TableCell>
+                      <TableCell align="left">{item_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{sub_category}</TableCell>
-                      <TableCell align="left">{satuan}</TableCell>
+                      <TableCell align="left">{facility_name}</TableCell>
+                      <TableCell align="left">{current_qty}</TableCell>
+                      <TableCell align="left">{unit_measurement}</TableCell>
                     </TableRow>
                   );
                 })}

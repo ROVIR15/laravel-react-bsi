@@ -10,11 +10,7 @@ import closeCircle from '@iconify/icons-eva/close-outline';
 // Components
 import API from '../../../../../helpers';
 import Table from './Table';
-import { bomitem_data_alt } from '../../utils';
 
-// Helpers
-import { inventoryItemWithStock } from '../../../../../helpers/data';
-import { isEmpty } from 'lodash';
 
 const style = {
   position: 'absolute',
@@ -25,8 +21,7 @@ const style = {
 };
 
 export default function BasicModal({
-  payload,
-  order_id,
+  facility,
   update,
   open,
   handleClose,
@@ -42,34 +37,32 @@ export default function BasicModal({
   const [selectionOptions, setSelectionOptions] = React.useState([]);
 
   // loading
-  const loading = open && options.length === 0;
+  const loading = open || options.length === 0;
 
   React.useEffect(() => {
     let active = true;
 
+    if(!open) {
+      return;
+    }
     if (!loading) {
       return undefined;
     }
-
+    console.log(facility)
     // get productFeature
-    API.getCheckInventoryItem((res) => {
+    API.getCheckInventoryItem(`?facility_id=${facility}`, (res) => {
       if (!res) return;
       if (!res.data) {
         setOptions([]);
       } else {
-        let data = inventoryItemWithStock(res.data);
-        setOptions(data);
+        setOptions(res.data);
       }
-    });
+    })
 
     return () => {
       active = false;
     };
-  }, [loading]);
-
-  React.useEffect(() => {
-    // get bom
-  }, []);
+  }, [open]);
 
   return (
     <div>

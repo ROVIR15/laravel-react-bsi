@@ -297,7 +297,7 @@ const main = {
   },
   getGoods(cb) {
     axios
-      .get(uri + '/goods')
+      .get(uri + '/goods-v2')
       .then(function (res) {
         cb(res.data);
       })
@@ -3390,9 +3390,9 @@ const main = {
         cb(err.response);
       });
   },
-  getCheckInventoryItem(cb) {
+  getCheckInventoryItem(params, cb) {
     axios
-      .get(uri + '/material-status-with-stock')
+      .get(uri + '/material-status-with-stock' + params)
       .then(function (res) {
         cb(res.data);
       })

@@ -377,7 +377,7 @@ export default function TestRouter() {
           element: <StockAdjustmentLayout />,
           children: [
             { path: ':id', element: <ShowStockAdjustment/>},
-            { path: 'add', element: <AddStockAdjustment/>},
+            { path: 'new', element: <AddStockAdjustment/>},
             { path: 'display', element: <DisplayStockAjustment />}
           ]
         },

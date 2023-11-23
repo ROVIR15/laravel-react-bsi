@@ -204,7 +204,7 @@ function StockAdjustment() {
       { field: 'item_name', headerName: 'Nama Material', width: 450, editable: false },
       {
         field: 'current_qty',
-        headerName: 'Quantity Sistem',
+        headerName: 'Qty Sistem',
         width: 250,
         type: 'number',
         editable: true,
@@ -212,7 +212,7 @@ function StockAdjustment() {
       },
       {
         field: 'counted_qty',
-        headerName: 'Quantity Aktual',
+        headerName: 'Qty Aktual',
         width: 250,
         type: 'number',
         editable: true,
@@ -228,7 +228,7 @@ function StockAdjustment() {
         flex: 1
       },
       {
-        field: 'satuan',
+        field: 'unit_measurement',
         type: 'number',
         headerName: 'Satuan',
         editable: false,
@@ -288,6 +288,7 @@ function StockAdjustment() {
                   <InputLabel>Facility</InputLabel>
                   <Select
                     onChange={handleFacility}
+                    disabled
                     value={values.facility_id}
                     label="Facility"
                     error={Boolean(touched.facility_id && errors.facility_id)}
@@ -319,16 +320,18 @@ function StockAdjustment() {
                   >
                     <FormControlLabel
                       value={1}
+                      disabled
                       control={<Radio />}
                       label="Penambahan/Pengurangan"
                     />
-                    <FormControlLabel value={2} control={<Radio />} label="Perhitungan Stok" />
+                    <FormControlLabel disabled value={2} control={<Radio />} label="Perhitungan Stok" />
                   </RadioGroup>
                 </FormControl>
               </Grid>
 
               <Grid item xs={6}>
                 <TextField
+                  disabled
                   fullWidth
                   autoComplete="adjustment_date"
                   type="date"
@@ -349,6 +352,7 @@ function StockAdjustment() {
                 <GridData>
                   <Typography variant="h6">Material Item</Typography>
                   <IconButton
+                    disabled
                     onClick={() => setOpenSh(true)}
                     sx={{
                       height: '36px',
@@ -372,6 +376,7 @@ function StockAdjustment() {
               <Grid item xs={12} style={{ marginTop: '2.5em' }}>
                 <TextField
                   fullWidth
+                  disabled
                   multiline
                   minRows={2}
                   maxRows={5}
@@ -393,6 +398,7 @@ function StockAdjustment() {
             <Stack direction="column">
               <LoadingButton
                 fullWidth
+                disbaled
                 size="large"
                 type="submit"
                 variant="contained"
