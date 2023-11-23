@@ -274,6 +274,9 @@ function DisplayInventory({ placeHolder }) {
                     unit_measurement,
                     facility_name,
                     category,
+                    origin_currency,
+                    unit_price,
+                    total_price,
                     current_stock
                   } = row;
 
@@ -295,9 +298,9 @@ function DisplayInventory({ placeHolder }) {
                       <TableCell align="left">{facility_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
+                      <TableCell align="left">{origin_currency}</TableCell>
                       <TableCell align="left">{fCurrency(unit_price, 'idr')}</TableCell>
                       <TableCell align="left">{fCurrency(total_price, 'idr')}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
                       <TableCell align="right">
                         <MoreMenu
                           scrapActive={true}
