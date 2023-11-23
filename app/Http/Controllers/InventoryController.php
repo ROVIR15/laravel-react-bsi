@@ -806,7 +806,7 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
             'qty' => $item->qty,
-            'sku_id' => str_pad($import_flag, 4, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
 
