@@ -325,10 +325,12 @@ class BOMController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
 
+          $import_flag = $order->import_flag ? 2 : 1;
+
           $payment = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
 
           return [
-            'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
             'import_item_id' => $import_info ? $import_info->id : null,
             'import_id' => $import_info ? $import_info->kite_import_doc_id : null,
