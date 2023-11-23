@@ -78,7 +78,7 @@ function applySortFilter(array, comparator, query) {
       return filter(
         array,
         (_b) =>
-          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
           _b.completion_status[0]?.status?.name?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1 &&
           _b.party?.id === query[2]
       );
@@ -87,14 +87,14 @@ function applySortFilter(array, comparator, query) {
         array,
         (_b) => {
           console.log(_b.completion_status.length === 0)
-          return  _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          return  _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
           isEmpty(_b.completion_status);
         }
       );
       return filter(
         array,
         (_b) =>
-          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
           !isEmpty(_b.completion_status) &&
           _b.completion_status[0]?.status?.name?.toLowerCase().indexOf(query[1].toLowerCase()) !== -1
       );
@@ -104,11 +104,11 @@ function applySortFilter(array, comparator, query) {
       return filter(
         array,
         (_b) =>
-          _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
+          _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1 &&
           _b.party?.id === query[2]
       );
     else
-      return filter(array, (_b) => _b.name?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
+      return filter(array, (_b) => _b.po_number?.toLowerCase().indexOf(query[0]?.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
