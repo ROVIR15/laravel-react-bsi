@@ -60,7 +60,7 @@ export const CurrencyProvider = ({ children }) => {
       // case exchange idr to usd
       // the calculation must be value divided by usd_currency;
       case 'usd':
-        return (parseFloat(value) / currencyData[initialCurrencyType]).toFixed(2);
+        return (parseFloat(value) / currencyData[initialCurrencyType]).toFixed(4);
       default:
         alert(`Requested currency type isn't supported yet`);
         return 0;
