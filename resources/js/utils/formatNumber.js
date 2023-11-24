@@ -15,7 +15,11 @@ export function fCurrency(number, currency = 'idr') {
     }
     return `Rp. ${res}`;
   }
-  if (currency?.toLowerCase() === 'usd') return `$ ${res}`;
+  if (currency?.toLowerCase() === 'usd') {
+    let formatPattern = hasDecimalPlaces ? '0,0.0000' : '0,0';
+    let res = numeral(number).format(`${formatPattern}`);  
+    return `$ ${res}`;
+  }
   else return res;
 }
 
