@@ -290,7 +290,7 @@ class GoodsController extends Controller
         ], 404);
       }
 
-      $goods = $goods->find($tes['goods_id']);
+      $goods = $goods->find($tes->goods_id);
 
       return new GoodsOneCollection($goods);
       // return response()->json($feature);
