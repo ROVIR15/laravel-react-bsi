@@ -51,7 +51,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('product', 'ProductController')->only(['index']);
     Route::resource('service', 'ServiceController')->only(['index']);
     Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
-    Route::resource('goods-v2', 'V2\GoodsController')->only(['index']);
+    Route::get('goods-v2', 'V2\GoodsController@index');
     Route::resource('service', 'ServiceController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('part', 'PartController')->only(['index']);
     Route::resource('partBOM', 'PartBOMController')->only(['index']);
