@@ -54,7 +54,7 @@ class GoodsController extends Controller
               ];
             }
           } else {
-            if(is_null($goods)){
+            if (is_null($goods)) {
               if (is_null($category)) {
                 return [
                   'id' => $product->id,
@@ -104,7 +104,7 @@ class GoodsController extends Controller
                   'category_id' => $category->id,
                   'category_sub_id' => $category->sub->id,
                   'category_name' => $category->name . ' ' . $category->sub->name
-                ];  
+                ];
               }
             }
           }
@@ -283,7 +283,7 @@ class GoodsController extends Controller
       // $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
       $tes = $product->find($id);
 
-      if(!$tes){
+      if (!$tes) {
         return response()->json([
           'success' => false,
           'message' => 'Not found!'
@@ -343,14 +343,14 @@ class GoodsController extends Controller
         'imageUrl' => $goodsParam['imageUrl']
       ]);
 
-      $_goods = Product::where('goods_id', $id)->get();
+      // $_goods = Product::where('goods_id', $id)->get();
 
-      if (sizeof($_goods) === 0) {
-        return response()->json(sizeOf($_goods));
-        throw new Exception("Goods Not Found", 1);
-      }
+      // if (sizeof($_goods) === 0) {
+      //   return response()->json(sizeOf($_goods));
+      //   throw new Exception("Goods Not Found", 1);
+      // }
 
-      ProductHasCategory::where('product_id', $_goods[0]['id'])
+      ProductHasCategory::where('product_id', $id)
         ->update([
           'product_category_id' => $catParam
         ]);
