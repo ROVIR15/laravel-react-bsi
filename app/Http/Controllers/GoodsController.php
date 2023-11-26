@@ -287,7 +287,7 @@ class GoodsController extends Controller
         return response()->json([
           'success' => false,
           'message' => 'Not found!'
-        ], 400);
+        ], 404);
       }
 
       $goods = $goods->find($tes[0]['goods_id']);
