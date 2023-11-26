@@ -67,6 +67,7 @@ export default function OSRPPIC() {
             </TableCell>
           </TableRow>
           <TableRow>
+            <TableCell className="wk_primary_color wk_gray_bg">No</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Sales Order ID</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Nama Buyer</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg">Gambar</TableCell>
@@ -91,7 +92,7 @@ export default function OSRPPIC() {
         </TableHead>
         <TableBody>
           {!isEmpty(OSRRows) ? (
-            OSRRows.map((_row) => (
+            OSRRows.map((_row, index) => (
               <TableRow
                 key={_row.sold_to}
                 sx={{
@@ -99,6 +100,9 @@ export default function OSRPPIC() {
                 }}
               >
                 <TableCell component="th" align="left">
+                  <TableCell component="th" align="left">
+                    {index+1}
+                  </TableCell>
                   {isNull(_row?.sales_order_id) ? null : (
                     <Typography
                       variant="body1"

@@ -214,6 +214,7 @@ function MaterialTransfer() {
   // handle edit compoennt rows change
   const handleEditComponentRowsModelChange = React.useCallback(
     (model) => {
+      console.log(model)
       const editedIds = Object.keys(model);
       // user stops editing when the edit model is empty
       if (editedIds.length === 0) {
