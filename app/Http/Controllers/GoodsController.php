@@ -326,8 +326,6 @@ class GoodsController extends Controller
     $goodsParam = $request->all()['payload']['goods'];
     $catParam = $request->all()['payload']['category'];
     try {
-      $existingProduct = Product::find($id);
-
       Goods::find($id)->update([
         'name' => $goodsParam['name'],
         'satuan' => $goodsParam['unit'],
