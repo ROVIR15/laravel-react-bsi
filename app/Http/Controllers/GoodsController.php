@@ -281,7 +281,7 @@ class GoodsController extends Controller
   {
     try {
       // $query = ProductHasCategory::whereNotIn('product_category_id', [7,8,9])->with('product', 'category')->get();
-      $tes = $product->where('goods_id', $id)->get();
+      $tes = $product->where('id', $id)->get();
 
       if(!isset($tes[0])){
         return response()->json([
