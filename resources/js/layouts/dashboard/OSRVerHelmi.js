@@ -103,8 +103,6 @@ export default function OSRPPIC() {
                   {index + 1}
                 </TableCell>
                 <TableCell component="th" align="left">
-                    {index+1}
-                  </TableCell>
                   {isNull(_row?.sales_order_id) ? null : (
                     <Typography
                       variant="body1"
