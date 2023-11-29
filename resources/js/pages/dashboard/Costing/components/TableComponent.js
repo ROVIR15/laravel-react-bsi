@@ -72,8 +72,8 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
               <TableCell align="left">{index + 1}</TableCell>
               <TableCell component="th" scope="row">
                 {row.product_feature?.product?.goods?.name}{' '}
-                {row.product_feature?.color.length > 1 ? row.product_feature?.color : null}{' '}
-                {row.product_feature?.size.length > 1 ? row.product_feature?.size : null}
+                {row.product_feature?.color?.length > 1 ? row.product_feature?.color : null}{' '}
+                {row.product_feature?.size?.length > 1 ? row.product_feature?.size : null}
               </TableCell>
               <TableCell component="th" scope="row">
                 {row.product_feature?.product_category?.category?.name} -{' '}
