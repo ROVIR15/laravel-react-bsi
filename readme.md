@@ -49,7 +49,7 @@ curl -X GET \
   'https://api.example.com/api/v2/some-api-endpoint' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN_HERE'
 ```
-
+============================================================================
 #### Get all purchase order document
 
 ```http
@@ -75,7 +75,7 @@ curl -X GET \
 | :-------- | :------- | :-------------------------------- |
 | `purchase_order_id`      | `int` | **Required**. Id of items on choosen purchae order to fetch |
 
-========================================================================
+============================================================================
 #### Get all invoice document
 
 ```http
@@ -124,6 +124,7 @@ Goods Movement (Mutasi Barang);
 | :-------- | :------- | :-------------------------------- |
 | `material_transfer_id`      | `int` | **Required**. Id of items on choosen purchae order to fetch |
 
+============================================================================
 
 #### Get all Sales Order
 
