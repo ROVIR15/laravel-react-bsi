@@ -15,10 +15,12 @@ class PurchaseOrderController extends Controller
     public function index(Request $request)
     {
         $month = $request->query('month');
+        $year = $request->query('year');
 
         try {
             $query = PurchaseOrder::with('order')
                 ->whereMonth('created_at', '=', $month)
+                ->whereYear('created_at', '=', $year)
                 ->paginate(10)
                 ->map(function ($query) {
                     // $costing= $query->order_item_one;
