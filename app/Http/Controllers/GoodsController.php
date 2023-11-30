@@ -288,11 +288,18 @@ class GoodsController extends Controller
           'success' => false,
           'message' => 'Not found!'
         ], 404);
+      } else {
+        $goods = $goods->find($tes->goods_id);
+        if (!$goods){
+          return response()->json([
+            'success' => false,
+            'message' => 'Not found!'
+          ], 404);  
+        } else {
+          return new GoodsOneCollection($goods);
+        }
       }
 
-      $goods = $goods->find($tes->goods_id);
-
-      return new GoodsOneCollection($goods);
       // return response()->json($feature);
     } catch (Exception $th) {
       //throw $th;

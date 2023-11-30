@@ -46,6 +46,7 @@ function Goods() {
   const [file, setFile] = useState(null);
 
   const GoodsSchema = Yup.object().shape({
+    code: Yup.string().required('Kode is required'),
     name: Yup.string().required('Nama is required'),
     unit_measurement: Yup.string().required('Satuan is required'),
     category: Yup.string().required('Kategori is required'),
@@ -56,6 +57,7 @@ function Goods() {
 
   const formik = useFormik({
     initialValues: {
+      code: '',
       name: '',
       unit_measurement: '',
       category: '',
@@ -65,10 +67,10 @@ function Goods() {
       feature_two: ''
     },
     validationSchema: GoodsSchema,
-    onSubmit: ({ name, unit_measurement, value, brand, category, feature_one, feature_two }) => {
+    onSubmit: ({ name, code, unit_measurement, value, brand, category, feature_one, feature_two }) => {
       const _new = {
         goods: {
-          name,
+          name: `${name} - #${code}`,
           unit: unit_measurement,
           value,
           brand,
@@ -215,7 +217,19 @@ function Goods() {
                   </Grid>
                   <Grid item xs={7}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12}>
+                      <Grid item xs={4}>
+                        <TextField
+                          fullWidth
+                          autoComplete="code"
+                          type="text"
+                          label="Kode"
+                          {...getFieldProps('code')}
+                          error={Boolean(touched.code && errors.code)}
+                          helperText={touched.code && errors.code}
+                        />
+                      </Grid>
+
+                      <Grid item xs={8}>
                         <TextField
                           fullWidth
                           autoComplete="name"
