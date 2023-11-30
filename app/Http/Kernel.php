@@ -67,7 +67,7 @@ class Kernel extends HttpKernel
         'notification.logger' => \App\Http\Middleware\NotificationLogger::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,  
-  
+        'auth.api.finance.external' => \App\Http\Middleware\ProtectAPIFinance::class,
     ];
 
     /**

@@ -349,3 +349,14 @@ Route::post('item-issuance-v2', 'ItemIssuanceController@storeV2');
 
 Route::get('bom-item-alt-v5/{costing_id}', 'BOMItemController@findItemsByCostingIdWithStock_test');
 Route::get('bom-item-alt-v6/{costing_id}', 'BOMItemController@findItemsByCostingId_test');
+
+
+Route::group(['middleware' => ['auth.api.finance.external']], function () {
+    Route::get('v2/finance/purchase-order', 'V2\Finance\PurchaseOrderController@index');
+    Route::get('v2/finance/purchase-order-items/{id}', 'V2\Finance\PurchaseOrderController@items');
+    Route::get('v2/finance/invoice', 'V2\Finance\InvoiceController@index');
+    Route::get('v2/finance/invoice-items/{id}', 'V2\Finance\InvoiceController@items');
+    Route::get('v2/finance/material-transfer', 'V2\Finance\MaterialTransferController@index');
+    Route::get('v2/finance/material-transfer-items/{id}', 'V2\Finance\MaterialTransferController@items');
+    Route::get('v2/finance/material-transfer-facility', 'V2\Finance\MaterialTransferController@material_transfer_facility');
+});
