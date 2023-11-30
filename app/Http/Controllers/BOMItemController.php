@@ -49,8 +49,8 @@ class BOMItemController extends Controller
                 return [
                     'id' => $item->id,
                     'order_id' => $item->id,
-                    'name' => $item->id .'-'.$item->name,
-                    'po_number' => $item->id .'-'. $item->name
+                    'name' => $item->id . '-' . $item->name,
+                    'po_number' => $item->id . '-' . $item->name
                 ];
             });
         } catch (\Throwable $th) {
@@ -189,13 +189,27 @@ class BOMItemController extends Controller
                 $product = $query->product ? $query->product : null;
                 $goods = $product ? $product->goods : null;
 
-                $query3 = BOMItem::select('unit_price', 'bom_id', 'id as costing_item_id')
+                $query3 = BOMItem::select('unit_price', 'qty', 'consumption', 'bom_id', 'id as costing_item_id')
                     ->with(['costing' => function ($item) {
                         return $item->with('currency_info');
                     }])
                     ->where('bom_id', $costing_id)
                     ->where('product_id', $query->product_id)
                     ->get();
+
+                $costing_item = count($query3) ? $query3[0] : null;
+                $costing = !is_null($costing_item) ? $costing_item['costing'] : null;
+
+                $qty = 0;
+                $unit_price = 0;
+
+                if (!is_null($costing_item)) {
+                    $unit_price = $costing_item['unit_price'];
+                    if (!is_null($costing)) {
+                        $qty = $costing_item['consumption'] * $costing['qty'];
+                    }
+                }
+
                 return
                     [
                         'id' => $query['id'],
@@ -207,7 +221,8 @@ class BOMItemController extends Controller
                         'category_id' => $query->product_category->product_category_id,
                         'category_name' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
                         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-                        'unit_price' => count($query3) ? $query3[0]['unit_price'] : 0,
+                        'qty' => $qty,
+                        'unit_price' => $unit_price,
                         'currency_id' => count($query3) ? $query3[0]['costing']['currency_id'] : null,
                         'costing_item_id' => count($query3) ? $query3[0]['costing_item_id'] : 0
                     ];
@@ -276,7 +291,6 @@ class BOMItemController extends Controller
                             'costing_item_id' => count($query3) ? $query3[0]['costing_item_id'] : 0
                         ];
                 });
-
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
