@@ -39,6 +39,93 @@ dan jalankan perintah dibawah ini untuk menjalankan laravel:
 
 ## API Reference
 
+### External API
+You must understand if there is an access token in order to securing this API. Please ask the administrator to get the accesss token.
+
+The authorization requires you to put access token on request header. It's look like that.
+
+```
+curl -X GET \
+  'https://api.example.com/api/v2/some-api-endpoint' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN_HERE'
+```
+============================================================================
+#### Get all purchase order document
+
+```http
+  GET /api/v2/finance/purchase-order?paginate={number_of_data}&month={month}&year={year}&page={page_number}
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `paginate` | `int` | Default is 10, if you want to increase or decrease page you can make some adjustment here |
+| `page_number` | `int` | It will direct you on the next data (if exists)|
+| `month` | `int` | **Required** provide month filter based on created_date, cannot be null |
+| `year` | `int` | **Required** provide year filter based on created_date, cannot be null |
+
+
+
+#### Get item on spesific purchae order document
+
+```http
+  GET /api/v2/finance/purchase-order-items/${purchase_order_id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `purchase_order_id`      | `int` | **Required**. Id of items on choosen purchae order to fetch |
+
+============================================================================
+#### Get all invoice document
+
+```http
+  GET /api/v2/finance/invoice?paginate={number_of_data}&invoice_type={invoice_type}&month={month}&year={year}&page={page_number}
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `paginate` | `int` | Default is 10, if you want to increase or decrease page you can make some adjustment here |
+| `invoice_type` | `int` | there is `2` type of invoices, **`1`** for Invoice is issued from BSI (based on sales order), **`2`** for Invoice given by external party (source from Purchase Order)|
+| `month` | `int` | **Required** provide month filter based on created_date, cannot be null |
+| `year` | `int` | **Required** provide year filter based on created_date, cannot be null |
+
+#### Get item on spesific purchae order document
+
+```http
+  GET /api/v2/finance/invoice-items/${invoice_id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `invoice_id`      | `int` | **Required**. Id of items on choosen purchae order to fetch |
+
+========================================================================
+#### Get all material transfer document
+
+Goods Movement (Mutasi Barang);
+
+```http
+  GET /api/v2/finance/material-transfer?paginate={number_of_data}&month={month}&year={year}&page={page_number}
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `paginate` | `int` | Default is 10, if you want to increase or decrease page you can make some adjustment here |
+| `month` | `int` | **Required** provide month filter based on created_date, cannot be null |
+| `year` | `int` | **Required** provide year filter based on created_date, cannot be null |
+
+#### Get item on spesific purchae order document
+
+```http
+  GET /api/v2/finance/material-transfer-items/${material_transfer_id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `material_transfer_id`      | `int` | **Required**. Id of items on choosen purchae order to fetch |
+
+============================================================================
+
 #### Get all Sales Order
 
 ```http
