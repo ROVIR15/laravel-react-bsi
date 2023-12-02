@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Invoice\Invoice;
 use App\Models\Invoice\InvoiceItem;
 use App\Models\Order\Order;
+use App\Models\Order\PurchaseOrder;
+use App\Models\Order\SalesOrder;
 use Throwable;
 
 class InvoiceController extends Controller
@@ -28,20 +30,33 @@ class InvoiceController extends Controller
                     ->whereMonth('created_at', $month)
                     ->whereYear('created_at', $year)
                     ->paginate($paginate)
-                    ->map(function ($query){
+                    ->map(function ($query) use ($invoice_type){
 
                         $summary = count($query->sum) ? $query->sum[0] : null;
                         $total_amount = !is_null($summary) ? $summary->total_amount : 0;
 
-                        $invoice_type = $query->type->invoice_type_id == 1 ? 'INV-' : 'INV-VB-';
+                        $invoice_type_ = $query->type->invoice_type_id == 1 ? 'INV-' : 'INV-VB-';
                         $invoice_type_desc = $query->type->invoice_type_id == 1 ? 'Invoice ke Buyer (Jual)' : 'Invoice dari Buyer (Beli)';
+
+                        $party_name = 'Empty';
+                        if($invoice_type === "1") {
+                            $so = SalesOrder::with('party')->where('order_id', $query->order_id)->get();
+
+                            $party_name = count($so) ? $so[0]->party->name : 'Empty';
+                        } else if($invoice_type === "2") {
+                            $po = PurchaseOrder::with('party')->where('order_id', $query->order_id)->get();
+                            $party_name = count($po) ? $po[0]->party->name : 'Empty';
+                        } else {
+                            $party_name = 'Not Defined';
+                        }
 
                         return [
                             'id' => $query->id,
                             'invoice_id' => $query->id,
-                            'uid' => $invoice_type . str_pad($query->id, 4, "0", STR_PAD_LEFT),
+                            'uid' => $invoice_type_ . str_pad($query->id, 4, "0", STR_PAD_LEFT),
                             'order_id' => $query->order_id,
-                            'billed_party' => !is_null($query->party) ? $query->party->name : "Empty",
+                            'issued_party' => $invoice_type === "1" ? 'PT Buana Sandang Indonesia' : $party_name,
+                            'billed_party' => !is_null($query->party) && $invoice_type === 2 ? $query->party->name : "PT Buana Sandang Indonesia",
                             'invoice_type_desc' => $invoice_type_desc,
                             'invoice_date' => $query->invoice_date,
                             'due_date' => $query->due_date,
