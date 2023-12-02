@@ -21,7 +21,7 @@ class InvoiceController extends Controller
         $paginate = $request->query('paginate');
 
         try {
-            $query = Invoice::with('party')
+            $query = Invoice::with('party', 'sum')
                     ->whereHas('type', function($query) use ($invoice_type){
                         return $query->where('invoice_type_id', $invoice_type);
                     })
@@ -29,12 +29,20 @@ class InvoiceController extends Controller
                     ->whereYear('created_at', $year)
                     ->paginate($paginate)
                     ->map(function ($query){
+
+                        $summary = count($query->sum) ? $query->sum[0] : null;
+                        $total_amount = !is_null($summary) ? $summary->total_amount : 0;
+
                         return [
                             'id' => $query->id,
+                            'invoice_id' => $query->id,
+                            'uid' => 'INV-' . str_pad($query->id, 4, "0", STR_PAD_LEFT),
                             'order_id' => $query->order_id,
+                            'billed_party' => !is_null($query->party) ? $query->party->name : "Empty",
                             'invoice_date' => $query->invoice_date,
                             'due_date' => $query->due_date,
                             'description' => $query->description,
+                            'total_amount' => $total_amount,
                             'tax' => $query->tax
                         ];
                     });
