@@ -38,16 +38,19 @@ class InvoiceController extends Controller
                         $invoice_type_ = $query->type->invoice_type_id == 1 ? 'INV-' : 'INV-VB-';
                         $invoice_type_desc = $query->type->invoice_type_id == 1 ? 'Invoice ke Buyer (Jual)' : 'Invoice dari Buyer (Beli)';
 
-                        $party_name = 'Empty';
+                        $issued_party = 'Empty';
+                        $billed_party = 'Empty';
                         if($invoice_type === "1") {
                             $so = SalesOrder::with('party')->where('order_id', $query->order_id)->get();
 
-                            $party_name = count($so) ? $so[0]->party->name : 'Empty';
+                            $issued_party = "PT Buana Sandang Indonesia";
+                            $billed_party = count($so) ? $so[0]->party->name : 'Empty';
                         } else if($invoice_type === "2") {
                             $po = PurchaseOrder::with('party')->where('order_id', $query->order_id)->get();
-                            $party_name = count($po) ? $po[0]->party->name : 'Empty';
+                            $issued_party = count($po) ? $po[0]->party->name : 'Empty';
+                            $billed_party = "PT Buana Sandang Indonesia";
                         } else {
-                            $party_name = 'Not Defined';
+                            $issued_party = 'Not Defined';
                         }
 
                         return [
@@ -55,8 +58,8 @@ class InvoiceController extends Controller
                             'invoice_id' => $query->id,
                             'uid' => $invoice_type_ . str_pad($query->id, 4, "0", STR_PAD_LEFT),
                             'order_id' => $query->order_id,
-                            'issued_party' => $invoice_type === "1" ? 'PT Buana Sandang Indonesia' : $party_name,
-                            'billed_party' => !is_null($query->party) && $invoice_type === 2 ? $query->party->name : "PT Buana Sandang Indonesia",
+                            'issued_party' => $issued_party,
+                            'billed_party' => $billed_party,
                             'invoice_type_desc' => $invoice_type_desc,
                             'invoice_date' => $query->invoice_date,
                             'due_date' => $query->due_date,
