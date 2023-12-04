@@ -236,15 +236,49 @@ function DisplayBOM({ placeHolder }) {
     setFilterMonthYear(value);
   };
 
-  const handleDeleteData = (event, id) => {
+  const handleDeleteData = (event, id, status) => {
     event.preventDefault();
 
-    try {
-      API.deleteBOM(id, function (res) {
-        if (res.success) setBomData([]);
-      });
-    } catch (error) {
-      alert('error');
+    if (isEmpty(status)) {
+      try {
+        API.deleteBOM(id, function (res) {
+          if (res.success) setBomData([]);
+        });
+      } catch (error) {
+        alert('Failed to delete ask administrator for delete');
+      }
+    } else {
+      if (isNull(status[0]?.status_type)) {
+        try {
+          API.deleteBOM(id, function (res) {
+            if (res.success) setBomData([]);
+          });
+        } catch (error) {
+          alert('Failed to delete ask administrator for delete');
+        }
+      } else {
+        if (status[0]?.status_type === 'Review' || status[0]?.status_type === 'Approve') {
+          if (user.id === 2) {
+            try {
+              API.deleteBOM(id, function (res) {
+                if (res.success) setBomData([]);
+              });
+            } catch (error) {
+              alert('Failed to delete ask administrator for delete');
+            }
+          } else {
+            alert('Failed to delete because its already Reviewed or Approved');
+          }
+        } else {
+          try {
+            API.deleteBOM(id, function (res) {
+              if (res.success) setBomData([]);
+            });
+          } catch (error) {
+            alert('Failed to delete ask administrator for delete');
+          }
+        }
+      }
     }
 
     handleUpdateData();
@@ -289,115 +323,119 @@ function DisplayBOM({ placeHolder }) {
   }
   return (
     <>
-    <Test2 data={filteredData}/>
-    <Card>
-      <ListToolbar
-        numSelected={selected.length}
-        buyerFilterActive={true}
-        filterBuyer={filterBuyer}
-        onFilterBuyer={handleBuyerFilter}
-        listOfBuyer={optionsBuyer}
-        monthYearActive={true}
-        filterMonthYear={filterMonthYear}
-        onFilterMonthYear={handleMonthYearChanges}
-        statusActive={true}
-        filterName={filterName}
-        filterStatus={filterStatus}
-        onFilterName={handleFilterByName}
-        onFilterStatus={handleFilterByStatus}
-        onGo={handleUpdateData}
-        placeHolder={placeHolder}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
-            <ListHead
-              active={false}
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={bomData.length}
-              numSelected={selected.length}
-              onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const {
-                    id,
-                    party,
-                    product_id,
-                    product_feature_id,
-                    status,
-                    name,
-                    qty,
-                    company_name,
-                    ...rest
-                  } = row;
-                  const isItemSelected = selected.indexOf(name) !== -1;
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
-                    >
-                      <TableCell align="left">{id}</TableCell>
-                      <TableCell align="left">{party?.name}</TableCell>
-                      <TableCell align="left">
-                        {moment(new Date(rest.start_date)).format('DD MMM YYYY')}
-                      </TableCell>
-                      <TableCell align="left">
-                        {moment(new Date(rest.created_at)).format('DD MMM YYYY')}
-                      </TableCell>
-                      <TableCell align="left">{name}</TableCell>
-                      <TableCell align="left">
-                        {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
-                      </TableCell>
-                      <TableCell align="left">{qty}</TableCell>
-                      <TableCell align="left">{ (isEmpty(status) && isNull(status[0]?.user)) ? "Tidak ada catetan" : `${status[0]?.user?.name} - ${status[0]?.description}`}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu
-                          id={id}
-                          document={true}
-                          handleDelete={(event) => handleDeleteData(event, id)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-            {isDataNotFound && (
+      <Test2 data={filteredData} />
+      <Card>
+        <ListToolbar
+          numSelected={selected.length}
+          buyerFilterActive={true}
+          filterBuyer={filterBuyer}
+          onFilterBuyer={handleBuyerFilter}
+          listOfBuyer={optionsBuyer}
+          monthYearActive={true}
+          filterMonthYear={filterMonthYear}
+          onFilterMonthYear={handleMonthYearChanges}
+          statusActive={true}
+          filterName={filterName}
+          filterStatus={filterStatus}
+          onFilterName={handleFilterByName}
+          onFilterStatus={handleFilterByStatus}
+          onGo={handleUpdateData}
+          placeHolder={placeHolder}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table size="small">
+              <ListHead
+                active={false}
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={bomData.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
               <TableBody>
-                <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
-                  </TableCell>
-                </TableRow>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const {
+                      id,
+                      party,
+                      product_id,
+                      product_feature_id,
+                      status,
+                      name,
+                      qty,
+                      company_name,
+                      ...rest
+                    } = row;
+                    const isItemSelected = selected.indexOf(name) !== -1;
+                    return (
+                      <TableRow
+                        hover
+                        key={id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={isItemSelected}
+                        aria-checked={isItemSelected}
+                      >
+                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{party?.name}</TableCell>
+                        <TableCell align="left">
+                          {moment(new Date(rest.start_date)).format('DD MMM YYYY')}
+                        </TableCell>
+                        <TableCell align="left">
+                          {moment(new Date(rest.created_at)).format('DD MMM YYYY')}
+                        </TableCell>
+                        <TableCell align="left">{name}</TableCell>
+                        <TableCell align="left">
+                          {ChipStatus(status[0]?.status_type, status[0]?.user_id)}
+                        </TableCell>
+                        <TableCell align="left">{qty}</TableCell>
+                        <TableCell align="left">
+                          {isEmpty(status) && isNull(status[0]?.user)
+                            ? 'Tidak ada catetan'
+                            : `${status[0]?.user?.name} - ${status[0]?.description}`}
+                        </TableCell>
+                        <TableCell align="right">
+                          <MoreMenu
+                            id={id}
+                            document={true}
+                            handleDelete={(event) => handleDeleteData(event, id, status)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
               </TableBody>
-            )}
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <TablePagination
-        rowsPerPageOptions={[15, 20, 25]}
-        component="div"
-        count={bomData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Card>
+              {isDataNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <SearchNotFound searchQuery={filterName} />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <TablePagination
+          rowsPerPageOptions={[15, 20, 25]}
+          component="div"
+          count={bomData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
     </>
   );
 }
