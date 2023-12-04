@@ -78,4 +78,8 @@ class Sewing extends Model
     public function wip_qc(){
         return $this->hasMany('App\Models\Monitoring\Qc', 'order_item_id', 'order_item_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
     }
+
+    public function wip_qc2(){
+        return $this->hasMany('App\Models\Monitoring\Qc', 'sales_order_id', 'sales_order_id')->select('id', 'date', 'sales_order_id', 'order_id', 'order_item_id', 'product_feature_id', 'output', 'reject');
+    }
 }

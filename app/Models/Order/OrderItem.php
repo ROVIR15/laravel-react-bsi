@@ -108,6 +108,22 @@ use DB;
       return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', DB::raw('sum(output) as total_output'))->groupBy('order_item_id', 'date');
     }
 
+    public function wip_cutting2(){
+      return $this->hasMany('App\Models\Monitoring\Cutting', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', 'output');
+    }
+
+    public function wip_sewing2(){
+      return $this->hasMany('App\Models\Monitoring\Sewing', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', 'output');
+    }
+
+    public function wip_qc2(){
+      return $this->hasMany('App\Models\Monitoring\Qc', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', 'output', 'reject');
+    }
+
+    public function wip_fg2(){
+      return $this->hasMany('App\Models\Monitoring\FinishedGoods', 'order_item_id')->select('id', 'product_feature_id', 'order_id', 'order_item_id', 'sales_order_id', 'date', 'output');
+    }
+
     public function import_info(){
       return $this->belongsTo('App\Models\KITE\ImportDocItem', 'id', 'order_item_id');
     }
