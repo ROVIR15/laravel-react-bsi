@@ -316,7 +316,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
 
     Route::get('report-osr-ppic', 'OSRController@get_osr_ppic_report');
     Route::resource('material-transfer', 'MaterialTransferController')->only(['index', 'store', 'show', 'update', 'destroy']);
-    
+
     // kite import 
     Route::resource('kite-export', 'KITEExportController')->only(['index', 'store', 'update', 'show', 'destroy']);
     Route::resource('kite-import', 'KITEImportController')->only(['index', 'store', 'update', 'show', 'destroy']);
@@ -324,7 +324,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::put('kite-import-item/{id}', 'KITEImportController@update_item');
     Route::get('get-export-so', 'SalesOrderController@get_export_so');
     Route::get('get-sales-order-item/{order_id}', 'OrderItemController@getFinishedGoodsOrderItemWithStock');
-    
+
     Route::get('notification/{user_id}', 'NotificationController@showFew');
     Route::put('notification/{notif_id}', 'NotificationController@update');
     Route::put('notification-mark-all/{user_id}', 'NotificationController@markAllAsRead');
@@ -341,7 +341,8 @@ Route::resource('logs', 'LogController')->only(['index']);
 Route::get('notification/{user_id}', 'NotificationController@showFew');
 Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
-Route::resource('goods', 'V2\GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+Route::resource('goods-v2', 'V2\GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
 Route::get('shipment-subcontract', 'ShipmentController@shipmentListSubcontract');
 Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
@@ -362,5 +363,5 @@ Route::group(['middleware' => ['auth.api.finance.external']], function () {
 });
 
 
-Route::get('v2/monitoring/daily-production-status', 'V2\Monitoring\ProductionStatusController@index');
+Route::get('v2/monitoring/daily-production-status/{order_id}', 'V2\Monitoring\ProductionStatusController@index');
 Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionStatusController@getDataBasedOnStyleFilterByDay');

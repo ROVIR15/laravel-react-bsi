@@ -12,9 +12,8 @@ class ProductionStatusController extends Controller
 {
     //
 
-    public function index(Request $request)
+    public function index($order_id, Request $request)
     {
-        $order_id = 64;
         try {
             $query = OrderItem::with('product_feature')
                             ->with(['wip_sewing2' => function($query){
