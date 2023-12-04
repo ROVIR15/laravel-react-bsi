@@ -360,3 +360,7 @@ Route::group(['middleware' => ['auth.api.finance.external']], function () {
     Route::get('v2/finance/material-transfer-items/{id}', 'V2\Finance\MaterialTransferController@items');
     Route::get('v2/finance/material-transfer-facility', 'V2\Finance\MaterialTransferController@material_transfer_facility');
 });
+
+
+Route::get('v2/monitoring/daily-production-status', 'V2\Monitoring\ProductionStatusController@index');
+Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionStatusController@getDataBasedOnStyleFilterByDay');
