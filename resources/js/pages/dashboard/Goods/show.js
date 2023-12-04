@@ -36,6 +36,7 @@ import API from '../../../helpers';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import { useSnackbar } from 'notistack';
 
 const UploadPaper = styled(Button)(({ theme }) => ({
   outline: 'none',
@@ -53,6 +54,8 @@ function Goods() {
   const [editRowData, setEditRowData] = React.useState({});
   const [items, setItems] = useState([]);
   const [cat, setCat] = useState([]);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const GoodsSchema = Yup.object().shape({
     name: Yup.string().required('Nama is required'),
@@ -81,21 +84,32 @@ function Goods() {
         },
         category
       };
-      API.updateGoods(id, _new, function (res) {
-        if (res.success) alert('success');
-        else alert('failed');
-      });
+      try {
+        API.updateGoods(id, _new, function (res) {
+          if (!res) enqueueSnackbar('', { variant: 'failedAlert' });
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
       setSubmitting(false);
     }
   });
 
   const deleteData = useCallback(
     (id) => () => {
-      API.deleteProductFeature(id, function (res) {
-        handleUpdateAllRows();
-      }).catch(function (error) {
-        alert('Fail');
-      });
+      try {
+        API.deleteProductFeature(id, function (res) {
+          if (!res) enqueueSnackbar('', { variant: 'failedAlert' });
+          if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } catch (error) {
+        enqueueSnackbar('', { variant: 'failedAlert' });
+      }
+
+      handleUpdateAllRows();
     },
     []
   );
@@ -111,9 +125,15 @@ function Goods() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
         // update on firebase
-        API.updateProductFeature(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updateProductFeature(editedIds, data, function (res) {
+            if (!res) enqueueSnackbar('', { variant: 'failedAlert' });
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -163,14 +183,15 @@ function Goods() {
     // Update the formData object
     formData.append('file', event.target.files[0], event.target.files[0].name);
 
-    API.uploadImage(formData, function (res) {
-      if (res.success) {
-        setFile(res.path);
-        alert(JSON.stringify(res));
-      } else {
-        alert('error');
-      }
-    });
+    try {
+      API.uploadImage(formData, function (res) {
+        if (!res) enqueueSnackbar('', { variant: 'failedAlert' });
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
   };
 
   const columns = useMemo(
