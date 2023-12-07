@@ -103,10 +103,10 @@ class ProductionStatusController extends Controller
                         'current_qc' => count($today_qc_output) ? $today_qc_output[0]->current_output : 0,
                         'current_fg' => count($today_fg_output) ? $today_fg_output[0]->current_output : 0,
 
-                        'balance_cutting' => count($total_cutting) ? $total_cutting->total_output - $query->qty : 0,
-                        'balance_sewing' => count($total_sewing) ? $total_sewing->total_output - $query->qty : 0,
-                        'balance_qc' => count($total_qc) ? $total_qc->total_output - $query->qty : 0,
-                        'balance_fg' => count($total_fg) ? $total_fg->total_output - $query->qty : 0,
+                        'balance_cutting' => !is_null($total_cutting) ? $total_cutting->total_output - $query->qty : 0,
+                        'balance_sewing' => !is_null($total_sewing) ? $total_sewing->total_output - $query->qty : 0,
+                        'balance_qc' => !is_null($total_qc) ? $total_qc->total_output - $query->qty : 0,
+                        'balance_fg' => !is_null($total_fg) ? $total_fg->total_output - $query->qty : 0,
                     ];
                 });
 
