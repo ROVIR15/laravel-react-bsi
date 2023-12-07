@@ -1161,7 +1161,7 @@ const main = {
         cb(err.response);
       });
   },
-  getOrder(params=null, cb) {
+  getOrder(params = null, cb) {
     axios
       .get(uri + '/order' + params)
       .then(function (res) {
@@ -4170,6 +4170,26 @@ const main = {
   getPerRecordOrderGraph(id, params, cb) {
     axios
       .get(uri + `/new-api-test-3/${id}` + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getDailyProduction(order_id, params, cb) {
+    axios
+      .get(uri + `/v2/monitoring/daily-production-status/${order_id}` + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  getDailyProduction2(params, cb) {
+    axios
+      .get(uri + `/v2/monitoring/daily-production-status-2` + params)
       .then(function (res) {
         cb(res.data);
       })

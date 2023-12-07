@@ -138,8 +138,6 @@ function TableD({ list, placeHolder, selected, setSelected }) {
                         real_end_date,
                         line_end_date
                       } = row;
-
-                      console.log(!isNull(real_start_date), real_start_date)
                       
                       return (
                         <TableRow

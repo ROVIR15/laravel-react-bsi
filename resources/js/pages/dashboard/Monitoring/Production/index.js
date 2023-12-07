@@ -27,6 +27,7 @@ import TableWorkDetail from './components/TableWorkDetail';
 import API from '../../../../helpers';
 import { fPercent } from '../../../../utils/formatNumber';
 import { countWorkingDays } from '../../ManufacturePlanning/utils';
+import Scrollbar from '../../../../components/Scrollbar';
 
 const CHART_DATA = [
   {
@@ -122,11 +123,13 @@ function Dashboard() {
       ckckck
     } = data;
 
-    let avg_output = 0
-    let imageUrl = ''
-    if(!isEmpty(ckckck)){
-      avg_output = expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
-      imageUrl = sales_order_img?.order_info?.order_item_img?.product_feature?.product?.goods?.imageUrl
+    let avg_output = 0;
+    let imageUrl = '';
+    if (!isEmpty(ckckck)) {
+      avg_output =
+        expected_output / countWorkingDays(ckckck[0]?.real_start_date, ckckck[0]?.real_end_date);
+      imageUrl =
+        sales_order_img?.order_info?.order_item_img?.product_feature?.product?.goods?.imageUrl;
     }
 
     return {
@@ -141,7 +144,7 @@ function Dashboard() {
       target_output: anticipated_pcs_per_line_output,
       line_start_date,
       line_end_date,
-      real_start_date:  ckckck[0]?.real_start_date,
+      real_start_date: ckckck[0]?.real_start_date,
       real_end_date: ckckck[0]?.real_end_date
     };
   }
@@ -184,12 +187,36 @@ function Dashboard() {
     }
   }
 
+  const [DPData, setDPData] = useState([]);
+  const [dailyProdSum, setDailyProdSum] = useState({
+    total_qty: 0,
+    total_current_sewing: 0,
+    total_current_qc: 0,
+    total_current_fg: 0,
+    sum_of_total_sewing: 0,
+    sum_of_total_qc: 0,
+    sum_of_total_fg: 0,
+    sum_of_balance_cutting: 0,
+    sum_of_balance_sewing: 0,
+    sum_of_balance_qc: 0,
+    sum_of_balance_fg: 0
+  });
+
   useEffect(() => {
     try {
       const { sales_order_id, ...item } = selectedGraph;
 
       if (item.id === 0 || sales_order_id === 0) return;
       const params = `?monthYear=${filterMonthYear}&facility=${lineSelected.id}&sales_order_id=${sales_order_id}`;
+
+      API.getDailyProduction(sales_order_id, `?date=${dateDailyProduction}`, function (res) {
+        if (isUndefined(res)) return;
+        if (!res.success) throw new Error('Error get data');
+        else {
+          setDPData(res.data);
+          setDailyProdSum(res.total);
+        }
+      });
 
       API.getPerRecordOrderGraph(item.id, params, function (res) {
         if (isUndefined(res)) return;
@@ -321,11 +348,132 @@ function Dashboard() {
     );
   const _p2 = ((average - average_ystrdy) / average_ystrdy) * 100;
 
+  // Set Current Date
+  let dateNow = moment(new Date()).format('YYYY-MM-DD');
+
+  const [dateDailyProduction, setDateDailyProduction] = useState(dateNow);
+  const [DPDataAllLines, setDPDataAllLines] = useState([]);
+
+  function handleDateChangeNew(e) {
+    setDateDailyProduction(e.target.value);
+  }
+
+  function tapGetData() {
+    try {
+      const params = `?date=${dateDailyProduction}`;
+
+      API.getDailyProduction2(params, function (res) {
+        if (isUndefined(res)) return;
+        if (!res.success) throw new Error('Error get data');
+        else {
+          setDPDataAllLines(res.data);
+        }
+      });
+    } catch (error) {
+      return;
+    }
+  }
+
+  useEffect(() => {
+
+    const { sales_order_id, ...item } = selectedGraph;
+
+    if(!sales_order_id){
+      return;
+    }
+
+    try {
+      API.getDailyProduction(sales_order_id, `?date=${dateDailyProduction}`, function (res) {
+        if (isUndefined(res)) return;
+        if (!res.success) throw new Error('Error get data');
+        else {
+          setDPData(res.data);
+          setDailyProdSum(res.total);
+        }
+      });
+
+    } catch (error) {
+      alert('error');
+    }
+  }, [dateDailyProduction])
+
   return (
     <Layout>
       <Modal open={isModalOpen} handleClose={handleClose} facility_id={lineSelected?.id} />
       <Card>
-        <CardHeader title="Realtime Output - OSR PPIC Line"/>
+        <CardHeader title="Realtime Output - OSR PPIC Line" />
+        <CardContent>
+          <Grid container direction="row" spacing={2}>
+            <Grid item xs={10}>
+              <TextField onChange={handleDateChangeNew} value={dateDailyProduction} fullWidth type="date" />
+            </Grid>
+            <Grid item xs={2}>
+              <Button onClick={tapGetData} size="large" variant="contained" fullWidth>
+                Go
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <table>
+                <thead>
+                  <tr>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center wk_text_center">
+                      No
+                    </th>
+                    <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                      Style / Nama Item
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_left">
+                      Total Pcs Sewing
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                      Total Pcs Check QC
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                      Defect
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                      GG
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                      Actual Report (pcs)
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {isEmpty(DPDataAllLines) ? (
+                    <tr>
+                      <Typography>Tidak ada Data!</Typography>
+                    </tr>
+                  ) : (
+                    DPDataAllLines.map(function (row, index) {
+                      return (
+                        <tr>
+                          <td className="wk_width_1 wk_text_center">{index + 1}</td>
+                          <td className="wk_width_1 wk_text_left">{row.label_name}</td>
+                          <td className="wk_width_1 wk_text_center">{row.total_output_sewing}</td>
+                          <td className="wk_width_1 wk_text_center">
+                            {parseInt(row.total_checked) + parseInt(row.total_reject)}
+                          </td>
+                          <td className="wk_width_1 wk_text_center">{row.total_reject}</td>
+                          <td className="wk_width_1 wk_text_center">{row.total_checked}</td>
+                          <td className="wk_width_1 wk_text_center">{0}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                  {/* <tr>
+                    <td className="wk_width_1">{index + 1}</td>
+                    <td className="wk_width_3">{row.item_name}</td>
+                  </tr>
+                  */}
+                </tbody>
+              </table>
+            </Grid>
+          </Grid>
+        </CardContent>
+
+        <CardHeader title="Realtime Output - OSR PPIC Line" />
         <CardContent>
           <Grid container direction="row" spacing={2}>
             <Grid item xs={12}>
@@ -422,6 +570,175 @@ function Dashboard() {
               </TabContext>
             </Grid>
           </Grid>
+        </CardContent>
+
+        <CardHeader title="Realtime Output - OSR PPIC Line" />
+        <CardContent>
+          <Scrollbar>
+            <Grid container>
+              <Grid item xs={12}>
+                <table>
+                  <thead>
+                    <tr>
+                      {/* Cutting */}
+                      <th
+                        className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                        colSpan={4}
+                      >
+                        {`Tanggal ${dateDailyProduction}`}
+                      </th>
+                      <th
+                        className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                        colSpan={3}
+                      >
+                        Cutting
+                      </th>
+                      {/* Sewing */}
+                      <th
+                        className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                        colSpan={3}
+                      >
+                        Sewing
+                      </th>
+                      {/* QC */}
+                      <th
+                        className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                        colSpan={3}
+                      >
+                        QC
+                      </th>
+                      {/* Finished Goods */}
+                      <th
+                        className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
+                        colSpan={5}
+                      >
+                        Finished Goods
+                      </th>
+                    </tr>
+                    <tr>
+                      <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center wk_text_center">
+                        No
+                      </th>
+                      <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Style / Nama Item
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Qty Order
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        UoM
+                      </th>
+                      {/* Cutting Tab */}
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Output Hari Ini
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Total Output
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Balance
+                      </th>
+                      {/* Sewing Tab */}
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Output Hari Ini
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Total Output
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Balance
+                      </th>
+                      {/* QC Tab */}
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Output Hari Ini
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Total Output
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Balance
+                      </th>
+                      {/* Finished Goods Tab */}
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Output Hari Ini
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Total Output
+                      </th>
+                      <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                        Balance
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isEmpty(DPData) ? (
+                      <tr>
+                        <Typography>Tidak ada Data!</Typography>
+                      </tr>
+                    ) : (
+                      DPData.map(function (row, index) {
+                        return (
+                          <tr>
+                            <td className="wk_width_1">{index + 1}</td>
+                            <td className="wk_width_3">{row.item_name}</td>
+                            <td className="wk_width_1 wk_text_center">{row.qty}</td>
+                            <td className="wk_width_1 wk_text_center">PCS</td>
+                            <td className="wk_width_1 wk_text_center">{row.current_cutting}</td>
+                            <td className="wk_width_1 wk_text_center">{row.total_cutting}</td>
+                            <td className="wk_width_1 wk_text_center">{row.balance_cutting}</td>
+                            <td className="wk_width_1 wk_text_center">{row.current_sewing}</td>
+                            <td className="wk_width_1 wk_text_center">{row.total_sewing}</td>
+                            <td className="wk_width_1 wk_text_center">{row.balance_sewing}</td>
+                            <td className="wk_width_1 wk_text_center">{row.current_qc}</td>
+                            <td className="wk_width_1 wk_text_center">{row.total_qc}</td>
+                            <td className="wk_width_1 wk_text_center">{row.balance_qc}</td>
+                            <td className="wk_width_1 wk_text_center">{row.current_fg}</td>
+                            <td className="wk_width_1 wk_text_center">{row.total_fg}</td>
+                            <td className="wk_width_1 wk_text_center">{row.balance_fg}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                    <tr>
+                      <td className="wk_width_1 wk_text_center" colSpan={2}>
+                        Total
+                      </td>
+                      <td className="wk_width_1 wk_text_center">{dailyProdSum.total_qty}</td>
+                      <td className="wk_width_1 wk_text_center"></td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.total_current_cutting}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_total_cutting}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_balance_cutting}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.total_current_sewing}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_total_sewing}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_balance_sewing}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">{dailyProdSum.total_current_qc}</td>
+                      <td className="wk_width_1 wk_text_center">{dailyProdSum.sum_of_total_qc}</td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_balance_qc}
+                      </td>
+                      <td className="wk_width_1 wk_text_center">{dailyProdSum.total_current_fg}</td>
+                      <td className="wk_width_1 wk_text_center">{dailyProdSum.sum_of_total_fg}</td>
+                      <td className="wk_width_1 wk_text_center">
+                        {dailyProdSum.sum_of_balance_fg}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Grid>
+            </Grid>
+          </Scrollbar>
         </CardContent>
       </Card>
     </Layout>
