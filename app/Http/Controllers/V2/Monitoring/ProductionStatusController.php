@@ -60,10 +60,10 @@ class ProductionStatusController extends Controller
                         $item_name = $goods['name'] . ' ' . $product_feature->color . ' ' . $product_feature->size;
                     }
 
-                    $total_cutting = count($query->wip_cutting2) ? $query->wip_cutting2[0] : null;
-                    $total_sewing = count($query->wip_sewing2) ? $query->wip_sewing2[0] : null;
-                    $total_qc = count($query->wip_qc2) ? $query->wip_qc2[0] : null;
-                    $total_fg = count($query->wip_fg2) ? $query->wip_fg2[0] : null;
+                    $total_cutting = isset($query->wip_cutting2) ? $query->wip_cutting2[0] : null;
+                    $total_sewing = isset($query->wip_sewing2) ? $query->wip_sewing2[0] : null;
+                    $total_qc = isset($query->wip_qc2) ? $query->wip_qc2[0] : null;
+                    $total_fg = isset($query->wip_fg2) ? $query->wip_fg2[0] : null;
 
                     $today_cutting_output = Cutting::select('id', 'date', 'order_item_id', DB::raw('sum(output) as current_output'))
                                             ->where('order_item_id', $query->id)
