@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     //Order
-    // Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::post('upload-sales-order', 'UploadController@upload_sales_order');
     Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
@@ -233,8 +233,8 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
     Route::get('fabric', 'ProductFeatureController@showFabric');
     Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
-    // Route::resource('order', 'OrderController')->only(['index', 'show', 'update']);
-    // Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::resource('order', 'OrderController')->only(['index', 'show', 'update']);
+    Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Graph
     Route::resource('graph-api', 'GraphSewingController')->only(['index']);
@@ -341,8 +341,8 @@ Route::resource('logs', 'LogController')->only(['index']);
 Route::get('notification/{user_id}', 'NotificationController@showFew');
 Route::resource('currency-exchange', 'CurrencyController')->only(['index', 'store']);
 
-Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
-Route::resource('goods-v2', 'V2\GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+// Route::resource('goods', 'GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
+// Route::resource('goods-v2', 'V2\GoodsController')->only(['index', 'store', 'update', 'destroy', 'show']);
 
 Route::get('shipment-subcontract', 'ShipmentController@shipmentListSubcontract');
 Route::get('wip-material-report', 'InventoryController@repWIPSubcontract');
