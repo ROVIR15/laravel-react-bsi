@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::resource('inquiry', 'InquiryController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     //Order
-    Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('sales-order', 'SalesOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::post('upload-sales-order', 'UploadController@upload_sales_order');
     Route::resource('order-item', 'OrderItemController')->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::resource('order-role', 'OrderRoleController')->only(['index', 'store', 'update', 'destroy', 'show']);
@@ -233,8 +233,8 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('sewing-line-detail', 'GraphSewingController@sewingLineDetail');
     Route::get('fabric', 'ProductFeatureController@showFabric');
     Route::resource('order-status', 'OrderStatusController')->only(['index', 'store', 'update', 'destroy', 'show']);
-    Route::resource('order', 'OrderController')->only(['index', 'show', 'update']);
-    Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
+    // Route::resource('order', 'OrderController')->only(['index', 'show', 'update']);
+    // Route::resource('purchase-order', 'PurchaseOrderController')->only(['index', 'show', 'store', 'update', 'destroy']);
 
     // Graph
     Route::resource('graph-api', 'GraphSewingController')->only(['index']);

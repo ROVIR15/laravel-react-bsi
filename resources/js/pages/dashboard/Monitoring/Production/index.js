@@ -572,7 +572,6 @@ function Dashboard() {
           </Grid>
         </CardContent>
 
-        <CardHeader title="Realtime Output - OSR PPIC Line" />
         <CardContent>
           <Scrollbar>
             <Grid container>
@@ -585,7 +584,7 @@ function Dashboard() {
                         className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
                         colSpan={4}
                       >
-                        {`Tanggal ${dateDailyProduction}`}
+                        {`Tanggal ${moment(dateDailyProduction).format('LL')}`}
                       </th>
                       <th
                         className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
