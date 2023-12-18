@@ -103,8 +103,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id}
-    const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
+    const selectedIndex = selected.map(e => e.id).indexOf(name.id);
     let newSelected = [];
     if (selectedIndex === -1) {
       if(isEditCondition(pathname.split('/'), id)) {

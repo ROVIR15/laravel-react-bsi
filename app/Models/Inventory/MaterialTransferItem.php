@@ -18,6 +18,7 @@ class MaterialTransferItem extends Model
         'goods_id',
         'product_id',
         'product_feature_id',
+        'order_item_id',
         'import_flag',
         'transfer_qty',
         'costing_item_id'

@@ -36,7 +36,7 @@ export function bomitem_data_alt(array, filter) {
 export function material_transfer_items(array, filter) {
   if (isEmpty(array)) return [];
   let arranged = array.map((x) => {
-    const { id, material_transfer_id, costing_item_id, import_flag, transfer_qty, product_feature, product, transferred } = x;
+    const { id, material_transfer_id, costing_item_id, import_flag, transfer_qty, product_feature, product, order_item_id, transferred } = x;
     const transferred_qty = isEmpty(transferred) || isUndefined(transferred) ? 0 : transferred.reduce((initial, next) => initial + parseFloat(next.transferred_qty), 0);
 
     let item_name = `${product?.goods?.name} ${product_feature?.color} - ${product_feature?.size}`;
@@ -60,7 +60,9 @@ export function material_transfer_items(array, filter) {
       category_id: product_feature?.product_category?.category?.id,
       category: product_feature?.product_category?.category?.name,
       satuan: product?.goods?.satuan,
-      sub_category: product_feature?.product_category?.sub?.name
+      sub_category: product_feature?.product_category?.sub?.name,
+      // adding order_item_id
+      order_item_id: order_item_id
     };
   });
 

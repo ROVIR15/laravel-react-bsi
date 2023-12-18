@@ -26,6 +26,7 @@ class GoodsMovement extends Model
         'goods_id',
         'facility_id',
         'type_movement',
+        'order_item_id',
         'qty'
     ];
 

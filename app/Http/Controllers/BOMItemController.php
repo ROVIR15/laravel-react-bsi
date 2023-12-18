@@ -325,11 +325,11 @@ class BOMItemController extends Controller
                 return $query2[0]['product_id'];
             });
 
-            $items = GoodsMovement::select(DB::raw('sum(qty) as available_stock'), 'product_id', 'goods_id', 'product_feature_id', 'import_flag')
+            $items = GoodsMovement::select(DB::raw('id, sum(qty) as available_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag')
                 ->with('product', 'product_feature', 'goods', 'product_category')
                 ->whereIn('product_id', $query)
                 ->where('facility_id', $from_facility)
-                ->groupBy('product_feature_id', 'import_flag')
+                ->groupBy('order_item_id', 'product_feature_id', 'import_flag')
                 ->get()
                 ->map(function ($query) use ($costing_id) {
                     $product_feature = $query->product_feature ? $query->product_feature : null;
@@ -341,9 +341,10 @@ class BOMItemController extends Controller
 
                     return
                         [
-                            'id' => $product_feature->id,
+                            'id' => $query->id,
                             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                             'import_flag' => $query->import_flag,
+                            'order_item_id' => $query->order_item_id,
                             'product_id' => $product->id,
                             'product_feature_id' => $product_feature->id,
                             'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,

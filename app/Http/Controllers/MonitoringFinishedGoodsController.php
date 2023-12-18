@@ -134,6 +134,7 @@ class MonitoringFinishedGoodsController extends Controller
             'material_transfer_id' => $mt['id'],
             'product_id' => $product->id,
             'product_feature_id' => $key['product_feature_id'],
+            'order_item_id' => $key['order_item_id'],
             'transfer_qty' => $key['output']
           ];
   
@@ -158,7 +159,9 @@ class MonitoringFinishedGoodsController extends Controller
             'product_id' => $product->id,
             'product_feature_id' => $key['product_feature_id'],
             'type_movement' => 1, // 1 for incoming and 2 outbound
-            'qty' => $key['output']
+            'qty' => $key['output'],
+            // adding order_item_id
+            'order_item_id' => $key['order_item_id'],
           ]);
           DB::commit();
         }

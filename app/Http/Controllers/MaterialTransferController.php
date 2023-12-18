@@ -93,6 +93,7 @@ class MaterialTransferController extends Controller
                     'costing_item_id' => $key['costing_item_id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
+                    'order_item_id' => $key['order_item_id'],
                     'transfer_qty' => $key['qty'],
                     'costing_item_id' => $_item_costing_id
                 ]);
@@ -162,6 +163,8 @@ class MaterialTransferController extends Controller
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 2, // 1 for incoming and 2 outbound
                     'qty' => $key['transferred_qty'] * -1,
+                    // adding_order_item_id
+                    'order_item_id' => $key['order_item_id']
                 ]);
 
                 //add qty from to_facility_id and make record on goods_movement;
@@ -176,7 +179,9 @@ class MaterialTransferController extends Controller
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 1, // 1 for incoming and 2 outbound
-                    'qty' => $key['transferred_qty']
+                    'qty' => $key['transferred_qty'],
+                    // adding_order_item_id
+                    'order_item_id' => $key['order_item_id']
                 ]);
             }
 
@@ -226,6 +231,7 @@ class MaterialTransferController extends Controller
                     'material_transfer_id' => $_mt['id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
+                    'order_item_id' => $key['order_item_id'],
                     'transfer_qty' => $key['qty']
                 ]);
                 DB::commit();
@@ -255,6 +261,8 @@ class MaterialTransferController extends Controller
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 2, // 1 for incoming and 2 outbound
                     'qty' => $key['qty'] * -1,
+                    // adding order_item_id
+                    'order_item_id' => $key['order_item_id']
                 ]);
                 DB::commit();
 
@@ -270,7 +278,9 @@ class MaterialTransferController extends Controller
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 1, // 1 for incoming and 2 outbound
-                    'qty' => $key['qty']
+                    'qty' => $key['qty'],
+                    // adding order_item_id
+                    'order_item_id' => $key['order_item_id']
                 ]);
                 DB::commit();
             }
