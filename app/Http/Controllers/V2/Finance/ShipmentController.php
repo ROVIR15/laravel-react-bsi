@@ -175,8 +175,8 @@ class ShipmentController extends Controller
                             'order_item_id' => $item->order_item_id,
                             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                             'item_name' => $item_name,
-                            'qty' => $item->qty,
-                            'qty_shipped' => $item->qty_shipped
+                            'delivery_qty' => $item->qty,
+                            'qty_on_hand' => $item->qty_shipped
                         ];
                      });
 
