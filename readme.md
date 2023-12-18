@@ -65,7 +65,7 @@ curl -X GET \
 | `month` | `int` | **Required** provide month filter based on created_date, cannot be null |
 | `year` | `int` | **Required** provide year filter based on created_date, cannot be null |
 
-#### Get item on spesific purchae order document
+#### Get item on spesific shipment document
 
 ```http
   GET /api/v2/finance/shipment-items/${shipment_id}

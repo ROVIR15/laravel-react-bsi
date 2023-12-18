@@ -360,10 +360,10 @@ Route::group(['middleware' => ['auth.api.finance.external']], function () {
     Route::get('v2/finance/material-transfer', 'V2\Finance\MaterialTransferController@index');
     Route::get('v2/finance/material-transfer-items/{id}', 'V2\Finance\MaterialTransferController@items');
     Route::get('v2/finance/material-transfer-facility', 'V2\Finance\MaterialTransferController@material_transfer_facility');
+    // add new api for shipment data display
+    Route::get('v2/finance/shipment', 'V2\Finance\ShipmentController@index');
+    Route::get('v2/finance/shipment-items/{shipment_id}', 'V2\Finance\ShipmentController@items');    
 });
-
-Route::get('v2/finance/shipment', 'V2\Finance\ShipmentController@index');
-Route::get('v2/finance/shipment-items/{shipment_id}', 'V2\Finance\ShipmentController@items');
 
 Route::get('v2/monitoring/daily-production-status/{order_id}', 'V2\Monitoring\ProductionStatusController@index');
 Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionStatusController@getDataBasedOnStyleFilterByDay');
