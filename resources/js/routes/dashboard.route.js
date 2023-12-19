@@ -197,7 +197,7 @@ import DocumentMaterialTransfer from '../pages/dashboard/Inventory/MaterialTrans
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
-// import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
+import ReportVB from '../pages/dashboard/Finance/VendorBills/pages/Report';
 
 //Play MOW
 import PlayMOW from '../pages/dashboard/ManufactureOrder/play';
@@ -753,7 +753,7 @@ export default function TestRouter() {
             { path: ':id', element: <ShowVInv /> },
             { path: 'display', element: <DisplayVInv /> },
             { path: 'document/:id', element: <DocumentVINV/>},
-            // { path: 'report', element: <ReportVB/>}
+            { path: 'report', element: <ReportVB/>}
           ]
         },
         {
