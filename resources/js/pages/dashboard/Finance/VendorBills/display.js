@@ -127,7 +127,7 @@ function Invoice({ placeHolder }) {
               }, parseFloat(purchase_invoice?.sum[0]?.total_amount));
 
               if (purchase_invoice?.tax > 0)
-                additionalCost = additionalCost * (purchase_invoice?.tax / 100 + 1);
+                additionalCost = additionalCost * (purchase_invoice?.tax / 100);
             }
 
             let total_amount_payment = 0;
@@ -311,7 +311,7 @@ function Invoice({ placeHolder }) {
                         <TableCell align="left">{serial_number}</TableCell>
                         <TableCell align="left">{billed_to}</TableCell>
                         <TableCell align="left">{`${fNumber(total_qty)} pcs`}</TableCell>
-                        <TableCell align="left">Rp. {fCurrency(additionalCost)}</TableCell>
+                        <TableCell align="left">{fCurrency(additionalCost)}</TableCell>
                         <TableCell align="right">
                           <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                         </TableCell>

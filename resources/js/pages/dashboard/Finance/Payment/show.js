@@ -19,7 +19,8 @@ import {
   Paper,
   Select,
   TextField,
-  Typography
+  Typography,
+  Box
 } from '@mui/material';
 import { isArray, isUndefined } from 'lodash';
 import ColumnBox from '../../../../components/ColumnBox';
@@ -79,7 +80,8 @@ function PaymentAccountNew() {
     validationSchema: GoodsSchema,
     onSubmit: (values) => {
       try {
-        API.updateAPayment(id,
+        API.updateAPayment(
+          id,
           {
             payment_method_type_id: values.type,
             invoice_id: values.invoice_id,
@@ -128,11 +130,14 @@ function PaymentAccountNew() {
           setFieldValue('effective_date', res.data.effective_date);
           setFieldValue('amount', res.data.amount);
           setFieldValue('comment', res.data.comment);
-          setFile(res.data.imageUrl)
+          setFile(res.data.imageUrl);
           const { invoice } = res.data;
           setSelectedValueSH({
             id: invoice[0]?.id,
-            serial_number: generateInvSerialNumber_alt(invoice[0], invoice[0]?.type?.invoice_type_id),
+            serial_number: generateInvSerialNumber_alt(
+              invoice[0],
+              invoice[0]?.type?.invoice_type_id
+            ),
             // billed_to: sales_invoice?.party?.name,
             // status: sales_invoice?.status[0]?.type?.name,
             total_amount: res.data.amount
@@ -213,7 +218,7 @@ function PaymentAccountNew() {
     if (file) {
       return (
         <Paper sx={{ padding: 2, height: '100%' }}>
-          <img src={file} alt="Image" sx={{height: '50%', width: '50%', margin: 'auto'}}/>
+          <img src={file} alt="Image" sx={{ height: '50%', width: '50%', margin: 'auto' }} />
           <Button component="label" htmlFor="upload-file">
             <input
               accept="image/*"
@@ -276,123 +281,84 @@ function PaymentAccountNew() {
       <Container>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={5}>
-                <Grid container direction="row">
+            <Card>
+              <CardHeader title="Payment Information" />
+              <CardContent>
+                <Grid container direction="column" spacing={2}>
                   <Grid item xs={12}>
-                    <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                      <CardContent>
-                        <ColumnBox>
-                          {/* <SpaceBetweenBox>
-                            <Typography variant="h6"> Invoice </Typography>
-                            <Button disabled onClick={() => setOpenSH(true)}>Select</Button>
-                          </SpaceBetweenBox> */}
-                          {/* <div>
-                            <Typography variant="subtitle1">
-                              {selectedValueSH?.serial_number}
-                            </Typography>
-                            <Typography variant="body2">{selectedValueSH?.billed_to}</Typography>
-                          </div> */}
-                          {/* <DialogBox
-                            options={optionsInvoice}
-                            loading={loadingSH}
-                            // error={Boolean(touched.facility_id && errors.facility_id)}
-                            // helperText={touched.facility_id && errors.facility_id}
-                            // selectedValue={values.facility_id}
-                            open={openSH}
-                            onClose={(value) => handleCloseDialog(value)}
-                          /> */}
-                        </ColumnBox>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <Card sx={{ m: 2, '& .MuiTextField-root': { m: 1 } }}>
-                      <CardContent>
-                        <ColumnBox>
-                          <SpaceBetweenBox>
-                            <Typography variant="h6"> Payment Amount </Typography>
-                          </SpaceBetweenBox>
-                        </ColumnBox>
+                    <ColumnBox>
+                      <SpaceBetweenBox>
+                        <Typography variant="h6"> Payment Amount </Typography>
                         <Typography variant="h3" sx={{ color: '#636b6f' }}>
-                          Rp. {fCurrency(selectedValueSH?.total_amount)}
+                          {fCurrency(selectedValueSH?.total_amount)}
                         </Typography>
-                      </CardContent>
-                    </Card>
+                      </SpaceBetweenBox>
+                    </ColumnBox>
+
+                    <Box mx={1} my={2}>
+                      <Typography variant="h6">This payment is made for invoice:</Typography>
+                      <Typography variant="body2">INV. 001</Typography>
+                    </Box>
                   </Grid>
-                </Grid>
-              </Grid>
 
-              <Grid item xs={7}>
-                <Card>
-                  <CardHeader title="Payment Information" />
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          name="reff_num"
-                          type="number"
-                          label="Reff Number"
-                          {...getFieldProps('reff_num')}
-                          error={Boolean(touched.reff_num && errors.reff_num)}
-                          helperText={touched.reff_num && errors.reff_num}
-                        />
-                      </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="reff_num"
+                      type="number"
+                      label="Reff Number"
+                      {...getFieldProps('reff_num')}
+                      error={Boolean(touched.reff_num && errors.reff_num)}
+                      helperText={touched.reff_num && errors.reff_num}
+                    />
+                  </Grid>
 
-                      <Grid item xs={12} lg={5}>
-                        <FormControl fullWidth>
-                          <InputLabel>Tipe Akun Rekening</InputLabel>
-                          <Select
-                            autoComplete="type"
-                            type="number"
-                            {...getFieldProps('type')}
-                            error={Boolean(touched.type && errors.type)}
-                            helperText={touched.type && errors.type}
-                          >
-                            {!isArray(cat)
-                              ? null
-                              : cat.map(function (x) {
-                                  return <MenuItem value={x.id}>{`${x.name}`}</MenuItem>;
-                                })}
-                          </Select>
-                        </FormControl>
-                      </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      name="effective_date"
+                      type="date"
+                      label="Payment Date"
+                      {...getFieldProps('effective_date')}
+                      error={Boolean(touched.effective_date && errors.effective_date)}
+                      helperText={touched.effective_date && errors.effective_date}
+                    />
+                  </Grid>
 
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          name="effective_date"
-                          type="date"
-                          label="Payment Date"
-                          {...getFieldProps('effective_date')}
-                          error={Boolean(touched.effective_date && errors.effective_date)}
-                          helperText={touched.effective_date && errors.effective_date}
-                        />
-                      </Grid>
+                  <Grid item xs={6} lg={5}>
+                    <FormControl fullWidth>
+                      <InputLabel>Tipe Akun Rekening</InputLabel>
+                      <Select
+                        autoComplete="type"
+                        type="number"
+                        {...getFieldProps('type')}
+                        error={Boolean(touched.type && errors.type)}
+                        helperText={touched.type && errors.type}
+                      >
+                        {!isArray(cat)
+                          ? null
+                          : cat.map(function (x) {
+                              return <MenuItem value={x.id}>{`${x.name}`}</MenuItem>;
+                            })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          InputProps={{
-                            startAdornment: <InputAdornment position="start">Rp.</InputAdornment>
-                          }}
-                          type="number"
-                          label="Amount Payment"
-                          {...getFieldProps('amount')}
-                          error={Boolean(touched.amount && errors.amount)}
-                          helperText={touched.amount && errors.amount}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">Rp.</InputAdornment>
+                      }}
+                      type="number"
+                      label="Amount Payment"
+                      {...getFieldProps('amount')}
+                      error={Boolean(touched.amount && errors.amount)}
+                      helperText={touched.amount && errors.amount}
+                    />
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardContent>
+                  <Grid item xs={12}>
                     <TextField
                       fullWidth
                       name="comment"
@@ -404,36 +370,33 @@ function PaymentAccountNew() {
                       error={Boolean(touched.comment && errors.comment)}
                       helperText={touched.comment && errors.comment}
                     />
-                  </CardContent>
-                </Card>
-              </Grid>
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader
-                    title="Upload Proof"
-                  />
-                  <ShowImageWhenItsUploaded />
-                </Card>
-              </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="h6"> Upload Bukti Pembayaran:</Typography>
+                    <ShowImageWhenItsUploaded />
+                  </Grid>
 
-              <Grid item xs={12}>
-                <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
-                  <LoadingButton
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                    loading={isSubmitting}
-                    sx={{ m: 1 }}
-                  >
-                    Save
-                  </LoadingButton>
-                  <Button size="large" color="grey" variant="contained" sx={{ m: 1 }}>
-                    Cancel
-                  </Button>
-                </Card>
-              </Grid>
-            </Grid>
+                  <Grid item xs={12}>
+                    <LoadingButton
+                      size="large"
+                      fullWidth
+                      type="submit"
+                      variant="contained"
+                      loading={isSubmitting}
+                      sx={{ m: 1 }}
+                    >
+                      Save
+                    </LoadingButton>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button size="large" fullWidth color="grey" variant="contained" sx={{ m: 1 }}>
+                      Cancel
+                    </Button>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           </Form>
         </FormikProvider>
       </Container>

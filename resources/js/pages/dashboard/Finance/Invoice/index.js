@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 //icons
+import externalLinkOutlined from '@iconify/icons-eva/external-link-outline';
 import hardDriveFill from '@iconify/icons-eva/hard-drive-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
@@ -43,7 +44,7 @@ function Invoice() {
             to={getPathname(pathname.split('/')) + '/add'}
             startIcon={<Icon icon={plusFill} />}
           >
-            New Layout
+            New
           </Button>
           <Button
             variant="contained"
@@ -52,6 +53,14 @@ function Invoice() {
             startIcon={<Icon icon={hardDriveFill} />}
           >
             Display
+          </Button>
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to={getPathname(pathname.split('/')) + '/report'}
+            startIcon={<Icon icon={externalLinkOutlined} />}
+          >
+            Summary
           </Button>
         </Stack>
       </Stack>

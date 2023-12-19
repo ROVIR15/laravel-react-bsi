@@ -316,7 +316,7 @@ function Invoice({ placeHolder }) {
                         <TableCell align="left">{serial_number}</TableCell>
                         <TableCell align="left">{billed_to}</TableCell>
                         <TableCell align="left">{`${fNumber(total_qty)} pcs`}</TableCell>
-                        <TableCell align="left">Rp. {fCurrency(additionalCost)}</TableCell>
+                        <TableCell align="left">{fCurrency(additionalCost)}</TableCell>
                         <TableCell align="right">
                           <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                         </TableCell>
