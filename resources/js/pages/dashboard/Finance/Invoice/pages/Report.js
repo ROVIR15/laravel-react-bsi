@@ -10,7 +10,15 @@ import Paper from '@mui/material/Paper';
 import API from '../../../../../helpers';
 import { fCurrency } from '../../../../../utils/formatNumber';
 import { initial, isArray, isEmpty, isUndefined, sum } from 'lodash';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material';
 import { Stack } from '@mui/system';
 import moment from 'moment';
 moment.locale('id');
@@ -79,7 +87,7 @@ export default function Report() {
         sold_to,
         party_name: party?.name,
         invoice_id: item?.id,
-        sales_order_id: item?.sales_order?.id,
+        sales_order_id: item?.sales_order?.sales_order?.id,
         po_number: item?.sales_order?.sales_order?.po_number
       };
       a = date.reduce(function (initial, next) {
@@ -197,7 +205,7 @@ export default function Report() {
           </TableHead>
           <TableBody>
             {row.map((_row) => {
-              let totalInv = date.reduce((initial, next) => initial + parseFloat(_row[next]), 0)
+              let totalInv = date.reduce((initial, next) => initial + parseFloat(_row[next]), 0);
 
               return (
                 <TableRow
@@ -210,10 +218,22 @@ export default function Report() {
                     {_row.party_name}
                   </TableCell>
                   <TableCell component="th" align="left">
-                    INV-{_row?.invoice_id?.toString().padStart(4, '0')}
+                    <Typography
+                      variant="body1"
+                      component="a"
+                      href={`/dashboard/finance/invoice/${_row?.invoice_id}`}
+                    >
+                      INV-{_row?.invoice_id?.toString().padStart(4, '0')}
+                    </Typography>
                   </TableCell>
                   <TableCell component="th" align="left">
-                    SO-{_row.sales_order_id?.toString().padStart(4, '0')}
+                    <Typography
+                      variant="body1"
+                      component="a"
+                      href={`/dashboard/order/sales-order/${_row?.sales_order_id}`}
+                    >
+                      {`SO-${_row.sales_order_id?.toString().padStart(4, '0')}`}
+                    </Typography>
                   </TableCell>
                   {date.map((_d) => (
                     <TableCell component="th" align="right">

@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import API from '../../../../../helpers';
 import { fCurrency } from '../../../../../utils/formatNumber';
 import { initial, isArray, isEmpty, isUndefined, sum } from 'lodash';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import moment from 'moment';
 moment.locale('id');
@@ -78,7 +78,7 @@ export default function Report() {
         invoice_id: id,
         sold_to,
         party_name: party?.name,
-        purchase_order_id: item?.purchase_order?.id,
+        purchase_order_id: item?.purchase_order?.purchase_order?.id,
         po_number: item?.purchase_order?.purchase_order?.po_number
       };
       a = date.reduce(function (initial, next) {
@@ -209,10 +209,22 @@ export default function Report() {
                     {_row.party_name}
                   </TableCell>
                   <TableCell component="th" align="left">
-                    INV-{_row?.invoice_id?.toString().padStart(4, '0')}
+                    <Typography
+                      variant="body1"
+                      component="a"
+                      href={`/dashboard/finance/vendor-bills/${_row?.invoice_id}`}
+                    >
+                      INV-{_row?.invoice_id?.toString().padStart(4, '0')}
+                    </Typography>
                   </TableCell>
                   <TableCell component="th" align="left">
-                    PO-{_row.purchase_order_id?.toString().padStart(4, '0')}
+                    <Typography
+                      variant="body1"
+                      component="a"
+                      href={`/dashboard/purchasing/purchase-order/${_row?.purchase_order_id}`}
+                    >
+                      PO-{_row.purchase_order_id?.toString().padStart(4, '0')}
+                    </Typography>
                   </TableCell>
                   {date.map((_d) => (
                     <TableCell component="th" align="right">

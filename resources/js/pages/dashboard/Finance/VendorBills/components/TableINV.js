@@ -105,8 +105,8 @@ export default function BasicTable({ payload, terms, tax }) {
                 {`${row.name}`}
               </TableCell>
               <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(row.amount)}</TableCell>
-              <TableCell align="right">Rp. {fCurrency(total_price(row.qty, row.amount))}</TableCell>
+              <TableCell align="right">{fCurrency(total_price(row.qty, row.amount))}</TableCell>
+              <TableCell align="right">{fCurrency(row.amount)}</TableCell>
             </TableRow>
           ))}
           <TableRow key="Total" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -155,7 +155,7 @@ export default function BasicTable({ payload, terms, tax }) {
             </NoBorderCell>
             <NoBorderCell align="right">
               <BoxStyle />
-              <Typography variant="body1">Rp. {fCurrency(total())} </Typography>
+              <Typography variant="body1">{fCurrency(total())} </Typography>
             </NoBorderCell>
           </TableRow>
         </TableBody>

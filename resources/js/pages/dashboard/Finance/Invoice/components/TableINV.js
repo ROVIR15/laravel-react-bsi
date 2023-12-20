@@ -116,7 +116,7 @@ export default function BasicTable({ payload, terms, tax }) {
             </NoBorderCell>
             <NoBorderCell align="right">
               <BoxStyle />
-              <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
+              <Typography variant="body1">{fCurrency(subTotal())} </Typography>
             </NoBorderCell>
           </TableRow>
           {terms.map(function (item) {
@@ -155,7 +155,7 @@ export default function BasicTable({ payload, terms, tax }) {
             </NoBorderCell>
             <NoBorderCell align="right">
               <BoxStyle />
-              <Typography variant="body1">Rp. {fCurrency(total())} </Typography>
+              <Typography variant="body1">{fCurrency(total())} </Typography>
             </NoBorderCell>
           </TableRow>
         </TableBody>

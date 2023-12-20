@@ -34,7 +34,7 @@ import DialogBox from './components/DBBuyer';
 import API from '../../../../helpers';
 
 import { invoiceItemArrangedData, generateInvSerialNumber_alt } from '../utils';
-import { _partyAddress } from '../../../../helpers/data';
+import { _partyAddress, partyArrangedData } from '../../../../helpers/data';
 import { fCurrency } from '../../../../utils/formatNumber';
 import moment from 'moment';
 
@@ -153,14 +153,15 @@ function Invoice() {
       return undefined;
     }
 
-    (async () => {
-      if (active) {
-        API.getBuyers((res) => {
-          if (!res) return;
-          else setOptions(res);
-        });
-      }
-    })();
+    if (active) {
+      API.getVendors(async (res) => {
+        if (!res) return;
+        else {
+          let data = await partyArrangedData(res);
+          setOptions(data);
+        }
+      });
+    }
 
     return () => {
       active = false;
