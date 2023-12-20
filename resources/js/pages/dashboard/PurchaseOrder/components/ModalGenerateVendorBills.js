@@ -81,60 +81,71 @@ export default function BasicModal({ order_id, open, handleClose }) {
         aria-describedby="modal-modal-description"
       >
         <Card sx={style}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Order Item
-            </Typography>
-            <IconButton onClick={handleClose} color="error">
-              <Icon icon={closeCircle} />
-            </IconButton>
-          </Stack>
+          <Stack direction="column" spacing={3}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Lengkapi Informasi Tagihan Supplier
+              </Typography>
+              <IconButton onClick={handleClose} color="error">
+                <Icon icon={closeCircle} />
+              </IconButton>
+            </Stack>
 
-          <FormikProvider value={formik}>
-            <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-              <Stack direction="row" spacing={2}>
-                <TextField
-                  fullWidth
-                  autoComplete="invoice_date"
-                  type="date"
-                  placeholder="invoice_date"
-                  {...getFieldProps('invoice_date')}
-                  error={Boolean(touched.invoice_date && errors.invoice_date)}
-                  helperText={touched.invoice_date && errors.invoice_date}
-                />
-                <TextField
-                  fullWidth
-                  autoComplete="due_date"
-                  type="number"
-                  placeholder="due_date"
-                  {...getFieldProps('due_date')}
-                  error={Boolean(touched.due_date && errors.due_date)}
-                  helperText={touched.due_date && errors.due_date}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">Hari</InputAdornment>
-                  }}
-                />
-              </Stack>
-              <LoadingButton
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-                sx={{ m: 1 }}
+            <FormikProvider value={formik}>
+              <Form
+                autoComplete="off"
+                noValidate
+                onSubmit={handleSubmit}
+                style={{ margin: 'none' }}
               >
-                Save
-              </LoadingButton>
-              <Button
-                size="large"
-                color="grey"
-                variant="contained"
-                sx={{ m: 1 }}
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-            </Form>
-          </FormikProvider>
+                <Stack direction="column" spacing={2}>
+                  <Stack direction="row" spacing={2}>
+                    <TextField
+                      fullWidth
+                      autoComplete="invoice_date"
+                      type="date"
+                      placeholder="invoice_date"
+                      {...getFieldProps('invoice_date')}
+                      error={Boolean(touched.invoice_date && errors.invoice_date)}
+                      helperText={touched.invoice_date && errors.invoice_date}
+                    />
+                    <TextField
+                      fullWidth
+                      autoComplete="due_date"
+                      type="number"
+                      placeholder="due_date"
+                      {...getFieldProps('due_date')}
+                      error={Boolean(touched.due_date && errors.due_date)}
+                      helperText={touched.due_date && errors.due_date}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">Hari</InputAdornment>
+                      }}
+                    />
+                  </Stack>
+                  <LoadingButton
+                    size="large"
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    loading={isSubmitting}
+                    sx={{ m: 1 }}
+                  >
+                    Save
+                  </LoadingButton>
+                  <Button
+                    size="large"
+                    fullWidth
+                    color="grey"
+                    variant="contained"
+                    sx={{ m: 1 }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              </Form>
+            </FormikProvider>
+          </Stack>
         </Card>
       </Modal>
     </div>

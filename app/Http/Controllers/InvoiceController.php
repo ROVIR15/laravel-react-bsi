@@ -146,7 +146,7 @@ class InvoiceController extends Controller
         'invoice_date' => $param['invoice_date'],
         'due_date' => $param['due_date'],
         'order_id' => $orderId,
-        'sold_to' => $purchaseOrder ? $purchaseOrder['ship_to'] : 0,
+        'sold_to' => $purchaseOrder ? $purchaseOrder['bought_from'] : 0,
         'tax' => $purchaseOrder ? $order[0]['tax'] : 0,
         'description' => $purchaseOrder ? $order[0]['description'] : null
       ];
@@ -545,7 +545,6 @@ class InvoiceController extends Controller
         array_push($_date, $key['invoice_date']);
       }
 
-
       $ss = Invoice::select(
         'id',
         'order_id',
@@ -580,10 +579,25 @@ class InvoiceController extends Controller
   public function getInvoicedParty(Request $request)
   {
     $type = $request->query('type');
+    $monthYear = $request->query('monthYear');
+
+    if (isset($monthYear)) {
+      $monthYear = date_create($monthYear);
+      $month = date_format($monthYear, 'm');
+      $year = date_format($monthYear, 'Y');
+    }
+
     try {
-      $query = Invoice::select('sold_to')->with('party')->whereHas('type', function ($query) use ($type) {
-        return ($query->where('invoice_type_id', $type));
-      })->groupBy('sold_to')->get();
+      $query = Invoice::select('sold_to', 'invoice_date')
+                ->with('party')
+                ->whereHas('type', function ($query) use ($type) {
+                  return ($query->where('invoice_type_id', $type));
+                })
+                ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
+                ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
+                ->groupBy('sold_to')
+                ->get();
+
     } catch (\Throwable $th) {
       //throw $th;
 

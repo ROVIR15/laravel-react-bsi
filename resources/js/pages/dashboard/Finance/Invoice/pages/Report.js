@@ -13,7 +13,7 @@ import { initial, isArray, isEmpty, isUndefined, sum } from 'lodash';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
 import moment from 'moment';
-moment.locale('id')
+moment.locale('id');
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
@@ -36,7 +36,7 @@ export default function Report() {
 
   useEffect(() => {
     try {
-      API.getInvoicedParty('?type=1', (res) => {
+      API.getInvoicedParty(`?type=1&monthYear=${monthYear}`, (res) => {
         if (!res) return;
         if (isEmpty(res.data)) throw new Error('failed to load data');
         else {
@@ -50,7 +50,7 @@ export default function Report() {
     } catch (error) {
       alert(error);
     }
-  }, []);
+  }, [monthYear]);
 
   const handleGetReport = () => {
     try {
@@ -73,18 +73,13 @@ export default function Report() {
 
   const processing_data = (data, date) => {
     let wkwkw = data.map(function (item) {
-      let {
-        id,
-        sold_to,
-        invoice_date,
-        due_dates,
-        sum,
-        party
-      } = item;
+      let { id, sold_to, invoice_date, due_dates, sum, party } = item;
       let a = {
         invoice_id: id,
         sold_to,
         party_name: party?.name,
+        invoice_id: item?.id,
+        sales_order_id: item?.sales_order?.id,
         po_number: item?.sales_order?.sales_order?.po_number
       };
       a = date.reduce(function (initial, next) {
@@ -115,6 +110,21 @@ export default function Report() {
     }
   };
 
+  const total_invoiced = (data) => {
+    let totalSum = 0;
+
+    for (const date in data) {
+      if (data.hasOwnProperty(date)) {
+        // Get the values for each date and calculate the sum
+        const values = data[date];
+        const sum = values.reduce((acc, curr) => acc + curr, 0);
+        totalSum += sum;
+      }
+    }
+
+    return totalSum;
+  };
+
   const handleSelectBuyer = (event) => {
     setSelectedBuyer(event.target.value);
   };
@@ -125,7 +135,7 @@ export default function Report() {
 
   return (
     <Stack direction="column" spacing={2}>
-      <Paper style={{padding: 2}}>
+      <Paper style={{ padding: 2 }}>
         <Stack direction="row" spacing={2}>
           <TextField type="month" label="Bulan" onChange={handleMonthYear} />
           <FormControl fullWidth>
@@ -158,7 +168,7 @@ export default function Report() {
         >
           <TableHead>
             <TableRow>
-              <TableCell colSpan={2} />
+              <TableCell colSpan={4} />
               <TableCell
                 className="wk_primary_color wk_gray_bg"
                 align="center"
@@ -172,36 +182,53 @@ export default function Report() {
               <TableCell className="wk_primary_color wk_gray_bg" align="left">
                 Invoice ID
               </TableCell>
+              <TableCell className="wk_primary_color wk_gray_bg" align="left">
+                Sales Order ID
+              </TableCell>
               {date.map((_d) => (
                 <TableCell className="wk_primary_color wk_gray_bg" align="right">
                   {moment(_d).format('ll')}
                 </TableCell>
               ))}
+              <TableCell className="wk_primary_color wk_gray_bg" align="right">
+                Total
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {row.map((_row) => (
-              <TableRow
-                key={row.sold_to}
-                sx={{
-                  '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
-                }}
-              >
-                <TableCell component="th" align="left">
-                  {_row.party_name}
-                </TableCell>
-                <TableCell component="th" align="left">
-                  {_row.po_number}
-                </TableCell>
-                {date.map((_d) => (
-                  <TableCell component="th" align="right">
-                    {fCurrency(_row[_d])}
+            {row.map((_row) => {
+              let totalInv = date.reduce((initial, next) => initial + parseFloat(_row[next]), 0)
+
+              return (
+                <TableRow
+                  key={row.sold_to}
+                  sx={{
+                    '& > *': { border: '1px solid rgba(241, 243, 244, 1)' }
+                  }}
+                >
+                  <TableCell component="th" align="left">
+                    {_row.party_name}
                   </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                  <TableCell component="th" align="left">
+                    INV-{_row?.invoice_id?.toString().padStart(4, '0')}
+                  </TableCell>
+                  <TableCell component="th" align="left">
+                    SO-{_row.sales_order_id?.toString().padStart(4, '0')}
+                  </TableCell>
+                  {date.map((_d) => (
+                    <TableCell component="th" align="right">
+                      {fCurrency(_row[_d])}
+                    </TableCell>
+                  ))}
+
+                  <TableCell component="th" align="right">
+                    {fCurrency(totalInv)}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             <TableRow>
-              <TableCell component="th" colSpan={2} align="right">
+              <TableCell component="th" colSpan={3} align="right">
                 Total
               </TableCell>
               {date.map((_row) => (
@@ -209,6 +236,10 @@ export default function Report() {
                   {fCurrency(sum(totalVal[_row]))}
                 </TableCell>
               ))}
+
+              <TableCell component="th" align="right">
+                {fCurrency(total_invoiced(totalVal))}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
