@@ -32,7 +32,7 @@ function createData(name, qty, unit_price) {
 function valueType(param, param2) {
   let type = param.toLowerCase();
   if (type === 'percentage') return `${param2} %`;
-  if (type === 'number') return `Rp. ${fCurrency(param2)}`;
+  if (type === 'number') return `${fCurrency(param2)}`;
   else return null;
 }
 
@@ -116,7 +116,7 @@ export default function BasicTable({ payload, terms, tax }) {
             </NoBorderCell>
             <NoBorderCell align="right">
               <BoxStyle />
-              <Typography variant="body1">Rp. {fCurrency(subTotal())} </Typography>
+              <Typography variant="body1">{fCurrency(subTotal())} </Typography>
             </NoBorderCell>
           </TableRow>
           {terms.map(function (item) {

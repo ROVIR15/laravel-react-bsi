@@ -24,7 +24,8 @@ import { LoadingButton } from '@mui/lab';
 import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { FormikProvider, Form, useFormik } from 'formik';
-import { isArray, isUndefined } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
+import { useSnackbar } from 'notistack';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -59,6 +60,8 @@ function Invoice() {
   const navigate = useNavigate();
 
   const [status, setStatus] = React.useState(null);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. BSI Indonesia',
@@ -302,10 +305,14 @@ function Invoice() {
         //update items state
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
-
-        API.updateInvoiceTerm(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updateInvoiceTerm(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
@@ -326,13 +333,13 @@ function Invoice() {
     };
     try {
       API.insertInvoiceTerm(a, function (res) {
-        if (!res) return;
-        if (!res.success) throw new Error('failed to add invoice term');
-        else alert('success');
+        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+        else enqueueSnackbar('', { variant: 'failedAlert' });
       });
     } catch (error) {
-      alert(error);
+      enqueueSnackbar('', { variant: 'failedAlert' });
     }
+
     handleUpdateInvoiceTerm();
   };
 
@@ -342,6 +349,7 @@ function Invoice() {
         if (!res) return;
         if (isEmpty(res.data)) throw new Error('failed to get data');
         else {
+          console.log('here')
           setRowsInvoiceTerm(res.data);
         }
       });

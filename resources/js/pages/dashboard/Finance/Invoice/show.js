@@ -25,7 +25,7 @@ import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { FormikProvider, Form, useFormik } from 'formik';
 
-import { isArray, isEmpty, isUndefined } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -220,9 +220,14 @@ function Invoice() {
         const data = new Object();
         data[editedColumnName] = editRowData[editedColumnName].value;
 
-        API.updateInvoiceTerm(editedIds, data, function (res) {
-          alert(JSON.stringify(res));
-        });
+        try {
+          API.updateInvoiceTerm(editedIds, data, function (res) {
+            if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } catch (error) {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       } else {
         setEditRowData(model[editedIds[0]]);
       }
