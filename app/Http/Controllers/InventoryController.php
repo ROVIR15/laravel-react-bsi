@@ -173,7 +173,7 @@ class InventoryController extends Controller
 
       $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
         ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
-        // ->where('facility_id', $facilityId)
+        ->where('facility_id', $facilityId)
         // ->whereIn('product_id', $query)
         ->groupBy('product_feature_id', 'import_flag', 'facility_id')
         ->get()
