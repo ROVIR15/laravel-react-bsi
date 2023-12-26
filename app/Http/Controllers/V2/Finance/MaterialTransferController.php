@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferItem;
 use App\Models\Facility\Facility;
+use App\Models\Order\OrderItem;
 
 class MaterialTransferController extends Controller
 {
@@ -68,9 +69,16 @@ class MaterialTransferController extends Controller
                 $product = $product_feature->product ? $product_feature->product : null;
                 $goods = $product->goods ? $product->goods : null;
 
+                $order_item_id = $query->order_item_id ? $query->order_item_id : null;
+
                 $item_name = '';
+                $order_item = null;
                 if (!is_null($product_feature) && !is_null($product) & !is_null($goods)){
                     $item_name = $goods['name'] . ' ' . $product_feature->color . ' ' . $product_feature->size;                            
+                }
+
+                if (!is_null($order_item_id)){
+                    $order_item = OrderItem::find($order_item_id);
                 }
 
                 $import_flag = 1;
@@ -90,7 +98,8 @@ class MaterialTransferController extends Controller
                     'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                     'item_name' => $item_name,
                     'req_transfer_qty' => $query->transfer_qty,
-                    'filled_transfer_qty' => !is_null($realisation) ? $realisation->transferred_qty : 0
+                    'filled_transfer_qty' => !is_null($realisation) ? $realisation->transferred_qty : 0,
+                    'unit_price' => !is_null($order_item) ? $order_item->unit_price : 0
                 ];
             });
 
