@@ -367,3 +367,7 @@ Route::group(['middleware' => ['auth.api.finance.external']], function () {
 
 Route::get('v2/monitoring/daily-production-status/{order_id}', 'V2\Monitoring\ProductionStatusController@index');
 Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionStatusController@getDataBasedOnStyleFilterByDay');
+
+
+Route::get('random-sales-order', 'SalesOrderController@getAThing');
+Route::get('random-outbound-shipment', 'SalesOrderController@getAThing2');
