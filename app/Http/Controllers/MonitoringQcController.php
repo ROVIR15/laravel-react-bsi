@@ -32,7 +32,7 @@ class MonitoringQcController extends Controller
       try {
         //code...
         if($param){
-          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output, sum(reject) as reject')
           ->with('sales_order', 'product_feature')
           ->with(['fg' => function ($query) use ($order_id){
             return $query->where('order_id', $order_id);

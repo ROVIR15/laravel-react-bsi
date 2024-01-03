@@ -26,12 +26,13 @@ import moment from 'moment';
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'date', label: 'date', alignRight: false },
-  { id: 'so_number', label: 'Sales PO Number', alignRight: false },
+  // { id: 'so_number', label: 'Sales PO Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
   { id: 'goods_name', label: 'Nama Barang', alignRight: false },
   { id: 'size', label: 'Size', alignRight: false },
   { id: 'color', label: 'Color', alignRight: false },
-  { id: 'output', label: 'Output', alignRight: false }
+  { id: 'output', label: 'Output', alignRight: false },
+  { id: 'reject', label: 'Reject', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -252,7 +253,8 @@ function DisplayQuote({ placeHolder }) {
                       product: { goods },
                       color,
                       size
-                    }
+                    },
+                    reject
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -266,12 +268,13 @@ function DisplayQuote({ placeHolder }) {
                     >
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{sales_order.po_number}</TableCell>
+                      {/* <TableCell align="left">{sales_order.po_number}</TableCell> */}
                       <TableCell align="left">{po_number}</TableCell>
                       <TableCell align="left">{goods.name}</TableCell>
                       <TableCell align="left">{color}</TableCell>
                       <TableCell align="left">{size}</TableCell>
                       <TableCell align="left">{output}</TableCell>
+                      <TableCell align="left">{reject}</TableCell>
                       <TableCell align="right">
                         <MoreMenu id={id} handleDelete={(event) => handleDeleteData(event, id)} />
                       </TableCell>
