@@ -18,6 +18,7 @@ use App\Http\Resources\Order\SOViewCollection;
 use App\Models\KITE\ExportDoc;
 use App\Models\Order\POBuyerProof;
 use App\Models\Reconcile\Reconcile;
+use App\Models\Shipment\Shipment;
 use Illuminate\Http\Request;
 
 class SalesOrderController extends Controller
@@ -37,8 +38,8 @@ class SalesOrderController extends Controller
         ->get();
     } else {
       $query = SalesOrder::with('completion_status')
-      ->where('export_flag', $export_flag)
-      ->get();
+        ->where('export_flag', $export_flag)
+        ->get();
     }
 
     if (isset($query) && is_array($query)) {
@@ -73,12 +74,12 @@ class SalesOrderController extends Controller
         $query = SalesOrder::with('completion_status', 'reconcile')->whereHas('completion_status', function ($query2) {
           $query2->where('completion_status_id', 2);
         })
-        ->orderBy('id', 'desc')
-        ->get();
+          ->orderBy('id', 'desc')
+          ->get();
       } else {
         $query = SalesOrder::with('status', 'sum', 'completion_status', 'reconcile')
-        ->orderBy('id', 'desc')
-        ->get();
+          ->orderBy('id', 'desc')
+          ->get();
       }
 
       return new SOViewCollection($query);
@@ -230,7 +231,6 @@ class SalesOrderController extends Controller
         'order_id' => $order->id
       ]);
       DB::commit();
-
     } catch (Exception $e) {
       //throw $th;
       DB::rollback();
@@ -396,7 +396,7 @@ class SalesOrderController extends Controller
     $salesOrderData = $request->all()['payload'];
     try {
       $sales_order = SalesOrder::find($id);
-      
+
       if ($sales_order) {
         $reconcile_payload = [
           'order_id' => $salesOrderData['order_id'],
@@ -406,7 +406,7 @@ class SalesOrderController extends Controller
 
         $reconcile_get = Reconcile::where('sales_order_id', $id)->get();
 
-        if (count($reconcile_get)){
+        if (count($reconcile_get)) {
           Reconcile::where('sales_order_id', $id)->update($reconcile_payload);
         } else {
           Reconcile::create($reconcile_payload);
@@ -416,8 +416,7 @@ class SalesOrderController extends Controller
 
         return response()->json([
           'success' => true
-        ], 200);  
-
+        ], 200);
       } else {
         return response()->json([
           'success' => false,
@@ -464,6 +463,82 @@ class SalesOrderController extends Controller
   //     ]);
   // }
 
+  public function getAThing()
+  {
+    try {
+      //code...
+      $query = SalesOrder::with('order', 'party', 'completion_status', 'status', 'sum', 'reconcile')
+      ->whereYear('issue_date', '=', '2023')
+      ->get()
+      ->map(function($query){
+        $total_qty = count($query->sum) ? $query->sum[0]->total_qty : 0;
+        $party_name = $query->party ? $query->party->name : 'Null';
+
+        return [
+          'id' => $query->id,
+          'po_number' => $query->po_number,
+          'order_id' => $query->order_id,
+          'sold_to' => $query->sold_to,
+          'party_name' => $party_name,
+          'total_qty' => $total_qty,
+          'issued_date' => $query->issue_date
+        ];
+      });
+
+    } catch (\Throwable $th) {
+      //throw $th;
+
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ]);
+  }
 
 
+  public function getAThing2()
+  {
+    try {
+      //code...
+      $query = Shipment::with('order', 'type', 'sum', 'party')
+      ->whereHas('type', function ($query) {
+        $query->where('id', 2);
+      })
+      ->whereYear('delivery_date', '=', '2023')
+      ->get()
+      ->map(function($query){
+        $total_qty = count($query->sum) ? $query->sum[0]->total_qty : 0;
+        $sales_order = $query->order ? $query->order->sales_order : null;
+        $po_number = $sales_order ? $sales_order->po_number : null;
+        $party_name = $sales_order ? $sales_order->party->name : 'Null';
+        return [
+          'id' => $query->id,
+          'order_id' => $query->order_id,
+          'po_number' => $po_number,
+          'ship_to' => $query->ship_to,
+          'party_name' => $party_name,
+          'total_qty' => $total_qty,
+          'delivery_date' => $query->delivery_date
+        ];
+      });
+
+    } catch (\Throwable $th) {
+      //throw $th;
+
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ]);
+  }
 }
