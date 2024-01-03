@@ -520,7 +520,7 @@ class SalesOrderController extends Controller
           'id' => $query->id,
           'order_id' => $query->order_id,
           'po_number' => $po_number,
-          'ship_to' => $query->ship_to,
+          'ship_to' => $sales_order ? $sales_order->ship_to : 0,
           'party_name' => $party_name,
           'total_qty' => $total_qty,
           'delivery_date' => $query->delivery_date
