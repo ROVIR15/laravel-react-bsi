@@ -42,7 +42,7 @@ class MonitoringQcController extends Controller
           ->get();
 
         } else {
-          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output')
+          $query = QC::selectRaw('id, date, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, sum(qty_loading) as qty_loading, sum(output) as output, sum(reject) as reject')
                   ->groupBy('line', 'date', 'po_number', 'product_feature_id', 'ms_id')
                   ->with('sales_order', 'product_feature')
                   ->orderBy('date', 'desc')
