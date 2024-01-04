@@ -519,6 +519,7 @@ class SalesOrderController extends Controller
           'party_name' => $party ? $party->name : null,
           'party_id' => $party ? $party->id : null,
           'month' => $query->month,
+          'year' => $query->year,
           // 'sales_order' => $sales_order ? $sales_order->sum : null,
           'po_number' => $sales_order ? $sales_order->po_number : null,
           'order_id' => $sales_order ? $sales_order->order_id : null,
