@@ -297,7 +297,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('fg-material-report', 'InventoryController@repFGoods');
     Route::get('mutasi-report', 'InventoryController@repMutasiV2');
     Route::get('report-scrap', 'ScrapController@reportScrap');
-    Route::get('current-stock', 'InventoryController@InventoryStock');
+Route::get('current-stock', 'InventoryController@InventoryStock');
 
     // jangan lupa dihapus
     Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
@@ -370,4 +370,4 @@ Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionS
 
 
 Route::get('random-sales-order', 'SalesOrderController@getAThing');
-Route::get('random-outbound-shipment', 'SalesOrderController@getAThing2');
+Route::get('random-produce', 'SalesOrderController@getAThing3');

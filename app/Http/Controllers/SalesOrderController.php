@@ -16,6 +16,7 @@ use App\Http\Resources\Order\SalesOrderCollection;
 use App\Http\Resources\Order\SOView as oneSalesOrderView;
 use App\Http\Resources\Order\SOViewCollection;
 use App\Models\KITE\ExportDoc;
+use App\Models\Monitoring\Sewing;
 use App\Models\Order\POBuyerProof;
 use App\Models\Reconcile\Reconcile;
 use App\Models\Shipment\Shipment;
@@ -484,6 +485,48 @@ class SalesOrderController extends Controller
           'issued_date' => $query->issue_date
         ];
       });
+
+    } catch (\Throwable $th) {
+      //throw $th;
+
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $query
+    ]);
+  }
+
+  public function getAThing3()
+  {
+    try {
+      $query = Sewing::selectRaw('id, MONTH(date) as month, YEAR(date) as year, po_number, sales_order_id, product_feature_id, order_id, order_item_id, line, facility_id, qty_loading, sum(output) as output')
+      ->whereYear('date', '=', '2023')
+      ->with('sales_order', 'product_feature')
+      ->groupBy(DB::raw('MONTH(date)'), 'sales_order_id')
+      ->orderBy('date', 'desc')
+      ->get()
+      ->map(function($query){
+        $sales_order = $query->sales_order ? $query->sales_order : null;
+        $party = $sales_order->party ? $sales_order->party : null;
+        $info_so = $sales_order && count($sales_order->sum) ? $sales_order->sum[0] : 0;
+        return [
+          'sales_order_id' => $query->sales_order ? $query->sales_order->id : null,
+          'party_name' => $party ? $party->name : null,
+          'party_id' => $party ? $party->id : null,
+          'month' => $query->month,
+          // 'sales_order' => $sales_order ? $sales_order->sum : null,
+          'po_number' => $sales_order ? $sales_order->po_number : null,
+          'order_id' => $sales_order ? $sales_order->order_id : null,
+          'qty_produce' => $query->output,
+          'qty_order' => $info_so->total_qty
+        ];
+      });
+
 
     } catch (\Throwable $th) {
       //throw $th;
