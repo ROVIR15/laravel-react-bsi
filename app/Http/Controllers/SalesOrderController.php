@@ -473,6 +473,7 @@ class SalesOrderController extends Controller
       ->get()
       ->map(function($query){
         $total_qty = count($query->sum) ? $query->sum[0]->total_qty : 0;
+        $avg_unit_price = count($query->sum) ? $query->sum[0]->avg_unit_price : 0;
         $party_name = $query->party ? $query->party->name : 'Null';
 
         return [
@@ -482,6 +483,7 @@ class SalesOrderController extends Controller
           'sold_to' => $query->sold_to,
           'party_name' => $party_name,
           'total_qty' => $total_qty,
+          'avg_unit_price' => $avg_unit_price,
           'issued_date' => $query->issue_date
         ];
       });
