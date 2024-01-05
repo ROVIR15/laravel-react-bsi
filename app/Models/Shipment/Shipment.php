@@ -44,7 +44,7 @@ class Shipment extends Model
 
     public function order()
     {
-        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order', 'purchase_order');
+        return $this->belongsTo('App\Models\Order\Order', 'order_id')->with('sales_order', 'purchase_order', 'info');
     }
 
     public function reconcile_based_sales_order()

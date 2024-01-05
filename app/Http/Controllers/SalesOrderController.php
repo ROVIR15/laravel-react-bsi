@@ -560,6 +560,7 @@ class SalesOrderController extends Controller
       ->map(function($query){
         $total_qty = count($query->sum) ? $query->sum[0]->total_qty : 0;
         $sales_order = $query->order ? $query->order->sales_order : null;
+        $info = $query->order ? $query->order->info : null;
         $po_number = $sales_order ? $sales_order->po_number : null;
         $party_name = $sales_order ? $sales_order->party->name : 'Null';
         return [
@@ -569,6 +570,7 @@ class SalesOrderController extends Controller
           'ship_to' => $sales_order ? $sales_order->ship_to : 0,
           'party_name' => $party_name,
           'total_qty' => $total_qty,
+          'unit_price' => $info && count($info) ? $info[0]->unit_price : 0,
           'delivery_date' => $query->delivery_date
         ];
       });
