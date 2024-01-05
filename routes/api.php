@@ -371,3 +371,4 @@ Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionS
 
 Route::get('random-sales-order', 'SalesOrderController@getAThing');
 Route::get('random-produce', 'SalesOrderController@getAThing3');
+Route::get('random-shipment', 'SalesOrderController@getAThing2');
