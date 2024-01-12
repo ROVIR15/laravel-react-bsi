@@ -25,7 +25,9 @@ class Sewing extends Model
         'line',
         'facility_id',
         'qty_loading',
-        'output'
+        'output',
+        'work_hours',
+        'defect'
     ];
 
     public function order_item(){

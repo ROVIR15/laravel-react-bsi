@@ -28,6 +28,21 @@ export default function ValidateRowModelControlGrid({ columns, rows, handleUpdat
             `rgb(126,10,15, ${theme.palette.mode === 'dark' ? 0 : 0.1})`,
           color: (theme) => (theme.palette.mode === 'dark' ? '#ff4343' : '#750f0f'),
         },
+        '& .super-app-theme--cell': {
+          backgroundColor: 'rgba(224, 183, 60, 0.55)',
+          color: '#1a3e72',
+          fontWeight: '600',
+        },
+        '& .super-app.negative': {
+          backgroundColor: '#d47483',
+          color: '#1a3e72',
+          fontWeight: '600',
+        },
+        '& .super-app.positive': {
+          backgroundColor: 'rgba(157, 255, 118, 0.49)',
+          color: '#1a3e72',
+          fontWeight: '600',
+        },
       }}
     >
       <DataGrid rows={rows ? rows : mrows } columns={columns ? columns : estColumns} {...rest}/>

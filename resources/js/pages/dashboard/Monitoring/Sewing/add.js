@@ -30,6 +30,8 @@ import DataGrid from './DataGrid';
 import Modal from './Modal';
 import DialogBox from '../../../../components/DialogBox/dialog.list';
 import { isUndefined } from 'lodash';
+import clsx from 'clsx';
+import { enqueueSnackbar } from 'notistack';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -73,6 +75,7 @@ function WorkCenter() {
         API.insertMonitoringSewing(data, function (res) {
           if (!res) return;
           if (!res.success) throw new Error('failed to save');
+          enqueueSnackbar('', { variant: 'successAlert' });
           setItems([]);
           handleReset();
           setSelectedValueSO({
@@ -81,8 +84,9 @@ function WorkCenter() {
           });
         });
       } catch (error) {
-        alert(error);
+        enqueueSnackbar('', { variant: 'failedAlert' });
       }
+
       setSubmitting(false);
     }
   });
@@ -110,9 +114,22 @@ function WorkCenter() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', headerName: 'Order Item ID', editable: false, visible: 'hide' },
+      { field: 'id', headerName: 'ID', editable: false, visible: 'hide' },
       { field: 'name', headerName: 'Name', width: 550, editable: false },
       { field: 'po_number', headerName: 'PO', editable: true },
+      {
+        field: 'work_hours',
+        type: 'number',
+        headerName: 'Jam Kerja',
+        type: 'number',
+        editable: true,
+        cellClassName: (params) => {
+          return clsx('super-app', {
+            negative: params.value == 0,
+            positive: params.value > 0
+          });
+        }
+      },
       {
         field: 'qty_loading',
         type: 'number',
@@ -125,7 +142,26 @@ function WorkCenter() {
         type: 'number',
         headerName: 'Output Sewing',
         type: 'number',
-        editable: true
+        editable: true,
+        cellClassName: (params) => {
+          return clsx('super-app', {
+            negative: params.value <= 0,
+            positive: params.value > 0
+          });
+        }
+      },
+      {
+        field: 'defect',
+        type: 'number',
+        headerName: 'Defect',
+        type: 'number',
+        editable: true,
+        cellClassName: (params) => {
+          return clsx('super-app', {
+            negative: params.value <= 0,
+            positive: params.value > 0
+          });
+        }
       },
       {
         field: 'actions',
@@ -349,7 +385,7 @@ function WorkCenter() {
               {/* Button */}
               <CardContent>
                 <LoadingButton
-                  fullWidth 
+                  fullWidth
                   size="large"
                   type="submit"
                   variant="contained"

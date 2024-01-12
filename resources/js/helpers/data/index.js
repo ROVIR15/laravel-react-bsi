@@ -817,6 +817,9 @@ export function optionSupermarket(array) {
       sales_order_id,
       product_feature_id: product_feature.id,
       po_number,
+      work_hours: 0,
+      defect: 0,
+      output: 0,
       name: `${product?.goods?.name} ${product_feature?.color} ${product_feature?.size}`,
       numbering: '',
       qty_loading:

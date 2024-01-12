@@ -307,7 +307,7 @@ function Invoice({ placeHolder }) {
                             style={{ color: status.color, backgroundColor: status.backgroundColor }}
                           />
                         </TableCell>
-                        <TableCell align="left">{invoice_date}</TableCell>
+                        <TableCell align="left">{moment(invoice_date).format('ll')}</TableCell>
                         <TableCell align="left">{serial_number}</TableCell>
                         <TableCell align="left">{billed_to}</TableCell>
                         <TableCell align="left">{`${fNumber(total_qty)} pcs`}</TableCell>
