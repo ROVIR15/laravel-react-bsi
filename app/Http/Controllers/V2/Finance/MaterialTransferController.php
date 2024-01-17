@@ -147,8 +147,8 @@ class MaterialTransferController extends Controller
                     return $query
                         ->whereMonth('created_at', $month)
                         ->whereYear('created_at', $year)
-                        // ->where('from_facility_id', $from_facility)
-                        // ->where('to_facility_id', $to_facility)
+                        ->where('from_facility_id', $from_facility)
+                        ->where('to_facility_id', $to_facility)
                         ->where('from_facility_id', '!=', 16)
                         ->where('to_facility_id', '!=', 3);
                 })
