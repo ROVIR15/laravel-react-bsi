@@ -162,14 +162,13 @@ This API automatically filtered with from_facility and to_facility which is simi
 Goods Movement (Mutasi Barang);
 
 ```http
-  GET /api/v2/finance/material-transfer-filtered?paginate={number_of_data}&month={month}&year={year}&page={page_number}&from_facility={from_facility}&to_facility={to_facility}
+  GET /api/v2/finance/material-transfer-filtered?month={month}&year={year}&from_facility={from_facility}&to_facility={to_facility}
 ```
 
 This API automatically filtered with from_facility and to_facility which is similiar with the incoming shipment.
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `paginate` | `int` | Default is 10, if you want to increase or decrease page you can make some adjustment here |
 | `month` | `int` | **Required** provide month filter based on created_date, cannot be null |
 | `year` | `int` | **Required** provide year filter based on created_date, cannot be null |
 | `from_facility` | `int` | **Required** provide the id of an specific facility whose own the material, cannot be null |
