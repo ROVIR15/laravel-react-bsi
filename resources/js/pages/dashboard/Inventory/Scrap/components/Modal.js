@@ -49,18 +49,18 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
   const [type, setType] = React.useState(0);
 
   const [selectedFacility, setSelectedFacility] = React.useState(0);
-  
+
   const handleSelectType = (e) => {
     setSelectedCosting(0);
     setOptions([]);
-    if (e.target.value === 2){
+    if (e.target.value === 2) {
       setSelectedFacility(2);
     }
     setType(e.target.value);
   };
-  
+
   const [facilityList, setFacilityList] = React.useState([]);
-  
+
   React.useEffect(() => {
     try {
       API.getFacility(``, function (res) {
@@ -81,9 +81,9 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         }
       });
     } catch (error) {
-      alert("error :", error)
+      alert('error :', error);
     }
-  }, [])
+  }, []);
 
   const handleSelectFacility = (e) => {
     if (!type) alert('select on left side field first!');
@@ -149,7 +149,6 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
               if (!res) return;
               if (!res.data) {
                 setOptions([]);
-
               } else {
                 // console.log(data);
                 setOptions(res.data);
@@ -185,59 +184,63 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
         aria-describedby="modal-modal-description"
       >
         <StyledCard sx={style}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Select Product
-            </Typography>
-            <IconButton onClick={handleClose} color="error">
-              <Icon icon={closeCircle} />
-            </IconButton>
-          </Stack>
+          <Stack direction="column" spacing={2}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Select Product
+              </Typography>
+              <IconButton onClick={handleClose} color="error">
+                <Icon icon={closeCircle} />
+              </IconButton>
+            </Stack>
 
-          <Stack direction="row" spacing={2}>
-            <Select
-              onChange={handleSelectType}
-              value={type}
-              input={<OutlinedInput label="Name" />}
-              size="small"
-              fullWidth
-            >
-              <MenuItem value={0}>None</MenuItem>
-              <MenuItem value={1}>CBD</MenuItem>
-              <MenuItem value={2}>Sales Order</MenuItem>
-            </Select>
-            <Select
-              onChange={handleSelectFacility}
-              value={selectedFacility}
-              input={<OutlinedInput label="Name" />}
-              size="small"
-              fullWidth
-            >
-              <MenuItem value={0}>None</MenuItem>
-              {isEmpty(facilityList)
-                ? null
-                : facilityList.map(function (item) {
-                    return <MenuItem value={item.id}>{item.facility_name}</MenuItem>;
-                  })}
-            </Select>
-          </Stack>
-
-          <Stack direction="row" spacing={2}>
-            <FormControl fullWidth>
-              <InputLabel id="costing_name">Pilih {(type === 1 ? 'Costing' : ((type===2) ? 'Sales Order' : null))}</InputLabel>
+            <Stack direction="row" spacing={2}>
               <Select
-                onChange={handleSelect}
-                value={selectedCosting}
+                onChange={handleSelectType}
+                value={type}
                 input={<OutlinedInput label="Name" />}
                 size="small"
                 fullWidth
               >
-                <MenuItem value={0}>None</MenuItem>;
-                {dataCosting?.map(function (item) {
-                  return <MenuItem value={item.order_id}>{item.po_number}</MenuItem>;
-                })}
+                <MenuItem value={0}>None</MenuItem>
+                <MenuItem value={1}>CBD</MenuItem>
+                <MenuItem value={2}>Sales Order</MenuItem>
               </Select>
-            </FormControl>
+              <Select
+                onChange={handleSelectFacility}
+                value={selectedFacility}
+                input={<OutlinedInput label="Name" />}
+                size="small"
+                fullWidth
+              >
+                <MenuItem value={0}>None</MenuItem>
+                {isEmpty(facilityList)
+                  ? null
+                  : facilityList.map(function (item) {
+                      return <MenuItem value={item.id}>{item.facility_name}</MenuItem>;
+                    })}
+              </Select>
+            </Stack>
+
+            <Stack direction="row" spacing={2}>
+              <FormControl fullWidth>
+                <InputLabel id="costing_name">
+                  Pilih {type === 1 ? 'Costing' : type === 2 ? 'Sales Order' : null}
+                </InputLabel>
+                <Select
+                  onChange={handleSelect}
+                  value={selectedCosting}
+                  input={<OutlinedInput label="Name" />}
+                  size="small"
+                  fullWidth
+                >
+                  <MenuItem value={0}>None</MenuItem>;
+                  {dataCosting?.map(function (item) {
+                    return <MenuItem value={item.order_id}>{item.po_number}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+            </Stack>
           </Stack>
 
           <Table list={options} selected={items} setSelected={setItems} />

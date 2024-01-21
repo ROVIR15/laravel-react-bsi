@@ -14,31 +14,33 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TablePagination
+  TablePagination,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
 import { Icon } from '@iconify/react';
 import downloadIcon from '@iconify/icons-eva/download-fill';
+import ExternalLink from '@iconify/icons-eva/external-link-fill';
 
-import { fCurrency } from '../../../../utils/formatNumber';
-import { firstLetterUpperCase, titleCase } from '../../../../utils/formatCase';
+import { fCurrency } from '../../../../../utils/formatNumber';
+import { firstLetterUpperCase, titleCase } from '../../../../../utils/formatCase';
 
-import { __payload } from '../data-testing/penerimaan_barang';
-import { StyledTableCell as TableCell } from './components/TableCell';
+import { StyledTableCell as TableCell } from '../components/TableCell';
 
-import API from '../../../../helpers';
+import API from '../../../../../helpers';
 import { isEmpty } from 'lodash';
 
-import { generalizeSKU, rearrange_data_in } from './utils';
+import { generalizeSKU, rearrange_data_in } from '../utils';
 import moment from 'moment';
+import BasicModal from './components/Modal';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
 function Inbound() {
   const xlsRef = useRef(null);
-  const [payloadData, setPayloadData] = useState(__payload);
+  const [payloadData, setPayloadData] = useState([]);
 
   // get pathname
   const { pathname } = useLocation();
@@ -157,8 +159,33 @@ function Inbound() {
     getData();
   }, []);
 
+  /**
+   * Modal
+   */
+  const [open, setOpen] = useState(false);
+  const handleCloseModal = () => { setOpen(false)};
+  
+  const [payload, setPayload] = useState({
+    purchase_order_id: null,
+    order_id: null,
+    order_item_id: null,
+    product_feature_id: null,
+    shipment_id: null
+  });
+
+  const handleOpenModal = (event, _p) => {
+    setPayload(_p)
+
+    setOpen(true);
+  };
+  
   return (
     <div>
+      <BasicModal
+        payload={payload}
+        open={open}
+        handleClose={handleCloseModal}
+      />
       <Paper sx={{ marginBottom: '1em', paddingY: '1em', paddingX: '1.25em' }}>
         <Grid container direction="column" spacing={2}>
           {/* Top row contain title and button to export and download */}
@@ -233,6 +260,7 @@ function Inbound() {
                     {' '}
                   </TableCell>
                   <TableCell align="center" colSpan={1}/>
+                  <TableCell align="center" colSpan={1}/>
                   <TableCell align="center" colSpan={1}>
                     Jenis Dokumen
                   </TableCell>
@@ -245,6 +273,7 @@ function Inbound() {
                   <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>Aksi</TableCell>
                   <TableCell>No</TableCell>
                   <TableCell>Tanggal Rekam</TableCell>
 
@@ -274,6 +303,11 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
+                      <TableCell> 
+                        <IconButton>
+                          <Icon icon={ExternalLink} onClick={(event) => handleOpenModal(event, row)} width={24} height={24}/>
+                        </IconButton>
+                      </TableCell>
                       <TableCell> {row.id} </TableCell>
                       <TableCell> {row.recoded_date} </TableCell>
 

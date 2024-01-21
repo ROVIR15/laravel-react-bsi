@@ -9,7 +9,8 @@ import Paper from '@mui/material/Paper';
 
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import { isEmpty, parseInt } from 'lodash';
 
 const BoxStyle = styled(Box)(({ theme }) => ({
   margin: 12
@@ -19,13 +20,8 @@ const NoBorderCell = styled(TableCell)(({ theme }) => ({
   border: 'unset'
 }));
 
-function createData(
-  name,
-  qty_order,
-  qty_on_receipt,
-  qty_received
-) {
-  return { name, qty_order, qty_on_receipt, qty_received};
+function createData(name, qty_order, qty_on_receipt, qty_received) {
+  return { name, qty_order, qty_on_receipt, qty_received };
 }
 
 const rows = [
@@ -35,94 +31,109 @@ const rows = [
   createData('Product D', 200, 190, 10)
 ];
 
-export default function BasicTable({payload}) {
+export default function BasicTable({ payload }) {
+  const [summary, setSummary] = React.useState({
+    total_delivery: 0,
+    difference: 0,
+    total_received: 0
+  });
 
-  const total_delivery = () => {
-    var total = 0;
-    payload.map(function({qty_on_receipt}){ total = total + qty_on_receipt});
-    return total;
-  } 
+  React.useEffect(() => {
+    if (isEmpty(payload)) return;
+    else {
+      let data_summary = payload.reduce(
+        (initial, next) => {
+          console.log(next)
+          var _qty_shipped = parseInt(next.qty_shipped); // qty on hand
+          var _deliv_qty = parseInt(next.qty); // qty sent by supplier
 
-  const rejected = () => {
-    var total = 0;
-    payload.map(function({qty_on_receipt, qty_received}){ total = total + (qty_on_receipt - qty_received)});
-    return total;
-  }
+          return {
+            ...initial,
+            total_delivery: initial.total_delivery + _deliv_qty,
+            difference: initial.difference + (_qty_shipped - _deliv_qty),
+            total_received: initial.total_received + _qty_shipped
+          };
+        },
+        {
+          total_delivery: 0,
+          difference: 0,
+          total_received: 0
+        }
+      );
 
-  const total_received = () => {
-    var total = 0;
-    payload.map(function({qty_received}){ total = total + qty_received});
-    return total;
-  }
+      setSummary(data_summary);
+    }
+  }, [payload]);
 
   return (
-    <TableContainer component={Paper} sx={{marginLeft: 'auto'}}>
-      <Table sx={{ minWidth: 120 }} size="small" aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left">#</TableCell>
-            <TableCell>Product Name</TableCell>
-            <TableCell align="right">Qty Ordered</TableCell>
-            <TableCell align="right">Qty Delivered</TableCell>
-            <TableCell align="right">Qty Received</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {payload.map((row, index) => (
-            <TableRow
-              key={row.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell align="left">{index+1}</TableCell>
-              <TableCell component="th" scope="row">
-                {`${row.product.name} ${row.product.color} - ${row.product.size}`}
-              </TableCell>
-              <TableCell align="right">{row.qty_order}</TableCell>
-              <TableCell align="right">{row.qty_on_receipt}</TableCell>
-              <TableCell align="right">{row.qty_received}</TableCell>
-            </TableRow>
-          ))}
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Total Delivery </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {total_delivery() } </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="body1"> Subtotal Received </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {total_received()} </Typography>
-              </NoBorderCell>
-            </TableRow>
-            <TableRow
-              key="Total"
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <NoBorderCell align="right" colSpan={4}>
-                <BoxStyle />
-                <Typography variant="h6"> Rejected </Typography>
-              </NoBorderCell>
-              <NoBorderCell align="right">
-                <BoxStyle />
-                <Typography variant="body1"> {rejected()} </Typography>
-              </NoBorderCell>
-            </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Stack direction="column" spacing={2}>
+      <div className="wk_table wk_style1">
+        <div className="wk_border">
+          <div className="wk_table_responsive">
+            <table style={{ fontSize: '11px' }}>
+              <thead>
+                <tr>
+                  <th className="wk_width_2 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    SKU ID
+                  </th>
+                  <th className="wk_width_3 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Item Name
+                  </th>
+                  <th className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Qty Dipesan
+                  </th>
+                  <th className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Qty Dikirim
+                  </th>
+                  <th className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Qty Diterima
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {payload.map((row, index) => (
+                  <tr>
+                    <td className="wk_width_2 wk_padd_8_20">{row?.sku_id}</td>
+                    <td className="wk_width_3 wk_padd_8_20">{row?.item_name}</td>
+                    <td className="wk_width_1 wk_padd_8_20">{`${row.qty_order} ${row.satuan}`}</td>
+                    <td className="wk_width_1 wk_padd_8_20">{`${row.qty} ${row.satuan}`}</td>
+                    <td className="wk_width_1 wk_padd_8_20">{`${row.qty_shipped} ${row.satuan}`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div className="wk_table wk_style1">
+        <div className="wk_border">
+          <div className="wk_table_responsive">
+            <table style={{ fontSize: '11px' }}>
+              <thead>
+                <tr>
+                  <th className="wk_width_3 wk_text_center wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Total Pengiriman
+                  </th>
+                  <th className="wk_width_3 wk_text_center wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Total Diterima
+                  </th>
+                  <th className="wk_width_3 wk_text_center wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Selisih
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="wk_width_3 wk_text_center wk_padd_8_20">{`${summary?.total_delivery}`}</td>
+                  <td className="wk_width_3 wk_text_center wk_padd_8_20">{`${summary?.total_received}`}</td>
+                  <td className="wk_width_3 wk_text_center wk_padd_8_20">{`${summary?.difference}`}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </Stack>
   );
 }

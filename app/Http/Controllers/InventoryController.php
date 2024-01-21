@@ -306,6 +306,13 @@ class InventoryController extends Controller
 
           $doc_type = '';
 
+          $costing_item_id = $orderItem['costing_item_id'];
+          $costing_item = null;
+
+          if ($costing_item_id){
+            $costing_item = BOMItem::find($costing_item_id);
+          }
+
           switch ($importDoc->type) {
             case 1:
               $doc_type = 'BC 2.0';
@@ -355,7 +362,9 @@ class InventoryController extends Controller
             'customs_document_id' => $importDoc->id,
             'customs_document_number' => $importDoc->document_number,
             'customs_document_date' => $this->change_date_format($importDoc->date),
-            'currency' => $order->currency_id
+            'currency' => $order->currency_id,
+            'costing_item_id' => $costing_item ? $costing_item->id : null,
+            'costing_id' => $costing_item ? $costing_item->bom_id : null
           ];
         });
     } catch (Exception $th) {
@@ -416,8 +425,16 @@ class InventoryController extends Controller
           $goods = $product->goods ? $product->goods : null;
           $exportDoc  = $salesOrder->export_doc ? $salesOrder->export_doc : null;
 
+          $costing_item_id = $orderItem['costing_item_id'];
+          $costing_item = null;
+
+          if ($costing_item_id){
+            $costing_item = BOMItem::find($costing_item_id);
+          }
+
           return [
             'id' => $index + 1,
+            'sku_id' => '01-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => $item->shipment->serial_number,
             'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
@@ -434,9 +451,12 @@ class InventoryController extends Controller
             'qty' => $item->qty_shipped,
             'unit_price' => $orderItem->unit_price,
             'valuation' => $orderItem->qty * $orderItem->unit_price,
+            'export_document_number' => $exportDoc ? $exportDoc->id : null,
             'export_document_number' => $exportDoc ? $exportDoc->document_number : null,
             'export_document_date' => $exportDoc ? $this->change_date_format($exportDoc->date) : null,
-            'currency' => $order->currency_id
+            'currency' => $order->currency_id,
+            'costing_item_id' => $costing_item ? $costing_item->id : null,
+            'costing_id' => $costing_item ? $costing_item->bom_id : null
           ];
         });
     } catch (\Throwable $th) {

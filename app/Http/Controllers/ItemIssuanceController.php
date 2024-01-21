@@ -155,6 +155,7 @@ class ItemIssuanceController extends Controller
 
   /**
    * Store a newly created resource in storage.
+   * This function enables to record goods movement for receive goods
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response

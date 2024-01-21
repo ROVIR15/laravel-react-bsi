@@ -257,8 +257,8 @@ import Capacity from '../pages/dashboard/CapacityAnalysis';
 import NotifMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/check';
 
 // Berikat
-import Inbound from '../pages/dashboard/Inventory/Reports/Inbound';
-import Outbound from '../pages/dashboard/Inventory/Reports/LaporanBarangKeluar';
+import Inbound from '../pages/dashboard/Inventory/Reports/Pemasukan';
+import Outbound from '../pages/dashboard/Inventory/Reports/Pengeluaran';
 import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
 import WIPReport_Pemasukkan from '../pages/dashboard/Inventory/Reports/LaporanBarangWIPPemasukan';
 import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
@@ -570,16 +570,6 @@ export default function TestRouter() {
           ]
         },
         { 
-          path: 'inventory/goods-receipt', 
-          element: <GoodsReceipt />,
-          children: [
-            { path: ':id', element: <ShowGR />},
-            { path: 'add', element: <AddGR />},
-            { path: 'display', element: <DisplayGR />},
-            { path: 'document/:id', element: <DocumentGR/>}
-          ]
-        },
-        { 
           path: 'material/invoice-receipt', 
           element: <InvoiceReceipt />,
           children: [
@@ -863,6 +853,7 @@ export default function TestRouter() {
             { path: 'add', element: <AddIncomingShipment /> },
             { path: ':id', element: <ShowIncomingShipment /> },
             { path: 'display', element: <DisplayIncomingShipment /> },
+            { path: 'document-gr/:id', element: <DocumentGR/>}
           ]
         },
         {

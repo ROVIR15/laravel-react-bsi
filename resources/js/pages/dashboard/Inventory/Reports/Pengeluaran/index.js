@@ -16,26 +16,30 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TablePagination
+  TablePagination,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
-import { fCurrency } from '../../../../utils/formatNumber';
-import { titleCase } from '../../../../utils/formatCase';
+import { fCurrency } from '../../../../../utils/formatNumber';
+import { titleCase } from '../../../../../utils/formatCase';
 
-import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
+import downloadIcon from '@iconify/icons-eva/download-fill';
+import ExternalLink from '@iconify/icons-eva/external-link-fill';
 
-import { __payload } from '../data-testing/pengeluaran_barang';
-import { StyledTableCell as TableCell } from './components/TableCell';
+import { __payload } from '../../data-testing/pengeluaran_barang';
+import { StyledTableCell as TableCell } from '../components/TableCell';
 
-import API from '../../../../helpers';
+import API from '../../../../../helpers';
 import { isEmpty } from 'lodash';
 
-import { generalizeSKU, rearrange_data_out } from './utils';
+import { generalizeSKU, rearrange_data_out } from '../utils';
 import moment from 'moment';
-import { strPadLeft } from '../../../../utils/formatProduct';
+import { strPadLeft } from '../../../../../utils/formatProduct';
+
+import BasicModal from './components/Modal';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
@@ -160,8 +164,31 @@ function Inbound() {
     getData();
   }, []);
 
+  /**
+   * Modal
+   */
+  const [open, setOpen] = useState(false);
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
+  const [payload, setPayload] = useState({
+    sales_order_id: null,
+    order_id: null,
+    order_item_id: null,
+    product_feature_id: null,
+    shipment_id: null
+  });
+
+  const handleOpenModal = (event, _p) => {
+    setPayload(_p);
+
+    setOpen(true);
+  };
+
   return (
     <div>
+      <BasicModal payload={payload} open={open} handleClose={handleCloseModal} />
       <Paper sx={{ marginBottom: '1em', paddingY: '1em', paddingX: '1.25em' }}>
         <Grid container direction="column" spacing={2}>
           {/* Top row contain title and button to export and download */}
@@ -233,7 +260,8 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell colSpan={1}> </TableCell>
+                  <TableCell align="center" colSpan={1} />
+                  <TableCell align="center" colSpan={1} />
                   <TableCell align="center" colSpan={2}>
                     PEB
                   </TableCell>
@@ -243,6 +271,7 @@ function Inbound() {
                   <TableCell colSpan={9}> </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>Aksi</TableCell>
                   <TableCell>No</TableCell>
                   {/*  */}
                   <TableCell>Nomor</TableCell>
@@ -267,11 +296,27 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
+                      <TableCell>
+                        <IconButton>
+                          <Icon
+                            icon={ExternalLink}
+                            onClick={(event) => handleOpenModal(event, row)}
+                            width={24}
+                            height={24}
+                          />
+                        </IconButton>
+                      </TableCell>
                       <TableCell>{row?.id}</TableCell>
                       <TableCell>{row?.export_document_number}</TableCell>
                       <TableCell>{row?.export_document_date}</TableCell>
                       {/* <TableCell>{row?.serial_number}</TableCell> */}
-                      <TableCell>{`OUTSHIP-${strPadLeft(row?.sales_order_id, 4, 0)}-${strPadLeft(row?.shipment_id, 4, 0)}`} </TableCell>
+                      <TableCell>
+                        {`OUTSHIP-${strPadLeft(row?.sales_order_id, 4, 0)}-${strPadLeft(
+                          row?.shipment_id,
+                          4,
+                          0
+                        )}`}{' '}
+                      </TableCell>
                       <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>
@@ -386,7 +431,9 @@ function Inbound() {
                           <td className="wk_width_2">{row?.id}</td>
                           <td className="wk_width_2">{row?.export_document_number}</td>
                           <td className="wk_width_2">{row?.export_document_date}</td>
-                          <td className="wk_width_2">{`OBSHIP-${row?.order_id}-${row?.shipment_id}`} </td>
+                          <td className="wk_width_2">
+                            {`OBSHIP-${row?.order_id}-${row?.shipment_id}`}{' '}
+                          </td>
                           <td className="wk_width_2">{row?.shipment_date} </td>
                           <td className="wk_width_2">{row.buyer_name}</td>
                           <td className="wk_width_2">{row.country}</td>
@@ -396,7 +443,9 @@ function Inbound() {
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>
                           <td className="wk_width_2">{row.qty}</td>
-                          <td className="wk_width_2">{row.currency === 2 ? 'Rupiah' : 'Dollar US'}</td>
+                          <td className="wk_width_2">
+                            {row.currency === 2 ? 'Rupiah' : 'Dollar US'}
+                          </td>
                           <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
                         </tr>
                       ))}

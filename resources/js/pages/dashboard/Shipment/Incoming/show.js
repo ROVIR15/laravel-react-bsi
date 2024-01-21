@@ -44,7 +44,7 @@ import AutoComplete from './components/AutoComplete';
 //Icons
 import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
-import { useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import useAuth from '../../../../context';
 
 // Snackbar
@@ -614,7 +614,7 @@ function OutboundDelivery() {
                 </Grid>
               </CardContent>
               <CardContent>
-                <Stack direction="row">
+                <Stack direction="column">
                   <Button
                     fullWidth
                     size="large"
@@ -624,6 +624,18 @@ function OutboundDelivery() {
                     sx={{ m: 1 }}
                   >
                     Issue to Warehouse
+                  </Button>
+                  <Button
+                    fullWidth
+                    component={RouterLink}
+                    to={`../document-gr/${id}`}
+                    size="large"
+                    color="primary"
+                    variant="contained"
+                    // onClick={handleItemIssuance}
+                    sx={{ m: 1 }}
+                  >
+                    Show Goods Receipt
                   </Button>
                   <LoadingButton
                     fullWidth
