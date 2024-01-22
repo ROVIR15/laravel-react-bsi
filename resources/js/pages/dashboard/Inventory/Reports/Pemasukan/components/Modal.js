@@ -110,6 +110,24 @@ export default function BasicModal({ payload, open, handleClose }) {
                           {padStartWithZero(payload?.customs_document_number)}
                         </td>
                       </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor Packing List
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {payload?.pl_number}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor Bill of Lading
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {payload?.bl_number}
+                        </td>
+                      </tr>
                     </table>
                   </div>
                 </div>

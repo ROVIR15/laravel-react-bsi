@@ -58,7 +58,7 @@ class ShipmentController extends Controller
               ->orderBy('id', 'desc')
               ->get();
           } else {
-            $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items')
+            $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items', 'issuance')
               ->whereHas('type', function ($query) use ($type) {
                 $query->where('id', $type);
               })
@@ -68,7 +68,7 @@ class ShipmentController extends Controller
               ->get();
           }
         } else {
-          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', 'issuance')
             ->with('__items')
             ->whereYear('delivery_date', '=', $year)
             ->whereMonth('delivery_date', '=', $month)
@@ -77,7 +77,7 @@ class ShipmentController extends Controller
         }
       } else {
         if (isset($type)) {
-          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', '__items', 'issuance')
             // ->with(['__items' => function ($query){
             //   return $query->select('costing_item_id');
             // }])
@@ -85,7 +85,7 @@ class ShipmentController extends Controller
             ->orderBy('order_id', 'asc')
             ->get();
         } else {
-          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum')
+          $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', 'issuance')
             ->orderBy('id', 'asc')
             ->get();
         }

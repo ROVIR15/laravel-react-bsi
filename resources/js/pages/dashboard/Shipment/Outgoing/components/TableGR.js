@@ -32,11 +32,9 @@ const rows = [
 
 export default function BasicTable({ payload }) {
   const total_delivery = () => {
-    var total = payload.reduce((initial, { deliv_qty }) => initial + deliv_qty, 0);
-    return total;
+    var total = payload.reduce((initial, { deliv_qty }) => initial + parseFloat(deliv_qty), 0);
+    return total.toFixed(2);
   };
-
-  console.log(payload);
 
   return (
     <div className="wk_table wk_style1">
@@ -47,7 +45,7 @@ export default function BasicTable({ payload }) {
               <tr>
                 <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">#</th>
                 <th className="wk_width_8 wk_semi_bold wk_primary_color wk_gray_bg">Item Name</th>
-                <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_right">Qty</th>
+                <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg wk_text_right">Qty Dikirim</th>
               </tr>
             </thead>
             <tbody>
@@ -55,7 +53,7 @@ export default function BasicTable({ payload }) {
                 <tr>
                   <td className="wk_width_1">{index+1}</td>
                   <td className="wk_width_8">{`${row?.item_name}`}</td>
-                  <td className="wk_width_2 wk_text_right">{row.deliv_qty}</td>
+                  <td className="wk_width_2 wk_text_right">{`${parseFloat(row.deliv_qty).toFixed(2)} ${row?.satuan}`}</td>
                 </tr>
               ))}
             </tbody>

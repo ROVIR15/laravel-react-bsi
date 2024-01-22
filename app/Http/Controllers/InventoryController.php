@@ -359,6 +359,8 @@ class InventoryController extends Controller
             'customs_item_number' => str_pad($importItem->item_serial_number, 6, '0', STR_PAD_LEFT),
             'customs_doc' => $doc_type,
             'hs_code_item' => $importItem->hs_code,
+            'bl_number' => $importDoc->bl_number,
+            'pl_number' => $importDoc->pl_number,
             'customs_document_id' => $importDoc->id,
             'customs_document_number' => $importDoc->document_number,
             'customs_document_date' => $this->change_date_format($importDoc->date),
@@ -827,6 +829,7 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
             'qty' => $item->qty,
+            'import_flag' => $import_flag,
             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
@@ -1135,7 +1138,7 @@ class InventoryController extends Controller
         return $item->product_feature_id;
       });
 
-      $query = GoodsMovement::select('id', 'date', 'material_transfer_id', 'material_transfer_item_id', 'product_id', 'product_feature_id', 'goods_id', 'facility_id', 'type_movement', DB::raw('sum(qty) as qty'))
+      $query = GoodsMovement::select('id', 'date', 'material_transfer_id', 'material_transfer_item_id', 'product_id', 'product_feature_id', 'goods_id', 'facility_id', 'order_item_id', 'type_movement', DB::raw('sum(qty) as qty'))
         ->with('product', 'product_feature', 'goods', 'facility')
         ->where('facility_id', $type)
         ->whereIn('product_feature_id', $order_item)
@@ -1146,6 +1149,17 @@ class InventoryController extends Controller
           $productFeature = $item->product_feature;
           $product = $item->product ? $item->product : null;
           $goods = $item->goods ? $item->goods : null;
+
+          $order_item = OrderItem::find($item->order_item_id);
+          $purchase_order = null;
+          $import_flag = 1;
+
+          if ($order_item) {
+            $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->get();
+            if (count($purchase_order) > 0){
+              $import_flag = $purchase_order[0]->import_flag ? 2 : 1;
+            }
+          }
 
           $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
             ->where('product_feature_id', $productFeature->id)
@@ -1161,6 +1175,8 @@ class InventoryController extends Controller
             'product_id' => $product->id,
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
+            'purchase_order' => $purchase_order,
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
             'qty' => $item->qty
@@ -1182,6 +1198,7 @@ class InventoryController extends Controller
             "product_id" => $item['product_id'],
             "product_feature_id" => $item['product_feature_id'],
             "goods_id" => $item['goods_id'],
+            "sku_id" => $item['sku_id'],
             "unit_measurement" => $item['unit_measurement'],
             "qty_in" => 0,
             "qty_out" => 0

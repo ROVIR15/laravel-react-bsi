@@ -99,12 +99,7 @@ function FirstPage() {
         if (!res.data) throw new Error('failed to load data');
         else {
           const { order, items, type, status, ...info } = res.data;
-          // setValues(info);
-          // setPONumber(order?.sales_order?.po_number);
-          // setSelectedValueSO(order?.sales_order?.ship);
-          // setStatus(status[0]?.shipment_type_status_id);
           let _items = _shipmentItem(items);
-          // setItems(_items);
 
           setData({
             ...data,
@@ -206,7 +201,7 @@ function FirstPage() {
               </Grid>
               <Grid item={6} sx={{ width: '50%', marginBottom: '1em', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
                 <Box sx={{ textAlign: 'right' }}>
-                  <IDontKnow>Surat Jalan</IDontKnow>
+                  <IDontKnow>Packing List</IDontKnow>
                 </Box>
               </Grid>
             </Grid>
@@ -251,39 +246,6 @@ function FirstPage() {
 
             <Grid item xs={12}>
               <Stack direction="row" spacing={2} justifyContent="space-around">
-                <div className="wk_sign wk_text_center">
-                  {/* <img
-                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
-                      alt="Sign"
-                      style={{ margin: 'auto' }}
-                    /> */}
-                  <div style={{ height: '50px' }} />
-                  <p className="wk_m0 wk_ternary_color"></p>
-                  <p className="wk_m0 wk_f16 wk_primary_color">Warehouse Lead</p>
-                </div>
-
-                <div className="wk_sign wk_text_center">
-                  {/* <img
-                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
-                      alt="Sign"
-                      style={{ margin: 'auto' }}
-                    /> */}
-                  <div style={{ height: '50px' }} />
-                  <p className="wk_m0 wk_ternary_color">Titin</p>
-                  <p className="wk_m0 wk_f16 wk_primary_color">Finance Person</p>
-                </div>
-
-                <div className="wk_sign wk_text_center">
-                  {/* <img
-                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
-                      alt="Sign"
-                      style={{ margin: 'auto' }}
-                    /> */}
-                  <div style={{ height: '50px' }} />
-                  <p className="wk_m0 wk_ternary_color">Jaja Misja</p>
-                  <p className="wk_m0 wk_f16 wk_primary_color">Factory Manager</p>
-                </div>
-
                 <div className="wk_sign wk_text_center">
                   {/* <img
                       src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"

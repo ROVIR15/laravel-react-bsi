@@ -270,7 +270,8 @@ function Inbound() {
                       <TableCell>{row.document_number}</TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
-                        {generalizeSKU(row?.goods_id, row?.product_id, row?.product_feature_id)}
+                        {row.sku_id}
+                        {/* {generalizeSKU(row?.goods_id, row?.product_id, row?.product_feature_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>

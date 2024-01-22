@@ -30,6 +30,7 @@ import { strPadLeft } from '../../../../utils/formatProduct';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'status_issuance', label: 'Bukti Keluar Gudang', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
   { id: 'po_number', label: 'PO Number', alignRight: false },
@@ -242,8 +243,11 @@ function OutboundDelivery({ placeHolder }) {
                       sum,
                       order,
                       order_id,
-                      status
+                      status, 
+                      issuance
                     } = row;
+
+                    let status_issuance = isNull(issuance) ? 'Belum Dikeluarkan dr Gudang' : `MT-${strPadLeft(issuance?.material_transfer_id, 4, '0')}`
                     let costing_id = row?.reconcile_based_sales_order
                       ? row?.reconcile_based_sales_order.costing_id
                       : null;
@@ -295,6 +299,7 @@ function OutboundDelivery({ placeHolder }) {
                         aria-checked={isItemSelected}
                       >
                         <TableCell align="left">{id_shipment_code}</TableCell>
+                        <TableCell align="left">{status_issuance}</TableCell>
                         <TableCell align="left">
                           <PinStatus
                             status={status_item.status}

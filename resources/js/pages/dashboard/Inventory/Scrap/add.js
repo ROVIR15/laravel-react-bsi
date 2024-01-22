@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Button, Card, CardContent, CardHeader, Container, Grid, TextField } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Container, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
 
 import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useState, useMemo, useCallback } from 'react';
@@ -44,10 +44,11 @@ function Scrap() {
   const formik = useFormik({
     initialValues: {
       document_number: 0,
-      date: '2023-07-18'
+      date: '2023-07-18',
+      type: 15
     },
     onSubmit: (values) => {
-      const data = {...values, items, user_id: user.id};
+      const data = { ...values, items, user_id: user.id };
 
       try {
         API.insertScrapV2(data, function (res) {
@@ -55,7 +56,7 @@ function Scrap() {
           else enqueueSnackbar('', { variant: 'failedAlert' });
         });
       } catch (error) {
-        alert(error)
+        alert(error);
         enqueueSnackbar('', { variant: 'failedAlert' });
       }
 
@@ -135,8 +136,6 @@ function Scrap() {
         const editedIds = Object.keys(editRowsModel);
         const editedColumnName = Object.keys(editRowsModel[editedIds[0]])[0];
 
-
-        console.log(editedIds)
         //update items state
         setItems((prevItems) => {
           const itemToUpdateIndex = parseInt(editedIds[0]);
@@ -172,6 +171,28 @@ function Scrap() {
   const handleCloseModal = () => setOpenM(false);
   // --------------------------------------------------------------------- //
 
+  // Radio Import Activity
+  // ----------------------------------------------------------------- //
+
+  const handleRadioTypeCheck = (e) => {
+    // skrap
+    var selected = parseInt(e.target.value)
+
+    if (selected === 15) {
+      setFieldValue('type', 15);
+    } 
+    else if (selected === 21) {
+      // waste
+      setFieldValue('type', 21);
+    }
+    // error
+    else {
+      enqueueSnackbar('Error', { variant: 'failedAlert' });
+    }
+    
+  };
+  // ----------------------------------------------------------------- //
+
   return (
     <Page>
       <Container>
@@ -179,6 +200,7 @@ function Scrap() {
           payload={items}
           open={openM}
           handleClose={handleCloseModal}
+          stype={values.type}
           items={items}
           setItems={setItems}
         />
@@ -208,6 +230,21 @@ function Scrap() {
                       error={Boolean(touched.document_number && errors.document_number)}
                       helperText={touched.document_number && errors.document_number}
                     />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <FormControl>
+                      <FormLabel id="type">Tipe</FormLabel>
+                      <RadioGroup
+                        row
+                        value={values.type}
+                        name="import-activity-check"
+                        onChange={handleRadioTypeCheck}
+                      >
+                        <FormControlLabel value={15} control={<Radio />} label="Skrap" />
+                        <FormControlLabel value={21} control={<Radio />} label="Waste" />
+                      </RadioGroup>
+                    </FormControl>
                   </Grid>
 
                   <Grid item xs={12}>

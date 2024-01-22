@@ -43,7 +43,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-export default function BasicModal({ payload, open, handleClose, items, setItems, update }) {
+export default function BasicModal({ payload, open, handleClose, items, setItems, stype }) {
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
   const [type, setType] = React.useState(0);
@@ -204,7 +204,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
               >
                 <MenuItem value={0}>None</MenuItem>
                 <MenuItem value={1}>CBD</MenuItem>
-                <MenuItem value={2}>Sales Order</MenuItem>
+                <MenuItem disabled={stype === 21} value={2}>Sales Order</MenuItem>
               </Select>
               <Select
                 onChange={handleSelectFacility}

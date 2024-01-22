@@ -14,6 +14,7 @@ class ScrapItem extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'costing_item_id',
         'scrap_id',
         'product_id',
         'product_feature_id',

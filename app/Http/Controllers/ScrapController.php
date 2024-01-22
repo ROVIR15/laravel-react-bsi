@@ -31,21 +31,20 @@ class ScrapController extends Controller
         try {
             //code...
             $query = Scrap::with('items')
-            ->orderBy('id', 'desc')
-            ->get()
-            ->map(function ($query) {
-                $arr = $query->items;
-        
-                return ([
-                    'id' => $query->id,
-                    'document_number' => str_pad($query->document_number, 10, 0, STR_PAD_LEFT),
-                    'date' => $query->date,
-                    'type' => 'BC 2.4',
-                    'banyaknya' => $arr->count(),
-                    'jumlah_barang' => $arr->sum('qty')
-                ]);
-            });
+                ->orderBy('id', 'desc')
+                ->get()
+                ->map(function ($query) {
+                    $arr = $query->items;
 
+                    return ([
+                        'id' => $query->id,
+                        'document_number' => str_pad($query->document_number, 10, 0, STR_PAD_LEFT),
+                        'date' => $query->date,
+                        'type' => 'BC 2.4',
+                        'banyaknya' => $arr->count(),
+                        'jumlah_barang' => $arr->sum('qty')
+                    ]);
+                });
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
@@ -92,6 +91,7 @@ class ScrapController extends Controller
                     $productFeature = $item->product_feature;
                     $product = $item->product ? $item->product : null;
                     $goods = $product ? $product->goods : null;
+                    $import_flag = $item->import_flag ? 2 : 1;
 
                     return [
                         'id' => $index + 1,
@@ -101,10 +101,11 @@ class ScrapController extends Controller
                         'product_id' => $productFeature->product->id,
                         'product_feature_id' => $item->product_feature_id,
                         'goods_id' => $goods->id,
+                        'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
                         'order_id' => $item->order_id,
                         'order_item_id' => $item->order_item_id,
                         'unit_measurement' => $goods ? $goods->satuan : null,
-                        'category' => 'Finished Goods',
+                        'category' => 'Waste/Scrap',
                         'unit_price' => $item->order_item ? $item->order_item->unit_price : 0,
                         'qty' => $item->qty
                     ];
@@ -192,119 +193,210 @@ class ScrapController extends Controller
             $query = Scrap::create([
                 'document_number' => $param['document_number'],
                 'date' => $param['date'],
+                'type' => $param['type'],
                 'material_transfer_id' => $mt['id']
             ]);
             DB::commit();
 
-            foreach ($param['items'] as $item) {
-                $product_master = Product::find($item['product_id']);
-                $goods_item = Goods::find($product_master['goods_id']);
-                $product_variant = ProductFeature::find($item['product_feature_id']);
+            if ($param['type'] === 15) {
+                // scrap
+                foreach ($param['items'] as $item) {
+                    $product_master = Product::find($item['product_id']);
+                    $goods_item = Goods::find($product_master['goods_id']);
+                    $product_variant = ProductFeature::find($item['product_feature_id']);
 
-                $goods_scrap = Goods::create([
-                    'name' => $goods_item['name'] . ' Scrap',
-                    'satuan' => $item['unit_measurement'],
-                    'value' => $goods_item['value'],
-                    'brand' => $goods_item['brand'],
-                    'imageUrl' => $goods_item['imageUrl']
-                ]);
+                    $_item_costing_id = isset($item['costing_item_id']) ? $item['costing_item_id'] : NULL;
 
-                $product_scrap = Product::create([
-                    'goods_id' => $goods_scrap['id'],
-                ]);
-                DB::commit();
+                    array_push($__items, [
+                        'unit_measurement' => $item['unit_measurement'],
+                        'import_flag' => $item['import_flag'],
+                        'product_id' => $product_master['id'],
+                        'product_feature_id' => $product_variant['id'],
+                        'costing_item_id' => $_item_costing_id,
+                        'order_id' => isset($item['order_id']) ? $item['order_id'] : null,
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null,
+                        'qty' => $item['qty'],
+                        'scrap_id' => $query->id
+                    ]);
 
-                ProductHasCategory::create([
-                    'product_id' => $product_scrap['id'],
-                    'product_category_id' => 10
-                ]);
-                DB::commit();
+                    $_temp = [
+                        'costing_item_id' => $_item_costing_id,
+                        'material_transfer_id' => $mt['id'],
+                        'import_flag' => $item['import_flag'],
+                        'product_id' => $product_master['id'],
+                        'product_feature_id' => $product_variant['id'],
+                        'transfer_qty' => $item['qty']
+                    ];
 
-                $temp = [
-                    'product_id' => $product_scrap['id'],
-                    'color' => $product_variant['color'],
-                    'size' => $product_variant['size']
-                ];
+                    $mti = MaterialTransferItem::create($_temp);
+                    DB::commit();
 
-                $product_variant_scrap = ProductFeature::create($temp);
-                DB::commit();
+                    $mtr = MaterialTransferRealisation::create([
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'transferred_qty' => $item['qty'],
+                        'costing_item_id' => $_item_costing_id
+                    ]);
+                    DB::commit();
 
-                array_push($__items, [
-                    'unit_measurement' => $item['unit_measurement'],
-                    'import_flag' => $item['import_flag'],
-                    'product_id' => $product_scrap['id'],
-                    'product_feature_id' => $product_variant_scrap['id'],
-                    'order_id' => isset($item['order_id']) ? $item['order_id'] : null,
-                    'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null,
-                    'qty' => $item['qty'],
-                    'scrap_id' => $query->id
-                ]);
+                    $goods = null;
 
-                $_item_costing_id = isset($key['costing_item_id']) ? $key['costing_item_id'] : NULL;
+                    if (!isset($item['goods_id'])) {
+                        $goods = Product::select('goods_id')->where('id', $item['product_id'])->get();
+                        $goods = count($goods) ? $goods[0]->goods_id : 0;
+                    } else {
+                        $goods = $item['goods_id'];
+                    }
 
-                $_temp = [
-                    'costing_item_id' => $_item_costing_id,
-                    'material_transfer_id' => $mt['id'],
-                    'import_flag' => $item['import_flag'],
-                    'product_id' => $product_scrap['id'],
-                    'product_feature_id' => $product_variant_scrap['id'],
-                    'transfer_qty' => $item['qty']
-                ];
+                    // substract qty from from_facility_id and make record on goods movement
+                    GoodsMovement::create([
+                        'date' => $param['date'],
+                        'import_flag' => $item['import_flag'],
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'material_transfer_item_realisation_id' => $mtr['id'],
+                        'facility_id' => $item['facility_id'],
+                        'goods_id' => $goods_item['id'],
+                        'product_id' => $product_master['id'],
+                        'product_feature_id' => $product_variant['id'],
+                        'type_movement' => 2, // 1 for incoming and 2 outbound
+                        'qty' => $item['qty'] * -1,
+                    ]);
+                    DB::commit();
 
-                $mti = MaterialTransferItem::create($_temp);
-                DB::commit();
-
-                $mtr = MaterialTransferRealisation::create([
-                    'material_transfer_id' => $mt['id'],
-                    'material_transfer_item_id' => $mti['id'],
-                    'transferred_qty' => $item['qty'],
-                    'costing_item_id' => $_item_costing_id
-                ]);
-                DB::commit();
-
-                $goods = null;
-
-                if (!isset($item['goods_id'])) {
-                    $goods = Product::select('goods_id')->where('id', $item['product_id'])->get();
-                    $goods = count($goods) ? $goods[0]->goods_id : 0;
-                } else {
-                    $goods = $item['goods_id'];
+                    //add qty from to_facility_id and make record on goods_movement;
+                    GoodsMovement::create([
+                        'date' => $param['date'],
+                        'import_flag' => $item['import_flag'],
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'material_transfer_item_realisation_id' => $mtr['id'],
+                        'facility_id' => 15,
+                        'goods_id' => $goods_item['id'],
+                        'product_id' => $product_master['id'],
+                        'product_feature_id' => $product_variant['id'],
+                        'type_movement' => 1, // 1 for incoming and 2 outbound
+                        'qty' => $item['qty']
+                    ]);
+                    DB::commit();
                 }
 
-                // substract qty from from_facility_id and make record on goods movement
-                GoodsMovement::create([
-                    'date' => $param['date'],
-                    'import_flag' => $item['import_flag'],
-                    'material_transfer_id' => $mt['id'],
-                    'material_transfer_item_id' => $mti['id'],
-                    'material_transfer_item_realisation_id' => $mtr['id'],
-                    'facility_id' => 4,
-                    'goods_id' => $goods_scrap['id'],
-                    'product_id' => $product_scrap['id'],
-                    'product_feature_id' => $product_variant_scrap['id'],
-                    'type_movement' => 2, // 1 for incoming and 2 outbound
-                    'qty' => $item['qty'] * -1,
-                ]);
-                DB::commit();
+                ScrapItem::insert($__items);
+            } elseif ($param['type'] === 21) {
+                // waste
+                foreach ($param['items'] as $item) {
+                    $product_master = Product::find($item['product_id']);
+                    $goods_item = Goods::find($product_master['goods_id']);
+                    $product_variant = ProductFeature::find($item['product_feature_id']);
 
-                //add qty from to_facility_id and make record on goods_movement;
-                GoodsMovement::create([
-                    'date' => $param['date'],
-                    'import_flag' => $item['import_flag'],
-                    'material_transfer_id' => $mt['id'],
-                    'material_transfer_item_id' => $mti['id'],
-                    'material_transfer_item_realisation_id' => $mtr['id'],
-                    'facility_id' => 15,
-                    'goods_id' => $goods_scrap['id'],
-                    'product_id' => $product_scrap['id'],
-                    'product_feature_id' => $product_variant_scrap['id'],
-                    'type_movement' => 1, // 1 for incoming and 2 outbound
-                    'qty' => $item['qty']
-                ]);
-                DB::commit();
+                    $goods_scrap = Goods::create([
+                        'name' => $goods_item['name'] . 'Waste/Limbah',
+                        'satuan' => $item['unit_measurement'],
+                        'value' => $goods_item['value'],
+                        'brand' => $goods_item['brand'],
+                        'imageUrl' => $goods_item['imageUrl']
+                    ]);
+
+                    $product_scrap = Product::create([
+                        'goods_id' => $goods_scrap['id'],
+                    ]);
+                    DB::commit();
+
+                    ProductHasCategory::create([
+                        'product_id' => $product_scrap['id'],
+                        'product_category_id' => 10
+                    ]);
+                    DB::commit();
+
+                    $temp = [
+                        'product_id' => $product_scrap['id'],
+                        'color' => $product_variant['color'],
+                        'size' => $product_variant['size']
+                    ];
+
+                    $product_variant_scrap = ProductFeature::create($temp);
+                    DB::commit();
+
+                    $_item_costing_id = isset($item['costing_item_id']) ? $item['costing_item_id'] : NULL;
+
+                    array_push($__items, [
+                        'unit_measurement' => $item['unit_measurement'],
+                        'import_flag' => $item['import_flag'],
+                        'product_id' => $product_scrap['id'],
+                        'product_feature_id' => $product_variant_scrap['id'],
+                        'costing_item_id' => $_item_costing_id,
+                        'order_id' => isset($item['order_id']) ? $item['order_id'] : null,
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null,
+                        'qty' => $item['qty'],
+                        'scrap_id' => $query->id
+                    ]);
+
+                    $_temp = [
+                        'costing_item_id' => $_item_costing_id,
+                        'material_transfer_id' => $mt['id'],
+                        'import_flag' => $item['import_flag'],
+                        'product_id' => $product_scrap['id'],
+                        'product_feature_id' => $product_variant_scrap['id'],
+                        'transfer_qty' => $item['qty']
+                    ];
+
+                    $mti = MaterialTransferItem::create($_temp);
+                    DB::commit();
+
+                    $mtr = MaterialTransferRealisation::create([
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'transferred_qty' => $item['qty'],
+                        'costing_item_id' => $_item_costing_id
+                    ]);
+                    DB::commit();
+
+                    $goods = null;
+
+                    if (!isset($item['goods_id'])) {
+                        $goods = Product::select('goods_id')->where('id', $item['product_id'])->get();
+                        $goods = count($goods) ? $goods[0]->goods_id : 0;
+                    } else {
+                        $goods = $item['goods_id'];
+                    }
+
+                    // substract qty from from_facility_id and make record on goods movement
+                    GoodsMovement::create([
+                        'date' => $param['date'],
+                        'import_flag' => $item['import_flag'],
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'material_transfer_item_realisation_id' => $mtr['id'],
+                        'facility_id' => $item['facility_id'],
+                        'goods_id' => $goods_scrap['id'],
+                        'product_id' => $product_scrap['id'],
+                        'product_feature_id' => $product_variant_scrap['id'],
+                        'type_movement' => 2, // 1 for incoming and 2 outbound
+                        'qty' => $item['qty'] * -1,
+                    ]);
+                    DB::commit();
+
+                    //add qty from to_facility_id and make record on goods_movement;
+                    GoodsMovement::create([
+                        'date' => $param['date'],
+                        'import_flag' => $item['import_flag'],
+                        'material_transfer_id' => $mt['id'],
+                        'material_transfer_item_id' => $mti['id'],
+                        'material_transfer_item_realisation_id' => $mtr['id'],
+                        'facility_id' => 21,
+                        'goods_id' => $goods_scrap['id'],
+                        'product_id' => $product_scrap['id'],
+                        'product_feature_id' => $product_variant_scrap['id'],
+                        'type_movement' => 1, // 1 for incoming and 2 outbound
+                        'qty' => $item['qty']
+                    ]);
+                    DB::commit();
+                }
+
+                ScrapItem::insert($__items);
+            } else {
+                throw new Exception('error type must be filled');
             }
-
-            ScrapItem::insert($__items);
 
             DB::commit();
         } catch (Exception $th) {

@@ -17,7 +17,8 @@ class Scrap extends Model
     protected $fillable = [
         'material_transfer_id',
         'document_number',
-        'date'
+        'date',
+        'type'
     ];
 
     public function items() {

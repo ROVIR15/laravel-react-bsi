@@ -25,6 +25,7 @@ import { strPadLeft } from '../../../../utils/formatProduct';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
+  { id: 'status_issuance', label: 'Bukti Masuk Gudang', alignRight: false },
   { id: 'costing.name', label: 'Nama BOM', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'serial_number', label: 'Serial Number', alignRight: false },
@@ -262,9 +263,11 @@ function OutboundDelivery({ placeHolder }) {
                       est_delivery_date,
                       order,
                       status,
-                      __items
+                      __items,
+                      issuance
                     } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
+                    let status_issuance = isNull(issuance) ? 'Belum Dikeluarkan dr Gudang' : `MT-${strPadLeft(issuance?.material_transfer_id, 4, '0')}`
 
                     let costing_id = __items?.alt_order_item?.costing?.bom_id ? __items?.alt_order_item?.costing?.bom_id : 0
 
@@ -313,6 +316,7 @@ function OutboundDelivery({ placeHolder }) {
                         aria-checked={isItemSelected}
                       >
                         <TableCell align="left">{`INSHIP-${strPadLeft(order?.purchase_order_id, 4, 0)}-${strPadLeft(id, 4, 0)}`}</TableCell>
+                        <TableCell align="left">{status_issuance}</TableCell>
                         <TableCell align="left">
                           {__items?.alt_order_item?.costing?.costing?.name}
                         </TableCell>

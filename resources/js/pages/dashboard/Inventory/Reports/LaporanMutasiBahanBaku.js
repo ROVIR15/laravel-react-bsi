@@ -273,8 +273,8 @@ function Inbound() {
                     <TableRow>
                       <TableCell>{row.id}</TableCell>
                       <TableCell>
-                        {/* {row.sku_barang} */}
-                        {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                        {row.sku_id}
+                        {/* {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
@@ -356,7 +356,7 @@ function Inbound() {
                         <tr>
                           <td className="wk_width_1">{row.id}</td>
                           <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                            {row.sku_id}
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>

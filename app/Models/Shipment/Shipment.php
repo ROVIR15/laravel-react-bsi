@@ -79,4 +79,9 @@ class Shipment extends Model
     {
         return $this->belongsTo('App\Models\Party\Party', 'ship_to', 'id')->with('address');
     }
+
+    public function issuance()
+    {
+        return $this->belongsTo('App\Models\Inventory\MaterialTransferShipmentRelationship', 'id', 'shipment_id');
+    }
 }

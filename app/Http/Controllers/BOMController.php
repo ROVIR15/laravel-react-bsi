@@ -16,7 +16,9 @@ use App\Http\Resources\Manufacture\BOMCollection;
 use App\Models\Invoice\Payment;
 use App\Models\Invoice\PaymentHasInvoice;
 use App\Models\KITE\ImportDoc;
+use App\Models\Order\OrderCompletionStatus;
 use App\Models\Order\OrderItem;
+use App\Models\Order\OrderStatus;
 use App\Models\Order\PurchaseOrder;
 use Illuminate\Http\Request;
 
@@ -303,17 +305,24 @@ class BOMController extends Controller
         return $item->id;
       });
 
-      $arr_order = OrderItem::select('id','order_id', 'product_feature_id', 'product_id', 'qty')
-        ->with(['order' => function($query) {
+      $arr_order = OrderItem::select('id', 'order_id', 'product_feature_id', 'product_id', 'qty')
+        ->with(['order' => function ($query) {
           return $query->with('purchase_order');
         }])
-        ->with(['import_info' => function($query) {
+        ->with(['import_info' => function ($query) {
           return $query->with('doc');
         }])
+        ->whereHas('order', function ($query) {
+          return $query->whereHas('purchase_order', function ($query) {
+            return $query->whereHas('status', function ($query) {
+              return $query->where('status_type', 'Review');
+            });
+          });
+        })
         ->with('shipment_item', 'invoice', 'product_feature')
         ->whereIn('costing_item_id', $arr_item)
         ->get()
-        ->map(function($item) {
+        ->map(function ($item) {
           $order = $item->order ? $item->order : null;
           $purchaseOrder = $order ? $order->purchase_order : null;
           $import_info = $item->import_info ? $item->import_info : null;
@@ -325,7 +334,16 @@ class BOMController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
 
-          $import_flag = $order->import_flag ? 2 : 1;
+          $ocs = null;
+
+          if ($order) {
+            $temp = OrderStatus::where('order_id', $item->order->id)->orderBy('created_at', 'desc')->get();
+            if (count($temp)) {
+              $ocs = $temp[0];
+            }
+          }
+
+          $import_flag = $purchaseOrder->import_flag ? 2 : 1;
 
           $payment = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
 
@@ -341,11 +359,12 @@ class BOMController extends Controller
             'order_id' => $item->order->id,
             'purchase_order_id' => $purchaseOrder ? $purchaseOrder->id : null,
             'po_number' => $purchaseOrder ? $purchaseOrder->po_number : null,
-            'import_flag' => $purchaseOrder ? ($purchaseOrder->import_flag ? 'Import' : 'Non-Import') : null,
+            'import_flag' => $purchaseOrder ? ($purchaseOrder->$import_flag ? 'Import' : 'Non-Import') : null,
             'shipment_item_id' => $shipmentItem ? $shipmentItem->id : null,
             'shipment_id' => $shipment ? $shipment->id : null,
             'invoice_id' => $invoice ? $invoice->id : null,
-            'payment_id' => $payment ? $payment['payment_id'] : null
+            'payment_id' => $payment ? $payment['payment_id'] : null,
+            'status' => $ocs
           ];
         });
 
