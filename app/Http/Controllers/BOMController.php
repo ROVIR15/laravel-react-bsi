@@ -13,13 +13,9 @@ use App\Models\Manufacture\BOMService;
 
 use App\Http\Resources\Manufacture\BOM as BOMOneCollection;
 use App\Http\Resources\Manufacture\BOMCollection;
-use App\Models\Invoice\Payment;
 use App\Models\Invoice\PaymentHasInvoice;
-use App\Models\KITE\ImportDoc;
-use App\Models\Order\OrderCompletionStatus;
 use App\Models\Order\OrderItem;
 use App\Models\Order\OrderStatus;
-use App\Models\Order\PurchaseOrder;
 use Illuminate\Http\Request;
 
 class BOMController extends Controller
