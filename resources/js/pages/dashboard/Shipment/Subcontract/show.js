@@ -22,7 +22,8 @@ import {
   Select,
   Paper,
   MenuItem
-} from '@mui/material';import { styled } from '@mui/material/styles';
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -119,7 +120,7 @@ function OutboundDelivery() {
         if (!res.data) return;
         else {
           const { order, items, type, status, ...info } = res.data;
-          setValues({...info, category_shipment_name: type?.name});
+          setValues({ ...info, category_shipment_name: type?.name });
           // setPONumber(order?.purchase_order?.po_number);
           let _ship = _partyAddress(res.data?.ship_to);
           setSelectedValueSO(_ship);
@@ -390,6 +391,51 @@ function OutboundDelivery() {
     }
   };
 
+  /**
+   * Handle item issuance
+   */
+  // -----------------------------------------------------------//
+  const handleItemIssuance = async () => {
+    try {
+
+      let from_f = null;
+      let to_f = null;
+      if (values?.shipment_type_id === 3){ //incoming
+        from_f = 17; //scrap
+        to_f = 23; // out of nowhere
+      } else if(values?.shipment_type_id === 4){
+        from_f = 23; //scrap
+        to_f = 17; // out of nowhere  
+      } else {
+        throw new Error('shipment type not found!');
+      }
+
+      let _obj = {
+        user_id: user?.id,
+        description: values.comment,
+        shipment_id: id,
+        items: items,
+        to_facility_id: to_f,
+        from_facility_id: from_f
+      };
+
+      await API.insertItemIssuanceV2(_obj, function (res) {
+        if (res.success)
+          enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
+        else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
+      });
+
+      // API.insertItemIssuance(_obj, function (res) {
+      //   if (res.success)
+      //     enqueueSnackbar('Shipment ini sudah dipindahkan', { variant: 'successAlert' });
+      //   else enqueueSnackbar('Anda tidak dapat melakukan ini dua kali', { variant: 'failedAlert' });
+      // });
+    } catch (error) {
+      enqueueSnackbar(error, { variant: 'failedAlert' });
+    }
+    // -----------------------------------------------------------//
+  };
+
   // Radio Import Activity
   // ----------------------------------------------------------------- //
   const [isSubcontract, setIsSubcontract] = useState(false);
@@ -575,6 +621,16 @@ function OutboundDelivery() {
               </CardContent>
             </Card>
             <Card sx={{ p: 2, display: 'flex', justifyContent: 'end' }}>
+              <Button
+                fullWidth
+                size="large"
+                color="primary"
+                variant="contained"
+                onClick={handleItemIssuance}
+                sx={{ m: 1 }}
+              >
+                Issue to Warehouse
+              </Button>
               <LoadingButton
                 size="large"
                 type="submit"

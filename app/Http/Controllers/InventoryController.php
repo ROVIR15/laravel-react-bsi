@@ -192,15 +192,14 @@ class InventoryController extends Controller
           $order_item = count($order_item_c) ? $order_item_c[0] : null;
           if ($order_item) {
             $order_c = Order::select('currency_id')->where('id', $order_item->order_id)->get();
-            if(count($order_c)) {
+            if (count($order_c)) {
               $currency = $order_c[0]->currency_id;
 
-              if ($currency === 1){
+              if ($currency === 1) {
                 $unit_price = $order_item->unit_price * 15000;
               } else {
                 $unit_price = $order_item->unit_price;
               }
-
             } else {
               $currency = 2;
               $unit_price = $order_item->unit_price;
@@ -235,7 +234,6 @@ class InventoryController extends Controller
           return $item['current_stock'] >= 0;
         })
         ->values();
-
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -313,7 +311,7 @@ class InventoryController extends Controller
           $costing_item_id = $orderItem['costing_item_id'];
           $costing_item = null;
 
-          if ($costing_item_id){
+          if ($costing_item_id) {
             $costing_item = BOMItem::find($costing_item_id);
           }
 
@@ -434,7 +432,7 @@ class InventoryController extends Controller
           $costing_item_id = $orderItem['costing_item_id'];
           $costing_item = null;
 
-          if ($costing_item_id){
+          if ($costing_item_id) {
             $costing_item = BOMItem::find($costing_item_id);
           }
 
@@ -754,9 +752,17 @@ class InventoryController extends Controller
 
           $ship_to = $item->shipment->ship_to ? $item->shipment->party['name'] : null;
 
+          $name = null;
+
+          if ($item->shipment->shipment_type_id === 3){
+            $name = 'SUBCONT-IN-';
+          } else {
+            $name = 'SUBCONT-OUT-';
+          }
+
           return [
             'id' => $index + 1,
-            'document_number' => 'SUBCONT-OUT-' . $item->shipment->id,
+            'document_number' => $name . $item->shipment->id,
             'document_date' => $item->shipment->delivery_date,
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
             'goods_id' => $goods->id,
@@ -825,27 +831,27 @@ class InventoryController extends Controller
           $costing_id = null;
           $shipment_id = null;
           $import_doc = null;
-          
-          if (isset($item->order_item_id)){
+
+          if (isset($item->order_item_id)) {
             $order_item = OrderItem::find($item->order_item_id);
-            if($order_item) {
+            if ($order_item) {
               $temp = PurchaseOrder::where('order_id', $order_item->order_id)->get();
               if (count($temp)) {
                 $purchase_order_id = $temp[0]->id;
               }
 
               $costing = BOMItem::find($order_item->costing_item_id);
-              if($costing) {
+              if ($costing) {
                 $costing_id = $costing->bom_id;
               }
 
               $shipment = Shipment::where('order_id', $order_item->order_id)->get();
-              if(count($shipment)){
+              if (count($shipment)) {
                 $shipment_id = $shipment[0]->id;
               }
 
               $temp_import_doc = ImportDoc::where('order_id', $order_item->order_id)->get();
-              if(count($temp_import_doc)){
+              if (count($temp_import_doc)) {
                 $import_doc = $temp_import_doc[0];
               }
             }
@@ -874,7 +880,7 @@ class InventoryController extends Controller
             'customs_document_number' => $import_doc ? $import_doc->document_number : null,
             'pl_number' => $import_doc ? $import_doc->pl_number : 'Tidak Ada',
             'bl_number' => $import_doc ? $import_doc->bl_number : 'Tidak Ada',
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
 
@@ -1214,28 +1220,27 @@ class InventoryController extends Controller
 
           if ($order_item) {
             $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->get();
-            if (count($purchase_order) > 0){
+            if (count($purchase_order) > 0) {
               $import_flag = $purchase_order[0]->import_flag ? 2 : 1;
             }
 
             $temp_shipment = Shipment::where('order_id', $order_item->order_id)->get();
-            if(count($temp_shipment)){
+            if (count($temp_shipment)) {
               $shipment = $temp_shipment[0];
             }
 
-            if(isset($order_item->costing_item_id)){
+            if (isset($order_item->costing_item_id)) {
               $temp = BOMItem::find($order_item->costing_item_id);
 
-              if($temp){
+              if ($temp) {
                 $costing_item = $temp;
               }
             }
 
             $temp_id = ImportDoc::where('order_id', $order_item->order_id)->get();
-            if(count($temp_id)){
+            if (count($temp_id)) {
               $import_doc = $temp_id[0];
             }
-
           }
 
           $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
@@ -1253,7 +1258,7 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
             'purchase_order_id' => count($purchase_order) ? $purchase_order[0]->id : 0,
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
             'qty' => $item->qty,
@@ -1369,25 +1374,24 @@ class InventoryController extends Controller
 
           if ($order_item) {
             $temp_so = SalesOrder::where('order_id', $order_item->order_id)->get();
-            if (count($temp_so) > 0){
+            if (count($temp_so) > 0) {
               $sales_order = $temp_so[0];
-          //     $import_flag = $sales_order->import_flag ? 2 : 1;
+              //     $import_flag = $sales_order->import_flag ? 2 : 1;
               $temp_rhso = ReconcileHasSalesOrder::where('sales_order_id', $sales_order->id)->get();
-              if(count($temp_rhso)){
+              if (count($temp_rhso)) {
                 $rhso = $temp_rhso[0];
               }
             }
 
             $temp_shipment = Shipment::where('order_id', $order_item->order_id)->get();
-            if(count($temp_shipment)){
+            if (count($temp_shipment)) {
               $shipment = $temp_shipment[0];
             }
 
             $temp_ed = ExportDoc::where('order_id', $order_item->order_id)->get();
-            if(count($temp_ed)){
+            if (count($temp_ed)) {
               $export_doc = $temp_ed[0];
             }
-
           }
 
           $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
@@ -1405,7 +1409,7 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
             'sales_order_id' => $sales_order ? $sales_order->id : 0,
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
             'qty' => $item->qty,

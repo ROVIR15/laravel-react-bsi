@@ -89,7 +89,7 @@ export default function BasicModal({
     setLoadingData(true);
     try {
       if (selectedCosting !== 0) {
-        API.getSalesOrderItemV2(selectedCosting, '', function (res) {
+        API.getInventoryStockBasedOnFacility_alt(selectedCosting, '', function (res) {
           if (!res) return;
           if (res.success) {
             let listed = res.data.map(function (item) {

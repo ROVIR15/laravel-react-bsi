@@ -52,6 +52,7 @@ class KITEExportController extends Controller
             $kite = ExportDoc::create([
                 'date' => $param['date'],
                 'document_number' => $param['document_number'],
+                'bl_number' => $param['bl_number'],
                 'order_id' => $param['order_id'],
                 'sales_order_id' => $param['sales_order_id']
             ]);

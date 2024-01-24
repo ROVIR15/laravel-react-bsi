@@ -149,7 +149,7 @@ function OutboundDelivery() {
     initialValues: {
       type: 0,
       document_number: '',
-      po_number: 'None',
+      bl_number: '0000000',
       purchase_order_id: 0,
       date: moment(new Date()).format('YYYY-MM-DD')
     },
@@ -295,7 +295,7 @@ function OutboundDelivery() {
                         <TextField fullWidth label="PO Number" value={values.po_number} disabled />
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
                         <FormControl fullWidth>
                           <FormLabel id="xx">Tanggal Penerbitan</FormLabel>
                           <TextField
@@ -311,7 +311,24 @@ function OutboundDelivery() {
                         </FormControl>
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="document_number"
+                            placeholder="Nomor Dokumen"
+                            {...getFieldProps('document_number')}
+                            error={Boolean(touched.document_number && errors.document_number)}
+                            helperText={touched.document_number && errors.document_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
                         <FormControl fullWidth>
                           <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
 

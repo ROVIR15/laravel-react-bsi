@@ -3422,6 +3422,19 @@ const main = {
         cb(err.response);
       });
   },
+  getInventoryStockBasedOnFacility_alt(id, params=null, cb) {
+    if (!id) {
+      return;
+    }
+    axios
+      .get(uri + `/v2/current-stock-facility/${id}` + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getInventoryItem(params, cb) {
     if (!params) throw new Error('Should add params!');
     axios

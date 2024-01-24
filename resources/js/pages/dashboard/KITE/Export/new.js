@@ -137,6 +137,7 @@ function OutboundDelivery() {
 
   const OutboundDeliverySchema = Yup.object().shape({
     order_id: Yup.number().required('Purchase Order is required'),
+    bl_number: Yup.string().required('BL Number is required'),
     document_number: Yup.string().required('Serial Number is required'),
     date: Yup.date().required('Date is required')
   });
@@ -145,6 +146,7 @@ function OutboundDelivery() {
     initialValues: {
       customs_document_type: 0,
       document_number: '',
+      bl_number: '0000000',
       sales_order_id: 0,
       date: moment(new Date()).format('YYYY-MM-DD')
     },
@@ -314,7 +316,7 @@ function OutboundDelivery() {
                         />
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
                         <FormControl fullWidth>
                           <FormLabel id="xx">Tanggal Penerbitan</FormLabel>
                           <TextField
@@ -330,7 +332,7 @@ function OutboundDelivery() {
                         </FormControl>
                       </Grid>
 
-                      <Grid item xs={6} sx={{ padding: 'unset' }}>
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
                         <FormControl fullWidth>
                           <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
 
@@ -343,6 +345,23 @@ function OutboundDelivery() {
                             {...getFieldProps('document_number')}
                             error={Boolean(touched.document_number && errors.document_number)}
                             helperText={touched.document_number && errors.document_number}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={4} sx={{ padding: 'unset' }}>
+                        <FormControl fullWidth>
+                          <FormLabel id="xx">Nomor BL</FormLabel>
+
+                          <TextField
+                            variant="outlined"
+                            type="text"
+                            fullWidth
+                            autoComplete="bl_number"
+                            placeholder="Nomor Bill of Lading"
+                            {...getFieldProps('bl_number')}
+                            error={Boolean(touched.bl_number && errors.bl_number)}
+                            helperText={touched.bl_number && errors.bl_number}
                           />
                         </FormControl>
                       </Grid>

@@ -17,6 +17,7 @@ class ExportDoc extends Model
 
     protected $fillable = [
         'date',
+        'bl_number',
         'document_number',
         'order_id',
         'sales_order_id'

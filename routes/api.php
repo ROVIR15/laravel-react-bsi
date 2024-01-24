@@ -298,7 +298,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('mutasi-report', 'InventoryController@repMutasiV2');
     Route::get('mutasi-hp-report', 'InventoryController@repMutasiHPV2');
     Route::get('report-scrap', 'ScrapController@reportScrap');
-Route::get('current-stock', 'InventoryController@InventoryStock');
+    Route::get('current-stock', 'InventoryController@InventoryStock');
 
     // jangan lupa dihapus
     Route::resource('facility', 'FacilityController')->only(['index', 'show', 'store']);
@@ -364,10 +364,11 @@ Route::group(['middleware' => ['auth.api.finance.external']], function () {
     Route::get('v2/finance/material-transfer-filtered', 'V2\Finance\MaterialTransferController@items_filter_by_query_month_based');
     // add new api for shipment data display
     Route::get('v2/finance/shipment', 'V2\Finance\ShipmentController@index');
-    Route::get('v2/finance/shipment-items/{shipment_id}', 'V2\Finance\ShipmentController@items');    
+    Route::get('v2/finance/shipment-items/{shipment_id}', 'V2\Finance\ShipmentController@items');
 });
 
 Route::get('v2/monitoring/daily-production-status/{order_id}', 'V2\Monitoring\ProductionStatusController@index');
 Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionStatusController@getDataBasedOnStyleFilterByDay');
 
 Route::get('v2/product-tracing/{feature_id}', 'V2\Product\TrackerController@index');
+Route::get('v2/current-stock-facility/{order_id}', 'V2\Inventory\InventoryController@get_order_item_by_check_availabiality_from_facility');
