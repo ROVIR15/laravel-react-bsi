@@ -26,6 +26,10 @@ use DB;
         'description'
     ];
 
+    public function gmovement(){
+      return $this->hasMany('App\Models\Inventory\GoodsMovement', 'order_item_id', 'id');
+  }
+
     public function costing(){
       return $this->belongsTo('App\Models\Manufacture\BOMItem', 'costing_item_id', 'id')->with('costing');
     }

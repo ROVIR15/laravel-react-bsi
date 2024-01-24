@@ -3254,6 +3254,17 @@ const main = {
         cb(err.response);
       });
   },
+  getReportMutasiHP_alt(params, cb) {
+    if (!params) return;
+    axios
+      .get(uri + '/mutasi-hp-report' + params)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getReportWIP_beta(params, cb) {
     if (!params) return;
     axios

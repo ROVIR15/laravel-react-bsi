@@ -8,10 +8,12 @@ use App\Models\Inventory\MaterialTransferItem;
 use App\Models\Inventory\MaterialTransferRealisation;
 use App\Models\Inventory\Scrap;
 use App\Models\Inventory\ScrapItem;
+use App\Models\Manufacture\BOMItem;
 use App\Models\Product\Goods;
 use App\Models\Product\Product;
 use App\Models\Product\ProductFeature;
 use App\Models\Product\ProductHasCategory;
+use App\Models\Product\ScrapHasProductFeature;
 use Error;
 use Exception;
 use Illuminate\Http\Request;
@@ -92,24 +94,47 @@ class ScrapController extends Controller
                     $product = $item->product ? $item->product : null;
                     $goods = $product ? $product->goods : null;
                     $import_flag = $item->import_flag ? 2 : 1;
+                    
+                    $scrap = ScrapHasProductFeature::with('scrap_product')->where('scrap_product_id', $item->product_id)->where('scrap_product_feature_id', $item->product_feature_id)->get();
+
+                    if (count($scrap) === 0) {
+                        $scrap = null;
+                        $sku_id = str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT);
+                    } else {
+                        $sku_id = str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->product->goods_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_feature_id, 4, '0', STR_PAD_LEFT) . '-W';
+                    }
+
+                    $bom_id = null;
+
+                    if(isset($item->costing_item_id)){
+                        $temp = BOMItem::find($item->costing_item_id);
+                        if($temp){
+                            $bom_id = $temp->id;
+                        }
+                    }
 
                     return [
                         'id' => $index + 1,
+                        'scrap_id' => $item->scrap->id,
                         'document_number' => $item->scrap['document_number'],
                         'document_date' => $this->change_date_format($item->scrap['date']),
                         'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
                         'product_id' => $productFeature->product->id,
                         'product_feature_id' => $item->product_feature_id,
                         'goods_id' => $goods->id,
-                        'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+                        'sku_id' => $sku_id,
                         'order_id' => $item->order_id,
                         'order_item_id' => $item->order_item_id,
                         'unit_measurement' => $goods ? $goods->satuan : null,
                         'category' => 'Waste/Scrap',
                         'unit_price' => $item->order_item ? $item->order_item->unit_price : 0,
-                        'qty' => $item->qty
+                        'qty' => $item->qty,
+                        'costing_id' => $bom_id
                     ];
                 });
+
+                // $result = $query->orderBy('product_feature_id', 'desc');
+
         } catch (Exception $th) {
             //throw $th;
             return response()->json([
@@ -316,6 +341,13 @@ class ScrapController extends Controller
 
                     $product_variant_scrap = ProductFeature::create($temp);
                     DB::commit();
+
+                    ScrapHasProductFeature::create([
+                        'ori_product_id' => $item['product_id'],
+                        'ori_product_feature_id' => $item['product_feature_id'],
+                        'scrap_product_id' => $product_scrap['id'],
+                        'scrap_product_feature_id' => $product_variant_scrap['id']
+                    ]);
 
                     $_item_costing_id = isset($item['costing_item_id']) ? $item['costing_item_id'] : NULL;
 

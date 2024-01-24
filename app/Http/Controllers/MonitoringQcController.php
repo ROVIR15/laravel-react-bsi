@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory\GoodsMovement;
 use Illuminate\Http\Request;
 
 use App\Models\Monitoring\Qc;
+use App\Models\Product\Product;
+use App\Models\Product\ProductFeature;
 use DB;
+use Exception;
 
 class MonitoringQcController extends Controller
 {
@@ -69,6 +73,13 @@ class MonitoringQcController extends Controller
 
         try {
             QC::insert($param);
+
+            foreach ($param as $key) {
+              # code...
+              $this->goodsMovementRecords($key, 18, $key['output']);
+              // $this->goodsMovementRecords($key, $key['facility_id'], $key['output']);
+              $this->goodsMovementRecords($key, 4, $key['output'] * -1);
+            }      
             
             return response()->json(['success' => true]);
         } catch (Throwable $th) {
@@ -81,6 +92,45 @@ class MonitoringQcController extends Controller
               500
             );
         }
+    }
+
+    public function goodsMovementRecords($key, $facility, $output)
+    {
+      try {
+  
+        $product_feature = ProductFeature::find($key['product_feature_id']);
+  
+        if ($product_feature) {
+          $product = Product::where('id', $product_feature->product_id)->get();
+  
+          if (!count($product)) {
+            throw new Exception("Goods Not Found", 1);
+          }
+  
+          GoodsMovement::create([
+            'date' => $key['date'],
+            'import_flag' => 0,
+            'material_transfer_id' => null,
+            'material_transfer_item_id' => null,
+            'material_transfer_item_realisation_id' => null,
+            'facility_id' => $facility, //Cutting Room
+            'goods_id' => $product[0]->goods_id,
+            'product_id' => $product[0]->id,
+            'product_feature_id' => $key['product_feature_id'],
+            'type_movement' => $output > 0 ? 1 : 2, // 1 for incoming and 2 outbound
+            'qty' => $output,
+            'order_item_id' => $key['order_item_id']
+          ]);
+          return ['status' => true];
+        } else {
+          return ['status' => false, 'msg' => 'product feature not found'];
+        }
+      } catch (\Throwable $th) {
+        //throw $th;
+        return ['status' => false, 'msg' => $th->getMessage()];
+  
+        return $th->getMessage();
+      }
     }
 
     /**

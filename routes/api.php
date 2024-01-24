@@ -296,6 +296,7 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::get('raw-material-report', 'InventoryController@repRawMaterialMovement');
     Route::get('fg-material-report', 'InventoryController@repFGoods');
     Route::get('mutasi-report', 'InventoryController@repMutasiV2');
+    Route::get('mutasi-hp-report', 'InventoryController@repMutasiHPV2');
     Route::get('report-scrap', 'ScrapController@reportScrap');
 Route::get('current-stock', 'InventoryController@InventoryStock');
 

@@ -61,7 +61,7 @@ function WorkCenter() {
     validationSchema: WorkCenterSchema,
     onSubmit: (values) => {
       const { sales_order_id, spread_id, date } = values;
-      let data = items.map(({ id, brand, product_id, qty_loading, name, size, color, ...x }) => ({
+      let data = items.map(({ id, brand, qty_loading, name, size, color, ...x }) => ({
         ...x,
         sales_order_id,
         date,
@@ -71,9 +71,10 @@ function WorkCenter() {
         API.insertMonitoringCutting(data, function (res) {
           if (!res) return;
           if (!res.success) throw new Error('failed to save');
-          setItems([]);
-          handleReset();
-          setSelectedValueSO({});
+          // setItems([]);
+          alert('success')
+          // handleReset();
+          // setSelectedValueSO({});
         });
       } catch (error) {
         alert(error);

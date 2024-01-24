@@ -16,27 +16,31 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TablePagination
+  TablePagination,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
-import { StyledTableCell as TableCell } from './components/TableCell';
+import { StyledTableCell as TableCell } from '../components/TableCell';
 
-import { fCurrency } from '../../../../utils/formatNumber';
-import { titleCase } from '../../../../utils/formatCase';
+import { fCurrency } from '../../../../../utils/formatNumber';
+import { titleCase } from '../../../../../utils/formatCase';
 
-import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
+import ExternalLink from '@iconify/icons-eva/external-link-fill';
+import downloadIcon from '@iconify/icons-eva/download-fill';
 
-import { __payload1 } from '../data-testing/mutasi_bahan';
-import { __payload2 } from '../data-testing/mutasi_barang_hasil_produksi';
+import { __payload1 } from '../../data-testing/mutasi_bahan';
+import { __payload2 } from '../../data-testing/mutasi_barang_hasil_produksi';
 import { isEmpty, values } from 'lodash';
 
-import API from '../../../../helpers';
+import API from '../../../../../helpers';
 
-import { generalizeSKU } from './utils';
+import { generalizeSKU } from '../../utils';
 import moment from 'moment';
+
+import BasicModal from './components/Modal';
 
 const names = ['Bahan Baku', 'Skrap'];
 
@@ -184,8 +188,31 @@ function Inbound() {
     setRangeDate({ ...rangeDate, [name]: value });
   };
 
+  /**
+   * Modal
+   */
+  const [open, setOpen] = useState(false);
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
+  const [payload, setPayload] = useState({
+    purchase_order_id: null,
+    order_id: null,
+    order_item_id: null,
+    product_feature_id: null,
+    shipment_id: null
+  });
+
+  const handleOpenModal = (event, _p) => {
+    setPayload(_p);
+
+    setOpen(true);
+  };
+
   return (
     <div>
+      <BasicModal payload={payload} open={open} handleClose={handleCloseModal} />
       <Paper sx={{ marginBottom: '1em', paddingY: '1em', paddingX: '1.25em' }}>
         <Grid container direction="column" spacing={2}>
           {/* Top row contain title and button to export and download */}
@@ -255,6 +282,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
+                  <TableCell>Aksi</TableCell>
                   <TableCell>No</TableCell>
                   <TableCell>Kode BB</TableCell>
                   <TableCell>Nama Barang</TableCell>
@@ -271,6 +299,16 @@ function Inbound() {
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row, index) => (
                     <TableRow>
+                      <TableCell>
+                        <IconButton>
+                          <Icon
+                            icon={ExternalLink}
+                            onClick={(event) => handleOpenModal(event, row)}
+                            width={24}
+                            height={24}
+                          />
+                        </IconButton>
+                      </TableCell>
                       <TableCell>{row.id}</TableCell>
                       <TableCell>
                         {row.sku_id}
@@ -322,9 +360,7 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No
-                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
                           Kode BB
                         </th>
@@ -355,15 +391,15 @@ function Inbound() {
                       {payloadData?.map((row, index) => (
                         <tr>
                           <td className="wk_width_1">{row.id}</td>
-                          <td className="wk_width_3">
-                            {row.sku_id}
-                          </td>
+                          <td className="wk_width_3">{row.sku_id}</td>
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>
                           <td className="wk_width_3">{row.initial_stock}</td>
                           <td className="wk_width_1">{row.qty_in}</td>
                           <td className="wk_width_1">{row.qty_out}</td>
-                          <td className="wk_width_1">{row?.initial_stock + row?.qty_in + row?.qty_out}</td>
+                          <td className="wk_width_1">
+                            {row?.initial_stock + row?.qty_in + row?.qty_out}
+                          </td>
                           <td className="wk_width_1">{row.facility_name}</td>
                         </tr>
                       ))}

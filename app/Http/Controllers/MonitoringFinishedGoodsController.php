@@ -163,6 +163,21 @@ class MonitoringFinishedGoodsController extends Controller
             // adding order_item_id
             'order_item_id' => $key['order_item_id'],
           ]);
+
+          GoodsMovement::create([
+            'date' => $date,
+            'material_transfer_id' => $mt['id'],
+            'material_transfer_item_id' => $mti['id'],
+            'material_transfer_item_realisation_id' => $mtr['id'],
+            'facility_id' => $from_facility_id,
+            'goods_id' => $goods->id,
+            'product_id' => $product->id,
+            'product_feature_id' => $key['product_feature_id'],
+            'type_movement' => 2, // 1 for incoming and 2 outbound
+            'qty' => $key['output'] * -1,
+            // adding order_item_id
+            'order_item_id' => $key['order_item_id'],
+          ]);
           DB::commit();
         }
       } catch (\Throwable $th) {

@@ -30,6 +30,11 @@ class Qc extends Model
         'reject'
     ];
 
+
+    public function gmovement(){
+        return $this->hasMany('App\Models\Inventory\GoodsMovement', 'order_item_id', 'order_item_id');
+    }
+
     public function order_item(){
         return $this->belongsTo('App\Models\Order\OrderItem')->with('product_feature');
     }

@@ -261,10 +261,10 @@ import Inbound from '../pages/dashboard/Inventory/Reports/Pemasukan';
 import Outbound from '../pages/dashboard/Inventory/Reports/Pengeluaran';
 import WIPReport from '../pages/dashboard/Inventory/Reports/LaporanBarangWIP';
 import WIPReport_Pemasukkan from '../pages/dashboard/Inventory/Reports/LaporanBarangWIPPemasukan';
-import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/LaporanMutasiBarang';
-import MutasiBahanBaku from '../pages/dashboard/Inventory/Reports/LaporanMutasiBahanBaku';
-import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/LaporanSkrap';
-import UsageReport from '../pages/dashboard/Inventory/Reports/LaporanPemakaian';
+import MaterialTransferReport from '../pages/dashboard/Inventory/Reports/MutasiHasilProduksi';
+import MutasiBahanBaku from '../pages/dashboard/Inventory/Reports/MutasiBahanBaku';
+import MaterialSkrapReport from '../pages/dashboard/Inventory/Reports/SkrapAndWaste/index';
+import UsageReport from '../pages/dashboard/Inventory/Reports/Pemakaian';
 import FGReport from '../pages/dashboard/Inventory/Reports/LaporanHasilProduksi';
 import WasteReport from '../pages/dashboard/Inventory/Reports/LaporanWaste'
 // KITE 

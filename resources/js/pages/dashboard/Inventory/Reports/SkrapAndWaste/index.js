@@ -16,26 +16,30 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TablePagination
+  TablePagination,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
-import { StyledTableCell as TableCell } from './components/TableCell';
+import { StyledTableCell as TableCell } from '../components/TableCell';
 
-import { fCurrency } from '../../../../utils/formatNumber';
-import { titleCase } from '../../../../utils/formatCase';
+import { fCurrency } from '../../../../../utils/formatNumber';
+import { titleCase } from '../../../../../utils/formatCase';
 
-import downloadIcon from '@iconify/icons-eva/download-fill';
 import { Icon } from '@iconify/react';
+import downloadIcon from '@iconify/icons-eva/download-fill';
+import ExternalLink from '@iconify/icons-eva/external-link-fill';
 
-import { __payload } from '../data-testing/scrap';
+import { __payload } from '../../data-testing/scrap';
 import { isEmpty, values } from 'lodash';
 
-import API from '../../../../helpers';
+import API from '../../../../../helpers';
 
-import { generalizeSKU } from './utils';
+import { generalizeSKU } from '../utils';
 import moment from 'moment';
+
+import BasicModal from './components/Modal';
 
 const names = ['Bahan Baku', 'Skrap'];
 
@@ -173,8 +177,31 @@ function Inbound() {
     setRangeDate({ ...rangeDate, [name]: value });
   };
 
+  /**
+   * Modal
+   */
+  const [open, setOpen] = useState(false);
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
+  const [payload, setPayload] = useState({
+    purchase_order_id: null,
+    order_id: null,
+    order_item_id: null,
+    product_feature_id: null,
+    shipment_id: null
+  });
+
+  const handleOpenModal = (event, _p) => {
+    setPayload(_p);
+
+    setOpen(true);
+  };
+
   return (
     <div>
+      <BasicModal payload={payload} open={open} handleClose={handleCloseModal} />
       <Paper sx={{ marginBottom: '1em', paddingY: '1em', paddingX: '1.25em' }}>
         <Grid container direction="column" spacing={2}>
           {/* Top row contain title and button to export and download */}
@@ -251,6 +278,7 @@ function Inbound() {
                   <TableCell colSpan={6}></TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>Aksi</TableCell>
                   <TableCell>No</TableCell>
                   <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
@@ -266,6 +294,16 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
+                      <TableCell>
+                        <IconButton>
+                          <Icon
+                            icon={ExternalLink}
+                            onClick={(event) => handleOpenModal(event, row)}
+                            width={24}
+                            height={24}
+                          />
+                        </IconButton>
+                      </TableCell>
                       <TableCell>{row.id}</TableCell>
                       <TableCell>{row.document_number}</TableCell>
                       <TableCell>{row.document_date}</TableCell>
@@ -326,9 +364,7 @@ function Inbound() {
                         <th colSpan={5}></th>
                       </tr>
                       <tr>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No
-                        </th>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor
                         </th>

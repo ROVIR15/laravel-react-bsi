@@ -23,14 +23,18 @@ use App\Models\Monitoring\FinishedGoods;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Inventory\Inventory as InventoryOneCollection;
 use App\Http\Resources\Inventory\InventoryCollection;
-use App\Http\Resources\Shipment\Shipment;
+
 use App\Models\Inventory\GoodsMovement;
 use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferShipmentRelationship;
+use App\Models\KITE\ExportDoc;
+use App\Models\KITE\ImportDoc;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Order\Order;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
+use App\Models\Reconcile\ReconcileHasSalesOrder;
+use App\Models\Shipment\Shipment;
 use Throwable;
 
 class InventoryController extends Controller
@@ -793,6 +797,7 @@ class InventoryController extends Controller
         'product_id',
         'product_feature_id',
         'goods_id',
+        'order_item_id',
         'material_transfer_id',
         'facility_id',
         'type_movement',
@@ -801,6 +806,7 @@ class InventoryController extends Controller
         ->with('product', 'product_feature', 'goods', 'material_transfer')
         ->whereIn('facility_id', [3, 18])
         ->where('qty', '<', 0)
+        ->whereNotNull('order_item_id')
         ->groupBy('facility_id', 'product_feature_id')
         // ->whereHas('relations_with_shipment', function($query) {
         //   return $query->whereHas('shipment', function($query) {
@@ -815,6 +821,36 @@ class InventoryController extends Controller
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
 
+          $purchase_order_id = null;
+          $costing_id = null;
+          $shipment_id = null;
+          $import_doc = null;
+          
+          if (isset($item->order_item_id)){
+            $order_item = OrderItem::find($item->order_item_id);
+            if($order_item) {
+              $temp = PurchaseOrder::where('order_id', $order_item->order_id)->get();
+              if (count($temp)) {
+                $purchase_order_id = $temp[0]->id;
+              }
+
+              $costing = BOMItem::find($order_item->costing_item_id);
+              if($costing) {
+                $costing_id = $costing->bom_id;
+              }
+
+              $shipment = Shipment::where('order_id', $order_item->order_id)->get();
+              if(count($shipment)){
+                $shipment_id = $shipment[0]->id;
+              }
+
+              $temp_import_doc = ImportDoc::where('order_id', $order_item->order_id)->get();
+              if(count($temp_import_doc)){
+                $import_doc = $temp_import_doc[0];
+              }
+            }
+          }
+
           $import_flag = $item->import_flag ? 2 : 1;
 
           return [
@@ -822,14 +858,22 @@ class InventoryController extends Controller
             'facility_id' => $item->facility_id,
             'material_transfer_id' => $materialTransfer->id,
             'document_number' => $materialTransfer->id,
+            'costing_id' => $costing_id,
+            'purchase_order_id' => $purchase_order_id,
             'document_date' => $materialTransfer->est_transfer_date,
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'order_item_id' => $item->order_item_id,
+            'shipment_id' => $shipment_id,
             'goods_id' => $goods->id,
             'product_id' => $productFeature->product->id,
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
             'qty' => $item->qty,
             'import_flag' => $import_flag,
+            'import_id' => $import_doc ? $import_doc->id : null,
+            'customs_document_number' => $import_doc ? $import_doc->document_number : null,
+            'pl_number' => $import_doc ? $import_doc->pl_number : 'Tidak Ada',
+            'bl_number' => $import_doc ? $import_doc->bl_number : 'Tidak Ada',
             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
           ];
         });
@@ -845,6 +889,14 @@ class InventoryController extends Controller
             'document_date' => $this->change_date_format($item['document_date']),
             'sku_id' => $item['sku_id'],
             'facility_id' => $item['facility_id'],
+            'order_item_id' => $item['order_item_id'],
+            'costing_id' => $item['costing_id'],
+            'purchase_order_id' => $item['purchase_order_id'],
+            'shipment_id' => $item['shipment_id'],
+            'import_id' => $item['import_id'],
+            'customs_document_number' => $item['customs_document_number'],
+            'pl_number' => $item['pl_number'],
+            'bl_number' => $item['bl_number'],
             "item_name" => $item['item_name'],
             "product_id" => $item['product_id'],
             "product_feature_id" => $item['product_feature_id'],
@@ -1122,6 +1174,8 @@ class InventoryController extends Controller
     try {
       //code...
 
+      $import_f = 1; //import
+
       $salesOrder = [];
       $purchaseOrder = [];
 
@@ -1141,6 +1195,7 @@ class InventoryController extends Controller
       $query = GoodsMovement::select('id', 'date', 'material_transfer_id', 'material_transfer_item_id', 'product_id', 'product_feature_id', 'goods_id', 'facility_id', 'order_item_id', 'type_movement', DB::raw('sum(qty) as qty'))
         ->with('product', 'product_feature', 'goods', 'facility')
         ->where('facility_id', $type)
+        ->where('import_flag', $import_f)
         ->whereIn('product_feature_id', $order_item)
         ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
         ->groupBy('product_feature_id', 'type_movement')
@@ -1153,12 +1208,34 @@ class InventoryController extends Controller
           $order_item = OrderItem::find($item->order_item_id);
           $purchase_order = null;
           $import_flag = 1;
+          $costing_item = null;
+          $shipment = null;
+          $import_doc = null;
 
           if ($order_item) {
             $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->get();
             if (count($purchase_order) > 0){
               $import_flag = $purchase_order[0]->import_flag ? 2 : 1;
             }
+
+            $temp_shipment = Shipment::where('order_id', $order_item->order_id)->get();
+            if(count($temp_shipment)){
+              $shipment = $temp_shipment[0];
+            }
+
+            if(isset($order_item->costing_item_id)){
+              $temp = BOMItem::find($order_item->costing_item_id);
+
+              if($temp){
+                $costing_item = $temp;
+              }
+            }
+
+            $temp_id = ImportDoc::where('order_id', $order_item->order_id)->get();
+            if(count($temp_id)){
+              $import_doc = $temp_id[0];
+            }
+
           }
 
           $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
@@ -1175,11 +1252,18 @@ class InventoryController extends Controller
             'product_id' => $product->id,
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
-            'purchase_order' => $purchase_order,
+            'purchase_order_id' => count($purchase_order) ? $purchase_order[0]->id : 0,
             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
-            'qty' => $item->qty
+            'qty' => $item->qty,
+            'costing_item_id' => $costing_item ? $costing_item->id : 0,
+            'costing_id' => $costing_item ? $costing_item->bom_id : 0,
+            'shipment_id' => $shipment ? $shipment->id : 0,
+            'import_id' => $import_doc ? $import_doc->id : 0,
+            'customs_document_number' => $import_doc ? $import_doc->document_number : 0,
+            'pl_number' => $import_doc ? $import_doc->pl_number : 0,
+            'bl_number' => $import_doc ? $import_doc->bl_number : 0
           ];
         });
 
@@ -1192,7 +1276,164 @@ class InventoryController extends Controller
           $organizedData[$itemName] = array(
             'id' => $item['id'],
             'date' => $item['date'],
-            'facility_name' => $item['facility_name'],
+            'shipment_id' => $item['shipment_id'],
+            'import_id' => $item['import_id'],
+            'customs_document_number' => $item['customs_document_number'],
+            'pl_number' => $item['pl_number'],
+            'bl_number' => $item['bl_number'],
+            'purchase_order_id' => $item['purchase_order_id'],
+            'costing_item_id' => $item['costing_item_id'],
+            'costing_id' => $item['costing_id'],
+            'initial_stock' => $item['initial_stock'] ? $item['initial_stock'] : 0,
+            "item_name" => $item['item_name'],
+            "product_id" => $item['product_id'],
+            "product_feature_id" => $item['product_feature_id'],
+            "goods_id" => $item['goods_id'],
+            "sku_id" => $item['sku_id'],
+            "unit_measurement" => $item['unit_measurement'],
+            "qty_in" => 0,
+            "qty_out" => 0
+          );
+        }
+
+        // Step 3: Sum up the quantities for "type_movement" 1 and 2 for each "item_name"
+        if ($typeMovement == 1) {
+          $organizedData[$itemName]['qty_in'] += $item['qty'];
+        } elseif ($typeMovement == 2) {
+          $organizedData[$itemName]['qty_out'] += $item['qty'];
+        }
+      }
+
+      $result = array_values($organizedData);
+    } catch (\Throwable $th) {
+      //throw $th;
+      return response()->json([
+        'success' => false,
+        'error' => $th->getMessage()
+      ]);
+    }
+
+    return response()->json([
+      'success' => true,
+      'data' => $result
+    ]);
+  }
+
+  public function repMutasiHPV2(Request $request)
+  {
+    $type = $request->query('type_of_facility');
+    $fromDate = $request->query('fromDate');
+    $thruDate = $request->query('thruDate');
+
+    if (empty($fromDate) || empty($thruDate)) {
+      $thruDate = date('Y-m-d');
+      $fromDate = date_sub(date_create($thruDate), date_interval_create_from_date_string("14 days"));
+      $fromDate = date_format($fromDate, 'Y-m-d');
+    }
+
+    try {
+      //code...
+
+      $import_f = 0; //import
+
+      $salesOrder = [];
+
+      $salesOrder = SalesOrder::select('order_id')->where('export_flag', 1)->get()->map(function ($item) {
+        return $item->order_id;
+      })->toArray();
+
+      $order_item = OrderItem::select('product_feature_id')->whereIn('order_id', $salesOrder)->groupBy('product_feature_id')->get()->map(function ($item) {
+        return $item->product_feature_id;
+      });
+
+      $query = GoodsMovement::select('id', 'date', 'material_transfer_id', 'material_transfer_item_id', 'product_id', 'product_feature_id', 'goods_id', 'facility_id', 'order_item_id', 'type_movement', DB::raw('sum(qty) as qty'))
+        ->with('product', 'product_feature', 'goods', 'facility')
+        ->where('facility_id', $type)
+        ->where('import_flag', $import_f)
+        ->whereIn('product_feature_id', $order_item)
+        ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate])
+        ->groupBy('product_feature_id', 'type_movement')
+        ->get()
+        ->map(function ($item, $index) use ($fromDate) {
+          $productFeature = $item->product_feature;
+          $product = $item->product ? $item->product : null;
+          $goods = $item->goods ? $item->goods : null;
+
+          $order_item = OrderItem::find($item->order_item_id);
+          $sales_order = null;
+          $import_flag = 1;
+          $costing_item = null;
+          $shipment = null;
+          $export_doc = null;
+          $rhso = null;
+
+          if ($order_item) {
+            $temp_so = SalesOrder::where('order_id', $order_item->order_id)->get();
+            if (count($temp_so) > 0){
+              $sales_order = $temp_so[0];
+          //     $import_flag = $sales_order->import_flag ? 2 : 1;
+              $temp_rhso = ReconcileHasSalesOrder::where('sales_order_id', $sales_order->id)->get();
+              if(count($temp_rhso)){
+                $rhso = $temp_rhso[0];
+              }
+            }
+
+            $temp_shipment = Shipment::where('order_id', $order_item->order_id)->get();
+            if(count($temp_shipment)){
+              $shipment = $temp_shipment[0];
+            }
+
+            $temp_ed = ExportDoc::where('order_id', $order_item->order_id)->get();
+            if(count($temp_ed)){
+              $export_doc = $temp_ed[0];
+            }
+
+          }
+
+          $initial_stock = GoodsMovement::select(DB::raw('sum(qty) as stock'))
+            ->where('product_feature_id', $productFeature->id)
+            ->where(DB::raw('DATE(date)'), '<', $fromDate)
+            ->get();
+
+          return [
+            'id' => $index + 1,
+            'initial_stock' => count($initial_stock) ? $initial_stock[0]['stock'] : 0,
+            'date' => $item->date,
+            'facility_name' => $item->facility ? $item->facility->name : '',
+            'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
+            'product_id' => $product->id,
+            'product_feature_id' => $item->product_feature_id,
+            'goods_id' => $goods->id,
+            'sales_order_id' => $sales_order ? $sales_order->id : 0,
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT). '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'unit_measurement' => $goods ? $goods->satuan : null,
+            'type_movement' => $item->type_movement,
+            'qty' => $item->qty,
+            'costing_id' => $rhso ? $rhso->costing_id : 0,
+            'shipment_id' => $shipment ? $shipment->id : 0,
+            'export_id' => $export_doc ? $export_doc->id : 0,
+            'export_document_number' => $export_doc ? $export_doc->document_number : 0,
+            // 'pl_number' => $export_doc ? $export_doc->pl_number : 0,
+            // 'bl_number' => $export_doc ? $export_doc->bl_number : 0
+          ];
+        });
+
+      // Step 2: Organize the data based on "item_name" and "type_movement"
+      $organizedData = array();
+      foreach ($query as $item) {
+        $itemName = $item['product_feature_id'];
+        $typeMovement = $item['type_movement'];
+        if (!isset($organizedData[$itemName])) {
+          $organizedData[$itemName] = array(
+            'id' => $item['id'],
+            'date' => $item['date'],
+            'shipment_id' => $item['shipment_id'],
+            'export_id' => $item['export_id'],
+            'export_document_number' => $item['export_document_number'],
+            // 'pl_number' => $item['pl_number'],
+            // 'bl_number' => $item['bl_number'],
+            'sales_order_id' => $item['sales_order_id'],
+            'costing_id' => $item['costing_id'],
             'initial_stock' => $item['initial_stock'] ? $item['initial_stock'] : 0,
             "item_name" => $item['item_name'],
             "product_id" => $item['product_id'],

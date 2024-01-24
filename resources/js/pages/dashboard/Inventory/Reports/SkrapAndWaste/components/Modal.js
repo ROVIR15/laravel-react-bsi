@@ -34,7 +34,7 @@ export default function BasicModal({ payload, open, handleClose }) {
             <Grid item xs={12}>
               <Stack direction="row" justifyContent="space-between">
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Informasi Barang
+                  Informasi Barang Skrap / Waste
                 </Typography>
                 <IconButton onClick={handleClose} color="error">
                   <Icon icon={closeCircle} />
@@ -75,40 +75,19 @@ export default function BasicModal({ payload, open, handleClose }) {
 
                       <tr>
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Sales Order
+                          Tanggal Dokumen BC
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          SO-{padStartWithZero(payload?.costing_id)}-
-                          {padStartWithZero(payload?.sales_order_id)}
+                          {payload?.document_date}
                         </td>
                       </tr>
 
                       <tr>
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Pengiriman
+                          Nomor Dokumen BC
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          OUTSHIP-{padStartWithZero(payload?.sales_order_id)}-
-                          {padStartWithZero(payload?.shipment_id)}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Packing List
-                        </td>
-                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          PL-{padStartWithZero(payload?.sales_order_id)}-
-                          {padStartWithZero(payload?.shipment_id)}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor PEB
-                        </td>
-                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          {padStartWithZero(payload?.export_document_number)}
+                          {payload?.document_number}
                         </td>
                       </tr>
                     </table>

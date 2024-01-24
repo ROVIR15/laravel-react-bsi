@@ -15,6 +15,7 @@ import Table from './Table';
 import { _miniFunc, optionSupermarket } from '../../../../helpers/data';
 import { IconButton, Stack } from '@mui/material';
 import closeCircle from '@iconify/icons-eva/close-outline';
+import { isNull } from 'lodash';
 
 const style = {
   position: 'absolute',
@@ -36,7 +37,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 export default function BasicModal({
-  order_id,
+  order_id=null,
   so_id,
   payload,
   open,
@@ -50,9 +51,8 @@ export default function BasicModal({
   const [openX, setOpenX] = React.useState(false);
 
   React.useEffect(() => {
-    function isEmpty(array) {
-      if (!Array.isArray(array)) return true;
-      return !array.length;
+    if(isNull(order_id)){
+      return;
     }
 
     try {
@@ -69,7 +69,7 @@ export default function BasicModal({
     } catch (error) {
       alert(error);
     }
-  }, [order_id]);
+  }, [order_id, open]);
 
   return (
     <div>

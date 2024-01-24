@@ -75,11 +75,11 @@ export default function BasicModal({ payload, open, handleClose }) {
 
                       <tr>
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Sales Order
+                          Nomor Purchase Order
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          SO-{padStartWithZero(payload?.costing_id)}-
-                          {padStartWithZero(payload?.sales_order_id)}
+                          PO-{padStartWithZero(payload?.costing_id)}-
+                          {padStartWithZero(payload?.purchase_order_id)}
                         </td>
                       </tr>
 
@@ -88,8 +88,26 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Pengiriman
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          OUTSHIP-{padStartWithZero(payload?.sales_order_id)}-
+                          INSHIP-{padStartWithZero(payload?.purchase_order_id)}-
                           {padStartWithZero(payload?.shipment_id)}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor Good Receipt
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          GR-{padStartWithZero(payload?.shipment_id)}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor PIB
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {padStartWithZero(payload?.customs_document_number)}
                         </td>
                       </tr>
 
@@ -98,17 +116,16 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Packing List
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          PL-{padStartWithZero(payload?.sales_order_id)}-
-                          {padStartWithZero(payload?.shipment_id)}
+                          {payload?.pl_number}
                         </td>
                       </tr>
 
                       <tr>
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor PEB
+                          Nomor Bill of Lading
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          {padStartWithZero(payload?.export_document_number)}
+                          {payload?.bl_number}
                         </td>
                       </tr>
                     </table>
