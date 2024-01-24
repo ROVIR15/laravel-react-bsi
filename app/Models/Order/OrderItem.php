@@ -27,7 +27,7 @@ use DB;
     ];
 
     public function gmovement(){
-      return $this->hasMany('App\Models\Inventory\GoodsMovement', 'order_item_id', 'id');
+      return $this->hasMany('App\Models\Inventory\GoodsMovement', 'product_feature_id', 'product_feature_id');
   }
 
     public function costing(){
