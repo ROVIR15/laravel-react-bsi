@@ -198,13 +198,18 @@ class ItemIssuanceController extends Controller
           $order_item_id = $key['order_item_id'];
 
           $order_item = OrderItem::select('order_id')->find($order_item_id);
+
+          // Check if $order_item is not null before proceeding
           if ($order_item) {
             $purchase_order = PurchaseOrder::select('import_flag')->where('order_id', $order_item['order_id'])->get();
 
-            if (count($purchase_order) > 0) {
-              $import_flag = $purchase_order[0]->import_flag;
+            // Check if $purchase_order has any records
+            if ($purchase_order->count() > 0) {
+              // Directly access the first element's import_flag
+              $import_flag = $purchase_order->first()->import_flag;
             }
           }
+
           // Use $order_item_id here since it exists and is not null
         } else {
           $order_item_id = null;
@@ -245,7 +250,7 @@ class ItemIssuanceController extends Controller
           'qty' => $key['deliv_qty'] * -1,
           // adding order_item_id
           'order_item_id' => $order_item_id
-         ]);
+        ]);
         DB::commit();
 
         //add qty from to_facility_id and make record on goods_movement;
@@ -272,7 +277,6 @@ class ItemIssuanceController extends Controller
         'material_transfer_id' => $mt['id']
       ]);
       DB::commit();
-
     } catch (Exception $th) {
       DB::rollback();
       return response()->json([
