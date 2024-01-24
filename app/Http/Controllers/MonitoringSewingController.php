@@ -43,13 +43,13 @@ class MonitoringSewingController extends Controller
           ->with(['qc' => function ($query) use ($order_id) {
             return $query->where('order_id', $order_id);
           }])
-          ->whereHas('gmovement', function ($query) {
-            return $query->select(DB::raw('id, product_feature_id, product_id, order_item_id, sum(qty) as qty'))
-              ->groupBy('order_item_id')
-              ->where('facility_id', 4)
-              // ->where('qty', '>', 0);
-              ->having(DB::raw('sum(qty)'), '>', 0);
-          })
+          // ->whereHas('gmovement', function ($query) {
+          //   return $query->select(DB::raw('id, product_feature_id, product_id, order_item_id, sum(qty) as qty'))
+          //     ->groupBy('order_item_id')
+          //     ->where('facility_id', 4)
+          //     // ->where('qty', '>', 0);
+          //     ->having(DB::raw('sum(qty)'), '>', 0);
+          // })
           ->where('order_id', $request->query('sales-order'))
           ->groupBy('order_item_id')
           ->get();
