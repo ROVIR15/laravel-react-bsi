@@ -33,6 +33,7 @@ use App\Models\Manufacture\BOMItem;
 use App\Models\Order\Order;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
+use App\Models\Reconcile\Reconcile;
 use App\Models\Reconcile\ReconcileHasSalesOrder;
 use App\Models\Shipment\Shipment;
 use Throwable;
@@ -1377,7 +1378,7 @@ class InventoryController extends Controller
             if (count($temp_so) > 0) {
               $sales_order = $temp_so[0];
               //     $import_flag = $sales_order->import_flag ? 2 : 1;
-              $temp_rhso = ReconcileHasSalesOrder::where('sales_order_id', $sales_order->id)->get();
+              $temp_rhso = Reconcile::where('sales_order_id', $sales_order->id)->get();
               if (count($temp_rhso)) {
                 $rhso = $temp_rhso[0];
               }
