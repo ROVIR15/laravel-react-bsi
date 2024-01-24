@@ -193,8 +193,8 @@ class ItemIssuanceController extends Controller
       DB::commit();
 
       foreach ($param['items'] as $key) {
-        $import_flag = false;
-        if (isset($key['order_item_id']) && $key['order_item_id'] !== null) {
+        $import_flag = 0;
+        if (isset($key['order_item_id'])) {
           $order_item_id = $key['order_item_id'];
 
           $order_item = OrderItem::select('order_id')->find($order_item_id);
