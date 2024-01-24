@@ -14,6 +14,7 @@ use App\Models\Inventory\GoodsMovement;
 use App\Models\Manufacture\CostingItemRevised;
 use App\Models\Order\OrderItem;
 use App\Models\Product\ProductFeature;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -312,6 +313,12 @@ class BOMItemController extends Controller
         $_param = is_null($from_facility) ? 3 : $from_facility;
 
         try {
+            if(!$costing_id) {
+                throw new Exception('Cannot send null id');
+            }
+
+            $query = [];
+
             $query = BOMItem::with('product_feature')->where('bom_id', $costing_id)->get()->map(function ($data) {
                 $query2 = ProductFeature::select('product_id', 'id')
                     ->where('id', $data['product_feature_id'])
@@ -323,7 +330,14 @@ class BOMItemController extends Controller
                 }
 
                 return $query2[0]['product_id'];
-            });
+            })->toArray();
+
+            $bom = BOM::find($costing_id);
+
+            if($bom){
+                $product_id = $bom->product_id;
+                array_push($query, $product_id);
+            }
 
             $items = GoodsMovement::select(DB::raw('id, sum(qty) as available_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag')
                 ->with('product', 'product_feature', 'goods', 'product_category')
