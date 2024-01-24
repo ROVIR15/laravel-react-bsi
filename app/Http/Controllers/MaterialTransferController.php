@@ -10,6 +10,8 @@ use App\Models\Inventory\MaterialTransferItem;
 use App\Models\Inventory\MaterialTransferRealisation;
 use App\Models\Inventory\MaterialTransferStatus;
 use App\Models\Inventory\GoodsMovement;
+use App\Models\Order\OrderItem;
+use App\Models\Order\PurchaseOrder;
 use App\Models\Product\Goods;
 use App\Models\Product\Product;
 use Exception;
@@ -137,6 +139,28 @@ class MaterialTransferController extends Controller
         try {
 
             foreach ($param as $key) {
+                $import_flag = 0;
+                if (isset($key['order_item_id'])) {
+                    $order_item_id = $key['order_item_id'];
+
+                    $order_item = OrderItem::select('order_id')->find($order_item_id);
+
+                    // Check if $order_item is not null before proceeding
+                    if ($order_item) {
+                        $purchase_order = PurchaseOrder::select('import_flag')->where('order_id', $order_item['order_id'])->get();
+
+                        // Check if $purchase_order has any records
+                        if ($purchase_order->count() > 0) {
+                            // Directly access the first element's import_flag
+                            $import_flag = $purchase_order->first()->import_flag;
+                        }
+                    }
+
+                    // Use $order_item_id here since it exists and is not null
+                } else {
+                    $order_item_id = null;
+                    // Handle the case where 'order_item_id' doesn't exist or is null
+                }
 
                 $_item_costing_id = isset($key['costing_item_id']) ? $key['costing_item_id'] : NULL;
 
@@ -163,6 +187,7 @@ class MaterialTransferController extends Controller
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 2, // 1 for incoming and 2 outbound
                     'qty' => $key['transferred_qty'] * -1,
+                    'import_flag' => $import_flag,
                     // adding_order_item_id
                     'order_item_id' => $key['order_item_id']
                 ]);
@@ -180,6 +205,7 @@ class MaterialTransferController extends Controller
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 1, // 1 for incoming and 2 outbound
                     'qty' => $key['transferred_qty'],
+                    'import_flag' => $import_flag,
                     // adding_order_item_id
                     'order_item_id' => $key['order_item_id']
                 ]);
@@ -226,8 +252,31 @@ class MaterialTransferController extends Controller
 
             $_data = [];
             foreach ($param['items'] as $key) {
+                $import_flag = 0;
+                if (isset($key['order_item_id'])) {
+                    $order_item_id = $key['order_item_id'];
+
+                    $order_item = OrderItem::select('order_id')->find($order_item_id);
+
+                    // Check if $order_item is not null before proceeding
+                    if ($order_item) {
+                        $purchase_order = PurchaseOrder::select('import_flag')->where('order_id', $order_item['order_id'])->get();
+
+                        // Check if $purchase_order has any records
+                        if ($purchase_order->count() > 0) {
+                            // Directly access the first element's import_flag
+                            $import_flag = $purchase_order->first()->import_flag;
+                        }
+                    }
+
+                    // Use $order_item_id here since it exists and is not null
+                } else {
+                    $order_item_id = null;
+                    // Handle the case where 'order_item_id' doesn't exist or is null
+                }
+
                 $_mti = MaterialTransferItem::create([
-                    'import_flag' => $key['import_flag'],
+                    'import_flag' => $import_flag,
                     'material_transfer_id' => $_mt['id'],
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
@@ -261,6 +310,7 @@ class MaterialTransferController extends Controller
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => 2, // 1 for incoming and 2 outbound
                     'qty' => $key['qty'] * -1,
+                    'import_flag' => $import_flag,
                     // adding order_item_id
                     'order_item_id' => $key['order_item_id']
                 ]);
@@ -280,6 +330,7 @@ class MaterialTransferController extends Controller
                     'type_movement' => 1, // 1 for incoming and 2 outbound
                     'qty' => $key['qty'],
                     // adding order_item_id
+                    'import_flag' => $import_flag,
                     'order_item_id' => $key['order_item_id']
                 ]);
                 DB::commit();
@@ -296,7 +347,6 @@ class MaterialTransferController extends Controller
                 'status' => 2
             ]);
             DB::commit();
-
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
