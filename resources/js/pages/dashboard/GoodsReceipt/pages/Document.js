@@ -195,7 +195,7 @@ function FirstPage() {
                   <Grid item={6} sx={{ width: '50%', marginBottom: '1em' }}>
                     <Box sx={{ textAlign: 'right' }}>
                       <IDontKnow>Goods Receipt</IDontKnow>
-                      <Typography variant="h3">
+                      <Typography variant="h6">
                         GR-{values.id ? values?.id?.toString().padStart(5, '0') : '0000'}
                       </Typography>
                     </Box>

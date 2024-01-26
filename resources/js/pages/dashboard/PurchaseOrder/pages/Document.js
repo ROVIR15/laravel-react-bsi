@@ -419,7 +419,7 @@ function FirstPage() {
               >
                 <Box sx={{ textAlign: 'right' }}>
                   <IDontKnow>Purchase Order</IDontKnow>
-                  <Typography variant="h6">{data.po_number}-A</Typography>
+                  <Typography variant="h6">PO-{id.toString().padStart(5, '0')}</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -493,6 +493,8 @@ function FirstPage() {
                 {data?.description?.split('\n').map((item) => {
                   return <Typography variant="body2">{`${item}`}</Typography>;
                 })}
+
+                <Typography variant="body1" fontStyle='italic'>**NB: Sertakan nomor dokumen PO-{id.toString().padStart(5, '0')} pada surat jalan untuk memudahkan proses pengecekan. Terimakasih</Typography>
               </Grid>
 
               <Grid item xs={12}>

@@ -78,8 +78,13 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Sales Order
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          SO-{padStartWithZero(payload?.costing_id)}-
-                          {padStartWithZero(payload?.sales_order_id)}
+                          <a
+                            href={`../order/sales-order/document/${payload?.sales_order_id}`}
+                            target="_blank"
+                          >
+                            SO-{padStartWithZero(payload?.costing_id)}-
+                            {padStartWithZero(payload?.sales_order_id)}
+                          </a>
                         </td>
                       </tr>
 
@@ -88,8 +93,13 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Pengiriman
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          OUTSHIP-{padStartWithZero(payload?.sales_order_id)}-
-                          {padStartWithZero(payload?.shipment_id)}
+                          <a
+                            href={`../shipment/outgoing/document/${payload?.shipment_id}`}
+                            target="_blank"
+                          >
+                            OUTSHIP-{padStartWithZero(payload?.sales_order_id)}-
+                            {padStartWithZero(payload?.shipment_id)}
+                          </a>
                         </td>
                       </tr>
 
@@ -98,8 +108,13 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Packing List
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          PL-{padStartWithZero(payload?.sales_order_id)}-
-                          {padStartWithZero(payload?.shipment_id)}
+                          <a
+                            href={`../shipment/outgoing/document/${payload?.shipment_id}`}
+                            target="_blank"
+                          >
+                            PL-{padStartWithZero(payload?.sales_order_id)}-
+                            {padStartWithZero(payload?.shipment_id)}
+                          </a>
                         </td>
                       </tr>
 
@@ -107,9 +122,22 @@ export default function BasicModal({ payload, open, handleClose }) {
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor PEB
                         </td>
-                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          {padStartWithZero(payload?.export_document_number)}
+                        <a href={`../kite/export/${payload?.export_document_id}`} target="_blank">
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            {padStartWithZero(payload?.export_document_id)}
+                          </td>
+                        </a>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor Bill of Lading
                         </td>
+                        <a href={`../kite/export/${payload?.export_document_id}`} target="_blank">
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            {padStartWithZero(payload?.bl_number)}
+                          </td>
+                        </a>
                       </tr>
                     </table>
                   </div>
