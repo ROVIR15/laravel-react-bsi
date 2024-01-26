@@ -432,10 +432,19 @@ class InventoryController extends Controller
 
           $costing_item_id = $orderItem['costing_item_id'];
           $costing_item = null;
+          $costing_id = null;
 
           if ($costing_item_id) {
             $costing_item = BOMItem::find($costing_item_id);
           }
+
+          if ($salesOrder){
+            $temp_rhso = Reconcile::where('sales_order_id', $salesOrder->id)->get();
+
+            if(count($temp_rhso)){
+              $costing_id = $temp_rhso->id;
+            }
+          }          
 
           return [
             'id' => $index + 1,
@@ -462,7 +471,7 @@ class InventoryController extends Controller
             'export_document_date' => $exportDoc ? $this->change_date_format($exportDoc->date) : null,
             'currency' => $order->currency_id,
             'costing_item_id' => $costing_item ? $costing_item->id : null,
-            'costing_id' => $costing_item ? $costing_item->bom_id : null
+            'costing_id' => $costing_id
           ];
         });
     } catch (\Throwable $th) {
