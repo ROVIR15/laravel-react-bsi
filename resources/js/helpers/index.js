@@ -1299,6 +1299,17 @@ const main = {
         cb(err.response);
       });
   },
+  getABOMV2_alt(id, cb) {
+    if (!id) console.error('ID not found');
+    axios
+      .get(uri + '/v2/bom' + `/${id}`)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getABOM_alt(id, cb) {
     if (!id) console.error('ID not found');
     axios

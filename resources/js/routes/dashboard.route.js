@@ -183,6 +183,8 @@ import ShowPayment from '../pages/dashboard/Finance/Payment/show';
 import ShowMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/show';
 import ShowScrap from '../pages/dashboard/Inventory/Scrap/show';
 
+import ShowBillofMaterialAlt from '../pages/dashboard/BillofMaterial/show-cost';
+
 //Document
 import DocumentCosting from '../pages/dashboard/Costing/pages/Document';
 import DocumentGR from '../pages/dashboard/GoodsReceipt/pages/Document';
@@ -436,7 +438,8 @@ export default function TestRouter() {
             { path: ':id', element: <ShowCosting />},
             { path: 'add', element: <AddCosting />},
             { path: 'display', element: <DisplayCosting />},
-            { path: 'document/:id', element: <DocumentCosting/>}
+            { path: 'document/:id', element: <DocumentCosting/>},
+            { path: 'show-bom/:id', element: <ShowBillofMaterialAlt/>}
           ]
         },
         {

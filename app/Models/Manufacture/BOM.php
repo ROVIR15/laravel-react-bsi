@@ -36,6 +36,10 @@ class BOM extends Model
         return $this->hasMany('App\Models\Manufacture\BOMItem', 'bom_id');
     }
 
+    public function items(){
+        return $this->hasMany('App\Models\Manufacture\BOMItem', 'bom_id', 'id')->with('product_feature');
+    }
+
     public function bom_services(){
         return $this->hasMany('App\Models\Manufacture\BOMService', 'bom_id');
     }

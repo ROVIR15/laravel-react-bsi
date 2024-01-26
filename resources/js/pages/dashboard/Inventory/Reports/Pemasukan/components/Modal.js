@@ -69,7 +69,12 @@ export default function BasicModal({ payload, open, handleClose }) {
                           BOM / CBD
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          CBD-{padStartWithZero(payload?.costing_id)}
+                          <a
+                            href={`../production/costing/show-bom/${payload?.costing_id}`}
+                            target="_blank"
+                          >
+                            CBD-{padStartWithZero(payload?.costing_id)}
+                          </a>
                         </td>
                       </tr>
 
@@ -117,7 +122,10 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor PIB
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          <a href={`../kite/import/${payload?.customs_document_id}`} target="_blank">
+                          <a
+                            href={`../kite/import/${payload?.customs_document_id}`}
+                            target="_blank"
+                          >
                             {padStartWithZero(payload?.customs_document_number)}
                           </a>
                         </td>
@@ -139,7 +147,10 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Bill of Lading
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          <a href={`../kite/import/${payload?.customs_document_id}`} target="_blank">
+                          <a
+                            href={`../kite/import/${payload?.customs_document_id}`}
+                            target="_blank"
+                          >
                             {payload?.bl_number}
                           </a>
                         </td>

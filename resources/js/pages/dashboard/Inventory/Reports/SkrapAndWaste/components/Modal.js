@@ -69,7 +69,9 @@ export default function BasicModal({ payload, open, handleClose }) {
                           BOM / CBD
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          CBD-{padStartWithZero(payload?.costing_id)}
+                          <a href={`../production/costing/show-bom/${payload?.costing_id}`} target="_blank">
+                            CBD-{padStartWithZero(payload?.costing_id)}
+                          </a>
                         </td>
                       </tr>
 

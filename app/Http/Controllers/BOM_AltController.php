@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Manufacture\BOM;
 use Illuminate\Http\Request;
 use App\Models\Manufacture\BOM_alt;
 use App\Models\Manufacture\BOMItem_alt;
@@ -97,6 +98,26 @@ class BOM_AltController extends Controller
             'data' => $query
         ], 200);
     }
+
+    public function showBOMBasedCosting($id)
+    {
+        try {
+            $query = BOM::with('items', 'product')->find($id);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $query
+        ], 200);
+    }
+
 
     /**
      * Get BoM item alt resources based on bom_id

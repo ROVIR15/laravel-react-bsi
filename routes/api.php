@@ -372,3 +372,4 @@ Route::get('v2/monitoring/daily-production-status-2', 'V2\Monitoring\ProductionS
 
 Route::get('v2/product-tracing/{feature_id}', 'V2\Product\TrackerController@index');
 Route::get('v2/current-stock-facility/{order_id}', 'V2\Inventory\InventoryController@get_order_item_by_check_availabiality_from_facility');
+Route::get('v2/bom/{costing_id}', 'BOM_AltController@showBOMBasedCosting');
