@@ -442,7 +442,7 @@ class InventoryController extends Controller
             $temp_rhso = Reconcile::where('sales_order_id', $salesOrder->id)->get();
 
             if(count($temp_rhso)){
-              $costing_id = $temp_rhso[0]->id;
+              $costing_id = $temp_rhso[0]->costing_id;
             }
           }          
 
