@@ -48,6 +48,7 @@ import useAuth from '../../../../context';
 
 // Snackbar
 import { enqueueSnackbar } from 'notistack';
+import { isNull } from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -147,7 +148,8 @@ function OutboundDelivery() {
       delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       est_delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       comment: 'nothing',
-      subcontract_flag: false
+      subcontract_flag: false,
+      imageUrl: null
     },
     validationSchema: OutboundDeliverySchema,
     onSubmit: (values) => {
@@ -156,7 +158,6 @@ function OutboundDelivery() {
         shipment_type_id: 1,
         user_id: user.id,
         OD_items: items,
-        imageUrl: file,
         subcontract_flag: false
       };
 
@@ -324,10 +325,10 @@ function OutboundDelivery() {
   };
 
   function ShowImageWhenItsUploaded() {
-    if (file) {
+    if (!isNull(values.imageUrl)) {
       return (
         <Paper sx={{ padding: 2, height: '100%' }}>
-          <img src={file} alt="Image" />
+          <img src={values.imageUrl} alt="Image" />
           <Button component="label" htmlFor="upload-file">
             <input
               accept="image/*"
@@ -374,10 +375,15 @@ function OutboundDelivery() {
 
     // Update the formData object
     formData.append('file', event.target.files[0], event.target.files[0].name);
+
     try {
       API.uploadShipmentReceiptProof(formData, function (res) {
-        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
-        else enqueueSnackbar('', { variant: 'failedAlert' });
+        if (res.success) {
+          enqueueSnackbar('', { variant: 'successAlert' });
+          setFieldValue('imageUrl', res?.path);
+        } else {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       });
     } catch (error) {
       enqueueSnackbar('', { variant: 'failedAlert' });
