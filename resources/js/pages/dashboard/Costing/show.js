@@ -188,8 +188,12 @@ function BillofMaterial() {
       } = key;
 
       let item_name = `${goods?.name} ${color} ${size}`;
-      const sku_id = generalizeSKU(key?.product_feature?.product?.goods_id, key?.product_feature?.product?.id, key?.product_feature?.id);
-      
+      const sku_id = generalizeSKU(
+        key?.product_feature?.product?.goods_id,
+        key?.product_feature?.product?.id,
+        key?.product_feature?.id
+      );
+
       return {
         ...goods,
         ...rest,
@@ -234,14 +238,16 @@ function BillofMaterial() {
     ? true
     : false;
 
-  const editableColumn = user.id === 2 ? true : isEmpty(statusCosting)
-  ? true
-  : statusCosting.status_type === 'Submit'
-  ? true
-  : false;
+  const editableColumn =
+    user.id === 2
+      ? true
+      : isEmpty(statusCosting)
+      ? true
+      : statusCosting.status_type === 'Submit'
+      ? true
+      : false;
 
   const __editable = editableUser || editableCondition;
-
 
   useEffect(() => {
     let active = true;
@@ -433,17 +439,22 @@ function BillofMaterial() {
   );
 
   const deleteDataComponent = React.useCallback((id) => () => {
-    if (!editableUser || !editableCondition) return;
-
-    setComponent((prevComponent) => {
-      return prevComponent.filter((x) => x.id !== id);
-    });
-
     try {
-      API.deleteABOMItem(id, (res) => {
-        if (res.success) enqueueSnackbar('Item Deleted', { variant: 'successAlert' });
-        else enqueueSnackbar('', { variant: 'failedAlert' });
-      });
+      if (editableUser) {
+        API.deleteABOMItem(id, (res) => {
+          if (res.success) enqueueSnackbar('Item Deleted', { variant: 'successAlert' });
+          else enqueueSnackbar('', { variant: 'failedAlert' });
+        });
+      } else {
+        if (editableCondition) {
+          API.deleteABOMItem(id, (res) => {
+            if (res.success) enqueueSnackbar('Item Deleted', { variant: 'successAlert' });
+            else enqueueSnackbar('', { variant: 'failedAlert' });
+          });
+        } else {
+          throw new Error('Failed to delete');
+        }
+      }
     } catch (error) {
       enqueueSnackbar('', { variant: 'failedAlert' });
     }
