@@ -2604,6 +2604,16 @@ const main = {
         cb(err.response);
       });
   },
+  getPurchaseOrderNotShipped(params=null, cb){
+    axios
+      .get(uri + '/v2/purchase-order-not-shipped')
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   getPurchaseOrderV2(params = null, cb) {
     axios
       .get(uri + '/purchase-order-v2' + params)

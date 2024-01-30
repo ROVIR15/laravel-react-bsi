@@ -119,7 +119,7 @@ function OutboundDelivery() {
     let active = true;
 
     (async () => {
-      API.getPurchaseOrder('', (res) => {
+      API.getPurchaseOrderNotShipped('', (res) => {
         if (!res) return;
         if (!res.data) {
           setOptions([]);

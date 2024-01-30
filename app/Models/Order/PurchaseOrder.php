@@ -73,6 +73,8 @@
       return $this->belongsTo('App\Models\KITE\ImportDoc', 'id', 'purchase_order_id');
     }
 
-  }
+    public function shipment(){
+      return $this->hasMany('App\Models\Shipment\Shipment', 'order_id', 'order_id');
+    }
 
-?>
+  }
