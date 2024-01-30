@@ -22,6 +22,7 @@ class PurchaseOrderController extends Controller
                 ->wherehas('status', function ($query) {
                     return $query->where('status_type', 'Review');
                 })
+                ->orderBy('id', 'desc')
                 ->get();
         } catch (\Throwable $th) {
             //throw $th;
