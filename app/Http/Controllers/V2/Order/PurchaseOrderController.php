@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V2\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order\PurchaseOrder;
+use App\Models\Shipment\Shipment;
 
 class PurchaseOrderController extends Controller
 {
@@ -14,11 +15,18 @@ class PurchaseOrderController extends Controller
     {
 
         try {
-            $query = PurchaseOrder::with('party')->whereHas('shipment', function ($query) {
-                return $query->whereHas('status', function ($query) {
-                    return $query->whereNotIn('shipment_type_status_id', [2, 4, 5]);
-                });
-            })
+
+            $query_sh = Shipment::select('order_id')->groupBy('order_id')->get()->map(function ($query) {
+                return $query->order_id;
+            });
+
+            $query = PurchaseOrder::with('party')
+                ->whereNotIn('order_id', $query_sh)
+                // ->whereDoesntHave('shipment', function ($query) {
+                //     return $query->whereHas('status', function ($query) {
+                //         return $query->whereNotIn('shipment_type_status_id', [2, 4, 5]);
+                //     });
+                // })
                 ->wherehas('status', function ($query) {
                     return $query->where('status_type', 'Review');
                 })
