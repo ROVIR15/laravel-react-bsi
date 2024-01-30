@@ -211,7 +211,7 @@ function FirstPage() {
                         <Typography variant="h6" gutterBottom component="div">
                           PO-{POID ? POID.toString().padStart(5, '0') : '0000'}
                         </Typography>
-                        <Typography variant='caption' gutterBottom component="div">
+                        <Typography variant="caption" gutterBottom component="div">
                           {PONumber}
                         </Typography>
                       </div>
@@ -264,6 +264,15 @@ function FirstPage() {
                   <Table payload={items} />
                 </GridItemX>
 
+                <Grid item xs={12}>
+                  <Typography variant="h6" style={{ marginTop: '0.5em' }}>
+                    Catatan
+                  </Typography>
+                  <Typography variant="subtitle">
+                    {values?.comment ? values?.comment : ''}
+                  </Typography>
+                </Grid>
+
                 <Stack
                   direction="row"
                   spacing={2}
@@ -298,7 +307,9 @@ function FirstPage() {
                 <Divider fullWidth />
                 <Grid container>
                   <Box sx={{ marginBottom: 15 }}>
-                    <Typography variant="subtitle">This Document Generated Automatically at {moment().format('LLLL')}</Typography>
+                    <Typography variant="subtitle">
+                      This Document Generated Automatically at {moment().format('LLLL')}
+                    </Typography>
                   </Box>
                 </Grid>
               </Stack>
