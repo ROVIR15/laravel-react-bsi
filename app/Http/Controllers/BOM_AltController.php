@@ -149,22 +149,23 @@ class BOM_AltController extends Controller
                     }
 
                     if($order_item){
-                        $temp_consumed_total = GoodsMovement::select(DB::raw('sum(qty) * -1 as qty'))
+                        $temp_consumed_total = GoodsMovement::select(DB::raw('sum(qty) as qty, order_item_id, facility_id, type_movement'))
                         ->where('order_item_id', $order_item->id)
-                        ->where('facility_id', 3)
                         ->where('type_movement', 2)
+                        ->where('facility_id', 3)
+                        ->groupBy('order_item_id')
                         ->get()
                         ->first();
 
                         if($temp_consumed_total){
                             $consumed_total = $temp_consumed_total ? $temp_consumed_total->qty : 0;
                         }
-
                         
-                        $temp_stock = GoodsMovement::select(DB::raw('sum(qty) as qty'))
+                        $temp_stock = GoodsMovement::select(DB::raw('sum(qty) as qty, order_item_id, facility_id, type_movement'))
                         ->where('order_item_id', $order_item->id)
-                        ->where('facility_id', 3)
                         ->where('type_movement', 1)
+                        ->where('facility_id', 3)
+                        ->groupBy('order_item_id')
                         ->get()
                         ->first();
 
@@ -188,8 +189,8 @@ class BOM_AltController extends Controller
                         'allowance' => $query->allowance,
                         'unit_price' => $query->unit_price,
                         'order_qty' => $order_item ? $order_item->qty : 0,
-                        'available_qty' => $stock - $consumed_total,
-                        'consumed_material_qty' => $consumed_total,
+                        'available_qty' => $stock + $consumed_total,
+                        'consumed_material_qty' => $consumed_total * -1,
                         'bl_number' => $doc_import ? $doc_import->doc->bl_number : 'Tidak Ada',
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
