@@ -406,6 +406,7 @@ function BillofMaterial() {
       // { field: 'color', headerName: 'Color', editable: true },
       // { field: 'brand', headerName: 'Brand', editable: false },
       { field: 'consumption', headerName: 'Konsumsi', editable: true },
+      { field: 'scrap_conversion', headerName: 'Konversi Scrap/Waste', editable: true },
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
       { field: 'unit_price', headerName: 'Harga', editable: true },
       // { field: 'qty', headerName: 'Total Konsumsi', editable: true, valueGetter: totalConsumption },

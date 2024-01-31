@@ -306,6 +306,7 @@ function BillofMaterial() {
       // { field: 'allowance', headerName: 'Allowance %', editable: true },
       { field: 'unit_price', headerName: 'Harga', editable: true },
       { field: 'qty', headerName: 'Biaya Unit', editable: true, valueGetter: totalConsumption },
+      { field: 'scrap_conversion', headerName: 'Konversi Scrap/Waste', editable: true },
       {
         field: 'actions',
         type: 'actions',

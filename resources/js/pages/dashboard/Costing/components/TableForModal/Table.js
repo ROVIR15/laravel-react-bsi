@@ -109,7 +109,7 @@ function TableD({ list, placeHolder, selected, setSelected, update}) {
   };
 
   const handleClick = (event, name) => {
-    name = {...name, product_feature_id: name.id, product_id: name.product_id, id: selected.length+1, allowance: 0}
+    name = {...name, product_feature_id: name.id, product_id: name.product_id, id: selected.length+1, allowance: 0, scrap_conversion: 0}
     const selectedIndex = selected.map(e => e.product_feature_id).indexOf(name.product_feature_id);
     let newSelected = [];
     if (selectedIndex === -1) {

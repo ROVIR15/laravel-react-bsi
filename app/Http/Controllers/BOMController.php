@@ -212,6 +212,7 @@ class BOMController extends Controller
           'qty' => floatval($key['consumption']) + floatval($key['allowance']),
           'consumption' => $key['consumption'],
           'allowance' => $key['allowance'],
+          'scrap_conversion' => $key['scrap_conversion'],
           'unit_price' => $key['unit_price'],
         ]);
       }

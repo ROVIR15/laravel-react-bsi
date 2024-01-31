@@ -22,6 +22,7 @@ class BOMItem extends JsonResource
             'qty' => $this->qty,
             'consumption' => $this->consumption,
             'allowance' => $this->allowance,
+            'scrap_conversion' => $this->scrap_conversion,
             'unit_price' => $this->unit_price,
             'product_feature' => $this->product_feature
         ];

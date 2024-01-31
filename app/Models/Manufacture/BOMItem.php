@@ -20,6 +20,7 @@ class BOMItem extends Model
         'qty',
         'consumption',
         'allowance',
+        'scrap_conversion',
         'unit_price'
     ];
 
