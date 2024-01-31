@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory\GoodsMovement;
+use App\Models\KITE\ImportDocItem;
 use App\Models\Manufacture\BOM;
 use Illuminate\Http\Request;
 use App\Models\Manufacture\BOM_alt;
+use App\Models\Manufacture\BOMItem;
 use App\Models\Manufacture\BOMItem_alt;
+use App\Models\Product\ScrapHasProductFeature;
+use DB;
 
 class BOM_AltController extends Controller
 {
@@ -32,7 +37,7 @@ class BOM_AltController extends Controller
             'data' => $query
         ], 200);
     }
-    
+
 
     /**
      * Store a newly created resource in storage
@@ -74,7 +79,7 @@ class BOM_AltController extends Controller
             'success' => true
         ], 500);
     }
-    
+
     /**
      * Display a resource 
      * 
@@ -102,8 +107,84 @@ class BOM_AltController extends Controller
     public function showBOMBasedCosting($id)
     {
         try {
-            $query = BOM::with('items', 'product')->find($id);
+            $query = BOM::with('product')->find($id);
 
+            $items = BOMItem::with('product_feature')
+                ->with('order_item')
+                ->where('bom_id', $id)
+                ->get()
+                ->map(function ($query) {
+                    $product_feature = $query->product_feature ? $query->product_feature : null;
+                    $product = $product_feature ? $product_feature->product : null;
+                    $goods = $product ? $product->goods : null;
+
+                    $item_name = $goods->name . $product_feature->size . '-' . $product_feature->color;
+
+                    $order_item = $query->order_item ? $query->order_item : null;
+
+                    $consumed_total = 0;
+                    $stock = 0;
+                    $import_flag = 1;
+
+                    $scrap = null;
+
+                    $doc_import = null;
+
+                    $shpf = ScrapHasProductFeature::select('scrap_product_id')->where('ori_product_id', $product->id)->groupBy('ori_product_id')->get()->map(function($query){
+                        return $query->scrap_product_id;
+                    });
+
+                    if($shpf) {
+                        $scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
+                        ->whereIn('product_id', $shpf)
+                        ->where('type_movement', 1)
+                        ->where('facility_id', 21)
+                        ->groupBy('product_id')
+                        ->get()
+                        ->first();
+                    }
+
+                    if($order_item){
+                        $consumed_total = GoodsMovement::select(DB::raw('sum(qty) * -1 as qty'))
+                        ->where('order_item_id', $order_item->id)
+                        ->where('facility_id', '3')
+                        ->where('qty', '<', 0)
+                        ->where('type_movement', 2)
+                        ->get()
+                        ->first();
+
+                        
+                        $stock = GoodsMovement::select(DB::raw('sum(qty) as qty'))
+                        ->where('order_item_id', $order_item->id)
+                        ->where('facility_id', '3')
+                        ->where('type_movement', 1)
+                        ->get()
+                        ->first();
+                        
+                        $doc_import = ImportDocItem::with('doc')->where('order_item_id', $order_item->id)->get()->first();
+                        $import_flag = !is_null($doc_import) ? 2 : 1;
+                    }
+
+                    return [
+                        'id' => $query->id,
+                        'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+                        'bom_id' => $query->bom_id,
+                        'product_id' => $product->id,
+                        'product_feature_id' => $query->product_feature_id,
+                        'goods_id' => $goods->id,
+                        'item_name' => $item_name,
+                        'consumption' => $query->consumption,
+                        'allowance' => $query->allowance,
+                        'unit_price' => $query->unit_price,
+                        'order_qty' => $order_item ? $order_item->qty : 0,
+                        'available_qty' => $stock ? $stock->qty - $consumed_total->qty : 0,
+                        'consumed_material_qty' => $consumed_total ? $consumed_total->qty : 0,
+                        'bl_number' => $doc_import ? $doc_import->doc->bl_number : 'Tidak Ada',
+                        'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
+                        'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
+                        'scrap' => $scrap ? $scrap->jumlah . ' kg' : 0 . ' kg'
+                    ];
+                });
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([
@@ -114,7 +195,8 @@ class BOM_AltController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $query
+            'data' => $query,
+            'items' => $items
         ], 200);
     }
 
@@ -127,10 +209,9 @@ class BOM_AltController extends Controller
      * 
      */
     public function getBOMItem_alt($bom_id)
-    {    
+    {
         try {
             $query = BOMItem_alt::where('bom_id', $bom_id)->get();
-
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json([

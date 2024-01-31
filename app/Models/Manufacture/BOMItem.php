@@ -35,4 +35,7 @@ class BOMItem extends Model
         return $this->belongsTo('App\Models\Manufacture\BOM', 'bom_id');
     }
 
+    public function import_item(){
+        return $this->hasMany('App\Models\KITE\ImportDocItem', 'product_feature_id', 'product_feature_id')->with('movement');
+    }
 }

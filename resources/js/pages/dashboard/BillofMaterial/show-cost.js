@@ -151,9 +151,9 @@ function BillofMaterial() {
 
           setFile(res.data?.product?.goods?.imageUrl)
 
-          if(isEmpty(res.data?.items)) return;
-          let bom_item = bomitem_data_alt(res.data?.items, res.data?.qty);
-          setComponent(bom_item);
+          if(isEmpty(res?.items)) return;
+          // let bom_item = bomitem_data_alt(res.data?.items, res.data?.qty);
+          setComponent(res.items);
         }
       });
     } catch (error) {
@@ -167,10 +167,16 @@ function BillofMaterial() {
   // columns for material
   const goodsColumns = useMemo(
     () => [
-      { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-      { field: 'item_name', width: 300, headerName: 'Name', editable: false },
+      { field: 'sku_id', headerName: 'SKU ID', width: 200, editable: false, visible: 'hide' },
+      { field: 'document_number', width: 150, headerName: 'No. Dokumen', editable: false },
+      { field: 'bl_number', width: 150, headerName: 'Bill of Lading', editable: false },
+      { field: 'pl_number', width: 150, headerName: 'Packing List', editable: false },
+      { field: 'item_name', width: 300, headerName: 'Nama Barang', editable: false },
       { field: 'consumption', headerName: 'Konsumsi', type: 'number', editable: false },
-      { field: 'qty', headerName: 'Total Konsumsi', width: 200, editable: false},
+      { field: 'order_qty', headerName: 'Total Dipesan', width: 200, editable: false},
+      { field: 'consumed_material_qty', headerName: 'Total Keluar Gudang', width: 200, editable: false},
+      { field: 'available_qty', headerName: 'Tersisa di Gudang', width: 200, editable: false},
+      { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false},
     ],
     [deleteDataComponent]
   );

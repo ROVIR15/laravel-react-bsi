@@ -36,4 +36,8 @@ class ImportDocItem extends Model
     public function doc() {
         return $this->belongsTo('App\Models\KITE\ImportDoc', 'kite_import_doc_id');
     }
+
+    public function movement(){
+        return $this->hasMany('App\Models\Inventory\GoodsMovement', 'order_item_id', 'order_item_id');
+    }
 }
