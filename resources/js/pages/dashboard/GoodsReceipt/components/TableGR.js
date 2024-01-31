@@ -88,6 +88,9 @@ export default function BasicTable({ payload }) {
                   <th className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
                     Qty Diterima
                   </th>
+                  <th className="wk_width_3 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                    Deskripsi
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -98,6 +101,7 @@ export default function BasicTable({ payload }) {
                     <td className="wk_width_1 wk_padd_8_20">{`${row.qty_order} ${row.satuan}`}</td>
                     <td className="wk_width_1 wk_padd_8_20">{`${parseFloat(row.qty).toFixed(2)} ${row.satuan}`}</td>
                     <td className="wk_width_1 wk_padd_8_20">{`${parseFloat(row.qty_shipped).toFixed(2)} ${row.satuan}`}</td>
+                    <td className="wk_width_3 wk_padd_8_20">{row?.description}</td>
                   </tr>
                 ))}
               </tbody>

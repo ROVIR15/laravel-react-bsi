@@ -135,30 +135,42 @@ class BOM_AltController extends Controller
                     });
 
                     if($shpf) {
-                        $scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
+                        $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
                         ->whereIn('product_id', $shpf)
                         ->where('type_movement', 1)
                         ->where('facility_id', 21)
                         ->groupBy('product_id')
                         ->get()
                         ->first();
+
+                        if ($temp_scrap){
+                            $scrap = $temp_scrap ? $temp_scrap->jumlah : 0;
+                        }
                     }
 
                     if($order_item){
-                        $consumed_total = GoodsMovement::select(DB::raw('sum(qty) * -1 as qty'))
+                        $temp_consumed_total = GoodsMovement::select(DB::raw('sum(qty) * -1 as qty'))
                         ->where('order_item_id', $order_item->id)
-                        ->where('facility_id', '3')
+                        ->where('facility_id', 3)
                         ->where('type_movement', 2)
                         ->get()
                         ->first();
 
+                        if($temp_consumed_total){
+                            $consumed_total = $temp_consumed_total ? $temp_consumed_total->qty : 0;
+                        }
+
                         
-                        $stock = GoodsMovement::select(DB::raw('sum(qty) as qty'))
+                        $temp_stock = GoodsMovement::select(DB::raw('sum(qty) as qty'))
                         ->where('order_item_id', $order_item->id)
-                        ->where('facility_id', '3')
+                        ->where('facility_id', 3)
                         ->where('type_movement', 1)
                         ->get()
                         ->first();
+
+                        if($temp_stock){
+                            $stock = $temp_stock ? $temp_stock->qty : 0;
+                        }
                         
                         $doc_import = ImportDocItem::with('doc')->where('order_item_id', $order_item->id)->get()->first();
                         $import_flag = !is_null($doc_import) ? 2 : 1;
@@ -176,12 +188,12 @@ class BOM_AltController extends Controller
                         'allowance' => $query->allowance,
                         'unit_price' => $query->unit_price,
                         'order_qty' => $order_item ? $order_item->qty : 0,
-                        'available_qty' => $stock ? $stock->qty - $consumed_total->qty : 0,
-                        'consumed_material_qty' => $consumed_total ? $consumed_total->qty : 0,
+                        'available_qty' => $stock - $consumed_total,
+                        'consumed_material_qty' => $consumed_total,
                         'bl_number' => $doc_import ? $doc_import->doc->bl_number : 'Tidak Ada',
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
-                        'scrap' => $scrap ? $scrap->jumlah . ' kg' : 0 . ' kg'
+                        'scrap' => $scrap ? $scrap . ' kg' : 0 . ' kg'
                     ];
                 });
         } catch (\Throwable $th) {
