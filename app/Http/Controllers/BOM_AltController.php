@@ -148,7 +148,6 @@ class BOM_AltController extends Controller
                         $consumed_total = GoodsMovement::select(DB::raw('sum(qty) * -1 as qty'))
                         ->where('order_item_id', $order_item->id)
                         ->where('facility_id', '3')
-                        ->where('qty', '<', 0)
                         ->where('type_movement', 2)
                         ->get()
                         ->first();
