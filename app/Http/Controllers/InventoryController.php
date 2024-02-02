@@ -141,7 +141,7 @@ class InventoryController extends Controller
         ->where('bom_id', $costingId)
         ->get()
         ->map(function ($item) {
-          return $item->product_feature_id;
+          return $item->product_id;
         });
 
       $list_order_item = OrderItem::select('id', 'product_feature_id')->whereIn('product_feature_id', $_items)->get()->map(function ($query) {
@@ -183,7 +183,7 @@ class InventoryController extends Controller
       $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
         ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
         ->where('facility_id', $facilityId)
-        ->whereIn('order_item_id', $list_order_item)
+        ->whereIn('product_id', $_items)
         ->groupBy('product_feature_id', 'import_flag', 'facility_id')
         ->get()
         ->map(function ($query) {
@@ -251,8 +251,8 @@ class InventoryController extends Controller
     return response()->json([
       'success' => true,
       'data' => $query,
-      'list_order_item' => $list_order_item,
-      '_items' => $_items
+      // 'list_order_item' => $list_order_item,
+      // '_items' => $_items
     ]);
   }
 
