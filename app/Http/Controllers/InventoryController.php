@@ -250,7 +250,9 @@ class InventoryController extends Controller
 
     return response()->json([
       'success' => true,
-      'data' => $query
+      'data' => $query,
+      'list_order_item' => $list_order_item,
+      '_items' => $_items
     ]);
   }
 
