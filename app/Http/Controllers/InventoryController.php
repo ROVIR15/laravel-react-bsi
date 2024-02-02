@@ -137,7 +137,7 @@ class InventoryController extends Controller
 
     try {
 
-      $_items = BOMItem::select('product_feature_id')
+      $_items = BOMItem::select('product_feature_id, product_id')
         ->where('bom_id', $costingId)
         ->get()
         ->map(function ($item) {
