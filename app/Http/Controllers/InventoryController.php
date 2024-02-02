@@ -144,7 +144,7 @@ class InventoryController extends Controller
           return $item->product_feature_id;
         });
 
-      $list_order_item = OrderItem::select('id')->whereIn('product_feature_id', $_items)->get()->map(function ($query) {
+      $list_order_item = OrderItem::select('id', 'product_feature_id')->whereIn('product_feature_id', $_items)->get()->map(function ($query) {
         return $query->id;
       });
 
