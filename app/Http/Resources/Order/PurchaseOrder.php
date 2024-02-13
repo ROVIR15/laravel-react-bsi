@@ -30,7 +30,8 @@
         'order_item' => new OrderItemCollection($this->order_item),
         'status' => $this->status,
         'invoice' => $this->invoice,
-        'import_doc' => $this->import_doc
+        'import_doc' => $this->import_doc,
+        'created_at' => $this->created_at
       ];
     }
   }
