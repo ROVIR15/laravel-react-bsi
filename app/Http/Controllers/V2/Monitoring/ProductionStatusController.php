@@ -165,7 +165,7 @@ class ProductionStatusController extends Controller
 
         try {
             //code...
-            $query = Sewing::select('id', 'date', 'order_id', 'order_item_id', 'product_feature_id', 'sales_order_id', 'facility_id', DB::raw('sum(output) as total_output'))
+            $query = Sewing::select('id', 'date', 'order_id', 'order_item_id', 'product_feature_id', 'sales_order_id', 'facility_id', DB::raw('sum(output) as total_output, avg(work_hours) as avg_work_hours'))
                 // $query = Sewing::select('id', 'date')
                 ->with('sales_order', 'facility')
                 ->with(['wip_qc2' => function ($query) use ($date) {
@@ -175,8 +175,10 @@ class ProductionStatusController extends Controller
                 }])
                 ->whereDate('date', '=', $date)
                 ->groupBy('sales_order_id', 'line')
+                ->orderBy('facility_id', 'asc')
                 ->get()
                 ->map(function ($query) {
+                    $avg_wh = $query->avg_work_hours;
                     $res_sewing = $query->total_output;
                     $res_qc = count($query->wip_qc2) ? $query->wip_qc2[0] : null;
                     $total_checked = !is_null($res_qc) ? $res_qc['total_output'] : 0;
@@ -185,6 +187,7 @@ class ProductionStatusController extends Controller
                     return [
                         'date' => $query->date,
                         'label_name' => $query->facility->name . ' - ' . $query->sales_order->po_number,
+                        'avg_work_hours' => $avg_wh,
                         'total_output_sewing' => $res_sewing,
                         'total_checked' => $total_checked,
                         'total_reject' => $total_reject

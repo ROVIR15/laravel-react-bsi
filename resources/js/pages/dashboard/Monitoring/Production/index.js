@@ -270,6 +270,8 @@ function Dashboard() {
   }, [lineSelected, filterMonthYear]);
 
   useEffect(() => {
+    tapGetData();
+
     try {
       API.getFacility('?type=line-sewing', function (res) {
         if (isUndefined(res)) return;
@@ -353,6 +355,12 @@ function Dashboard() {
 
   const [dateDailyProduction, setDateDailyProduction] = useState(dateNow);
   const [DPDataAllLines, setDPDataAllLines] = useState([]);
+  const [totalData, setTotalData] = useState({
+    average_work_hours: 0,
+    total_output_sewing: 0,
+    total_checked: 0,
+    total_reject: 0
+  });
 
   function handleDateChangeNew(e) {
     setDateDailyProduction(e.target.value);
@@ -367,6 +375,30 @@ function Dashboard() {
         if (!res.success) throw new Error('Error get data');
         else {
           setDPDataAllLines(res.data);
+
+          var lengthData = res.data.length;
+
+          const total = res.data.reduce(
+            (initial, next) => {
+              return {
+                average_work_hours: initial.average_work_hours + (parseFloat(next.avg_work_hours) / lengthData),
+                total_output_sewing:
+                  initial.total_output_sewing + parseInt(next.total_output_sewing),
+                total_garment_checked: initial.total_good_garment + parseInt(next.total_checked) + parseInt(next.total_reject),
+                total_good_garment: initial.total_good_garment + parseInt(next.total_checked),
+                total_reject: initial.total_reject + parseInt(next.total_reject)
+              };
+            },
+            {
+              average_work_hours: 0,
+              total_output_sewing: 0,
+              total_garment_checked: 0,
+              total_good_garment: 0,
+              total_reject: 0
+            }
+          );
+
+          setTotalData(total);
         }
       });
     } catch (error) {
@@ -375,10 +407,9 @@ function Dashboard() {
   }
 
   useEffect(() => {
-
     const { sales_order_id, ...item } = selectedGraph;
 
-    if(!sales_order_id){
+    if (!sales_order_id) {
       return;
     }
 
@@ -391,11 +422,10 @@ function Dashboard() {
           setDailyProdSum(res.total);
         }
       });
-
     } catch (error) {
       alert('error');
     }
-  }, [dateDailyProduction])
+  }, [dateDailyProduction]);
 
   return (
     <Layout>
@@ -405,7 +435,12 @@ function Dashboard() {
         <CardContent>
           <Grid container direction="row" spacing={2}>
             <Grid item xs={10}>
-              <TextField onChange={handleDateChangeNew} value={dateDailyProduction} fullWidth type="date" />
+              <TextField
+                onChange={handleDateChangeNew}
+                value={dateDailyProduction}
+                fullWidth
+                type="date"
+              />
             </Grid>
             <Grid item xs={2}>
               <Button onClick={tapGetData} size="large" variant="contained" fullWidth>
@@ -423,20 +458,23 @@ function Dashboard() {
                       Style / Nama Item
                     </th>
                     <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_left">
-                      Total Pcs Sewing
+                      Jam Bekerja
+                    </th>
+                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_left">
+                      Hasil Sewing (pcs)
                     </th>
                     <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
-                      Total Pcs Check QC
+                      Hasil End-Line QC (pcs)
                     </th>
                     <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
-                      Defect
+                      Hasil Garment Reject (pcs)
                     </th>
                     <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
-                      GG
+                      Jumlah Garment Baik (pcs)
                     </th>
-                    <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
+                    {/* <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">
                       Actual Report (pcs)
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
 
@@ -451,13 +489,13 @@ function Dashboard() {
                         <tr>
                           <td className="wk_width_1 wk_text_center">{index + 1}</td>
                           <td className="wk_width_1 wk_text_left">{row.label_name}</td>
+                          <td className="wk_width_1 wk_text_center">{parseFloat(row.avg_work_hours).toFixed(1)}</td>
                           <td className="wk_width_1 wk_text_center">{row.total_output_sewing}</td>
                           <td className="wk_width_1 wk_text_center">
-                            {parseInt(row.total_checked) + parseInt(row.total_reject)}
+                            {parseInt(row.total_checked)}
                           </td>
                           <td className="wk_width_1 wk_text_center">{row.total_reject}</td>
-                          <td className="wk_width_1 wk_text_center">{row.total_checked}</td>
-                          <td className="wk_width_1 wk_text_center">{0}</td>
+                          <td className="wk_width_1 wk_text_center">{parseInt(row.total_checked) + parseInt(row.total_reject)}</td>
                         </tr>
                       );
                     })
@@ -468,6 +506,16 @@ function Dashboard() {
                   </tr>
                   */}
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center" colSpan={2}>Total</th>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">{totalData.average_work_hours}</th>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">{totalData.total_output_sewing}</th>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">{totalData.total_garment_checked}</th>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">{totalData.total_good_garment}</th>
+                    <th className="wk_semi_bold wk_primary_color wk_gray_bg wk_text_center">{totalData.total_reject}</th>
+                  </tr>
+                </tfoot>
               </table>
             </Grid>
           </Grid>
