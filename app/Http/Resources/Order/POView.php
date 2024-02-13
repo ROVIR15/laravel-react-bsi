@@ -27,6 +27,7 @@ class POView extends JsonResource
         'status' => $this->status,
         'completion_status' => $this->completion_status,
         'order_item' => $this->order_item_one,
+        'created_at' => $this->created_at,
         'sum' => $this->sum
       ];
     }
