@@ -444,13 +444,13 @@ class InventoryController extends Controller
             $costing_item = BOMItem::find($costing_item_id);
           }
 
-          if ($salesOrder){
+          if ($salesOrder) {
             $temp_rhso = Reconcile::where('sales_order_id', $salesOrder->id)->get();
 
-            if(count($temp_rhso)){
+            if (count($temp_rhso)) {
               $costing_id = $temp_rhso[0]->costing_id;
             }
-          }          
+          }
 
           return [
             'id' => $index + 1,
@@ -771,7 +771,7 @@ class InventoryController extends Controller
 
           $name = null;
 
-          if ($item->shipment->shipment_type_id === 3){
+          if ($item->shipment->shipment_type_id === 3) {
             $name = 'SUBCONT-IN-';
           } else {
             $name = 'SUBCONT-OUT-';
