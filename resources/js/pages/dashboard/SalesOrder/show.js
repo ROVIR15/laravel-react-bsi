@@ -227,7 +227,11 @@ function SalesOrder() {
     // transfrom data of order item
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
-      const sku_id = generalizeSKU(product_feature?.product?.goods_id, product_feature?.product?.id, product_feature?.id);
+      const sku_id = generalizeSKU(
+        product_feature?.product?.goods_id,
+        product_feature?.product?.id,
+        product_feature?.id
+      );
 
       return {
         ...product_feature,
@@ -645,7 +649,13 @@ function SalesOrder() {
       return (
         <Paper sx={{ height: '100%' }}>
           <Stack direction="column">
-            <Typography variant="body1" component="a" href={_link}>
+            <Typography
+              variant="body1"
+              component="a"
+              href={_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {_link}
             </Typography>
             <Button component="label" htmlFor="upload-file">

@@ -292,6 +292,36 @@ function OutboundDelivery() {
     setItems([]);
   };
 
+  const [dragging, setDragging] = useState(false);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    const files = [...e.dataTransfer.files];
+    const event = {target: {files}};
+
+    // Handle file upload
+    handleOnFileChange(event);
+  };
+
   /**
    * Completion Status
    */
@@ -351,10 +381,16 @@ function OutboundDelivery() {
               multiple
               id="upload-file"
               type="file"
-              onChange={handleOnFileChange}
               style={{ display: 'none' }}
             />
-            <UploadPaper component="span" fullWidth>
+            <UploadPaper
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              component="span"
+              fullWidth
+            >
               <Typography variant="h5">Drop or Select File</Typography>
             </UploadPaper>
           </label>
@@ -368,6 +404,7 @@ function OutboundDelivery() {
    */
 
   const handleOnFileChange = (event) => {
+    console.log(event);
     setFile(event.target.files[0]);
 
     // Create an object of formData
