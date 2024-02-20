@@ -129,7 +129,7 @@ function SalesOrder() {
     onSubmit: (values) => {
       const _data = {
         ...values,
-        imageUrl: file,
+        imageUrl: _link,
         order_items: items
       };
 
@@ -184,7 +184,8 @@ function SalesOrder() {
     handleSubmit,
     setFieldValue,
     setValues,
-    getFieldProps
+    getFieldProps,
+    handleReset
   } = formik;
 
   function changeData(data) {
@@ -364,6 +365,36 @@ function SalesOrder() {
   // ----------------------------------------------------------------- //
 
   const [file, setFile] = useState(null);
+  const [_link, _setLink] = useState(null);
+  const [dragging, setDragging] = useState(false);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    const files = [...e.dataTransfer.files];
+    const event = { target: { files } };
+
+    // Handle file upload
+    handleOnFileChange(event);
+  };
 
   const handleOnFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -375,8 +406,12 @@ function SalesOrder() {
     formData.append('file', event.target.files[0], event.target.files[0].name);
     try {
       API.uploadSalesOrderImage(formData, function (res) {
-        if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
-        else enqueueSnackbar('', { variant: 'failedAlert' });
+        if (res.success) {
+          _setLink(res.path);
+          enqueueSnackbar('', { variant: 'successAlert' });
+        } else {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
       });
     } catch (error) {
       enqueueSnackbar('', { variant: 'failedAlert' });
@@ -387,18 +422,29 @@ function SalesOrder() {
     if (file) {
       return (
         <Paper sx={{ height: '100%' }}>
-          <img src={file} alt="Image" />
-          <Button component="label" htmlFor="upload-file">
-            <input
-              accept="image/*"
-              multiple
-              id="upload-file"
-              type="file"
-              onChange={handleOnFileChange}
-              hidden
-            />
-            <Typography variant="h5">Change File</Typography>
-          </Button>
+          <Stack direction="column">
+            <Typography
+              variant="body1"
+              component="a"
+              href={_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {_link}
+            </Typography>
+
+            <Button component="label" htmlFor="upload-file">
+              <input
+                accept="image/*"
+                multiple
+                id="upload-file"
+                type="file"
+                onChange={handleOnFileChange}
+                hidden
+              />
+              <Typography variant="h5">Change File</Typography>
+            </Button>
+          </Stack>
         </Paper>
       );
     } else {
@@ -413,7 +459,15 @@ function SalesOrder() {
               onChange={handleOnFileChange}
               style={{ display: 'none' }}
             />
-            <UploadPaper component="span" fullWidth>
+            <UploadPaper
+              onChange={handleOnFileChange}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              component="span"
+              fullWidth
+            >
               <Typography variant="h5">Drop or Select File</Typography>
             </UploadPaper>
           </label>
