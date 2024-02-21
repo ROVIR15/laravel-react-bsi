@@ -190,7 +190,8 @@ class ShipmentController extends Controller
         'shipment_type_id' => $param['shipment_type_id'],
         'subcontract_flag' => $__subcontract_flag,
         'order_id' => $param['order_id'],
-        'ship_to' => $__ship_to
+        'ship_to' => $__ship_to,
+        'imageUrl' => $param['imageUrl']
       ]);
 
       //shipment item variable
