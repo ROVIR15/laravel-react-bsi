@@ -65,7 +65,6 @@ class OrderItemController extends Controller
             'cm_price' => $key['cm_price'],
             'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
           ]);
-  
         } else {
           $queryProduct = ProductFeature::find($key['product_feature_id']);
           $product__id = $queryProduct->product_id;
@@ -78,9 +77,7 @@ class OrderItemController extends Controller
             'cm_price' => $key['cm_price'],
             'shipment_estimated' => date('Y-m-d', strtotime('2022-04-03'))
           ]);
-  
         }
-  
       }
 
       OrderItem::insert($salesItemsCreation);
@@ -224,7 +221,6 @@ class OrderItemController extends Controller
   {
     try {
       OrderItem::destroy($id);
-      return response()->json(['test' => 'yo']);
     } catch (Exception $e) {
       //throw $th;
       return response()->json(
