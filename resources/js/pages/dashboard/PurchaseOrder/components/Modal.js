@@ -9,7 +9,9 @@ import {
   Stack,
   styled,
   Typography,
-  Modal
+  Modal,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 
 import { Icon } from '@iconify/react';
@@ -116,18 +118,21 @@ export default function BasicModal({
 
           <div>
             <InputLabel id="costing_name">Pilih Costing</InputLabel>
-            <Select
-              onChange={handleSelect}
-              value={selectedCosting}
-              input={<OutlinedInput label="Name" />}
+            <Autocomplete
               size="small"
-              fullWidth
-            >
-              <MenuItem value={0}>None</MenuItem>;
-              {dataCosting?.map(function (item) {
-                return <MenuItem value={item.id}>{item.name}</MenuItem>;
-              })}
-            </Select>
+              disablePortal
+              onInputChange={(event, newInputValue) => {
+                let newValue = newInputValue.split('-')[0];
+                let _event = { target: { value: newValue } };
+                handleSelect(_event);
+              }}
+              options={dataCosting}
+              isOptionEqualToValue={(option, value) => {
+                return option.id === value;
+              }}
+              getOptionLabel={(option) => `${option.name}`}
+              renderInput={(params) => <TextField fullWidth {...params} />}
+            />
           </div>
 
           <Table

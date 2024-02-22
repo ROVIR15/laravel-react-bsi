@@ -235,5 +235,6 @@ class OrderItemController extends Controller
         500
       );
     }
+    return response()->json(['success' => true]);
   }
 }

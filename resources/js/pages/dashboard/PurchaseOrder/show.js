@@ -282,11 +282,6 @@ function SalesOrder() {
   } = formik;
 
   const deleteData = useCallback((id) => () => {
-    setItems((prevItems) => {
-      const rowToDeleteIndex = id;
-      return filter.map((x) => x.id !== id);
-    });
-
     try {
       API.deleteSalesOrderItem(id, (res) => {
         if (res.success) enqueueSnackbar('', { variant: 'successAlert' });
