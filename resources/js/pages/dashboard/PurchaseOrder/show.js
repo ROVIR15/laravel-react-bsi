@@ -171,6 +171,8 @@ function SalesOrder() {
     });
 
     setComments(load.status);
+    // setStatusCosting(load?.status[0]);s
+
     setIsImport(Boolean(load?.import_flag));
     setDescription(load.order.description);
     setTax(load.order.tax);
@@ -247,6 +249,22 @@ function SalesOrder() {
 
     setGeneratedInvoice(_inv);
   }, [id]);
+
+  // const editableUser = user.id === 2 ? true : false;
+  // const editableCondition = isEmpty(statusCosting)
+  //   ? true
+  //   : statusCosting.status_type === 'Submit'
+  //   ? true
+  //   : false;
+
+  // const editableColumn =
+  //   user.id === 2
+  //     ? true
+  //     : isEmpty(statusCosting)
+  //     ? true
+  //     : statusCosting.status_type === 'Submit'
+  //     ? true
+  //     : false;
 
   useEffect(() => {
     let active = true;
@@ -390,13 +408,15 @@ function SalesOrder() {
     setItems(c);
   };
 
-  const editableUser = user.id !== 2 ? true : false;
+  const editableUser = user.id === 2 ? true : false;
   const roles = !isEmpty(user) ? user?.role : [];
   const editableCondition = isArray(roles)
     ? roles.some(function (item) {
         return item.name === 'purchase-order' && item.review;
       })
     : false;
+
+  console.log(editableUser, roles, editableCondition)
 
   const columns = useMemo(
     () => [
