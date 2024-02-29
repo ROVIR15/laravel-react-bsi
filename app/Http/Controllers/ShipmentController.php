@@ -138,11 +138,12 @@ class ShipmentController extends Controller
         $query = Shipment::with('order', 'type', 'status', 'items')
           ->where('shipment_type_id', $type)
           ->whereNotIn('id', $_shipmentHasInvoice)
-          ->orderBy('order_id', 'asc')
+          ->orderBy('id', 'desc')
           ->get();
       } else {
         $query = Shipment::with('order', 'type', 'status', 'items')
           ->whereNotIn('id', $_shipmentHasInvoice)
+          ->orderBy('id', 'desc')
           ->get();
       }
     } catch (\Throwable $th) {
