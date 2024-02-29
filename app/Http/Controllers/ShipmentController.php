@@ -82,11 +82,11 @@ class ShipmentController extends Controller
             //   return $query->select('costing_item_id');
             // }])
             ->where('shipment_type_id', $type)
-            ->orderBy('order_id', 'asc')
+            ->orderBy('order_id', 'desc')
             ->get();
         } else {
           $query = Shipment::with('order', 'reconcile_based_sales_order', 'type', 'status', 'sum', 'issuance')
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
         }
       }
