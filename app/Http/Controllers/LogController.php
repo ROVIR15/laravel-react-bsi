@@ -18,8 +18,20 @@ class LogController extends Controller
             $startDate = Carbon::today();
             $endDate = Carbon::today()->addDays(7);
 
+            $monthYear = $request->query('monthYear');
+
+            if (empty($monthYear)) {
+                $monthYear = date('Y-m');
+            }
+
+            $monthYear = date_create($monthYear);
+            $month = date_format($monthYear, 'm');
+            $year = date_format($monthYear, 'Y');
+
+
             $query = LogTable::with('user')
-                ->whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])
+                ->whereYear('created_at', '=', $year)
+                ->whereMonth('created_at', '=', $month)
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($item, $index) {

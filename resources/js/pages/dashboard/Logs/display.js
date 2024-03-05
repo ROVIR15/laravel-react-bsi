@@ -77,6 +77,7 @@ function DisplayBuyer({ placeHolder }) {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterMonthYear, setFilterMonthYear] = useState(moment(new Date()).format('YYYY-MM'));
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
@@ -85,21 +86,21 @@ function DisplayBuyer({ placeHolder }) {
       return !array.length;
     }
 
-    if (isEmpty(goodsData)) {
-      try {
-        API.getLogs((res) => {
-          if(!res) return;
-          if (isEmpty(res.data)) {
-            setGoodsData([]);
-          } else {
-            setGoodsData(res.data);
-          }
-        });
-      } catch (error) {
-        alert(error);
-      }
+    let params = `?monthYear=${filterMonthYear}`;
+
+    try {
+      API.getLogs(params, (res) => {
+        if (!res) return;
+        if (isEmpty(res.data)) {
+          setGoodsData([]);
+        } else {
+          setGoodsData(res.data);
+        }
+      });
+    } catch (error) {
+      alert(error);
     }
-  }, []);
+  }, [filterMonthYear]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -139,6 +140,12 @@ function DisplayBuyer({ placeHolder }) {
 
   const isDataNotFound = filteredData.length === 0;
 
+  const handleMonthYearChanges = (event) => {
+    const { value } = event.target;
+    console.log(value)
+    setFilterMonthYear(value);
+  };
+
   return (
     <Card>
       <ListToolbar
@@ -146,6 +153,9 @@ function DisplayBuyer({ placeHolder }) {
         filterName={filterName}
         onFilterName={handleFilterByName}
         placeHolder={placeHolder}
+        monthYearActive={true}
+        filterMonthYear={filterMonthYear}
+        onFilterMonthYear={handleMonthYearChanges}
       />
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800 }}>
