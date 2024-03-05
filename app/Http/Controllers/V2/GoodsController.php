@@ -87,7 +87,7 @@ class GoodsController extends Controller
                                 $product_id = str_pad($product->id, 4, '0', STR_PAD_LEFT);
                                 $goods_id = str_pad($goods->id, 4, '0', STR_PAD_LEFT);
                                 // $sku_id = $category_id.$category_sub_id.$product_id.$goods_id;
-                                $sku_id = $category_id.'-'.$category_sub_id.'-'.$product_id.'-'.$goods_id;
+                                $sku_id = $goods_id.'-'.$product_id;
                                 return [
                                     'sku_id' => $sku_id,
                                     'id' => $product->id,

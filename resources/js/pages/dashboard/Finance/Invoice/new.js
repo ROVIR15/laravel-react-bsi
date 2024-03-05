@@ -62,7 +62,7 @@ function Invoice() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. Buana Sandang Indonesia',
     address:
-      'Jl. Raya Albisindo Desa Gondosari, RT/RW 02/06, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+      'Jl. Raya Albisindo Desa Gondosari, RT 01 RW 05, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
     postal_code: 59354,
     phone_number: '(0291) 4251259'
   });

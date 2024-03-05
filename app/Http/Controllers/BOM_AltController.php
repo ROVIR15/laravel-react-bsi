@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventory\GoodsMovement;
+use App\Models\KITE\ExportDoc;
 use App\Models\KITE\ImportDocItem;
 use App\Models\Manufacture\BOM;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use App\Models\Manufacture\BOM_alt;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Manufacture\BOMItem_alt;
 use App\Models\Product\ScrapHasProductFeature;
+use App\Models\Reconcile\Reconcile;
+use App\Models\Reconcile\ReconcileHasSalesOrder;
 use DB;
 
 class BOM_AltController extends Controller
@@ -109,6 +112,14 @@ class BOM_AltController extends Controller
         try {
             $query = BOM::with('product')->find($id);
 
+            if(!$query) throw new Exception("Error Processing Request", 1);
+
+            $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->first();
+
+            if(!$reconcile) throw new Exception("Error Processing Request", 1);
+            
+            $export_kite = ExportDoc::where('sales_order_id', $reconcile->sales_order_id)->first();
+
             $items = BOMItem::with('product_feature')
                 ->with('order_item')
                 ->where('bom_id', $id)
@@ -194,6 +205,7 @@ class BOM_AltController extends Controller
                         'bl_number' => $doc_import ? $doc_import->doc->bl_number : 'Tidak Ada',
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
+                        'item_serial_number' => $doc_import ? $doc_import->item_serial_number : 'Tidak Ada',
                         'scrap' => $scrap ? $scrap . ' kg' : 0 . ' kg'
                     ];
                 });
@@ -208,7 +220,9 @@ class BOM_AltController extends Controller
         return response()->json([
             'success' => true,
             'data' => $query,
-            'items' => $items
+            'items' => $items,
+            'reconcile' => $reconcile,
+            'export_license' => $export_kite
         ], 200);
     }
 

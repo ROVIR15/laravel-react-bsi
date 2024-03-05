@@ -22,7 +22,7 @@ class PurchaseOrderController extends Controller
 
             $query = PurchaseOrder::with('party')
                 ->whereNotIn('order_id', $query_sh)
-                // ->whereDoesntHave('shipment', function ($query) {
+                // ->whereHas('shipment', function ($query) {
                 //     return $query->whereHas('status', function ($query) {
                 //         return $query->whereNotIn('shipment_type_status_id', [2, 4, 5]);
                 //     });

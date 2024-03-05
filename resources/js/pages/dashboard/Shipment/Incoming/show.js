@@ -370,7 +370,14 @@ function OutboundDelivery() {
               onChange={handleOnFileChange}
               style={{ display: 'none' }}
             />
-            <UploadPaper component="span" fullWidth>
+            <UploadPaper
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              component="span"
+              fullWidth
+            >
               <Typography variant="h5">Drop or Select File</Typography>
             </UploadPaper>
           </label>
@@ -379,11 +386,42 @@ function OutboundDelivery() {
     }
   }
 
+  const [dragging, setDragging] = useState(false);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    const files = [...e.dataTransfer.files];
+    const event = { target: { files } };
+
+    // Handle file upload
+    handleOnFileChange(event);
+  };
+
   /**
    * Handle Upload File
    */
 
   const handleOnFileChange = (event) => {
+    console.log(event)
     setFile(event.target.files[0]);
 
     // Create an object of formData
@@ -397,8 +435,7 @@ function OutboundDelivery() {
         if (res.success) {
           enqueueSnackbar('', { variant: 'successAlert' });
           setFieldValue('imageUrl', res?.path);
-        }
-        else {
+        } else {
           enqueueSnackbar('', { variant: 'failedAlert' });
         }
       });

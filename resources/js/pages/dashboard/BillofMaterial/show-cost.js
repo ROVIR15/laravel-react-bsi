@@ -4,7 +4,7 @@ import { LoadingButton } from '@mui/lab';
 import { Button, Card, Grid, Paper, Stack, TextField, Typography } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { useFormik, Form, FormikProvider } from 'formik';
-import { isEmpty, isUndefined, update } from 'lodash';
+import { isEmpty, isUndefined, update, isNull } from 'lodash';
 
 import API from '../../../helpers';
 import { optionProductFeature, optionProductFeatureV3 } from '../../../helpers/data';
@@ -30,7 +30,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   }
 }));
 
-export function bomitem_data_alt(array, qty=1) {
+export function bomitem_data_alt(array, qty = 1) {
   if (isEmpty(array)) return;
   let arranged = array.map((x) => {
     const { id, consumption, allowance, unit_price, bom_id, product_feature } = x;
@@ -54,6 +54,11 @@ export function bomitem_data_alt(array, qty=1) {
 }
 
 function BillofMaterial() {
+  function padStartWithZero(number) {
+    if (isNull(number)) return '0000';
+    return number?.toString().padStart(4, '0');
+  }
+
   // param
   const { id } = useParams();
 
@@ -64,6 +69,12 @@ function BillofMaterial() {
 
   // storing data of material list of a bom
   const [component, setComponent] = useState([]);
+
+  // reconcile data storage
+  const [reconcile, setReconcile] = useState({});
+
+  // export document data storage
+  const [exportLicense, setExportLicense] = useState({});
 
   //store value of options for modal
   const [options, setOptions] = useState([]);
@@ -149,17 +160,21 @@ function BillofMaterial() {
             category: 'Finished Goods'
           });
 
-          setFile(res.data?.product?.goods?.imageUrl)
+          setFile(res.data?.product?.goods?.imageUrl);
 
-          if(isEmpty(res?.items)) return;
+          if (isEmpty(res?.items)) return;
           // let bom_item = bomitem_data_alt(res.data?.items, res.data?.qty);
           setComponent(res.items);
+
+          setReconcile(res.reconcile);
+
+          setExportLicense(res.export_license);
         }
       });
     } catch (error) {
       alert(error);
     }
-  }
+  };
 
   // file
   const [file, setFile] = useState(null);
@@ -168,15 +183,21 @@ function BillofMaterial() {
   const goodsColumns = useMemo(
     () => [
       { field: 'sku_id', headerName: 'SKU ID', width: 200, editable: false, visible: 'hide' },
+      { field: 'item_serial_number', width: 150, headerName: 'Nomor Seri Barang', editable: false },
       { field: 'document_number', width: 150, headerName: 'No. Dokumen', editable: false },
       { field: 'bl_number', width: 150, headerName: 'Bill of Lading', editable: false },
       { field: 'pl_number', width: 150, headerName: 'Packing List', editable: false },
       { field: 'item_name', width: 300, headerName: 'Nama Barang', editable: false },
       { field: 'consumption', headerName: 'Konsumsi', type: 'number', editable: false },
-      { field: 'order_qty', headerName: 'Total Dipesan', width: 200, editable: false},
-      { field: 'consumed_material_qty', headerName: 'Total Keluar Gudang', width: 200, editable: false},
-      { field: 'available_qty', headerName: 'Tersisa di Gudang', width: 200, editable: false},
-      { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false},
+      { field: 'order_qty', headerName: 'Total Dipesan', width: 200, editable: false },
+      {
+        field: 'consumed_material_qty',
+        headerName: 'Total Keluar Gudang',
+        width: 200,
+        editable: false
+      },
+      { field: 'available_qty', headerName: 'Tersisa di Gudang', width: 200, editable: false },
+      { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false }
     ],
     [deleteDataComponent]
   );
@@ -184,12 +205,10 @@ function BillofMaterial() {
   //delete a row on data component
   const deleteDataComponent = React.useCallback((id) => () => {
     try {
-      alert('You will delete this item?')
+      alert('You will delete this item?');
 
-      API.deleteABOMItem_alt(id)
-    } catch (error) {
-      
-    }
+      API.deleteABOMItem_alt(id);
+    } catch (error) {}
   });
 
   /**
@@ -305,11 +324,63 @@ function BillofMaterial() {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <DataGrid
-                      columns={goodsColumns}
-                      rows={component}
-                      duplicateMaterial={false}
-                    />
+                    <div className="wk_table_responsive">
+                      <table style={{ fontSize: '11px' }}>
+                        <tr>
+                          <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                            BOM / CBD
+                          </td>
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            <a
+                              href={`../../../production/costing/show-bom/${reconcile?.costing_id}`}
+                              target="_blank"
+                            >
+                              CBD-{padStartWithZero(reconcile?.costing_id)}
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                            Sales Order
+                          </td>
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            <a
+                              href={`../../../order/sales-order/document/${reconcile?.sales_order_id}`}
+                              target="_blank"
+                            >
+                              SO-{padStartWithZero(reconcile?.costing_id)}-
+                              {padStartWithZero(reconcile?.sales_order_id)}
+                            </a>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                            Nomor PEB
+                          </td>
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            <a
+                              href={`../../../kite/export/${exportLicense?.export_document_id}`}
+                              target="_blank"
+                            >
+                              {padStartWithZero(exportLicense?.document_number)}
+                            </a>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                            Tanggal Dokumen PEB
+                          </td>
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            {exportLicense?.date}
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <DataGrid columns={goodsColumns} rows={component} duplicateMaterial={false} />
                   </Grid>
                 </Grid>
               </Grid>

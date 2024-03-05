@@ -268,7 +268,7 @@ function FirstPage() {
                   <Typography variant="h6" style={{ marginTop: '0.5em' }}>
                     Catatan
                   </Typography>
-                  <Typography variant="subtitle">
+                  <Typography variant="body2">
                     {values?.comment ? values?.comment : ''}
                   </Typography>
                 </Grid>

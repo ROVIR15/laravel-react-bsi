@@ -381,6 +381,7 @@ function OutboundDelivery() {
               multiple
               id="upload-file"
               type="file"
+              onChange={handleOnFileChange}
               style={{ display: 'none' }}
             />
             <UploadPaper

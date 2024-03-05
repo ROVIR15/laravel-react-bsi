@@ -85,15 +85,15 @@ export default function BasicTable({ payload, terms, tax }) {
             <TableCell className="wk_primary_color wk_gray_bg" align="left">
               #
             </TableCell>
-            <TableCell className="wk_primary_color wk_gray_bg">Product Name</TableCell>
+            <TableCell className="wk_primary_color wk_gray_bg">Nama Barang</TableCell>
             <TableCell className="wk_primary_color wk_gray_bg" align="right">
-              Qty Ordered
+              Qty 
             </TableCell>
             <TableCell className="wk_primary_color wk_gray_bg" align="right">
-              Unit Price
+              Harga
             </TableCell>
             <TableCell className="wk_primary_color wk_gray_bg" align="right">
-              Total
+              Total Harga
             </TableCell>
           </TableRow>
         </TableHead>

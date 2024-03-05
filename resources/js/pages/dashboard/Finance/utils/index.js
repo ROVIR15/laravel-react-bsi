@@ -113,9 +113,11 @@ export const invoiceItemArrangedData = (payload) => {
 
 
 export const generateInvSerialNumber = (payload, type) => {
-  if(type === 1) return `SO-INV No. ${payload.id}/${payload?.sales_order?.id}-${payload?.sales_order?.sales_order?.id}/${payload.invoice_date}/${payload?.sales_order?.sales_order?.po_number}`;
-  if(type === 2) return `PO-INV No. ${payload.id}/${payload?.purchase_order?.id}-${payload?.purchase_order?.purchase_order?.id}/${payload.invoice_date}/${payload?.purchase_order?.purchase_order?.po_number}`;
-  else return `INV No.`
+  // if(type === 1) return `INV No. ${payload.id}`;
+  // if(type === 1) return `INV No. ${payload.id}`;
+  // if(type === 1) return `SO-INV No. ${payload.id}/${payload?.sales_order?.id}-${payload?.sales_order?.sales_order?.id}/${payload.invoice_date}/${payload?.sales_order?.sales_order?.po_number}`;
+  // if(type === 2) return `PO-INV No. ${payload.id}/${payload?.purchase_order?.id}-${payload?.purchase_order?.purchase_order?.id}/${payload.invoice_date}/${payload?.purchase_order?.purchase_order?.po_number}`;
+  return `INV No. ${payload.id}`
 }
 
 export const generateInvSerialNumber_alt = (payload, type) => {

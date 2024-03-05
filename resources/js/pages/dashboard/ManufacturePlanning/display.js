@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination,
+  TablePagination
 } from '@mui/material';
 //components
 import Scrollbar from '../../../components/Scrollbar';
@@ -26,10 +26,10 @@ import { fNumber } from '../../../utils/formatNumber';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'month', label: 'month', alignRight: false },
-  { id: 'year', label: 'year', alignRight: false },
-  { id: 'total_expected_output', label: 'Planned Output', alignRight: true },
-  { id: 'total_amount_of_money', label: 'Planned Output Valuation', alignRight: true },
+  { id: 'month', label: 'Bulan Perencanaan', alignRight: false },
+  { id: 'year', label: 'Tahun', alignRight: false },
+  { id: 'total_expected_output', label: 'Total Output yg Direncanakan', alignRight: true },
+  { id: 'total_amount_of_money', label: 'Total Valuasi Pengerjaan', alignRight: true }
   // { id: 'total_sewing_output', label: 'Output Realisation', alignRight: true },
   // { id: 'total_sewing_output_valuation', label: 'Output Realisation Valuation', alignRight: true }
 ];
@@ -53,7 +53,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  if(!isArray(array)) return []
+  if (!isArray(array)) return [];
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -61,13 +61,15 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_b) => _b.facility?.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(
+      array,
+      (_b) => _b.facility?.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 function DisplayBuyer({ placeHolder }) {
-
   const [goodsData, setGoodsData] = useState([]);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -77,47 +79,57 @@ function DisplayBuyer({ placeHolder }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    function isEmpty(array){
-      if(!Array.isArray(array)) return true;
+    function isEmpty(array) {
+      if (!Array.isArray(array)) return true;
       return !array.length;
     }
 
-    if(isEmpty(goodsData)) {
+    if (isEmpty(goodsData)) {
       API.getManufacturePlanning((res) => {
-		    if(!res){
+        if (!res) {
           setGoodsData([]);
         } else {
           // let data = serviceList2(res.data);
-          let data = res.map(function(payloadPerMonth){
-            let info = payloadPerMonth.items_with_price.reduce(function(initial, payloadEachOrder) {
-              // calculate expected pieces of good garment produced
-              let total_expected_output = parseFloat(payloadEachOrder?.expected_output);
+          let data = res.map(function (payloadPerMonth) {
+            let info = payloadPerMonth.items_with_price.reduce(
+              function (initial, payloadEachOrder) {
+                // calculate expected pieces of good garment produced
+                let total_expected_output = parseFloat(payloadEachOrder?.expected_output);
 
-              // calculate expected pieces of good garment valuation
-              let total_expected_valuation = total_expected_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
+                // calculate expected pieces of good garment valuation
+                let total_expected_valuation =
+                  total_expected_output *
+                  parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
 
-              // store total_sewing_output
-              // let sewing_output = parseFloat(payloadEachOrder?.ckck[0]?.total_output);
+                // store total_sewing_output
+                // let sewing_output = parseFloat(payloadEachOrder?.ckck[0]?.total_output);
 
-              // calculate valuation of garment sewing output
-              // let val_sewing_output = sewing_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
+                // calculate valuation of garment sewing output
+                // let val_sewing_output = sewing_output * parseFloat(payloadEachOrder?.info?.avg_price[0]?.cm_price_avg);
 
-              return {
-                total_amount_of_money: initial.total_amount_of_money + total_expected_valuation,
-                total_expected_output: initial.total_expected_output + total_expected_output,
-                // total_sewing_output: initial.total_sewing_output + sewing_output,
-                // total_sewing_output_valuation: initial.total_sewing_output + val_sewing_output
-              }
-            }, { total_expected_output: 0, total_amount_of_money: 0, total_sewing_output: 0});
+                return {
+                  total_amount_of_money: initial.total_amount_of_money + total_expected_valuation,
+                  total_expected_output: initial.total_expected_output + total_expected_output
+                  // total_sewing_output: initial.total_sewing_output + sewing_output,
+                  // total_sewing_output_valuation: initial.total_sewing_output + val_sewing_output
+                };
+              },
+              { total_expected_output: 0, total_amount_of_money: 0, total_sewing_output: 0 }
+            );
 
-            return {...info, month: payloadPerMonth?.month, year: payloadPerMonth?.year, id: payloadPerMonth?.id}
-          })
+            return {
+              ...info,
+              month: payloadPerMonth?.month,
+              year: payloadPerMonth?.year,
+              id: payloadPerMonth?.id
+            };
+          });
 
           setGoodsData(data);
         }
-        });
-      }
-  }, [])
+      });
+    }
+  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -167,18 +179,18 @@ function DisplayBuyer({ placeHolder }) {
 
   const handleDeleteData = (event, id) => {
     event.preventDefault();
-    API.deleteService(id, function(res){
-      if(res.success) setGoodsData([]);
-    }).catch(function(error){
-      alert('error')
+    API.deleteService(id, function (res) {
+      if (res.success) setGoodsData([]);
+    }).catch(function (error) {
+      alert('error');
     });
-  }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - goodsData.length) : 0;
 
   const filteredData = applySortFilter(goodsData, getComparator(order, orderBy), filterName);
 
-  const isDataNotFound = filteredData.length === 0;  
+  const isDataNotFound = filteredData.length === 0;
 
   return (
     <Card>
@@ -205,7 +217,14 @@ function DisplayBuyer({ placeHolder }) {
               {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const { id, month, year, total_amount_of_money, total_expected_output, total_sewing_output, total_sewing_output_valuation
+                  const {
+                    id,
+                    month,
+                    year,
+                    total_amount_of_money,
+                    total_expected_output,
+                    total_sewing_output,
+                    total_sewing_output_valuation
                   } = row;
                   const isItemSelected = selected.indexOf(name) !== -1;
                   return (
@@ -217,15 +236,17 @@ function DisplayBuyer({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{index + 1}</TableCell>
-                      <TableCell align="left">{`Planning - ${moment(new Date(`${year}-${month}`)).format("MMMM")}`}</TableCell>
+                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{`Planning - ${moment(
+                        new Date(`${year}-${month}`)
+                      ).format('MMMM')}`}</TableCell>
                       <TableCell align="left">{year}</TableCell>
-                      <TableCell align="right">{fNumber(total_expected_output)}</TableCell>
-                      <TableCell align="right">{fNumber(total_amount_of_money)}</TableCell>
+                      <TableCell align="right">{`${fNumber(total_expected_output)} pcs`}</TableCell>
+                      <TableCell align="right">{`Rp. ${fNumber(total_amount_of_money)}`}</TableCell>
                       {/* <TableCell align="right">{fNumber(total_sewing_output)}</TableCell> */}
                       {/* <TableCell align="right">{fNumber(total_sewing_output_valuation)}</TableCell> */}
                       <TableCell align="right">
-                        <MoreMenu id={id} deleteActive={false}/>
+                        <MoreMenu id={id} deleteActive={false} />
                       </TableCell>
                     </TableRow>
                   );
@@ -258,7 +279,7 @@ function DisplayBuyer({ placeHolder }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Card>
-  )
+  );
 }
 
-export default DisplayBuyer
+export default DisplayBuyer;

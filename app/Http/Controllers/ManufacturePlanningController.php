@@ -20,6 +20,7 @@ class ManufacturePlanningController extends Controller
     {
         $param = $request->all();
         $query = ManufacturePlanning::with('items_with_price')
+                  ->orderBy('id', 'desc')
                   ->get();
 
         return response()->json($query);

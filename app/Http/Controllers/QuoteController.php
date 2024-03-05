@@ -57,6 +57,7 @@ class QuoteController extends Controller
             })
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
             // return response()->json($query);
             return new QuoteViewCollection($query);
@@ -69,6 +70,7 @@ class QuoteController extends Controller
             })
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
             return new QuoteViewCollection($query);
             break;
@@ -78,13 +80,17 @@ class QuoteController extends Controller
             $query = Quote::with('sum', 'status')->where('quote_type', 'SO')
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
 
             return new QuoteViewCollection($query);
             break;
 
           default:
-            $query = Quote::with('sum', 'status')->where('quote_type', 'SO')->get();
+            $query = Quote::with('sum', 'status')
+              ->where('quote_type', 'SO')
+              ->orderBy('id', 'desc')
+              ->get();
             return new QuoteViewCollection($query);
         }
       case 'PO':
@@ -97,6 +103,7 @@ class QuoteController extends Controller
             })
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
 
             return new QuoteViewCollection($query);
@@ -109,6 +116,7 @@ class QuoteController extends Controller
             })
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
 
             return new QuoteViewCollection($query);
@@ -121,6 +129,7 @@ class QuoteController extends Controller
               ->where('quote_type', 'PO')
               ->whereYear('created_at', '=', $year)
               ->whereMonth('created_at', '=', $month)
+              ->orderBy('id', 'desc')
               ->get();
 
             return new QuoteViewCollection($query);
@@ -129,6 +138,7 @@ class QuoteController extends Controller
           default:
             $query = Quote::with('sum', 'status')
               ->where('quote_type', 'PO')
+              ->orderBy('id', 'desc')
               ->get();
 
             return new QuoteViewCollection($query);
@@ -138,6 +148,7 @@ class QuoteController extends Controller
         $query = Quote::with('sum')
           ->whereYear('created_at', '=', $year)
           ->whereMonth('created_at', '=', $month)
+          ->orderBy('id', 'desc')
           ->get();
 
         return new QuoteViewCollection($query);

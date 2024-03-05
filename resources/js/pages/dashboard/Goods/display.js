@@ -23,7 +23,7 @@ import { machineList } from '../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'id', label: 'SKU ID', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'unit_measurement', label: 'Satuan', alignRight: false },
   { id: 'category', label: 'Kategori', alignRight: false },
@@ -205,7 +205,7 @@ function DisplayBuyer({ placeHolder }) {
                       selected={isItemSelected}
                       aria-checked={isItemSelected}
                     >
-                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">{sku_id}</TableCell>
                       <TableCell align="left">{name}</TableCell>
                       <TableCell align="left">{unit_measurement}</TableCell>
                       <TableCell align="left">{category_name}</TableCell>

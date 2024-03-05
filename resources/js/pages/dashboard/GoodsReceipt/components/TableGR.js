@@ -101,7 +101,7 @@ export default function BasicTable({ payload }) {
                     <td className="wk_width_1 wk_padd_8_20">{`${row.qty_order} ${row.satuan}`}</td>
                     <td className="wk_width_1 wk_padd_8_20">{`${parseFloat(row.qty).toFixed(2)} ${row.satuan}`}</td>
                     <td className="wk_width_1 wk_padd_8_20">{`${parseFloat(row.qty_shipped).toFixed(2)} ${row.satuan}`}</td>
-                    <td className="wk_width_3 wk_padd_8_20">{row?.description}</td>
+                    <td className="wk_width_3 wk_padd_8_20">{row?.costing_name}</td>
                   </tr>
                 ))}
               </tbody>

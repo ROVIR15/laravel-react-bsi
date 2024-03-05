@@ -44,7 +44,13 @@ class Goods extends JsonResource
             ->join("product_feature as pf", function($join){
               $join->on("p.id", "=", "pf.product_id");
             })
-            ->select("pf.id", "pf.size", "pf.color")
+            ->select(DB::raw("CONCAT(
+                    LPAD(g.id, 4, '0'), 
+                    '-',
+                    LPAD(p.id, 4, '0'), 
+                    '-',
+                    LPAD(pf.id, 4, '0')
+                  ) as sku_id"), "pf.id", "pf.size", "pf.color")
             ->where("g.id", "=", $this->id)
             ->get()
         ];

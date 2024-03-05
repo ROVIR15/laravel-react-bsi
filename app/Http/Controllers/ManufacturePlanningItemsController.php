@@ -15,6 +15,7 @@ class ManufacturePlanningItemsController extends Controller
         $query = BOM::whereHas('status', function($query3){
           $query3->whereIn('status_type', ['Approve', 'Review']);
         })
+        ->orderBy('id', 'desc')
         ->get();
         return response()->json($query);
       } catch (\Throwable $th) {

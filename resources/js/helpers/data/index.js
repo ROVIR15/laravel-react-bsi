@@ -1097,11 +1097,14 @@ export function _shipmentItem(array) {
     
     const sku_id = generalizeSKU(order_item?.product_feature?.product?.goods_id, order_item?.product_feature?.product?.id, order_item?.product_feature?.id);
 
+    let costing_name_ = order_item?.costing_item?.costing?.name;
+
     let _qty = qty > 0 ? qty : order_item?.qty 
     return {
       id,
       sku_id,
       item_name,
+      costing_name: costing_name_ ? `Pembelian untuk BOM style: ${costing_name_}` : '',
       order_item_id: order_item?.id,
       goods_id: order_item?.product_feature?.product?.goods?.id,
       product_feature_id: order_item?.product_feature?.id,

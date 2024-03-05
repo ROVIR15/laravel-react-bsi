@@ -46,7 +46,10 @@ class BOMItemController extends Controller
     public function getCostingId()
     {
         try {
-            $query = BOM::select('id', 'name')->get()->map(function ($item) {
+            $query = BOM::select('id', 'name')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'order_id' => $item->id,

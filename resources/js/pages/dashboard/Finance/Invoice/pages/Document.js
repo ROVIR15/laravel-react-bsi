@@ -103,13 +103,14 @@ function FirstPage() {
   const [selectedValueSO, setSelectedValueSO] = React.useState({
     name: '',
     address: '',
-    postal_code: 0
+    postal_code: 0,
+    npwp: ''
   });
 
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. Buana Sandang Indonesia',
     address:
-      'Jl. Raya Albisindo Desa Gondosari, RT/RW 02/06, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+      'Jl. Raya Albisindo Desa Gondosari, RT 01 RW 05, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
     postal_code: 59354,
     phone_number: '(0291) 4251259'
   });
@@ -148,8 +149,11 @@ function FirstPage() {
     let _data = _partyAddress(payload.party);
     setSelectedValueSO({
       name: _data.name,
-      address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
-      postal_code: _data.postal_code
+      address: `${_data.street} ${_data.city ? _data.city : ''} ${
+        _data.province ? _data.province : ''
+      } ${_data.country ? _data.country : ''}`,
+      postal_code: _data.postal_code,
+      npwp: _data.npwp ? _data.npwp : ''
     });
 
     setInvInfo({
@@ -174,21 +178,32 @@ function FirstPage() {
     let _isSubmitted = _statusOrderData.filter(
       (item) => item.status_type.toLowerCase() === 'submit'
     );
-    
-    if(_isSubmitted.length > 0) {
+
+    if (_isSubmitted.length > 0) {
       // let salt = _isSubmitted?.id + _isSubmitted?.order_id + _isSubmitted?.user_id;
       let { user_info, ...rest } = _isSubmitted[0];
-      setValueSubmit({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by submitter'});
+      setValueSubmit({
+        id: rest.id,
+        created_at: rest.created_at,
+        name: user_info?.name,
+        email: user_info?.email,
+        status: 'Signed by submitter'
+      });
       setIsSubmitted(true);
     }
 
-    if(_isReviewed.length > 0) {
+    if (_isReviewed.length > 0) {
       // let salt = _isReviewed?.id + _isReviewed?.order_id + _isReviewed?.user_id;
       let { user_info, ...rest } = _isReviewed[0];
-      setValueReview({id: rest.id, created_at: rest.created_at, name: user_info?.name, email: user_info?.email, status: 'Signed by reviewer'});
+      setValueReview({
+        id: rest.id,
+        created_at: rest.created_at,
+        name: user_info?.name,
+        email: user_info?.email,
+        status: 'Signed by reviewer'
+      });
       setIsReviewed(true);
     }
-
   };
 
   const handleDownload = React.useCallback(() => {
@@ -441,7 +456,7 @@ function FirstPage() {
                   <Box>
                     <div>
                       <Typography variant="overline" display="block" gutterBottom>
-                        Invoice From
+                        Tagihan Dari
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {selectedValueSH.name}
@@ -459,7 +474,7 @@ function FirstPage() {
                   <Box>
                     <div>
                       <Typography variant="overline" display="block" gutterBottom>
-                        Invoice To
+                        Tagihan Ke
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {selectedValueSO.name}
@@ -470,6 +485,10 @@ function FirstPage() {
                       <Typography variant="body1" gutterBottom component="div">
                         {selectedValueSO.postal_code}
                       </Typography>
+
+                      <Typography variant="body1" gutterBottom component="div">
+                        {`NPWP: ${selectedValueSO.npwp}`}
+                      </Typography>
                     </div>
                   </Box>
                 </Grid>
@@ -478,7 +497,7 @@ function FirstPage() {
                   <Box>
                     <div>
                       <Typography variant="overline" display="block" gutterBottom>
-                        Issued Date
+                        Tanggal Invoice
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {moment(invInfo.invoice_date, 'YYYY-MM-DD').format('DD MMMM YYYY')}
@@ -490,7 +509,7 @@ function FirstPage() {
                   <Box>
                     <div>
                       <Typography variant="overline" display="block" gutterBottom>
-                        Due Date
+                        Jatuh Tempo
                       </Typography>
                       <Typography variant="h6" gutterBottom component="div">
                         {moment(invInfo.invoice_date, 'YYYY-MM-DD')
@@ -511,7 +530,20 @@ function FirstPage() {
               </GridItemX>
 
               <Grid item xs={12}>
-                <Typography variant="h5">Catatan</Typography>
+                <Typography variant="h5">Pembayaran</Typography>
+                <Typography variant="body1">
+                  <b>PT. Buana Sandang Indonesia</b>
+                </Typography>
+                <Typography variant="body1">
+                  <b>0310371394 (IDR)</b>
+                </Typography>
+                <Typography variant="body1">
+                  <b>Bank BCA KCU Kudus</b>
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography variant="h5">Keterangan</Typography>
                 {invInfo?.description?.split('\n').map((item) => {
                   return <Typography variant="body2">{`${item}`}</Typography>;
                 })}
@@ -525,49 +557,21 @@ function FirstPage() {
                   style={{ margin: '12px 0' }}
                 >
                   <div className="wk_sign wk_text_center">
-                    {/* <img
-                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
-                      alt="Sign"
-                      style={{ margin: 'auto' }}
-                    /> */}
-                    {isEmpty(valueSubmit) ? (
-                      <div style={{ height: '75px' }} />
-                    ) : (
-                      <QRCode
-                        size={256}
-                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
-                        value={JSON.stringify(valueSubmit)}
-                        viewBox={`0 0 256 256`}
-                      />
-                    )}
+                    <p className="wk_m0 wk_f14 wk_primary_color">Pembuat</p>
+                    <div style={{ height: '75px' }} />
 
                     {/* <div style={{ height: '50px' }} /> */}
-                    <p className="wk_m0 wk_ternary_color">
-                      {isEmpty(valueSubmit) ? 'Not Signed Yet' : valueSubmit?.name}
-                    </p>
-                    <p className="wk_m0 wk_f16 wk_primary_color">Finance Person</p>
+                    <p className="wk_m0 wk_primary_color">.................................</p>
+                    <p className="wk_m0 wk_primary_color">[Dept. Keuangan]</p>
                   </div>
 
                   <div className="wk_sign wk_text_center">
-                    {/* <img
-                      src="https://brandeps.com/icon-download/B/Barcode-icon-vector-02.svg"
-                      alt="Sign"
-                      style={{ margin: 'auto' }}
-                    /> */}
-                    {isEmpty(valueReview) ? (
-                      <div style={{ height: '75px' }} />
-                    ) : (
-                      <QRCode
-                        size={256}
-                        style={{ height: '75px', maxWidth: '100%', width: '100%' }}
-                        value={JSON.stringify(valueReview)}
-                        viewBox={`0 0 256 256`}
-                      />
-                    )}
-                    <p className="wk_m0 wk_ternary_color">
-                      {isEmpty(valueReview) ? 'Not Signed Yet' : valueReview?.name}
-                    </p>
-                    <p className="wk_m0 wk_f16 wk_primary_color">Direktur</p>
+                    <p className="wk_m0 wk_f14 wk_primary_color">Penerima</p>
+                    <div style={{ height: '75px' }} />
+
+                    {/* <div style={{ height: '50px' }} /> */}
+                    <p className="wk_m0 wk_primary_color">.................................</p>
+                    <p className="wk_m0 wk_primary_color">[Direktur]</p>
                   </div>
                 </Stack>
               </Grid>

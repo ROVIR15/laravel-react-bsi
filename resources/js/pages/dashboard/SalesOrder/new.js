@@ -141,7 +141,13 @@ function SalesOrder() {
       } catch (error) {
         enqueueSnackbar('', { variant: 'failedAlert' });
       }
+
       setSubmitting(false);
+      handleReset();
+      setItems([]);
+      setSelectedValueSH({});
+      setSelectedValueSO({});
+      _setLink(null);
     }
   });
 
@@ -481,14 +487,18 @@ function SalesOrder() {
   const [optionsCosting, setOptionsCosting] = React.useState([]);
   const loadingCosting = optionsCosting.length === 0;
 
-  const [choosen, setChoosen] = React.useState();
+  const [choosen, setChoosen] = React.useState(0);
 
   const handleAutoComplete = (value) => {
-    let val = value.split('-')[0];
-    if (!isUndefined(val) && val !== 'undefined') {
+    if (value === 'undefined-undefined') {
+      return;
+    } else {
       let val = value.split('-')[0];
-      setFieldValue('costing_id', parseInt(val));
-      setChoosen(parseInt(val));
+      if (!isUndefined(val) && val !== 'undefined') {
+        let val = value.split('-')[0];
+        setFieldValue('costing_id', parseInt(val));
+        setChoosen(parseInt(val));
+      }
     }
   };
 
@@ -566,20 +576,16 @@ function SalesOrder() {
                           onInputChange={(event, newInputValue) => {
                             handleAutoComplete(newInputValue);
                           }}
-                          value={choosen}
                           options={optionsCosting}
                           isOptionEqualToValue={(option, value) => {
-                            return option.id === value;
+                            if (option.id === value) return option;
                           }}
-                          getOptionLabel={(option) => `${option.id}-${option.name}`}
-                          renderInput={(params) => (
-                            <TextField
-                              fullWidth
-                              error={Boolean(touched.costing_id && errors.costing_id)}
-                              helperText={touched.costing_id && errors.costing_id}
-                              {...params}
-                            />
-                          )}
+                          error={Boolean(touched.costing_id && errors.costing_id)}
+                          helperText={touched.costing_id && errors.costing_id}
+                          getOptionLabel={(option) => {
+                            return `${option.id}-${option.name}`;
+                          }}
+                          renderInput={(params) => <TextField fullWidth {...params} />}
                         />
                       </Stack>
                     </Grid>

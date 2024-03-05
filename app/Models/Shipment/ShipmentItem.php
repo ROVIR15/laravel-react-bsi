@@ -24,7 +24,9 @@ class ShipmentItem extends Model
     ];
 
     public function order_item(){
-      return $this->belongsTo('App\Models\Order\OrderItem', 'order_item_id')->with(['product_feature' => function($query){
+      return $this->belongsTo('App\Models\Order\OrderItem', 'order_item_id')
+      ->with('costing_item')
+      ->with(['product_feature' => function($query){
         return $query->with('product_category', 'product');
       }]);
     }

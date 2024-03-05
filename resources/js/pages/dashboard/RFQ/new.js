@@ -41,7 +41,7 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../helpers/data';
 import { RFQSchema } from '../../../helpers/FormerSchema';
-import { isEmpty, isNull } from 'lodash';
+import { isEmpty, isNull, isUndefined } from 'lodash';
 
 // Loading Page
 import LoadingPage from '../../../components/LoadingPage';
@@ -325,14 +325,31 @@ function RFQ() {
   };
 
   React.useEffect(() => {
+
     setItems((prevItems) => {
       return prevItems.map((item) => {
         if (item.currency_id !== values.currency_id) {
-          let current_value = item.unit_price;
-          let initialCurrency = item.currency_id === 1 ? 'usd' : 'idr';
-          let convertedCurrency = parseInt(values.currency_id) === 1 ? 'usd' : 'idr';
-          let converted_val = exchanger(current_value, initialCurrency, convertedCurrency);
-          return { ...item, unit_price: converted_val };
+
+          let currentCurrency = parseInt(item.currency_id) === 1 ? 'usd' : 'idr';
+          let currentPrice = item.unit_price;
+
+          // if there is initial price its mean that the price not converted yet to the another form
+          if ( 'initial_price' in item && 'initial_currency' in item){
+            let convertedCurrency = parseInt(values.currency_id) === 1 ? 'usd' : 'idr';
+            let converted_val = exchanger(currentPrice, currentCurrency, convertedCurrency);
+
+            return { ...item, unit_price: converted_val, currency_id: values.currency_id};
+
+          } else {
+
+            let initialPrice = currentPrice;
+            let initialCurrency = currentCurrency;
+
+            let convertedCurrency = parseInt(values.currency_id) === 1 ? 'usd' : 'idr';
+            let converted_val = exchanger(initialPrice, initialCurrency, convertedCurrency);
+
+            return { ...item, unit_price: converted_val, currency_id: values.currency_id, initial_price: initialPrice, initial_currency: initialCurrency };
+          }
         }
       });
     });

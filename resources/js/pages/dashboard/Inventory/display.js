@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Paper,
   Button,
   Card,
+  FormControl,
   Table,
   TableBody,
   TableRow,
   TableCell,
   TableContainer,
-  TablePagination
+  TablePagination,
+  CardContent,
+  Stack,
+  InputLabel,
+  Select,
+  MenuItem,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
@@ -138,19 +147,19 @@ function DisplayInventory({ placeHolder }) {
     // Convert JSON to CSV
     jsonexport(data, function (err, csv) {
       if (err) return console.error(err);
-      
+
       // Create a Blob containing the CSV data
       const blob = new Blob([csv], { type: 'text/csv' });
-      
+
       // Create a link to download the file
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = 'master_data_barang.csv';
-      
+
       // Trigger the download
       link.click();
     });
-  }
+  };
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -219,114 +228,159 @@ function DisplayInventory({ placeHolder }) {
   const isDataNotFound = filteredData.length === 0;
 
   return (
-    <Card>
-      <Button variant="contained" startIcon={<Icon icon={downloadIcon} />} onClick={handleDownload}>
+    <Stack direction="column" spacing={2}>
+      <ScrapModal id={selectedData} modalOpen={modalManageScrap} onCloseModal={handleCloseModal} />
+      <Paper style={{ padding: '1em 0.5em' }}>
+        <Stack direction="row" spacing={2}>
+          <FormControl fullWidth>
+            <Autocomplete
+              fullWidth
+              disablePortal
+              onInputChange={(event, newInputValue) => {
+                let newValue = newInputValue.split('-')[0];
+                let _event = { target: { value: parseInt(newValue) } };  
+                handleFilterCosting(_event);
+              }}
+              options={optionsCosting}
+              isOptionEqualToValue={(option, value) => {
+                if (option.id === value) return option;
+              }}
+              getOptionLabel={(option) => {
+                return `${option.id}-${option.name}`;
+              }}
+              renderInput={(params) => <TextField fullWidth {...params} label="CBD/Sales Order"/>}
+            />
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Facility</InputLabel>
+            <Select value={filterFacility} label="Buyer" onChange={handleFilterFacility}>
+              <MenuItem value={0}>All</MenuItem>
+              {isArray(optionsFilter)
+                ? optionsFilter?.map(function (item) {
+                    return <MenuItem value={item.id}>{item.name}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </FormControl>
+
+          <Button variant="contained" onClick={fetchData}>
+            Go
+          </Button>
+        </Stack>
+      </Paper>
+      <Card>
+        <ListToolbar
+          // filter costing
+          filterCosting={filterCosting}
+          costingFilterActive={false}
+          onFilterCosting={handleFilterCosting}
+          costingList={optionsCosting}
+          // filter cateogry
+          categoryFilterActive={true}
+          filterCategory={filterCategory}
+          onFilterCategoryAndSub={handleFilterCategory}
+          // filter facility
+          facilityFilterActive={false}
+          filterFacility={filterFacility}
+          filterList={optionsFilter}
+          onFilterFacility={handleFilterFacility}
+          // name
+          numSelected={selected.length}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+          placeHolder={placeHolder}
+          onGo={fetchData}
+        />
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table size="small">
+              <ListHead
+                active={false}
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={data.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
+              <TableBody>
+                {filteredData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    const {
+                      id,
+                      item_name,
+                      sku_id,
+                      unit_measurement,
+                      facility_name,
+                      category,
+                      current_stock
+                    } = row;
+
+                    const isItemSelected = selected.includes(id);
+
+                    return (
+                      <TableRow
+                        hover
+                        key={id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={isItemSelected}
+                        aria-checked={isItemSelected}
+                        onClick={(event) => handleClick(event, id)}
+                      >
+                        <TableCell align="left">{sku_id}</TableCell>
+                        <TableCell align="left">{item_name}</TableCell>
+                        <TableCell align="left">{facility_name}</TableCell>
+                        <TableCell align="left">{category}</TableCell>
+                        <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
+                        <TableCell align="right">
+                          <MoreMenu
+                            scrapActive={true}
+                            handleOpenModalForScrap={() => handleOpenModal(id)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+                {isDataNotFound && (
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <SearchNotFound searchQuery={filterName} />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={data.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+
+      <Button
+        fullWidth
+        variant="contained"
+        startIcon={<Icon icon={downloadIcon} />}
+        onClick={handleDownload}
+      >
         Download
       </Button>
-
-      <ScrapModal id={selectedData} modalOpen={modalManageScrap} onCloseModal={handleCloseModal} />
-      <ListToolbar
-        // filter costing
-        filterCosting={filterCosting}
-        costingFilterActive={true}
-        onFilterCosting={handleFilterCosting}
-        costingList={optionsCosting}
-        // filter cateogry
-        categoryFilterActive={true}
-        filterCategory={filterCategory}
-        onFilterCategoryAndSub={handleFilterCategory}
-        // filter facility
-        facilityFilterActive={true}
-        filterFacility={filterFacility}
-        filterList={optionsFilter}
-        onFilterFacility={handleFilterFacility}
-        // name
-        numSelected={selected.length}
-        filterName={filterName}
-        onFilterName={handleFilterByName}
-        placeHolder={placeHolder}
-        onGo={fetchData}
-      />
-      <Scrollbar>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table size="small">
-            <ListHead
-              active={false}
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={data.length}
-              numSelected={selected.length}
-              onRequestSort={handleRequestSort}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {filteredData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const {
-                    id,
-                    item_name,
-                    sku_id,
-                    unit_measurement,
-                    facility_name,
-                    category,
-                    current_stock
-                  } = row;
-
-                  const isItemSelected = selected.includes(id);
-
-                  return (
-                    <TableRow
-                      hover
-                      key={id}
-                      tabIndex={-1}
-                      role="checkbox"
-                      selected={isItemSelected}
-                      aria-checked={isItemSelected}
-                      onClick={(event) => handleClick(event, id)}
-                    >
-                      {/* <TableCell align="left">{id}</TableCell> */}
-                      <TableCell align="left">{sku_id}</TableCell>
-                      <TableCell align="left">{item_name}</TableCell>
-                      <TableCell align="left">{facility_name}</TableCell>
-                      <TableCell align="left">{category}</TableCell>
-                      <TableCell align="left">{`${current_stock} ${unit_measurement}`}</TableCell>
-                      <TableCell align="right">
-                        <MoreMenu
-                          scrapActive={true}
-                          handleOpenModalForScrap={() => handleOpenModal(id)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-              {isDataNotFound && (
-                <TableRow>
-                  <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Scrollbar>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Card>
+    </Stack>
   );
 }
 

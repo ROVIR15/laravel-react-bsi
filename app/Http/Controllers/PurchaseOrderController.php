@@ -371,6 +371,7 @@ class PurchaseOrderController extends Controller
     try {
       $query = PurchaseOrder::select('id as purchase_order_id', 'order_id', 'po_number', 'issue_date')
         ->whereDoesntHave('invoice')
+        ->orderBy('id', 'desc')
         ->get();
     } catch (\Throwable $th) {
       //throw $th;

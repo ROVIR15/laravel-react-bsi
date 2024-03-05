@@ -128,7 +128,7 @@ function OutboundDelivery({ placeHolder }) {
             return init; 
           }, []);
 
-          setOptionsBuyer(__costing);
+          setOptionsBuyer([...__costing, {id: 0, name: 'All'}]);
         }
       });
     } catch (error) {

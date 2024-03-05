@@ -3,13 +3,15 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import {
+  Autocomplete,
   IconButton,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
   Stack,
-  styled
+  styled,
+  TextField
 } from '@mui/material';
 
 import { Icon } from '@iconify/react';
@@ -76,7 +78,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
 
   const handleSelect = (e) => {
     setSelectedCosting(e.target.value);
-  }
+  };
 
   React.useEffect(() => {
     // console.log(selectedCosting)
@@ -96,11 +98,11 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
       }
     } else {
       try {
-        API.getProductFeatureFinishedGoods((res)=>{
-          if(!res) return;
-          if(!res.data) setOptions([])
+        API.getProductFeatureFinishedGoods((res) => {
+          if (!res) return;
+          if (!res.data) setOptions([]);
           else setOptions(res.data);
-        })
+        });
       } catch {
         alert('error');
       }
@@ -127,7 +129,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
 
           <div>
             <InputLabel id="costing_name">Pilih Costing</InputLabel>
-            <Select
+            {/* <Select
               onChange={handleSelect}
               value={selectedCosting}
               input={<OutlinedInput label="Name" />}
@@ -138,7 +140,22 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
               {dataCosting?.map(function (item) {
                 return <MenuItem value={item.id}>{item.name}</MenuItem>;
               })}
-            </Select>
+            </Select> */}
+            <Autocomplete
+              size="small"
+              disablePortal
+              onInputChange={(event, newInputValue) => {
+                let newValue = newInputValue.split('-')[0];
+                let _event = {target: { value: newValue}}
+                handleSelect(_event);
+              }}
+              options={dataCosting}
+              isOptionEqualToValue={(option, value) => {
+                return option.id === value;
+              }}
+              getOptionLabel={(option) => `${option.name}`}
+              renderInput={(params) => <TextField fullWidth {...params} />}
+            />
           </div>
 
           <Table list={options} selected={items} setSelected={setItems} />

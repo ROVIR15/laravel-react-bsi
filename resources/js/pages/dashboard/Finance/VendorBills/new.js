@@ -52,8 +52,7 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 function Invoice() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. BSI Indonesia',
-    address:
-      'Jalan Albisindo Raya no 24, Kec. Kaliwungu, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+    address: 'Jalan Raya Albisindo Desa Gondosari RT 01 RW 05, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
     postal_code: 42133,
     phone_number: '(0291) 2381023'
   });

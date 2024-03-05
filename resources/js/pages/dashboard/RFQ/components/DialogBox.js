@@ -134,7 +134,7 @@ function SimpleDialog(props) {
     <DialogStyled onClose={handleClose} open={open} fullWidth>
       <Stack direction="row" justifyContent="space-between" alignItems="center" pt={"12px"} pl={"20px"} pr={"20px"}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Select Buyer
+          Select Supplier
         </Typography>
         <IconButton onClick={handleClose} color="error">
           <Icon icon={closeCircle}/>

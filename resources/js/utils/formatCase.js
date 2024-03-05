@@ -15,3 +15,11 @@ export function firstLetterUpperCase(str) {
   if(isEmpty(str)  || isUndefined(str)) return;
   return str?.charAt(0).toUpperCase() + str?.slice(1);
 }
+
+export function strPadLeft(value, length, padChar) {
+  value = isString(value) ? value : String(value)
+  while (value.length < length) {
+      value = padChar + value;
+  }
+  return value;
+}

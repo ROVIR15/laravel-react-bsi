@@ -29,10 +29,10 @@ import { array } from 'yup';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
-  height: 96,
+  // height: 96,
   display: 'flex',
-  justifyContent: 'space-between',
-  padding: theme.spacing(0, 1, 0, 3)
+  justifyContent: 'space-between'
+  // padding: theme.spacing(0, 1, 0, 3)
 }));
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
@@ -89,7 +89,6 @@ export default function ListToolbar({
   onDeletedSelected,
   placeHolder
 }) {
-
   function listCosting() {
     if (costingFilterActive)
       return (
@@ -146,12 +145,6 @@ export default function ListToolbar({
   return (
     <RootStyle>
       <Stack direction="row" spacing={2} sx={{ width: '100%' }}>
-        {listCosting()}
-
-        {listFacility()}
-
-        <Button onClick={onGo}>Go</Button>
-
         {categoryAndSubCategory()}
 
         <SearchStyle

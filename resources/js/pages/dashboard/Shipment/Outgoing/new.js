@@ -146,7 +146,8 @@ function OutboundDelivery() {
         ...values,
         shipment_type_id: 2,
         user_id: user.id,
-        OD_items: items
+        OD_items: items,
+        imageUrl: null
       };
       try {
         API.insertShipment(_data, (res) => {

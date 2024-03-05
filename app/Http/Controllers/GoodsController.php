@@ -85,6 +85,7 @@ class GoodsController extends Controller
                 return [
                   'id' => $product->id,
                   'goods_id' => $product->goods_id,
+                  'sku_id' => str_pad($product->goods_id, 4, '0', STR_PAD_LEFT) .  '-' . str_pad($product->id, 4, 0, STR_PAD_LEFT),
                   'name' => $goods->name,
                   'unit_measurement' => $goods->unit_measurement,
                   'value' => $goods->value,
@@ -97,6 +98,7 @@ class GoodsController extends Controller
                 return [
                   'id' => $product->id,
                   'goods_id' => $product->goods_id,
+                  'sku_id' => str_pad($product->goods_id, 4, '0', STR_PAD_LEFT) .  '-' . str_pad($product->id, 4, 0, STR_PAD_LEFT),
                   'name' => $goods->name,
                   'unit_measurement' => $goods->unit_measurement,
                   'value' => $goods->value,

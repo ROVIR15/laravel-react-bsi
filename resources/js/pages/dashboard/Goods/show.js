@@ -38,6 +38,9 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { useSnackbar } from 'notistack';
 
+import { strPadLeft } from '../../../utils/formatCase';
+import { isUndefined } from 'lodash';
+
 const UploadPaper = styled(Button)(({ theme }) => ({
   outline: 'none',
   padding: '40px 8px',
@@ -196,8 +199,8 @@ function Goods() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', headerName: 'ID Feature', editable: false, visible: 'hide' },
-      { field: 'name', headerName: 'Name', editable: false },
+      { field: 'sku_id', headerName: 'SKU ID', editable: false, visible: 'hide', width: 150 },
+      { field: 'name', headerName: 'Name', editable: false , width: 350},
       { field: 'size', headerName: 'Size', editable: true },
       { field: 'color', headerName: 'Color', editable: true },
       { field: 'brand', headerName: 'Brand', editable: false },
@@ -243,22 +246,36 @@ function Goods() {
     if (!id) return;
     API.getAGoods(id, function (res) {
       if (!res) alert('Something went wrong!');
-      setValues({
-        ...values,
-        product_id: res.data.product_id[0].id,
-        name: res.data.name,
-        unit_measurement: res.data.unit_measurement,
-        gross_weight: res.data.gross_weight,
-        category: res.data.category[0].id,
-        value: res.data.value,
-        brand: res.data.brand
-      });
-      setFile(res.data.imageUrl);
-      var temp = res.data.goods_items;
-      temp = temp.map(function (x) {
-        return { ...x, name: res.data.name, brand: res.data.brand };
-      });
-      setItems(temp);
+      if (!res?.data) alert('Something went wrong!');
+      else {
+        let data = res?.data;
+
+        setValues({
+          ...values,
+          product_id: data?.product_id[0]?.id,
+          name: data?.name,
+          unit_measurement: data?.unit_measurement,
+          gross_weight: data?.gross_weight,
+          category: data?.category[0]?.id,
+          value: data?.value,
+          brand: data?.brand
+        });
+
+        setFile(data?.imageUrl);
+
+        var temp = data?.goods_items;
+
+        temp = temp?.map(function (x) {
+          return {
+            ...x,
+            sku_id: x.sku_id,
+            name: data?.name,
+            brand: data?.brand
+          };
+        });
+
+        setItems(temp);
+      }
     });
   }, [id]);
 
