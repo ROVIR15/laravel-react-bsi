@@ -4913,9 +4913,9 @@ const main = {
         cb(err.response);
       });
   },
-  getLogs(cb) {
+  getLogs(param, cb) {
     axios
-      .get(uri + '/logs')
+      .get(uri + '/logs' + param)
       .then(function (res) {
         cb(res.data);
       })
