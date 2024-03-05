@@ -408,7 +408,7 @@ function SalesOrder() {
     setItems(c);
   };
 
-  const editableUser = user.id === 2 ? true : false;
+  const editableUser = user.id === 2 || user.id === 46 ? true : false;
   const roles = !isEmpty(user) ? user?.role : [];
   const editableCondition = isArray(roles)
     ? roles.some(function (item) {
