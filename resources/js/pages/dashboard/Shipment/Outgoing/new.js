@@ -137,7 +137,8 @@ function OutboundDelivery() {
       delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       est_delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       comment: 'nothing',
-      subcontract_flag: false
+      subcontract_flag: false,
+      imageUrl: null
     },
     validationSchema: OutboundDeliverySchema,
     onSubmit: (values) => {

@@ -163,7 +163,8 @@ function OutboundDelivery() {
       serial_number: '',
       delivery_date: moment(new Date()).format('YYYY-MM-DD'),
       est_delivery_date: moment(new Date()).format('YYYY-MM-DD'),
-      comment: 'nothing'
+      comment: 'nothing',
+      imageUrl: null
     },
     validationSchema: OutboundDeliverySchema,
     onSubmit: (values) => {
