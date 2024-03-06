@@ -257,7 +257,7 @@ function Inbound() {
             <Table size="small">
               <TableHead sx={{ backgroundColor: 'rgba(241, 243, 244, 1)' }}>
                 <TableRow>
-                  <TableCell>Kode BB</TableCell>
+                  <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Saldo Awal</TableCell>
@@ -327,7 +327,7 @@ function Inbound() {
                     <thead>
                       <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode BB
+                          Kode Barang
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nama Barang

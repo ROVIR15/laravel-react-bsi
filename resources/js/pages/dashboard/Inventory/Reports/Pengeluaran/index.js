@@ -282,7 +282,7 @@ function Inbound() {
                   {/*  */}
                   <TableCell>Penerima</TableCell>
                   <TableCell>Negara Tujuan</TableCell>
-                  <TableCell>Kode BB</TableCell>
+                  <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   {/* <TableCell>Category Name</TableCell> */}
                   <TableCell>Satuan</TableCell>
@@ -406,7 +406,7 @@ function Inbound() {
                           Negara Tujuan
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode BB
+                          Kode Barang
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nama Barang
