@@ -279,7 +279,7 @@ function Inbound() {
                 <TableRow>
                   <TableCell>Aksi</TableCell>
                   <TableCell>No</TableCell>
-                  <TableCell>Kode BB</TableCell>
+                  <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Saldo Awal</TableCell>
@@ -361,7 +361,7 @@ function Inbound() {
                       <tr>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Kode BB
+                          Kode Barang
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nama Barang
