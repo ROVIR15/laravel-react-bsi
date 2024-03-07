@@ -1085,7 +1085,7 @@ export function bomDocumentArranged(data) {
 
 // Shipment
 
-export function _shipmentItem(array) {
+export function _shipmentItem(array, import_flag=0) {
   if (!isArray(array)) return undefined;
   if (isEmpty(array)) return undefined;
   return array.map((x) => {
@@ -1095,7 +1095,7 @@ export function _shipmentItem(array) {
       order_item?.product_feature?.product?.goods ? order_item?.product_feature?.product?.goods?.name : order_item?.product_feature?.product?.service?.name
     } - ${order_item?.product_feature?.size} -  ${order_item?.product_feature?.color}`;
     
-    const sku_id = generalizeSKU(order_item?.product_feature?.product?.goods_id, order_item?.product_feature?.product?.id, order_item?.product_feature?.id);
+    const sku_id = generalizeSKU(order_item?.product_feature?.product?.goods_id, order_item?.product_feature?.product?.id, order_item?.product_feature?.id, import_flag);
 
     let costing_name_ = order_item?.costing_item?.costing?.name;
 

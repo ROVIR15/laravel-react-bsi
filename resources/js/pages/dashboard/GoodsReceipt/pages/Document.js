@@ -97,7 +97,7 @@ function FirstPage() {
           let _ship = _partyAddress(order?.purchase_order?.party);
           setShipper(_ship);
           setStatus(status[0]?.shipment_type_status_id);
-          let _items = _shipmentItem(items);
+          let _items = _shipmentItem(items, order?.purchase_order?.import_flag);
           setItems(_items);
         }
       });
