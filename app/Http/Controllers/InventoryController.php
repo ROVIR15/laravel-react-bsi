@@ -782,6 +782,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
+            'shipment_id' => $item->shipment->id,
             'document_number' => $name . $item->shipment->id,
             'document_date' => $item->shipment->delivery_date,
             'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
