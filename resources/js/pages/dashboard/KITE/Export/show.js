@@ -187,7 +187,8 @@ function OutboundDelivery() {
             order_id: data?.order_id,
             sales_order_id: data?.sales_order_id,
             date: data?.date,
-            document_number: data?.document_number
+            document_number: data?.document_number,
+            bl_number: data?.bl_number
           });
 
           setItems(data?.items);
