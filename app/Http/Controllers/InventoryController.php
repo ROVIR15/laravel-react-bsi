@@ -991,8 +991,9 @@ class InventoryController extends Controller
         DB::raw('sum(qty) as qty')
       )
         ->with('product', 'product_feature', 'goods', 'material_transfer')
-        ->whereIn('facility_id', [2, 17])
-        // ->where('qty', '>', 0)
+        ->where('facility_id', 2)
+        // ->whereIn('facility_id', [2])
+        ->where('qty', '>', 0) 
         ->whereIn('product_feature_id', $order_item)
         ->groupBy('facility_id', 'product_feature_id')
         // ->whereHas('relations_with_shipment', function($query) {
