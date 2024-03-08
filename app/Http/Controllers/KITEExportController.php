@@ -123,6 +123,7 @@ class KITEExportController extends Controller
 
                     return [
                         'id' => $query->id,
+                        'bl_number' => $query->bl_number,
                         'document_number' => $query->document_number,
                         'date' => date_format(date_create($query->date), 'Y-m-d'),
                         'po_number' => $query->sales_order->po_number,
