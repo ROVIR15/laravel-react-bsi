@@ -51,7 +51,6 @@ export default function BasicModal({ order_id, so_id, payload, open, options, ha
 		if(!res.data) {
         setValue([]);
       } else {
-        console.log(res.data)
         let ras = optionSupermarketV2(res.data);
         ras = ras.filter(item => item.qty_loading > 0);
         setValue(ras)

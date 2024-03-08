@@ -258,7 +258,7 @@ function Inbound() {
                   <TableCell>No </TableCell>
                   <TableCell>Nomor </TableCell>
                   <TableCell>Tanggal </TableCell>
-                  <TableCell>Kode BB</TableCell>
+                  <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
                   <TableCell>Digunakan</TableCell>
@@ -276,7 +276,7 @@ function Inbound() {
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
                         {/* {row.kode_barang} */}
-                        {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                        {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>

@@ -356,7 +356,7 @@ function Inbound() {
                       {payloadData?.map((row, index) => (
                         <tr>
                           <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                            {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_3">{row.unit_measurement}</td>
