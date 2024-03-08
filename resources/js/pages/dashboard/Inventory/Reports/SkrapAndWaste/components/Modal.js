@@ -92,6 +92,24 @@ export default function BasicModal({ payload, open, handleClose }) {
                           {payload?.document_number}
                         </td>
                       </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Dari Fasilitas
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {payload?.from_facility?.name}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Nomor Dokumen BC
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {payload?.to_facility?.name}
+                        </td>
+                      </tr>
                     </table>
                   </div>
                 </div>
