@@ -341,7 +341,7 @@ function BillofMaterial() {
                           </td>
                           <td className="wk_width_1 wk_padd_8_20 wk_text_left">
                             <a
-                              href={`../../../kite/export/${exportLicense?.export_document_id}`}
+                              href={`../../../kite/export/${exportLicense?.id}`}
                               target="_blank"
                             >
                               {padStartWithZero(exportLicense?.document_number)}
