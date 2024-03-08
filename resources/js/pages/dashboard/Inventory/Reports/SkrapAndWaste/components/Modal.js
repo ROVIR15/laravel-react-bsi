@@ -104,7 +104,7 @@ export default function BasicModal({ payload, open, handleClose }) {
 
                       <tr>
                         <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Dokumen BC
+                          Ke Fasilitas
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
                           {payload?.to_facility?.name}
