@@ -50,7 +50,7 @@ function Inbound() {
 
   // range of date
   const [values, setValues] = useState({
-    start_date: moment().subtract(7,'d').format('YYYY-MM-DD'),
+    start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD'),
     category: 1
   });
@@ -170,7 +170,11 @@ function Inbound() {
           {/* Top row contain title and button to export and download */}
           <Grid item>
             <Stack direction="row" justifyContent="space-between" sx={{ marginX: '1em' }}>
-              <Typography variant="h5">{titleCase('Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak ')}</Typography>
+              <Typography variant="h5">
+                {titleCase(
+                  'Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak '
+                )}
+              </Typography>
               <Button
                 variant="contained"
                 onClick={handleDownload}
@@ -267,7 +271,14 @@ function Inbound() {
                     return (
                       <TableRow>
                         <TableCell>{row.id}</TableCell>
-                        <TableCell>{row.document_number}</TableCell>
+                        <TableCell>
+                          <a
+                            href={`../../shipment/incoming/document-gr/${row?.shipment_id}`}
+                            target="_blank"
+                          >
+                            {row.document_number}
+                          </a>
+                        </TableCell>
                         <TableCell>{row.document_date}</TableCell>
                         <TableCell>
                           {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
@@ -288,7 +299,9 @@ function Inbound() {
       <div ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h3">Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak</Typography>
+            <Typography variant="h3">
+              Laporan Pemasukan Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak
+            </Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -316,7 +329,10 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
-                        <th colSpan={2} className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                        <th
+                          colSpan={2}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
                           Bukti Pengeluaran
                         </th>
                       </tr>
@@ -361,7 +377,9 @@ function Inbound() {
                             <td className="wk_width_3">{row.document_number}</td>
                             <td className="wk_width_3">{row.document_date}</td>
                             <td className="wk_width_2">{row.item_name}</td>
-                            <td className="wk_width_2">{generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}</td>
+                            <td className="wk_width_2">
+                              {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                            </td>
                             <td className="wk_width_3">{row.item_name}</td>
                             <td className="wk_width_1">{row.unit_measurement}</td>
                             <td className="wk_width_1">{row.qty}</td>
