@@ -163,7 +163,7 @@ class BOM_AltController extends Controller
                     $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
                     ->where('product_id', $product->id)
                     ->where('type_movement', 1)
-                    ->where('facility_id', 23)
+                    ->where('facility_id', 15)
                     ->groupBy('product_id')
                     ->get()
                     ->first();
