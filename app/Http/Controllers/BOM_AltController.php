@@ -113,11 +113,11 @@ class BOM_AltController extends Controller
         try {
             $query = BOM::with('product')->find($id);
 
-            if(!$query) throw new Exception("Error Processing Request", 1);
+            if(!$query) throw new Exception("Error Processing Requestbom", 1);
 
             $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->first();
 
-            if(!$reconcile) throw new Exception("Error Processing Request", 1);
+            if(!$reconcile) throw new Exception("Error Processing Requestrecon", 1);
             
             $export_kite = ExportDoc::where('sales_order_id', $reconcile->sales_order_id)->first();
 
