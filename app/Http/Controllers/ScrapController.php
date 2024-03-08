@@ -109,7 +109,7 @@ class ScrapController extends Controller
                     if(isset($item->costing_item_id)){
                         $temp = BOMItem::find($item->costing_item_id);
                         if($temp){
-                            $bom_id = $temp->id;
+                            $bom_id = $temp->bom_id;
                         }
                     }
 
