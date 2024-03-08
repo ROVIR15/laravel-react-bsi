@@ -169,6 +169,7 @@ function BillofMaterial() {
       { field: 'pl_number', width: 150, headerName: 'Packing List', editable: false },
       { field: 'item_name', width: 300, headerName: 'Nama Barang', editable: false },
       { field: 'consumption', headerName: 'Konsumsi', type: 'number', editable: false },
+      { field: 'unit_measurement', headerName: 'Satuan', editable: false },
       { field: 'order_qty', headerName: 'Total Dipesan', width: 200, editable: false },
       {
         field: 'consumed_material_qty',
