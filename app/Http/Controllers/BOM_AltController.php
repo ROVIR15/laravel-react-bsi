@@ -115,7 +115,7 @@ class BOM_AltController extends Controller
 
             if(!$query) throw new Exception("Error Processing Requestbom", 1);
 
-            $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->first();
+            $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->orderBy('id', 'desc')->first();
 
             if(!$reconcile) throw new Exception("Error Processing Requestrecon", 1);
             
@@ -150,7 +150,7 @@ class BOM_AltController extends Controller
                         $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
                         ->whereIn('product_id', $shpf)
                         ->where('type_movement', 1)
-                        ->where('facility_id', 21)
+                        ->where('facility_id', 15)
                         ->groupBy('product_id')
                         ->get()
                         ->first();
