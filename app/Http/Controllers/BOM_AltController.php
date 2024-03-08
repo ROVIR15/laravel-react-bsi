@@ -14,6 +14,7 @@ use App\Models\Product\ScrapHasProductFeature;
 use App\Models\Reconcile\Reconcile;
 use App\Models\Reconcile\ReconcileHasSalesOrder;
 use DB;
+use Illuminate\Foundation\Exceptions\Exception;
 
 class BOM_AltController extends Controller
 {
