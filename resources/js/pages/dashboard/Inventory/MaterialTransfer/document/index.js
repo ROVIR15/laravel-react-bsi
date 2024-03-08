@@ -352,7 +352,7 @@ function MaterialTransfer() {
               <Stack>
                 <Box>
                   <Typography variant="overline" display="block" gutterBottom>
-                    Dikirim ke bagian
+                    Dikirim dari bagian
                   </Typography>
                   <Typography variant="h6" gutterBottom component="div">
                     {info.from_facility_name}
