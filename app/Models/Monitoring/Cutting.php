@@ -48,7 +48,7 @@ class Cutting extends Model
     }
 
     public function supermarket(){
-        return $this->hasMany('App\Models\Monitoring\Supermarket', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(qty) as total_output'))->groupBy('order_item_id');
+        return $this->hasMany('App\Models\Monitoring\Supermarket', 'product_feature_id', 'product_feature_id')->select('id', 'order_id', 'order_item_id', 'product_feature_id', DB::raw('sum(qty) as total_output'))->with('order_item')->groupBy('order_item_id');
     }
 
     public function wip_sewing(){
