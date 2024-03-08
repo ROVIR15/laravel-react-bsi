@@ -315,7 +315,7 @@ class ScrapController extends Controller
                     $product_variant = ProductFeature::find($item['product_feature_id']);
 
                     $goods_scrap = Goods::create([
-                        'name' => $goods_item['name'] . 'Waste/Limbah',
+                        'name' => $goods_item['name'] . 'Scrap/Waste',
                         'satuan' => $item['unit_measurement'],
                         'value' => $goods_item['value'],
                         'brand' => $goods_item['brand'],
