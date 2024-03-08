@@ -331,17 +331,17 @@ function OutboundDelivery() {
 
                       <Grid item xs={4} sx={{ padding: 'unset' }}>
                         <FormControl fullWidth>
-                          <FormLabel id="xx">Nomor Dokumen Kepabean</FormLabel>
+                          <FormLabel id="xx">Nomor BL</FormLabel>
 
                           <TextField
                             variant="outlined"
                             type="text"
                             fullWidth
-                            autoComplete="document_number"
-                            placeholder="Nomor Dokumen"
-                            {...getFieldProps('document_number')}
-                            error={Boolean(touched.document_number && errors.document_number)}
-                            helperText={touched.document_number && errors.document_number}
+                            autoComplete="bl_number"
+                            placeholder="Nomor Bill of Lading"
+                            {...getFieldProps('bl_number')}
+                            error={Boolean(touched.bl_number && errors.bl_number)}
+                            helperText={touched.bl_number && errors.bl_number}
                           />
                         </FormControl>
                       </Grid>
