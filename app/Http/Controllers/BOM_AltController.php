@@ -142,22 +142,34 @@ class BOM_AltController extends Controller
 
                     $doc_import = null;
 
-                    $shpf = ScrapHasProductFeature::select('scrap_product_id')->where('ori_product_id', $product->id)->groupBy('ori_product_id')->get()->map(function($query){
-                        return $query->scrap_product_id;
-                    });
+                    // $shpf = ScrapHasProductFeature::select('scrap_product_id')->where('ori_product_id', $product->id)->groupBy('ori_product_id')->get()->map(function($query){
+                    //     return $query->scrap_product_id;
+                    // });
 
-                    if($shpf) {
-                        $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
-                        ->whereIn('product_id', $shpf)
-                        ->where('type_movement', 1)
-                        ->where('facility_id', 15)
-                        ->groupBy('product_id')
-                        ->get()
-                        ->first();
+                    // if($shpf) {
+                    //     $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
+                    //     ->whereIn('product_id', $shpf)
+                    //     ->where('type_movement', 1)
+                    //     ->where('facility_id', 15)
+                    //     ->groupBy('product_id')
+                    //     ->get()
+                    //     ->first();
 
-                        if ($temp_scrap){
-                            $scrap = $temp_scrap ? $temp_scrap->jumlah : 0;
-                        }
+                    //     if ($temp_scrap){
+                    //         $scrap = $temp_scrap ? $temp_scrap->jumlah : 0;
+                    //     }
+                    // }
+
+                    $temp_scrap = GoodsMovement::select(DB::raw('sum(qty) as jumlah'))
+                    ->where('product_id', $product->id)
+                    ->where('type_movement', 1)
+                    ->where('facility_id', 23)
+                    ->groupBy('product_id')
+                    ->get()
+                    ->first();
+
+                    if ($temp_scrap){
+                        $scrap = $temp_scrap ? $temp_scrap->jumlah : 0;
                     }
 
                     if($order_item){
