@@ -273,7 +273,7 @@ function Inbound() {
                         <TableCell>{row.id}</TableCell>
                         <TableCell>
                           <a
-                            href={`../../shipment/outgoing/document/${row?.shipment_id}`}
+                            href={`../shipment/outgoing/document/${row?.shipment_id}`}
                             target="_blank"
                           >
                             {row.document_number}
