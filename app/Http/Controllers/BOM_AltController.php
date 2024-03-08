@@ -219,7 +219,7 @@ class BOM_AltController extends Controller
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
                         'item_serial_number' => $doc_import ? $doc_import->item_serial_number : 'Tidak Ada',
-                        'scrap' => $scrap ? $scrap . ' kg' : 0 . ' kg'
+                        'scrap' => $scrap ? $scrap : 0
                     ];
                 });
         } catch (\Throwable $th) {
