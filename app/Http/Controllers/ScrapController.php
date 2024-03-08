@@ -83,7 +83,7 @@ class ScrapController extends Controller
         }
 
         try {
-            $query = ScrapItem::with('scrap', 'order_item', 'product_feature', 'product')
+            $query = ScrapItem::with('scrap', 'order_item', 'product_feature', 'product', 'from_facility', 'to_facility')
                 ->whereHas('scrap', function ($query) use ($fromDate, $thruDate) {
                     return $query
                         ->whereBetween(DB::raw('DATE(date)'), [$fromDate, $thruDate]);
@@ -121,6 +121,8 @@ class ScrapController extends Controller
                         'item_name' => $goods ? $goods->name . ' - ' . $productFeature->color . ' ' . $productFeature->size : null,
                         'product_id' => $productFeature->product->id,
                         'product_feature_id' => $item->product_feature_id,
+                        'from_facility' => $item->from_facility,
+                        'to_facility' => $item->to_facility,
                         'goods_id' => $goods->id,
                         'sku_id' => $sku_id,
                         'order_id' => $item->order_id,
