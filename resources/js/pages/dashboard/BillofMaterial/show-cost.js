@@ -122,26 +122,6 @@ function BillofMaterial() {
   } = formik;
 
   React.useEffect(() => {
-    let active = true;
-
-    try {
-      API.getProductFeature((res) => {
-        if (!res) return;
-        if (!res.data) {
-          setOptions([]);
-        } else {
-          const data = optionProductFeature(res.data);
-          const dataAC = optionProductFeatureV3(res.data);
-          setOptions(data);
-          setOptionsAC(dataAC);
-        }
-      });
-    } catch (error) {
-      alert(error);
-    }
-  }, []);
-
-  React.useEffect(() => {
     handleUpdate();
   }, [id]);
 
