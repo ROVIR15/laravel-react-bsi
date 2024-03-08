@@ -44,4 +44,12 @@ class ScrapItem extends Model
         return $this->belongsTo('App\Models\Inventory\Scrap', 'scrap_id');
     }
 
+    public function from_facility(){
+        return $this->belongsTo('App\Models\Facility\Facility', 'from_facility_id');
+    }
+
+    public function to_facility(){
+        return $this->belongsTo('App\Models\Facility\Facility', 'to_facility_id');
+    }
+
 }
