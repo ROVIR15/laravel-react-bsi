@@ -43,7 +43,6 @@ export default function BasicTable({ payload }) {
     else {
       let data_summary = payload.reduce(
         (initial, next) => {
-          console.log(next)
           var _qty_shipped = parseInt(next.qty_shipped); // qty on hand
           var _deliv_qty = parseInt(next.qty); // qty sent by supplier
 

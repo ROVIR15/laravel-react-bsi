@@ -262,7 +262,7 @@ class BOMItemController extends Controller
                 return $query2[0]['product_id'];
             });
 
-            $items = GoodsMovement::select('id', 'product_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
+            $items = GoodsMovement::select('id', 'product_id', 'order_item_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
                 ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
                 ->where('facility_id', $from_facility)
                 ->whereIn('product_id', $query)
@@ -282,6 +282,7 @@ class BOMItemController extends Controller
                             'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
                             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                             'import_flag' => $query->import_flag,
+                            'order_item_id' => $query->order_item_id,
                             'product_id' => $product->id,
                             'product_feature_id' => $product_feature->id,
                             'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
