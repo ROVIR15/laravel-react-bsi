@@ -240,6 +240,8 @@ class ScrapController extends Controller
                         'product_id' => $product_master['id'],
                         'product_feature_id' => $product_variant['id'],
                         'costing_item_id' => $_item_costing_id,
+                        'to_facility_id' => 15,
+                        'from_facility_id' => $data[0]['facility_id'],        
                         'order_id' => isset($item['order_id']) ? $item['order_id'] : null,
                         'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null,
                         'qty' => $item['qty'],

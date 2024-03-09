@@ -111,15 +111,15 @@ function TableD({ list, placeHolder, selected, setSelected, dataCosting }) {
     let newSelected = [];
     if (selectedIndex === -1) {
       if (isEditCondition(pathname.split('/'), id)) {
-        try {
-          API.insertQuoteItem([name], function (res) {
-            if (res.success) alert('success');
-            else alert('failed');
-          });
-          update();
-        } catch (e) {
-          alert(e);
-        }
+        // try {
+        //   API.insertQuoteItem([name], function (res) {
+        //     if (res.success) alert('success');
+        //     else alert('failed');
+        //   });
+        //   update();
+        // } catch (e) {
+        //   alert(e);
+        // }
       } else {
         newSelected = newSelected.concat(selected, name);
       }

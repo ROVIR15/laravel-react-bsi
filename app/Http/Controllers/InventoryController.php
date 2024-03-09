@@ -29,6 +29,7 @@ use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferShipmentRelationship;
 use App\Models\KITE\ExportDoc;
 use App\Models\KITE\ImportDoc;
+use App\Models\Manufacture\BOM;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Order\Order;
 use App\Models\Order\PurchaseOrder;
@@ -137,19 +138,26 @@ class InventoryController extends Controller
 
     try {
 
+      $costing = Reconcile::select('order_id', 'costing_id')
+          ->where('costing_id', $costingId)
+          ->first();
+
+      $list_of_so_item = OrderItem::select('id', 'product_feature_id')
+                                    ->where('order_id', $costing->order_id)
+                                    ->pluck('id')
+                                    ->toArray();
+      
       $costing_item_id = BOMItem::select('id', 'product_feature_id', 'product_id')
         ->where('bom_id', $costingId)
-        ->get()
-        ->map(function ($item) {
-          return $item->id;
-        });
+        ->pluck('id')
+        ->toArray();
 
       $list_order_item = OrderItem::select('id', 'product_feature_id', 'costing_item_id')
         ->whereIn('costing_item_id', $costing_item_id)
-        ->get()
-        ->map(function ($query) {
-        return $query->id;
-      });
+        ->pluck('id')
+        ->toArray();
+      
+      $list_of_item = array_merge($list_order_item, $list_of_so_item);
 
       // $query = ProductFeature::with('product', 'product_category')
       //   ->with(['movement' => function ($query) use ($_items, $facilityId) {
@@ -186,7 +194,7 @@ class InventoryController extends Controller
       $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
         ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
         ->where('facility_id', $facilityId)
-        ->whereIn('order_item_id', $list_order_item)
+        // ->whereIn('order_item_id', $list_of_item)
         ->groupBy('product_feature_id', 'import_flag', 'facility_id')
         ->get()
         ->map(function ($query) {
