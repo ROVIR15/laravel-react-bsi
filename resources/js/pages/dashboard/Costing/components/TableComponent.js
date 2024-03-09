@@ -60,7 +60,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
             <TableCell>Product Name</TableCell>
             <TableCell align="left">Category</TableCell>
             <TableCell align="right">Consumption</TableCell>
-            <TableCell align="right">Allowance</TableCell>
+            {/* <TableCell align="right">Allowance</TableCell> */}
             <TableCell align="right">Total Consumption</TableCell>
             <TableCell align="right">Unit Price</TableCell>
             <TableCell align="right">Total</TableCell>
@@ -80,7 +80,7 @@ export default function BasicTable({ switchCurrency, initialCurrency, payload, t
                 {row.product_feature?.product_category?.category?.sub?.name}
               </TableCell>
               <TableCell align="right">{row.consumption}</TableCell>
-              <TableCell align="right">{row.allowance}</TableCell>
+              {/* <TableCell align="right">{row.allowance}</TableCell> */}
               <TableCell align="right">
                 {parseFloat(row.consumption * (row.allowance / 100 + 1)).toFixed(4)}
               </TableCell>
