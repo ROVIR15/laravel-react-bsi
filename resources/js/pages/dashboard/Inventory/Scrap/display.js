@@ -18,6 +18,7 @@ import { ListHead, ListToolbar, MoreMenu } from '../../../../components/Table';
 // api
 import API from '../../../../helpers';
 import { enqueueSnackbar } from 'notistack';
+import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
@@ -69,7 +70,7 @@ function Labor({ placeHolder }) {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('document_number');
+  const [orderBy, setOrderBy] = useState('id');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -181,19 +182,19 @@ function Labor({ placeHolder }) {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       const { id, document_number, date, jumlah_barang, banyaknya } = row;
-                      const isItemSelected = selected.indexOf(document_number) !== -1;
+                      // const isItemSelected = selected.indexOf(document_number) !== -1;
                       return (
                         <TableRow
                           hover
                           key={id}
                           tabIndex={-1}
                           role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
+                          // selected={isItemSelected}
+                          // aria-checked={isItemSelected}
                         >
                           <TableCell align="left">{id}</TableCell>
                           <TableCell align="left">{document_number}</TableCell>
-                          <TableCell align="left">{date}</TableCell>
+                          <TableCell align="left">{moment(row?.date).format('LL')}</TableCell>
                           <TableCell align="left">{banyaknya}</TableCell>
                           <TableCell align="left">{jumlah_barang}</TableCell>
                           <TableCell align="right">

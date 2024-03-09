@@ -29,7 +29,7 @@ moment.locale('id');
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'Submitter', label: 'Status', alignRight: false },
+  { id: 'submitter', label: 'Pengguna', alignRight: false },
   { id: '_serial_number', label: 'Opname SN', alignRight: false },
   { id: 'date', label: 'Tanggal Buat', alignRight: false },
   { id: 'change_tpe', label: 'Tipe Penyesuaian', alignRight: false },

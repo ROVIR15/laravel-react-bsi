@@ -23,8 +23,9 @@ import { isEditCondition } from '../../../../../helpers/data';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'id', label: 'ID', alignRight: false },
+    // { id: 'id', label: 'ID', alignRight: false },
     { id: 'sku_id', label: 'SKU ID', alignRight: false },
+    { id: 'order_code', label: 'Order Code', alignRight: false },
     { id: 'item_name', label: 'Nama Item', alignRight: false },
     { id: 'category', label: 'Kategori', alignRight: false },
     { id: 'facility_name', label: 'Nama Fasilitas', alignRight: false },  
@@ -214,6 +215,7 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                     // && isEditCondition(pathname.split('/'), paramsId))
                   const {
                     id,
+                    order_code,
                     sku_id,
                     item_name,
                     category,
@@ -237,8 +239,9 @@ function TableD({ list, order_id, update, placeHolder, selected, setSelected}) {
                           onChange={(event) => handleClick(event, row)}
                         />
                       </TableCell>
-                      <TableCell align="left">{id}</TableCell>
+                      {/* <TableCell align="left">{id}</TableCell> */}
                       <TableCell align="left">{sku_id}</TableCell>
+                      <TableCell align="left">{order_code}</TableCell>
                       <TableCell align="left">{item_name}</TableCell>
                       <TableCell align="left">{category}</TableCell>
                       <TableCell align="left">{facility_name}</TableCell>

@@ -88,7 +88,8 @@ class AdjustmentController extends Controller
                     'product_id' => $key['product_id'],
                     'product_feature_id' => $key['product_feature_id'],
                     'type_movement' => $type_movement, // 1 for incoming and 2 outbound
-                    'qty' => $diff
+                    'qty' => $diff,
+                    'order_item_id' => $key['order_item_id']
                 ]);
                 DB::commit();
             }

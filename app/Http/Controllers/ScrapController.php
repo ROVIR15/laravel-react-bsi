@@ -290,6 +290,7 @@ class ScrapController extends Controller
                         'product_feature_id' => $product_variant['id'],
                         'type_movement' => 2, // 1 for incoming and 2 outbound
                         'qty' => $item['qty'] * -1,
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null
                     ]);
                     DB::commit();
 
@@ -305,7 +306,8 @@ class ScrapController extends Controller
                         'product_id' => $product_master['id'],
                         'product_feature_id' => $product_variant['id'],
                         'type_movement' => 1, // 1 for incoming and 2 outbound
-                        'qty' => $item['qty']
+                        'qty' => $item['qty'],
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null
                     ]);
                     DB::commit();
                 }
@@ -409,6 +411,7 @@ class ScrapController extends Controller
                         'product_feature_id' => $product_variant_scrap['id'],
                         'type_movement' => 2, // 1 for incoming and 2 outbound
                         'qty' => $item['qty'] * -1,
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null
                     ]);
                     DB::commit();
 
@@ -424,7 +427,8 @@ class ScrapController extends Controller
                         'product_id' => $product_scrap['id'],
                         'product_feature_id' => $product_variant_scrap['id'],
                         'type_movement' => 1, // 1 for incoming and 2 outbound
-                        'qty' => $item['qty']
+                        'qty' => $item['qty'],
+                        'order_item_id' => isset($item['order_item_id']) ? $item['order_item_id'] : null
                     ]);
                     DB::commit();
                 }

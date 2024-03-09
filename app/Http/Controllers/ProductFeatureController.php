@@ -44,11 +44,12 @@ class ProductFeatureController extends Controller
     try {
       // $query = ProductFeature::with('product', 'product_category', 'stock_in', 'stock_shipped_out', 'stock_transfer_out')->get();
 
-      $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'import_flag', 'facility_id')
+      $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
         ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
         ->where('facility_id', $facilityId)
         // ->whereIn('product_id', $query)
-        ->groupBy('product_feature_id', 'import_flag', 'facility_id')
+        ->groupBy('order_item_id', 'product_feature_id', 'import_flag', 'facility_id')
+        ->orderBy('id', 'desc')
         ->get()
         ->map(function ($query) {
           $product_feature = $query->product_feature ? $query->product_feature : null;
@@ -57,12 +58,34 @@ class ProductFeatureController extends Controller
 
           $import_flag = $query->import_flag ? 2 : 1;
 
+          $order_code = null;
+
+          if(is_null($query->order_item_id)){
+            $order_code = null;
+          } else {
+            $order_item = OrderItem::where('id', $query->order_item_id)->orderBy('order_id', 'desc')->first();
+            if($order_item){
+              $order = Order::select('id', 'sales_order_id', 'purchase_order_id')->find($order_item->order_id);
+              if($order){
+                if($order->sales_order_id){
+                  $order_code = 'SO-' . str_pad($order->sales_order_id, 4, '0', STR_PAD_LEFT);
+                } elseif ($order->purchase_order_id) {
+                  $order_code = 'PO-' . str_pad($order->purchase_order_id,  4, '0', STR_PAD_LEFT);
+                } else {
+                  $order_code = null;
+                }  
+              }  
+            }
+          }
+
           return
             [
               'id' => $query->id,
               // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
               'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
               'import_flag' => $query->import_flag,
+              'order_item_id' => $query->order_item_id,
+              'order_code' => $order_code,
               'goods_id' => $goods->id,
               'product_id' => $product->id,
               'product_feature_id' => $product_feature->id,

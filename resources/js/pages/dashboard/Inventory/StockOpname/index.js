@@ -57,7 +57,7 @@ function MaterialTransfer() {
         </Stack>
       </Stack>
       <Outlet/>
-      {/* {isBeginning()} */}
+      {isBeginning()}
     </Layout>
   );
 }
