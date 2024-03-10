@@ -160,8 +160,8 @@ const sidebarConfig = [
       },
       {
         // done completing columns per 5 table nomor 5
-        title: 'Laporan Pengeluaran Barang Hasil Produksi',
-        path: '/dashboard/laporan-kite/laporan-pengeluaran-barang-hasil-produksi'
+        title: 'Laporan Pengeluaran Hasil Produksi',
+        path: '/dashboard/laporan-kite/laporan-pengeluaran-hasil-produksi'
       },
       {
         // done completing columns per 5 tabel nomor 7

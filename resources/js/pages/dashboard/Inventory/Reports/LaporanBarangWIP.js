@@ -114,34 +114,49 @@ function Inbound() {
   }
 
   const handleDownload = React.useCallback(() => {
-    let downloadLink;
     const dataType = 'application/vnd.ms-excel';
-    const tableSelect = xlsRef.current;
+    const tableSelect = document.getElementById('report-id'); // replace 'your-table-id' with the actual ID of your table
 
-    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    if (!tableSelect) {
+      console.error('Table element not found');
+      return;
+    }
+
+    const tableHTML = tableSelect.outerHTML;
 
     // Specify file name
-    const filename = 'laporan barang wip' + '.xls';
-
-    // Create download link element
-    downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
+    const filename =
+      'Laporan Pemakaian Barang Dalam Proses Dalam Rangka Kegiatan Subkontrak PT Buana Sandang Indonesia.xls';
 
     if (navigator.msSaveOrOpenBlob) {
+      // For Internet Explorer
       const blob = new Blob(['\ufeff', tableHTML], {
         type: dataType
       });
       navigator.msSaveOrOpenBlob(blob, filename);
     } else {
-      // Create a link to the file
-      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+      // For other browsers
+      const blob = new Blob([tableHTML], {
+        type: dataType
+      });
+      const url = URL.createObjectURL(blob);
 
-      // Setting the file name
+      // Create a link element
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
       downloadLink.download = filename;
 
-      //triggering the function
+      // Append the link to the body
+      document.body.appendChild(downloadLink);
+
+      // Trigger the click event
       downloadLink.click();
+
+      // Remove the link from the body
+      document.body.removeChild(downloadLink);
+
+      // Release the object URL
+      URL.revokeObjectURL(url);
     }
   }, [xlsRef]);
 
@@ -296,7 +311,7 @@ function Inbound() {
         </Stack>
       </Paper>
 
-      <div ref={xlsRef} style={{ display: 'none' }}>
+      <div id="report-id" ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h3">
@@ -330,6 +345,12 @@ function Inbound() {
                     <thead>
                       <tr>
                         <th
+                          colSpan={1}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          {''}
+                        </th>
+                        <th
                           colSpan={2}
                           className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
                         >
@@ -337,10 +358,13 @@ function Inbound() {
                         </th>
                       </tr>
                       <tr>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
+                          No
+                        </th>
+                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor
                         </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
+                        <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
@@ -362,25 +386,25 @@ function Inbound() {
                     </thead>
                     <tbody>
                       {payloadData.map((row, index) => {
-                        let convertedString = row.category?.replace(
-                          /(^|\s)([a-z])/g,
-                          function (match, group1, group2) {
-                            return group1 + group2.toUpperCase();
-                          }
-                        );
+                        // let convertedString = row.category?.replace(
+                        //   /(^|\s)([a-z])/g,
+                        //   function (match, group1, group2) {
+                        //     return group1 + group2.toUpperCase();
+                        //   }
+                        // );
 
-                        let last_stock =
-                          parseFloat(row.total_output) - parseFloat(row.next_wip_output);
+                        // let last_stock =
+                        //   parseFloat(row.total_output) - parseFloat(row.next_wip_output);
 
                         return (
                           <tr>
+                            <td className="wk_width_3">{row.index + 1}</td>
                             <td className="wk_width_3">{row.document_number}</td>
                             <td className="wk_width_3">{row.document_date}</td>
                             <td className="wk_width_2">{row.item_name}</td>
                             <td className="wk_width_2">
                               {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                             </td>
-                            <td className="wk_width_3">{row.item_name}</td>
                             <td className="wk_width_1">{row.unit_measurement}</td>
                             <td className="wk_width_1">{row.qty}</td>
                             <td className="wk_width_1">{row.subcontractor_name}</td>

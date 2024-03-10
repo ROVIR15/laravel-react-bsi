@@ -85,34 +85,48 @@ function Inbound() {
   }
 
   const handleDownload = React.useCallback(() => {
-    let downloadLink;
     const dataType = 'application/vnd.ms-excel';
-    const tableSelect = xlsRef.current;
+    const tableSelect = document.getElementById('report-id'); // replace 'your-table-id' with the actual ID of your table
 
-    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    if (!tableSelect) {
+      console.error('Table element not found');
+      return;
+    }
+
+    const tableHTML = tableSelect.outerHTML;
 
     // Specify file name
-    const filename = 'laporan barang masuk' + '.xls';
-
-    // Create download link element
-    downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
+    const filename = 'Laporan Pemasukan Bahan Baku PT Buana Sandang Indonesia.xls';
 
     if (navigator.msSaveOrOpenBlob) {
+      // For Internet Explorer
       const blob = new Blob(['\ufeff', tableHTML], {
         type: dataType
       });
       navigator.msSaveOrOpenBlob(blob, filename);
     } else {
-      // Create a link to the file
-      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+      // For other browsers
+      const blob = new Blob([tableHTML], {
+        type: dataType
+      });
+      const url = URL.createObjectURL(blob);
 
-      // Setting the file name
+      // Create a link element
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
       downloadLink.download = filename;
 
-      //triggering the function
+      // Append the link to the body
+      document.body.appendChild(downloadLink);
+
+      // Trigger the click event
       downloadLink.click();
+
+      // Remove the link from the body
+      document.body.removeChild(downloadLink);
+
+      // Release the object URL
+      URL.revokeObjectURL(url);
     }
   }, [xlsRef]);
 
@@ -163,8 +177,10 @@ function Inbound() {
    * Modal
    */
   const [open, setOpen] = useState(false);
-  const handleCloseModal = () => { setOpen(false)};
-  
+  const handleCloseModal = () => {
+    setOpen(false);
+  };
+
   const [payload, setPayload] = useState({
     purchase_order_id: null,
     order_id: null,
@@ -174,18 +190,14 @@ function Inbound() {
   });
 
   const handleOpenModal = (event, _p) => {
-    setPayload(_p)
+    setPayload(_p);
 
     setOpen(true);
   };
-  
+
   return (
     <div>
-      <BasicModal
-        payload={payload}
-        open={open}
-        handleClose={handleCloseModal}
-      />
+      <BasicModal payload={payload} open={open} handleClose={handleCloseModal} />
       <Paper sx={{ marginBottom: '1em', paddingY: '1em', paddingX: '1.25em' }}>
         <Grid container direction="column" spacing={2}>
           {/* Top row contain title and button to export and download */}
@@ -259,8 +271,8 @@ function Inbound() {
                   <TableCell align="center" colspan>
                     {' '}
                   </TableCell>
-                  <TableCell align="center" colSpan={1}/>
-                  <TableCell align="center" colSpan={1}/>
+                  <TableCell align="center" colSpan={1} />
+                  <TableCell align="center" colSpan={1} />
                   <TableCell align="center" colSpan={1}>
                     Jenis Dokumen
                   </TableCell>
@@ -303,9 +315,14 @@ function Inbound() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow>
-                      <TableCell> 
+                      <TableCell>
                         <IconButton>
-                          <Icon icon={ExternalLink} onClick={(event) => handleOpenModal(event, row)} width={24} height={24}/>
+                          <Icon
+                            icon={ExternalLink}
+                            onClick={(event) => handleOpenModal(event, row)}
+                            width={24}
+                            height={24}
+                          />
                         </IconButton>
                       </TableCell>
                       <TableCell> {row.id} </TableCell>
@@ -339,7 +356,7 @@ function Inbound() {
         </Stack>
       </Paper>
 
-      <div ref={xlsRef} style={{ display: 'none' }}>
+      <div id="report-id" ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h3">{titleCase('Laporan Pemasukan Bahan Baku ')}</Typography>
@@ -395,6 +412,7 @@ function Inbound() {
                         </th>
                       </tr>
                       <tr>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal Rekam
                         </th>
@@ -453,6 +471,7 @@ function Inbound() {
                     <tbody>
                       {payloadData.map((row, index) => (
                         <tr>
+                          <td className="wk_width_2">{index + 1}</td>
                           <td className="wk_width_2">{row?.recoded_date}</td>
                           <td className="wk_width_2">{row?.customs_doc}</td>
                           <td className="wk_width_2">{row?.customs_document_number}</td>
@@ -469,7 +488,7 @@ function Inbound() {
                             {row.currency === 2 ? 'Rupiah' : 'Dollar US'}
                           </td>
                           <td className="wk_width_2">{fCurrency(row.unit_price, 'id')}</td>
-                          <td className="wk_width_2">{'Gudang'}</td>
+                          <td className="wk_width_2">{'Warehouse (Raw Material)'}</td>
                           <td className="wk_width_2">{firstLetterUpperCase(row.buyer_name)}</td>
                           <td className="wk_width_2">{firstLetterUpperCase(row.country)}</td>
                         </tr>

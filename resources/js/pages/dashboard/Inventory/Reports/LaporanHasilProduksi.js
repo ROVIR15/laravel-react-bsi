@@ -113,34 +113,49 @@ function Inbound() {
   }
 
   const handleDownload = React.useCallback(() => {
-    let downloadLink;
     const dataType = 'application/vnd.ms-excel';
-    const tableSelect = xlsRef.current;
+    const tableSelect = document.getElementById('report-id'); // replace 'your-table-id' with the actual ID of your table
 
-    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    if (!tableSelect) {
+      console.error('Table element not found');
+      return;
+    }
+
+    const tableHTML = tableSelect.outerHTML;
 
     // Specify file name
-    const filename = 'laporan mutasi barang' + '.xls';
-
-    // Create download link element
-    downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
+    const filename =
+      'Laporan Pemasukan Hasil Produksi PT Buana Sandang Indonesia.xls';
 
     if (navigator.msSaveOrOpenBlob) {
+      // For Internet Explorer
       const blob = new Blob(['\ufeff', tableHTML], {
         type: dataType
       });
       navigator.msSaveOrOpenBlob(blob, filename);
     } else {
-      // Create a link to the file
-      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+      // For other browsers
+      const blob = new Blob([tableHTML], {
+        type: dataType
+      });
+      const url = URL.createObjectURL(blob);
 
-      // Setting the file name
+      // Create a link element
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
       downloadLink.download = filename;
 
-      //triggering the function
+      // Append the link to the body
+      document.body.appendChild(downloadLink);
+
+      // Trigger the click event
       downloadLink.click();
+
+      // Remove the link from the body
+      document.body.removeChild(downloadLink);
+
+      // Release the object URL
+      URL.revokeObjectURL(url);
     }
   }, [xlsRef]);
 
@@ -251,7 +266,9 @@ function Inbound() {
                     Dokumen
                   </TableCell>
                   <TableCell colSpan={3}> </TableCell>
-                  <TableCell align="center" colSpan={2}>Jumlah</TableCell>
+                  <TableCell align="center" colSpan={2}>
+                    Jumlah
+                  </TableCell>
                   <TableCell colSpan={1}></TableCell>
                 </TableRow>
                 <TableRow>
@@ -261,8 +278,8 @@ function Inbound() {
                   <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
                   <TableCell>Satuan</TableCell>
-                  <TableCell>Digunakan</TableCell>
-                  <TableCell>Disubkontrakan</TableCell>
+                  <TableCell>dari produksi</TableCell>
+                  <TableCell>dari subkontrak</TableCell>
                   <TableCell>Gudang</TableCell>
                 </TableRow>
               </TableHead>
@@ -291,7 +308,7 @@ function Inbound() {
         </Stack>
       </Paper>
 
-      <div ref={xlsRef} style={{ display: 'none' }}>
+      <div id="report-id" ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h3">{`${titleCase(pagename)}`}</Typography>
@@ -322,14 +339,38 @@ function Inbound() {
                   <table>
                     <thead>
                       <tr>
+                        <th
+                          colSpan={1}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          {''}
+                        </th>
+                        <th
+                          colSpan={2}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Dokumen
+                        </th>
+                        <th
+                          colSpan={3}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          {''}
+                        </th>
+                        <th
+                          colSpan={2}
+                          className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg"
+                        >
+                          Jumlah
+                        </th>
+                      </tr>
+                      <tr>
+                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Bukti Pengeluaran Barang
-                        </th>
-                        <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Tanggal Bukti Pengeluaran
+                          Tanggal
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Kode Barang
@@ -341,10 +382,10 @@ function Inbound() {
                           Satuan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Pemakaian Barang
+                          dari produksi
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Jumlah Barang yang di subkontrakan
+                          dari subkontrakan
                         </th>
                         <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
                           Gudang
@@ -358,7 +399,7 @@ function Inbound() {
                           <td className="wk_width_2">{row.document_number}</td>
                           <td className="wk_width_2">{row.document_date}</td>
                           <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
                           </td>
                           <td className="wk_width_1">{row.item_name}</td>
                           <td className="wk_width_1">{row.unit_measurement}</td>

@@ -504,7 +504,7 @@ export default function TestRouter() {
           element: <Inbound/>
         },
         {
-          path: 'laporan-kite/laporan-pengeluaran-barang-hasil-produksi',
+          path: 'laporan-kite/laporan-pengeluaran-hasil-produksi',
           element: <Outbound/>
         },
         {

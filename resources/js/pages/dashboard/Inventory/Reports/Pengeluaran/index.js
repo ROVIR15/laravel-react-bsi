@@ -85,34 +85,48 @@ function Inbound() {
   }
 
   const handleDownload = React.useCallback(() => {
-    let downloadLink;
     const dataType = 'application/vnd.ms-excel';
-    const tableSelect = xlsRef.current;
+    const tableSelect = document.getElementById('report-id'); // replace 'your-table-id' with the actual ID of your table
 
-    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    if (!tableSelect) {
+      console.error('Table element not found');
+      return;
+    }
+
+    const tableHTML = tableSelect.outerHTML;
 
     // Specify file name
-    const filename = 'laporan barang keluar' + '.xls';
-
-    // Create download link element
-    downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
+    const filename = 'Laporan Pengeluaran Hasil Produksi PT Buana Sandang Indonesia.xls';
 
     if (navigator.msSaveOrOpenBlob) {
+      // For Internet Explorer
       const blob = new Blob(['\ufeff', tableHTML], {
         type: dataType
       });
       navigator.msSaveOrOpenBlob(blob, filename);
     } else {
-      // Create a link to the file
-      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+      // For other browsers
+      const blob = new Blob([tableHTML], {
+        type: dataType
+      });
+      const url = URL.createObjectURL(blob);
 
-      // Setting the file name
+      // Create a link element
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
       downloadLink.download = filename;
 
-      //triggering the function
+      // Append the link to the body
+      document.body.appendChild(downloadLink);
+
+      // Trigger the click event
       downloadLink.click();
+
+      // Remove the link from the body
+      document.body.removeChild(downloadLink);
+
+      // Release the object URL
+      URL.revokeObjectURL(url);
     }
   }, [xlsRef]);
 
@@ -280,7 +294,7 @@ function Inbound() {
                   <TableCell>Nomor</TableCell>
                   <TableCell>Tanggal</TableCell>
                   {/*  */}
-                  <TableCell>Penerima</TableCell>
+                  <TableCell>Pembeli/Penerima</TableCell>
                   <TableCell>Negara Tujuan</TableCell>
                   <TableCell>Kode Barang</TableCell>
                   <TableCell>Nama Barang</TableCell>
@@ -315,7 +329,7 @@ function Inbound() {
                           row?.shipment_id,
                           4,
                           0
-                        )}`}{' '}
+                        )}`}
                       </TableCell>
                       <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
@@ -325,7 +339,7 @@ function Inbound() {
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
-                      <TableCell>{row.qty}</TableCell>
+                      <TableCell>{parseFloat(row.qty).toFixed(2)}</TableCell>
                       <TableCell>{row.currency === 2 ? 'Rupiah' : 'Dollar US'}</TableCell>
                       <TableCell>{fCurrency(row.unit_price, 'id')}</TableCell>
                       {/* <TableCell>{fCurrency(row.valuation, 'id')}</TableCell> */}
@@ -337,7 +351,7 @@ function Inbound() {
         </Stack>
       </Paper>
 
-      <div ref={xlsRef} style={{ display: 'none' }}>
+      <div id="report-id" ref={xlsRef} style={{ display: 'none' }}>
         <Grid container direction="row" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h3">{titleCase(pagename)}</Typography>
@@ -378,7 +392,7 @@ function Inbound() {
                           className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg wk_text_center"
                           colSpan={2}
                         >
-                          Bukti Pengeluaran
+                          Bukti Pengeluaran Barang
                         </th>
                       </tr>
 
@@ -386,21 +400,22 @@ function Inbound() {
                         <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           No
                         </th>
+                        {/* PEB */}
                         <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Dokumen
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
-
+                        {/* Bukti Pengeluaran Barang */}
                         <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
-                          Nomor Dokumen
+                          Nomor
                         </th>
                         <th className="wk_width_3 wk_text_center wk_semi_bold wk_primary_color wk_gray_bg">
                           Tanggal
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
-                          Penerima
+                          Pembeli/Penerima
                         </th>
                         <th className="wk_width_3 wk_semi_bold wk_primary_color wk_gray_bg">
                           Negara Tujuan
@@ -432,7 +447,11 @@ function Inbound() {
                           <td className="wk_width_2">{row?.export_document_number}</td>
                           <td className="wk_width_2">{row?.export_document_date}</td>
                           <td className="wk_width_2">
-                            {`OBSHIP-${row?.order_id}-${row?.shipment_id}`}{' '}
+                            {`OUTSHIP-${strPadLeft(row?.sales_order_id, 4, 0)}-${strPadLeft(
+                              row?.shipment_id,
+                              4,
+                              0
+                            )}`}
                           </td>
                           <td className="wk_width_2">{row?.shipment_date} </td>
                           <td className="wk_width_2">{row.buyer_name}</td>
@@ -442,7 +461,7 @@ function Inbound() {
                           </td>
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>
-                          <td className="wk_width_2">{row.qty}</td>
+                          <td className="wk_width_2">{parseFloat(row.qty).toFixed(2)}</td>
                           <td className="wk_width_2">
                             {row.currency === 2 ? 'Rupiah' : 'Dollar US'}
                           </td>
