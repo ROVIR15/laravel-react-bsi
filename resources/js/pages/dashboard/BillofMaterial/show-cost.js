@@ -178,7 +178,9 @@ function BillofMaterial() {
         editable: false
       },
       { field: 'available_qty', headerName: 'Tersisa di Gudang', width: 200, editable: false },
-      { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false }
+      { field: 'scrap_conversion', headerName: 'Konversi ke KG', width: 200, type: 'number', editable: false },
+      { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false },
+      { field: 'converted_scrap', headerName: 'Waste/Scrap kg', width: 300, editable: false }
     ],
     [deleteDataComponent]
   );

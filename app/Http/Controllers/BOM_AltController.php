@@ -201,6 +201,8 @@ class BOM_AltController extends Controller
                         $import_flag = !is_null($doc_import) ? 2 : 1;
                     }
 
+                    $scrap_val = $scrap ? $scrap : 0;
+
                     return [
                         'id' => $query->id,
                         'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
@@ -212,6 +214,8 @@ class BOM_AltController extends Controller
                         'item_name' => $item_name,
                         'consumption' => $query->consumption,
                         'allowance' => $query->allowance,
+                        'scrap_conversion' => $query->scrap_conversion,
+                        'converted_scrap' => $query->scrap_conversion > 0 ? number_format($scrap_val/$query->scrap_conversion, 2) . ' kg' : 0 . ' kg',
                         'unit_price' => $query->unit_price,
                         'order_qty' => $order_item ? $order_item->qty : 0,
                         'available_qty' => $stock + $consumed_total,
@@ -221,7 +225,7 @@ class BOM_AltController extends Controller
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
                         'item_serial_number' => $doc_import ? $doc_import->item_serial_number : 'Tidak Ada',
-                        'scrap' => $scrap ? $scrap : 0
+                        'scrap' => $scrap_val
                     ];
                 });
         } catch (\Throwable $th) {
