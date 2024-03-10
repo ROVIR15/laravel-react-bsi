@@ -118,7 +118,12 @@ class BOM_AltController extends Controller
             $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->orderBy('id', 'desc')->first();
 
             if(!$reconcile) throw new Exception("Error Processing Requestrecon", 1);
-            
+
+            $shipment = Shipment::with('sum', 'issuance')
+              ->where('order_id', $reconcile->order_id)
+              ->orderBy('id', 'desc')
+              ->get();
+
             $export_kite = ExportDoc::where('sales_order_id', $reconcile->sales_order_id)->first();
 
             $items = BOMItem::with('product_feature')
