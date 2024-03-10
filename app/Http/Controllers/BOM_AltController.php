@@ -10,9 +10,11 @@ use Illuminate\Http\Request;
 use App\Models\Manufacture\BOM_alt;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Manufacture\BOMItem_alt;
+use App\Models\Order\PurchaseOrder;
 use App\Models\Product\ScrapHasProductFeature;
 use App\Models\Reconcile\Reconcile;
 use App\Models\Reconcile\ReconcileHasSalesOrder;
+use App\Models\Shipment\Shipment;
 use DB;
 use Exception;
 
@@ -203,7 +205,20 @@ class BOM_AltController extends Controller
                         }
                         
                         $doc_import = ImportDocItem::with('doc')->where('order_item_id', $order_item->id)->get()->first();
-                        $import_flag = !is_null($doc_import) ? 2 : 1;
+                        // $import_flag = !is_null($doc_import) ? 2 : 1;
+
+                        $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->first();
+                        $flagg = $purchase_order->import_flag;
+
+                        $import_flag = 1;
+                        
+                        if ($flagg === 1) {
+                            $import_flag = 2;
+                        } elseif ($flagg === 2) {
+                            $import_flag = 3;
+                        } else {
+                            $import_flag = 1;
+                        }
                     }
 
                     $scrap_val = $scrap ? $scrap : 0;
@@ -230,7 +245,7 @@ class BOM_AltController extends Controller
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
                         'item_serial_number' => $doc_import ? $doc_import->item_serial_number : 'Tidak Ada',
-                        'scrap' => $scrap_val
+                        'scrap' => $scrap_val . ' ' . $goods->satuan
                     ];
                 });
         } catch (\Throwable $th) {
@@ -246,7 +261,8 @@ class BOM_AltController extends Controller
             'data' => $query,
             'items' => $items,
             'reconcile' => $reconcile,
-            'export_license' => $export_kite
+            'export_license' => $export_kite,
+            'shipment' => $shipment
         ], 200);
     }
 
