@@ -22,6 +22,7 @@ import moment from 'moment';
 
 // api
 import API from '../../../../helpers';
+import { strPadLeft } from '../../../../utils/formatProduct';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: 'invoice_date', label: 'Issued Date', alignRight: false },
+  { id: 'purchase_order_id', label: 'Purchase Order', alignRight: false },
   { id: 'serial_number', label: 'No. Invoice', alignRight: false },
   { id: 'billed_to', label: 'Billed To', alignRight: false },
   { id: 'total_qty', label: 'Total Qty', alignRight: false },
@@ -149,6 +151,9 @@ function Invoice({ placeHolder }) {
               invoice_date: purchase_invoice?.invoice_date,
               tax: purchase_invoice?.tax,
               billed_to: purchase_invoice?.party?.name,
+              reff_number: purchase_invoice?.reff_number,
+              purchase_order_id: purchase_invoice?.purchase_order?.id,
+              po_number: purchase_invoice?.purchase_order?.po_number,
               serial_number: `INV. No ${purchase_invoice.id}/${purchase_invoice?.purchase_order?.id}-${purchase_invoice?.purchase_order?.purchase_order?.id}/${purchase_invoice.invoice_date}/${purchase_invoice?.purchase_order?.purchase_order?.po_number}`,
               total_qty: purchase_invoice?.sum[0]?.total_qty,
               total_amount: purchase_invoice?.sum[0]?.total_amount,
@@ -285,7 +290,9 @@ function Invoice({ placeHolder }) {
                       id,
                       status,
                       invoice_date,
-                      serial_number,
+                      reff_number,
+                      po_number,
+                      purchase_order_id,
                       billed_to,
                       total_qty,
                       additionalCost
@@ -308,7 +315,8 @@ function Invoice({ placeHolder }) {
                           />
                         </TableCell>
                         <TableCell align="left">{moment(invoice_date).format('ll')}</TableCell>
-                        <TableCell align="left">{serial_number}</TableCell>
+                        <TableCell align="left">{`PO-${strPadLeft(purchase_order_id, 4, '0')}`}</TableCell>
+                        <TableCell align="left">{reff_number}</TableCell>
                         <TableCell align="left">{billed_to}</TableCell>
                         <TableCell align="left">{`${fNumber(total_qty)} pcs`}</TableCell>
                         <TableCell align="left">{fCurrency(additionalCost)}</TableCell>

@@ -52,13 +52,15 @@ const SpaceBetweenBox = styled('div')(({ theme }) => ({
 function Invoice() {
   const [selectedValueSH, setSelectedValueSH] = React.useState({
     name: 'PT. BSI Indonesia',
-    address: 'Jalan Raya Albisindo Desa Gondosari RT 01 RW 05, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
+    address:
+      'Jalan Raya Albisindo Desa Gondosari RT 01 RW 05, Kec. Gebog, Kab. Kudus, Provinsi Jawa Tengah, Indonesia',
     postal_code: 42133,
     phone_number: '(0291) 2381023'
   });
 
   const formik = useFormik({
     initialValues: {
+      reff_number: '',
       order_id: 0,
       purchase_order_id: 0,
       sold_to: 0,
@@ -311,7 +313,7 @@ function Invoice() {
           <CardHeader title="Invoice Info" />
           <CardContent>
             <Grid container spacing={3} direction="row">
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <AutoComplete
                   fullWidth
                   autoComplete="shipment_id"
@@ -323,6 +325,18 @@ function Invoice() {
                   setOpen={setOpenAutoComplete}
                   loading={loadingAutoComplete}
                   changeData={changeData}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  autoComplete="reff_number"
+                  type="text"
+                  placeholder="Reff Number"
+                  {...getFieldProps('reff_number')}
+                  error={Boolean(touched.reff_number && errors.reff_number)}
+                  helperText={touched.reff_number && errors.reff_number}
                 />
               </Grid>
 

@@ -4,7 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import API from '../../../../../helpers';
-import { isArray } from 'lodash';
+import { isArray, isNull } from 'lodash';
+import { strPadLeft } from '../../../../../utils/formatProduct';
 
 function sleep(delay = 0) {
   return new Promise((resolve) => {
@@ -25,9 +26,18 @@ export default function Asynchronous({
 
   React.useEffect(() => {
     if (!value) return;
-    let id = value?.split('.')[1];
-    id = id?.split('/')[0];
-    id = id?.split('-')[0];
+    let match = value.match(/PO-(\d+)/);
+    let id=null;
+    if (match) {
+        let extractedNumber = match[1];
+        // Remove leading zeros
+        id = extractedNumber.replace(/^0+/, '');
+        console.log(id);
+    } else {
+        console.log("Pattern not found.");
+    }
+
+    if(isNull(id)) return;
 
     try {
       API.getAPurchaseOrder(id, (res) => {
@@ -55,9 +65,7 @@ export default function Asynchronous({
       }}
       isOptionEqualToValue={(option, value) => option.purchase_order_id === value.purchase_order_id}
       getOptionLabel={({ purchase_order_id,
-        order_id,
-        issue_date,
-        po_number }) => `PO-No.${purchase_order_id}-${order_id}/${issue_date}/${po_number}`}
+        po_number }) => `PO-${strPadLeft(purchase_order_id, 4, '0')} (${po_number})`}
       options={options}
       loading={loading}
       value={choosen}

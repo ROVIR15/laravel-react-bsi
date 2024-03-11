@@ -343,6 +343,7 @@ class InvoiceController extends Controller
     try {
       //Goods Receipt Creation
       $invoice = Invoice::create([
+        'reff_number' => $param['reff_number'],
         'invoice_date' => $param['invoice_date'],
         'order_id' => $param['order_id'],
         // 'shipment_id' => $param['shipment_id'][0],

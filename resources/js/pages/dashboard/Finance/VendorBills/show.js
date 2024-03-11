@@ -106,6 +106,7 @@ function Invoice() {
         else {
           setValues({
             invoice_id: res.data.id,
+            reff_number: res.data.reff_number,
             po_number: generateInvSerialNumber_alt(res.data, 2),
             sold_to: res.data.sold_to.id,
             invoice_date: res.data.invoice_date,
@@ -367,7 +368,7 @@ function Invoice() {
           <CardContent>
             <Grid container spacing={2} direction="row">
               <Grid item xs={6}>
-                <TextField disabled fullWidth value={values.po_number} />
+                <TextField disabled fullWidth value={values.reff_number} />
               </Grid>
 
               <Grid item xs={6}>
