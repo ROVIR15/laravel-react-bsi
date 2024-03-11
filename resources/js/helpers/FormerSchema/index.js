@@ -41,11 +41,12 @@ export const QuotationSchema = Yup.object().shape({
 export const PurchaseOrderSchema = Yup.object().shape({
   order_id: Yup.string().required('Order ID is required'),
   quote_id: Yup.string().required('Quote ID is required'),
-  bought_from: Yup.string().required('Supplier is required'),
-  ship_to: Yup.string().required('Penerima is required'),
+  bought_from: Yup.string().required('Bought From is required'),
+  ship_to: Yup.string().required('Ship To is required'),
   po_number: Yup.string().required('PO Number is required'),
-  issue_date: Yup.date().required('province is required'),
-  valid_thru: Yup.date().required('city is required'),
-  delivery_date: Yup.date().required('province is required')
+  issue_date: Yup.date().required('Issue Date is required'),
+  valid_thru: Yup.date().required('Valid Thru Date is required'),
+  delivery_date: Yup.date().required('Delivery Date is required'),
+  import_flag: Yup.number().min(1).required('tipe order is required')
 });
 

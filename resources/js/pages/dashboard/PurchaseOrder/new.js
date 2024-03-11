@@ -36,6 +36,9 @@ import LoadingPage from '../../../components/LoadingPage';
 // api
 import API from '../../../helpers';
 
+// utils 
+import { isEmpty } from 'lodash'
+
 //Component
 import DataGrid from './components/DataGrid';
 import Modal from './components/Modal';
@@ -107,7 +110,8 @@ function SalesOrder() {
     po_number: Yup.string().required('city is required'),
     issue_date: Yup.date().required('province is required'),
     valid_thru: Yup.date().required('city is required'),
-    delivery_date: Yup.date().required('province is required')
+    delivery_date: Yup.date().required('province is required'),
+    import_flag: Yup.number().min(1).required('tipe order is required')
   });
 
   const formik = useFormik({
@@ -120,7 +124,7 @@ function SalesOrder() {
       valid_thru: '',
       delivery_date: '',
       description: '',
-      import_flag: false,
+      import_flag: null,
       tax: 0,
       currency_id: 2
     },
@@ -128,7 +132,8 @@ function SalesOrder() {
     onSubmit: (values) => {
       const _data = {
         ...values,
-        order_items: items
+        order_items: items,
+        import_flag: values-1
       };
 
       try {
@@ -212,7 +217,7 @@ function SalesOrder() {
       ship_to: data.ship_to,
       issue_date: data.issue_date,
       valid_thru: data.valid_thru,
-      import_flag: false,
+      import_flag: 0,
       delivery_date: data.delivery_date,
       tax: data.tax,
       currency_id: data.currency_id
@@ -388,18 +393,6 @@ function SalesOrder() {
 
   // Radio Import Activity
   // ----------------------------------------------------------------- //
-  const [isImport, setIsImport] = useState(false);
-
-  const handleRadioImportCheck = (e) => {
-    if (e.target.value === 'true') {
-      setIsImport(true);
-      setFieldValue('import_flag', true);
-    } else {
-      setIsImport(false);
-      setFieldValue('import_flag', false);
-      if (valueTab === '4') setValueTab('1');
-    }
-  };
   // ----------------------------------------------------------------- //
 
   return (
@@ -524,16 +517,18 @@ function SalesOrder() {
 
                         <Grid item xs={2}>
                           <FormControl>
-                            <FormLabel id="Improt">Import</FormLabel>
-                            <RadioGroup
-                              row
-                              value={isImport}
-                              name="import-activity-check"
-                              onChange={handleRadioImportCheck}
+                            <FormLabel id="import">Tipe Order?</FormLabel>
+                            <Select
+                              id="import-activity-check"
+                              {...getFieldProps('import_flag')}
+                              error={Boolean(touched.import_flag && errors.import_flag)}
+                              helperText={touched.import_flag && errors.import_flag}  
                             >
-                              <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
-                              <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
-                            </RadioGroup>
+                              <MenuItem value={0}>None</MenuItem>
+                              <MenuItem value={1}>Lokal/Domestik</MenuItem>
+                              <MenuItem value={2}>Impor KITE</MenuItem>
+                              <MenuItem value={3}>Impor Umum</MenuItem>
+                            </Select>
                           </FormControl>
                         </Grid>
 
@@ -620,7 +615,6 @@ function SalesOrder() {
                                   </FormControl>
                                 </Stack>
                               </TabPanel>
-
                             </TabContext>
                           </ColumnBox>
                         </Grid>

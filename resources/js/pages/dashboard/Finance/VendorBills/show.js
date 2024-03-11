@@ -1,4 +1,5 @@
 import React, { Component, useState } from 'react';
+import * as Yup from 'yup';
 import {
   Box,
   Button,
@@ -31,7 +32,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
-import {UploadPaper} from './components/UploadPaper';
+import { UploadPaper } from './components/UploadPaper';
 
 import API from '../../../../helpers';
 
@@ -72,20 +73,27 @@ function Invoice() {
     phone_number: '(0291) 2381023'
   });
 
+  const ValidationSchema = Yup.object().shape({
+    reff_number: Yup.string().required('Nomor Invoice diperlukan'),
+    invoice_date: Yup.date().required('Tanggal Penerbitan Invoice'),
+    due_date: Yup.number().required('Tenggat Waktu Pembayaran')
+  });
+
   const formik = useFormik({
     initialValues: {
       sales_order_id: '',
       sold_to: 0,
       invoice_date: ''
     },
+    validationSchema: ValidationSchema,
     onSubmit: (values) => {
       let _data = { ...values, items };
-      let _proofData = { 
-        tanggal_inv: values.invoice_date, 
+      let _proofData = {
+        tanggal_inv: values.invoice_date,
         nomor_inv: values.reff_number,
-        invoice_id: id, 
-        url: _link 
-      }
+        invoice_id: id,
+        url: _link
+      };
 
       try {
         API.updateSalesInvoice(id, _data, (res) => {
@@ -133,9 +141,9 @@ function Invoice() {
             address: `${_data.street} ${_data.city} ${_data.province} ${_data.country}`,
             postal_code: _data.postal_code
           });
-          if(!isEmpty(res.data.vendor_bills_attachment)){
-            _setLink(res.data.vendor_bills_attachment[0].url)
-            _setFile(res.data.vendor_bills_attachment[0].url)
+          if (!isEmpty(res.data.vendor_bills_attachment)) {
+            _setLink(res.data.vendor_bills_attachment[0].url);
+            _setFile(res.data.vendor_bills_attachment[0].url);
           }
           setStatus(res.data?.status[0]?.invoice_status_type_id);
           setRowsInvoiceTerm(res.data?.terms);
@@ -496,7 +504,15 @@ function Invoice() {
           <CardContent>
             <Grid container spacing={2} direction="row">
               <Grid item xs={6}>
-                <TextField disabled fullWidth value={values.reff_number} />
+                <TextField
+                  fullWidth
+                  autoComplete="reff_number"
+                  type="text"
+                  placeholder="Reff Number"
+                  {...getFieldProps('reff_number')}
+                  error={Boolean(touched.reff_number && errors.reff_number)}
+                  helperText={touched.reff_number && errors.reff_number}
+                />
               </Grid>
 
               <Grid item xs={6}>

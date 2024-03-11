@@ -125,6 +125,7 @@ function SalesOrder() {
       issue_date: '',
       valid_thru: '',
       delivery_date: '',
+      import_flag: null,
       document_number: 0,
       customs_document_date: '',
       customs_document_type: 0
@@ -155,6 +156,8 @@ function SalesOrder() {
         alert(error);
       });
 
+    let import_flag = load?.import_flag
+
     setValues({
       id: load.id,
       quote_id: load?.order?.quote_id,
@@ -165,9 +168,8 @@ function SalesOrder() {
       issue_date: load.issue_date,
       valid_thru: load.valid_thru,
       delivery_date: load.delivery_date,
-      import_flag: Boolean(load?.import_flag),
       currency_id: load.order.currency_id,
-      import_flag: load?.import_flag
+      import_flag: load?.import_flag + 1
     });
 
     setComments(load.status);
@@ -190,7 +192,7 @@ function SalesOrder() {
     var c = load.order_item.map((key) => {
       const { product_feature } = key;
 
-      const sku_id = generalizeSKU(product_feature?.product?.goods_id, product_feature?.product?.id, product_feature?.id);
+      const sku_id = generalizeSKU(product_feature?.product?.goods_id, product_feature?.product?.id, product_feature?.id, import_flag);
       const shipment_date_ = moment(key.shipment_estimated).format('YYYY-MM-DD');
 
       return {
@@ -416,8 +418,6 @@ function SalesOrder() {
       })
     : false;
 
-  console.log(editableUser, roles, editableCondition)
-
   const columns = useMemo(
     () => [
       { field: 'sku_id', headerName: 'SKU ID', width: 150, editable: false },
@@ -535,15 +535,10 @@ function SalesOrder() {
 
   // Radio Import Activity
   //-------------------------------------------------------//
-  const [isImport, setIsImport] = useState(false);
+  const [isImport, setIsImport] = useState(0);
 
-  const handleRadioImportCheck = (e) => {
-    if (e.target.value === 'true') {
-      setIsImport(true);
-    } else {
-      setIsImport(false);
-      if (valueTab === '6') setValueTab('1');
-    }
+  const handleChangeImportType = (e) => {
+    console.log('haha')
   };
   //-------------------------------------------------------//
 
@@ -685,16 +680,22 @@ function SalesOrder() {
 
                         <Grid item xs={2}>
                           <FormControl>
-                            <FormLabel id="Improt">Import</FormLabel>
-                            <RadioGroup
-                              row
+                            <FormLabel id="import">Tipe Order?</FormLabel>
+                            <Select
+                              id="import-activity-check"
                               value={isImport}
-                              name="import-activity-check"
-                              onChange={handleRadioImportCheck}
+                              onChange={(e) => {
+                                console.log('haha')
+                              }}
+                              {...getFieldProps('import_flag')}
+                              error={Boolean(touched.import_flag && errors.import_flag)}
+                              helperText={touched.import_flag && errors.import_flag}  
                             >
-                              <FormControlLabel value={'true'} control={<Radio />} label="Ya" />
-                              <FormControlLabel value={'false'} control={<Radio />} label="Tidak" />
-                            </RadioGroup>
+                              <MenuItem value={0}>None</MenuItem>
+                              <MenuItem value={1}>Lokal/Domestik</MenuItem>
+                              <MenuItem value={2}>Impor KITE</MenuItem>
+                              <MenuItem value={3}>Impor Umum</MenuItem>
+                            </Select>
                           </FormControl>
                         </Grid>
 

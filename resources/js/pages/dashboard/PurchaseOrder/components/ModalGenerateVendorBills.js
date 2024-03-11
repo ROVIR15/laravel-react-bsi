@@ -33,6 +33,7 @@ export default function BasicModal({ order_id, open, handleClose }) {
   const { user } = useAuth();
 
   const ValidationSchema = Yup.object().shape({
+    reff_number: Yup.string().required('Nomor Invoice diperlukan'),
     invoice_date: Yup.date().required('Tanggal Penerbitan Invoice'),
     due_date: Yup.number().required('Tenggat Waktu Pembayaran')
   });
@@ -99,6 +100,15 @@ export default function BasicModal({ order_id, open, handleClose }) {
                 style={{ margin: 'none' }}
               >
                 <Stack direction="column" spacing={2}>
+                  <TextField
+                    fullWidth
+                    autoComplete="reff_number"
+                    type="text"
+                    placeholder="Nomor Invoice Supplier"
+                    {...getFieldProps('reff_number')}
+                    error={Boolean(touched.reff_number && errors.reff_number)}
+                    helperText={touched.reff_number && errors.reff_number}
+                  />
                   <Stack direction="row" spacing={2}>
                     <TextField
                       fullWidth

@@ -153,16 +153,6 @@ class InvoiceController extends Controller
       // create Invoice 
       $invoice = Invoice::create($payloadInvoice);
 
-      // construct data
-      $vendorBillsAttachment = [
-        'tanggal_inv' => $param['invoice_date'],
-        'nomor_inv' => $param['reff_number'],
-        'invoice_id' => $invoice['id'],
-        'url' => $param['url']
-      ];
-
-      VendorBillFileUpload::create($vendorBillsAttachment);
-
       DB::commit();
 
       $payloadInvoiceItem = [];

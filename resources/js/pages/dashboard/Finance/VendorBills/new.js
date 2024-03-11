@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Yup from 'yup';
 
 import {
   Box,
@@ -60,6 +61,12 @@ function Invoice() {
     phone_number: '(0291) 2381023'
   });
 
+  const ValidationSchema = Yup.object().shape({
+    reff_number: Yup.string().required('Nomor Invoice diperlukan'),
+    invoice_date: Yup.date().required('Tanggal Penerbitan Invoice'),
+    due_date: Yup.number().required('Tenggat Waktu Pembayaran')
+  });
+
   const formik = useFormik({
     initialValues: {
       reff_number: '',
@@ -70,6 +77,7 @@ function Invoice() {
       description: '',
       tax: 0
     },
+    validationSchema: ValidationSchema,
     onSubmit: (values) => {
       if(isNull(_link)){
         alert('Lampirkan Dokumen Tagihan dari Supplier!');
