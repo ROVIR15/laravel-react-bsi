@@ -957,9 +957,9 @@ class InventoryController extends Controller
             'pl_number' => $import_doc ? $import_doc->pl_number : 'Tidak Ada',
             'bl_number' => $import_doc ? $import_doc->bl_number : 'Tidak Ada',
             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
-            'invoice_id' => $inv['id'],
-            'vendor_bills' => $inv['reff_number'],
-            'vb_attachment' => $vb_attachment['url']
+            'invoice_id' => $inv ? $inv['id'] : null,
+            'vendor_bills' => $inv ? $inv['reff_number'] : null,
+            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
           ];
         });
 
@@ -1360,9 +1360,9 @@ class InventoryController extends Controller
             'customs_document_number' => $import_doc ? $import_doc->document_number : 0,
             'pl_number' => $import_doc ? $import_doc->pl_number : 0,
             'bl_number' => $import_doc ? $import_doc->bl_number : 0,
-            'invoice_id' => $inv['id'],
-            'vendor_bills' => $inv['reff_number'],
-            'vb_attachment' => $vb_attachment['url']
+            'invoice_id' => $inv ? $inv['id'] : null,
+            'vendor_bills' => $inv ? $inv['reff_number'] : null,
+            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
           ];
         });
 
