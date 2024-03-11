@@ -124,8 +124,7 @@ function Inbound() {
     const tableHTML = tableSelect.outerHTML;
 
     // Specify file name
-    const filename =
-      'Laporan Pemasukan Hasil Produksi PT Buana Sandang Indonesia.xls';
+    const filename = 'Laporan Pemasukan Hasil Produksi PT Buana Sandang Indonesia.xls';
 
     if (navigator.msSaveOrOpenBlob) {
       // For Internet Explorer
@@ -289,7 +288,14 @@ function Inbound() {
                   ?.map((row, index) => (
                     <TableRow>
                       <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.document_number}</TableCell>
+                      <TableCell>
+                        <a
+                          href={`../inventory/material-transfer-view/view-document/${row.material_transfer_id}`}
+                          target="_blank"
+                        >
+                          {row.document_number}
+                        </a>
+                      </TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
                         {/* {row.kode_barang} */}
