@@ -410,9 +410,9 @@ class InventoryController extends Controller
             'currency' => $order->currency_id,
             'costing_item_id' => $costing_item ? $costing_item->id : null,
             'costing_id' => $costing_item ? $costing_item->bom_id : null,
-            'invoice_id' => $inv['id'],
-            'vendor_bills' => $inv['reff_number'],
-            'vb_attachment' => $vb_attachment['url']
+            'invoice_id' => $inv ? $inv['id'] : null,
+            'vendor_bills' => $inv ? $inv['reff_number'] : null,
+            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
           ];
         });
     } catch (Exception $th) {
