@@ -21,7 +21,7 @@ class VendorBillsFileUploadController extends Controller
                 VendorBillFileUpload::create([
                     'tanggal_inv' => $param['tanggal_inv'],
                     'nomor_inv' => $param['nomor_inv'],
-                    'invoice_id' => $param['invoice_id'],
+                    'invoice_id' => $inv['id'],
                     'url' => $param['url']
                 ]);
             } else {
