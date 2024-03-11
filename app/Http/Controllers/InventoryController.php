@@ -412,7 +412,7 @@ class InventoryController extends Controller
             'costing_id' => $costing_item ? $costing_item->bom_id : null,
             'invoice_id' => $inv ? $inv['id'] : null,
             'vendor_bills' => $inv ? $inv['reff_number'] : null,
-            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
+            'vb_attachment' => $vb_attachment ? (isset($vb_attachment['url']) ? $vb_attachment['url'] : null) : null
           ];
         });
     } catch (Exception $th) {
@@ -959,7 +959,7 @@ class InventoryController extends Controller
             'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'invoice_id' => $inv ? $inv['id'] : null,
             'vendor_bills' => $inv ? $inv['reff_number'] : null,
-            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
+            'vb_attachment' => $vb_attachment ? (isset($vb_attachment['url']) ? $vb_attachment['url'] : null) : null
           ];
         });
 
@@ -1363,7 +1363,7 @@ class InventoryController extends Controller
             'bl_number' => $import_doc ? $import_doc->bl_number : 0,
             'invoice_id' => $inv ? $inv['id'] : null,
             'vendor_bills' => $inv ? $inv['reff_number'] : null,
-            'vb_attachment' => $vb_attachment ? $vb_attachment['url'] : null
+            'vb_attachment' => $vb_attachment ? (isset($vb_attachment['url']) ? $vb_attachment['url'] : null) : null
           ];
         });
 
