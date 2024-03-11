@@ -901,7 +901,7 @@ class InventoryController extends Controller
               if (count($temp)) {
                 $purchase_order_id = $temp[0]->id;
                 $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $temp[0]->order_id)->first();
-                if (count($inv['vendor_bills_attachment'])) {
+                if (isset($inv['vendor_bills_attachment'])) {
                   $vb_attachment = $inv['vendor_bills_attachment'][0];
                 }  
               }
@@ -1309,7 +1309,7 @@ class InventoryController extends Controller
             if (count($purchase_order) > 0) {
               $import_flag = $purchase_order[0]->import_flag ? 2 : 1;              
               $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $order_item->order_id)->first();
-              if (count($inv['vendor_bills_attachment'])) {
+              if (isset($inv['vendor_bills_attachment'])) {
                 $vb_attachment = $inv['vendor_bills_attachment'][0];
               }  
             }
