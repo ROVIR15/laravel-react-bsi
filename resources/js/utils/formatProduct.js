@@ -8,16 +8,22 @@ export function strPadLeft(value, length, padChar) {
   return value;
 }
 
-export function generalizeSKU(order_item_id, product_feature_id, product_id, import_flag=false) {
-  if (import_flag) {
-    return `02-${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(
-      product_id,
+export function generalizeSKU(goods_id, product_id, product_feature_id, import_flag = 0) {
+  if (import_flag === 1) {
+    return `02-${strPadLeft(goods_id, 4, 0)}-${strPadLeft(product_id, 4, 0)}-${strPadLeft(
+      product_feature_id,
+      4,
+      0
+    )}`;
+  } else if (import_flag === 2) {
+    return `03-${strPadLeft(goods_id, 4, 0)}-${strPadLeft(product_id, 4, 0)}-${strPadLeft(
+      product_feature_id,
       4,
       0
     )}`;
   } else {
-    return `01-${strPadLeft(order_item_id, 4, 0)}-${strPadLeft(product_feature_id, 4, 0)}-${strPadLeft(
-      product_id,
+    return `01-${strPadLeft(goods_id, 4, 0)}-${strPadLeft(product_id, 4, 0)}-${strPadLeft(
+      product_feature_id,
       4,
       0
     )}`;
