@@ -33,6 +33,7 @@ use App\Models\KITE\ImportDoc;
 use App\Models\Manufacture\BOM;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Order\Order;
+use App\Models\Order\POBuyerProof;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Order\SalesOrder;
 use App\Models\Reconcile\Reconcile;
@@ -475,6 +476,7 @@ class InventoryController extends Controller
           $costing_item_id = $orderItem['costing_item_id'];
           $costing_item = null;
           $costing_id = null;
+          $po_proof = null;
 
           if ($costing_item_id) {
             $costing_item = BOMItem::find($costing_item_id);
@@ -483,6 +485,7 @@ class InventoryController extends Controller
           if ($salesOrder) {
             $temp_rhso = Reconcile::where('sales_order_id', $salesOrder->id)->get();
 
+            $po_proof = POBuyerProof::where('sales_order_id', $salesOrder->id)->orderBy('id', 'desc')->first();
             if (count($temp_rhso)) {
               $costing_id = $temp_rhso[0]->costing_id;
             }
@@ -513,7 +516,8 @@ class InventoryController extends Controller
             'export_document_date' => $exportDoc ? $this->change_date_format($exportDoc->date) : null,
             'currency' => $order->currency_id,
             'costing_item_id' => $costing_item ? $costing_item->id : null,
-            'costing_id' => $costing_id
+            'costing_id' => $costing_id,
+            'po_proof' => $po_proof ? $po_proof->imageUrl : null
           ];
         });
     } catch (\Throwable $th) {

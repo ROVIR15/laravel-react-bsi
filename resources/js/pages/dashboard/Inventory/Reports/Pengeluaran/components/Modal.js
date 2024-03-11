@@ -83,10 +83,11 @@ export default function BasicModal({ payload, open, handleClose }) {
                           Nomor Sales Order
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                          <a
+                          <a href={payload?.po_proof} disabled={payload?.po_proof ? false : true} target="_blank">
+                            {/* <a
                             href={`../order/sales-order/document/${payload?.sales_order_id}`}
                             target="_blank"
-                          >
+                          > */}
                             SO-{padStartWithZero(payload?.costing_id)}-
                             {padStartWithZero(payload?.sales_order_id)}
                           </a>
