@@ -351,7 +351,7 @@ class InventoryController extends Controller
 
           if ($order) {
             $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $order->id)->first();
-            if (count($inv['vendor_bills_attachment'])) {
+            if (isset($inv['vendor_bills_attachment'])) {
               $vb_attachment = $inv['vendor_bills_attachment'][0];
             }
           }
