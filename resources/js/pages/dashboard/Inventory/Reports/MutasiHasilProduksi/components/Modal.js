@@ -129,7 +129,7 @@ export default function BasicModal({ payload, open, handleClose }) {
                         </td>
                         <td className="wk_width_1 wk_padd_8_20 wk_text_left">
                           <a href={`../kite/export/${payload?.export_document_id}`} target="_blank">
-                            {padStartWithZero(payload?.export_document_id)}
+                            {padStartWithZero(payload?.export_document_number)}
                           </a>
                         </td>
                       </tr>

@@ -472,7 +472,18 @@ class ScrapController extends Controller
                 $product = $query->product ? $query->product : null;
                 $goods = $product ? $product->goods : null;
 
-                $import_flag = $query->import_flag ? 2 : 1;
+                // $import_flag = $query->import_flag ? 2 : 1;
+                $doc_import = $query->import_flag;
+                $import_flag = 1;
+                    
+                if ($doc_import === 1) {
+                    $import_flag = 2;
+                } elseif ($doc_import === 2) {
+                    $import_flag = 3;
+                } else {
+                    $import_flag = 1;
+                }
+      
 
                 return [
                     'id' => $query->id,

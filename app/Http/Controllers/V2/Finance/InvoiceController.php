@@ -101,7 +101,16 @@ class InvoiceController extends Controller
 
                         $import_flag = 1;
                         if (!is_null($order)){
-                            $import_flag = $order->import_flag ? 2 : 1;
+                            // $import_flag = $order->import_flag ? 2 : 1;
+                            $doc_import = $order->import_flag;
+                                
+                            if ($doc_import === 1) {
+                                $import_flag = 2;
+                            } elseif ($doc_import === 2) {
+                                $import_flag = 3;
+                            } else {
+                                $import_flag = 1;
+                            }
                         }
 
                         $item_name = '';

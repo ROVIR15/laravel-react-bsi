@@ -1,10 +1,24 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import AutoComplete from './components/AutoComplete';
 import { LoadingButton } from '@mui/lab';
-import { Button, Card, Grid, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  Grid,
+  Paper,
+  Stack,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TextField,
+  Typography
+} from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { isEmpty, isUndefined, update, isNull } from 'lodash';
+import { moment } from 'moment';
 
 import API from '../../../helpers';
 import { optionProductFeature, optionProductFeatureV3 } from '../../../helpers/data';
@@ -82,6 +96,9 @@ function BillofMaterial() {
   //store value of options for autocomplete
   const [optionsAC, setOptionsAC] = useState([]);
 
+  //store value of shipment
+  const [shipmentList, setShipmentList] = useState([]);
+
   // handle autocomplete is active or not;
   const [open, setOpen] = useState(false);
   const loading = open && isEmpty(options) && isEmpty(optionsAC);
@@ -149,6 +166,8 @@ function BillofMaterial() {
           setReconcile(res.reconcile);
 
           setExportLicense(res.export_license);
+
+          setShipmentList(res.shipment);
         }
       });
     } catch (error) {
@@ -178,7 +197,13 @@ function BillofMaterial() {
         editable: false
       },
       { field: 'available_qty', headerName: 'Tersisa di Gudang', width: 200, editable: false },
-      { field: 'scrap_conversion', headerName: 'Konversi ke KG', width: 200, type: 'number', editable: false },
+      {
+        field: 'scrap_conversion',
+        headerName: 'Konversi ke KG',
+        width: 200,
+        type: 'number',
+        editable: false
+      },
       { field: 'scrap', headerName: 'Waste/Scrap', width: 200, editable: false },
       { field: 'converted_scrap', headerName: 'Waste/Scrap kg', width: 300, editable: false }
     ],
@@ -342,10 +367,7 @@ function BillofMaterial() {
                             Nomor PEB
                           </td>
                           <td className="wk_width_1 wk_padd_8_20 wk_text_left">
-                            <a
-                              href={`../../../kite/export/${exportLicense?.id}`}
-                              target="_blank"
-                            >
+                            <a href={`../../../kite/export/${exportLicense?.id}`} target="_blank">
                               {padStartWithZero(exportLicense?.document_number)}
                             </a>
                           </td>
@@ -366,6 +388,53 @@ function BillofMaterial() {
                     <DataGrid columns={goodsColumns} rows={component} duplicateMaterial={false} />
                   </Grid>
                 </Grid>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography variant="h6" style={{ marginTop: '1em', marginBottom: '0.5em' }}>
+                  Riwayat Pengiriman
+                </Typography>
+                <Table
+                  className="wk_table wk_style1 wk_border"
+                  sx={{ minWidth: 120 }}
+                  size="small"
+                  aria-label="simple table"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className="wk_primary_color wk_gray_bg" align="left">
+                        #
+                      </TableCell>
+                      <TableCell className="wk_primary_color wk_gray_bg">
+                        Nomor Pengiriman
+                      </TableCell>
+                      <TableCell className="wk_primary_color wk_gray_bg">Tanggal</TableCell>
+                      <TableCell className="wk_primary_color wk_gray_bg" align="right">
+                        Total Qty Kirim
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {shipmentList.map((row, index) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell align="left">{index + 1}</TableCell>
+                        <TableCell align="left">
+                          <a
+                            href={`../../../shipment/outgoing/document/${id}`}
+                            target="_blank"
+                          >
+                            {`INSHIP-${row.id}`}
+                          </a>
+                        </TableCell>
+                        <TableCell align="left">{row?.delivery_date}</TableCell>
+                        <TableCell align="right">{`${row?.sum[0]?.total_qty} pcs`}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </Grid>
             </Grid>
           </Card>

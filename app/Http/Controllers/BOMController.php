@@ -340,7 +340,19 @@ class BOMController extends Controller
             }
           }
 
-          $import_flag = $purchaseOrder->import_flag ? 2 : 1;
+          // $import_flag = $purchaseOrder->import_flag ? 2 : 1;
+          $doc_import = $purchaseOrder->import_flag;
+          // $import_flag = !is_null($doc_import) ? 2 : 1;
+
+          $import_flag = 1;
+                        
+          if ($doc_import === 1) {
+              $import_flag = 2;
+          } elseif ($doc_import === 2) {
+              $import_flag = 3;
+          } else {
+              $import_flag = 1;
+          }
 
           $payment = $invoice ? PaymentHasInvoice::where('invoice_id', $invoice->id)->first() : 0;
 

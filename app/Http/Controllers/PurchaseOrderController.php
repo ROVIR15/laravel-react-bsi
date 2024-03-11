@@ -100,7 +100,8 @@ class PurchaseOrderController extends Controller
           $query2->whereIn('status_type', ['Approve', 'Review', 'Reject Approve']);
         })
           ->whereYear('created_at', '=', $year)
-          ->whereMonth('created_at', '=', $month)->orderBy('id', 'desc')
+          ->whereMonth('created_at', '=', $month)
+          ->orderBy('id', 'desc')
           ->get();
         break;
 

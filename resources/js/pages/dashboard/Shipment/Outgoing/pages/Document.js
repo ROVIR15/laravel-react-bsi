@@ -105,7 +105,7 @@ function FirstPage() {
             ...data,
             id: info?.id,
             po_number: order?.sales_order?.po_number,
-            bought_from: order?.sales_order?.party ? $order?.sales_order?.party : info?.ship_to,
+            bought_from: order?.sales_order?.party ? order?.sales_order?.party : info?.ship_to,
             issue_date: moment(info?.created_at).format('LL'),
             GR_Items: _items
           });

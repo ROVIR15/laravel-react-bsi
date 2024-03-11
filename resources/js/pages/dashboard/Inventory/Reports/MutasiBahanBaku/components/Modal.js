@@ -158,6 +158,30 @@ export default function BasicModal({ payload, open, handleClose }) {
                           </a>
                         </td>
                       </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Invoice
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          {payload?.vendor_bills ? payload?.vendor_bills : 'Tidak Ada'}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                          Invoice *Lampiran
+                        </td>
+                        <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                          <a
+                            href={payload?.vb_attachment}
+                            disabled={payload?.vb_attachment ? false : true}
+                            target="_blank"
+                          >
+                            {payload?.vb_attachment ? payload?.vb_attachment : 'Belum di Upload'}
+                          </a>
+                        </td>
+                      </tr>
                     </table>
                   </div>
                 </div>

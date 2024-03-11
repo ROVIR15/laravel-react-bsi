@@ -27,6 +27,7 @@ use App\Http\Resources\Inventory\InventoryCollection;
 use App\Models\Inventory\GoodsMovement;
 use App\Models\Inventory\MaterialTransfer;
 use App\Models\Inventory\MaterialTransferShipmentRelationship;
+use App\Models\Invoice\Invoice;
 use App\Models\KITE\ExportDoc;
 use App\Models\KITE\ImportDoc;
 use App\Models\Manufacture\BOM;
@@ -139,14 +140,14 @@ class InventoryController extends Controller
     try {
 
       $costing = Reconcile::select('order_id', 'costing_id')
-          ->where('costing_id', $costingId)
-          ->first();
+        ->where('costing_id', $costingId)
+        ->first();
 
       $list_of_so_item = OrderItem::select('id', 'product_feature_id')
-                                    ->where('order_id', $costing->order_id)
-                                    ->pluck('id')
-                                    ->toArray();
-      
+        ->where('order_id', $costing->order_id)
+        ->pluck('id')
+        ->toArray();
+
       $costing_item_id = BOMItem::select('id', 'product_feature_id', 'product_id')
         ->where('bom_id', $costingId)
         ->pluck('id')
@@ -156,7 +157,7 @@ class InventoryController extends Controller
         ->whereIn('costing_item_id', $costing_item_id)
         ->pluck('id')
         ->toArray();
-      
+
       $list_of_item = array_merge($list_order_item, $list_of_so_item);
 
       // $query = ProductFeature::with('product', 'product_category')
@@ -202,7 +203,18 @@ class InventoryController extends Controller
           $product = $query['product'] ? $query['product'] : null;
           $goods = $query->goods ? $query->goods : null;
 
-          $import_flag = $query->import_flag ? 2 : 1;
+          // $import_flag = $query->import_flag ? 2 : 1;
+          $doc_import = $query->import_flag;
+          $import_flag = 1;
+
+          if ($doc_import === 1) {
+            $import_flag = 2;
+          } elseif ($doc_import === 2) {
+            $import_flag = 3;
+          } else {
+            $import_flag = 1;
+          }
+
 
           $order_item_c = OrderItem::select('order_id', 'product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
           $order_item = count($order_item_c) ? $order_item_c[0] : null;
@@ -333,6 +345,16 @@ class InventoryController extends Controller
             $costing_item = BOMItem::find($costing_item_id);
           }
 
+          $inv = null;
+          $vb_attachment = null;
+
+          if ($order) {
+            $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $order->id)->first();
+            if (count($inv['vendor_bills_attachment'])) {
+              $vb_attachment = $inv['vendor_bills_attachment'][0];
+            }
+          }
+
           switch ($importDoc->type) {
             case 1:
               $doc_type = 'BC 2.0';
@@ -386,7 +408,10 @@ class InventoryController extends Controller
             'customs_document_date' => $this->change_date_format($importDoc->date),
             'currency' => $order->currency_id,
             'costing_item_id' => $costing_item ? $costing_item->id : null,
-            'costing_id' => $costing_item ? $costing_item->bom_id : null
+            'costing_id' => $costing_item ? $costing_item->bom_id : null,
+            'invoice_id' => $inv['id'],
+            'vendor_bills' => $inv['reff_number'],
+            'vb_attachment' => $vb_attachment['url']
           ];
         });
     } catch (Exception $th) {
@@ -840,6 +865,7 @@ class InventoryController extends Controller
       )
         ->with('product', 'product_feature', 'goods', 'material_transfer')
         ->where('facility_id', 3)
+        ->where('import_flag', 1)
         // ->whereIn('facility_id', [3, 18])
         ->where('qty', '<', 0)
         ->whereNotNull('order_item_id')
@@ -861,6 +887,8 @@ class InventoryController extends Controller
           $costing_id = null;
           $shipment_id = null;
           $import_doc = null;
+          $inv = null;
+          $vb_attachment = null;
 
           if (isset($item->order_item_id)) {
             $order_item = OrderItem::find($item->order_item_id);
@@ -868,6 +896,10 @@ class InventoryController extends Controller
               $temp = PurchaseOrder::where('order_id', $order_item->order_id)->get();
               if (count($temp)) {
                 $purchase_order_id = $temp[0]->id;
+                $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $temp[0]->order_id)->first();
+                if (count($inv['vendor_bills_attachment'])) {
+                  $vb_attachment = $inv['vendor_bills_attachment'][0];
+                }  
               }
 
               $costing = BOMItem::find($order_item->costing_item_id);
@@ -884,10 +916,20 @@ class InventoryController extends Controller
               if (count($temp_import_doc)) {
                 $import_doc = $temp_import_doc[0];
               }
+
             }
           }
 
-          $import_flag = $item->import_flag ? 2 : 1;
+          $doc_import = $item->import_flag;
+          $import_flag = 1;
+
+          if ($doc_import === 1) {
+            $import_flag = 2;
+          } elseif ($doc_import === 2) {
+            $import_flag = 3;
+          } else {
+            $import_flag = 1;
+          }
 
           return [
             'id' => $index + 1,
@@ -910,7 +952,10 @@ class InventoryController extends Controller
             'customs_document_number' => $import_doc ? $import_doc->document_number : null,
             'pl_number' => $import_doc ? $import_doc->pl_number : 'Tidak Ada',
             'bl_number' => $import_doc ? $import_doc->bl_number : 'Tidak Ada',
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT)
+            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'invoice_id' => $inv['id'],
+            'vendor_bills' => $inv['reff_number'],
+            'vb_attachment' => $vb_attachment['url']
           ];
         });
 
@@ -940,7 +985,10 @@ class InventoryController extends Controller
             "unit_measurement" => $item['unit_measurement'],
             "qty_digunakan" => 0,
             "qty_subcontract" => 0,
-            "subcontractor_name" => ''
+            "subcontractor_name" => '',
+            "invoice_id" => $item['invoice_id'],
+            "vendor_bills" => $item['vendor_bills'],
+            "vb_attachment" => $item['vb_attachment']
           );
         }
 
@@ -1002,7 +1050,7 @@ class InventoryController extends Controller
         ->with('product', 'product_feature', 'goods', 'material_transfer')
         ->where('facility_id', 2)
         // ->whereIn('facility_id', [2])
-        ->where('qty', '>', 0) 
+        ->where('qty', '>', 0)
         ->whereIn('product_feature_id', $order_item)
         ->groupBy('facility_id', 'product_feature_id')
         // ->whereHas('relations_with_shipment', function($query) {
@@ -1248,12 +1296,19 @@ class InventoryController extends Controller
           $costing_item = null;
           $shipment = null;
           $import_doc = null;
+          $inv = null;
+          $vb_attachment = null;
 
           if ($order_item) {
             $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->get();
             if (count($purchase_order) > 0) {
-              $import_flag = $purchase_order[0]->import_flag ? 2 : 1;
+              $import_flag = $purchase_order[0]->import_flag ? 2 : 1;              
+              $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $order_item->order_id)->first();
+              if (count($inv['vendor_bills_attachment'])) {
+                $vb_attachment = $inv['vendor_bills_attachment'][0];
+              }  
             }
+
 
             $temp_shipment = Shipment::where('order_id', $order_item->order_id)->get();
             if (count($temp_shipment)) {
@@ -1299,7 +1354,10 @@ class InventoryController extends Controller
             'import_id' => $import_doc ? $import_doc->id : 0,
             'customs_document_number' => $import_doc ? $import_doc->document_number : 0,
             'pl_number' => $import_doc ? $import_doc->pl_number : 0,
-            'bl_number' => $import_doc ? $import_doc->bl_number : 0
+            'bl_number' => $import_doc ? $import_doc->bl_number : 0,
+            'invoice_id' => $inv['id'],
+            'vendor_bills' => $inv['reff_number'],
+            'vb_attachment' => $vb_attachment['url']
           ];
         });
 
@@ -1329,7 +1387,11 @@ class InventoryController extends Controller
             "sku_id" => $item['sku_id'],
             "unit_measurement" => $item['unit_measurement'],
             "qty_in" => 0,
-            "qty_out" => 0
+            "qty_out" => 0,
+            "subcontractor_name" => '',
+            "invoice_id" => $item['invoice_id'],
+            "vendor_bills" => $item['vendor_bills'],
+            "vb_attachment" => $item['vb_attachment']
           );
         }
 
@@ -1449,8 +1511,8 @@ class InventoryController extends Controller
             'shipment_id' => $shipment ? $shipment->id : 0,
             'export_id' => $export_doc ? $export_doc->id : 0,
             'export_document_number' => $export_doc ? $export_doc->document_number : 0,
-            // 'pl_number' => $export_doc ? $export_doc->pl_number : 0,
-            // 'bl_number' => $export_doc ? $export_doc->bl_number : 0
+            // 'pl_number' => $export_doc ? $export_doc : 0,
+            'bl_number' => $export_doc ? $export_doc->bl_number : 0
           ];
         });
 
@@ -1464,11 +1526,11 @@ class InventoryController extends Controller
             'id' => $item['id'],
             'date' => $item['date'],
             'shipment_id' => $item['shipment_id'],
-            'export_id' => $item['export_id'],
+            'export_document_id' => $item['export_id'],
             'facility_name' => $item['facility_name'],
             'export_document_number' => $item['export_document_number'],
             // 'pl_number' => $item['pl_number'],
-            // 'bl_number' => $item['bl_number'],
+            'bl_number' => $item['bl_number'],
             'sales_order_id' => $item['sales_order_id'],
             'costing_id' => $item['costing_id'],
             'initial_stock' => $item['initial_stock'] ? $item['initial_stock'] : 0,
