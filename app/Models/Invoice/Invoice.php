@@ -15,6 +15,7 @@ class Invoice extends Model
     public $incrementing = true;
 
     protected $fillable = [
+        'reff_number',
         'invoice_date',
         'order_id',
         'shipment_id',
@@ -62,5 +63,9 @@ class Invoice extends Model
 
     public function submission(){
       return $this->hasMany('App\Models\Invoice\InvoiceSubmission')->with('user_info')->orderBy('created_at', 'desc');
+    }
+
+    public function vendor_bills_attachment(){
+        return $this->hasMany('App\Models\Invoice\VendorBillFileUpload')->orderBy('created_at', 'desc');
     }
 }

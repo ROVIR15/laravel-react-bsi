@@ -23,6 +23,7 @@ import { FormikProvider, Form, useFormik } from 'formik';
 
 import DataGrid from './components/DataGrid';
 import DialogBox from './components/DBBuyer';
+import {UploadPaper} from './components/UploadPaper';
 
 import AutoComplete from './components/AutoComplete';
 import Page from '../../../../components/Page';
@@ -34,6 +35,7 @@ import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import { partyArrangedData } from '../../../../helpers/data';
 
 import { orderItemToVendorBillItems } from '../utils';
+import {isNull} from 'lodash';
 
 const ColumnBox = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -69,12 +71,19 @@ function Invoice() {
       tax: 0
     },
     onSubmit: (values) => {
+      if(isNull(_link)){
+        alert('Lampirkan Dokumen Tagihan dari Supplier!');
+        setSubmitting(false);
+        setValueTab("4");
+        return
+      }
       let _data = {
         ...values,
         items,
         type: 2,
         tax: 11,
         description: '',
+        url: _link,
         shipment_id: null,
         terms: rowsInvoiceTerm
       };
@@ -151,6 +160,118 @@ function Invoice() {
   };
 
   //   END
+
+  const [file, setFile] = React.useState(null);
+  const [_link, _setLink] = React.useState(null);
+  const [dragging, setDragging] = React.useState(false);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    const files = [...e.dataTransfer.files];
+    const event = { target: { files } };
+
+    // Handle file upload
+    handleOnFileChange(event);
+  };
+  
+  const handleOnFileChange = (event) => {
+    setFile(event.target.files[0]);
+
+    // Create an object of formData
+    const formData = new FormData();
+
+    // Update the formData object
+    formData.append('file', event.target.files[0], event.target.files[0].name);
+    try {
+      API.uploadVendorBills(formData, function (res) {
+        if (res.success) {
+          _setLink(res.path);
+          enqueueSnackbar('', { variant: 'successAlert' });
+        } else {
+          enqueueSnackbar('', { variant: 'failedAlert' });
+        }
+      });
+    } catch (error) {
+      enqueueSnackbar('', { variant: 'failedAlert' });
+    }
+  };
+
+  function ShowImageWhenItsUploaded() {
+    if (file) {
+      return (
+        <Paper sx={{ height: '100%' }}>
+          <Stack direction="column">
+            <Typography
+              variant="body1"
+              component="a"
+              href={_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {_link}
+            </Typography>
+
+            <Button component="label" htmlFor="upload-file">
+              <input
+                accept="pdf/*"
+                multiple
+                id="upload-file"
+                type="file"
+                onChange={handleOnFileChange}
+                hidden
+              />
+              <Typography variant="h5">Change File</Typography>
+            </Button>
+          </Stack>
+        </Paper>
+      );
+    } else {
+      return (
+        <Paper sx={{ height: '100%' }}>
+          <label htmlFor="upload-file">
+            <input
+              accept="pdf/*"
+              multiple
+              id="upload-file"
+              type="file"
+              onChange={handleOnFileChange}
+              style={{ display: 'none' }}
+            />
+            <UploadPaper
+              onChange={handleOnFileChange}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              component="span"
+              fullWidth
+            >
+              <Typography variant="h5">Drop or Select File</Typography>
+            </UploadPaper>
+          </label>
+        </Paper>
+      );
+    }
+  }
 
   /**
    * Data Grid for Invoice Item
@@ -435,6 +556,7 @@ function Invoice() {
                   <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                     <Tab label="Description" value="1" />
                     <Tab label="Finance" value="2" />
+                    <Tab label="Attachment" value="4" />
                     <Tab label="Terms" value="3" />
                   </TabList>
                 </Box>
@@ -476,6 +598,12 @@ function Invoice() {
                     handleAddRow={handleAddInvoiceTerm}
                     onEditRowsModelChange={handleEditRowsModelChange}
                   />
+                </TabPanel>
+
+                <TabPanel value="4">
+                  <Grid item xs={12}>
+                    <ShowImageWhenItsUploaded />
+                  </Grid>
                 </TabPanel>
               </TabContext>
             </ColumnBox>

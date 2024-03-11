@@ -12,9 +12,7 @@ use App\Models\Invoice\InvoiceHasShipment;
 use App\Models\Invoice\InvoiceItem;
 use App\Models\Invoice\InvoiceHasType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Study\Invoice as InvoiceOneCollection;
-use App\Http\Resources\Study\InvoiceCollection;
-
+use App\Models\Invoice\VendorBillFileUpload;
 use DB;
 
 use Exception;
@@ -144,6 +142,7 @@ class InvoiceController extends Controller
       // return response()->json($orderItem);
       $payloadInvoice = [
         'invoice_date' => $param['invoice_date'],
+        'reff_number' => $param['reff_number'],
         'due_date' => $param['due_date'],
         'order_id' => $orderId,
         'sold_to' => $purchaseOrder ? $purchaseOrder['bought_from'] : 0,
@@ -153,6 +152,17 @@ class InvoiceController extends Controller
 
       // create Invoice 
       $invoice = Invoice::create($payloadInvoice);
+
+      // construct data
+      $vendorBillsAttachment = [
+        'tanggal_inv' => $param['invoice_date'],
+        'nomor_inv' => $param['reff_number'],
+        'invoice_id' => $invoice['id'],
+        'url' => $param['url']
+      ];
+
+      VendorBillFileUpload::create($vendorBillsAttachment);
+
       DB::commit();
 
       $payloadInvoiceItem = [];
@@ -354,6 +364,16 @@ class InvoiceController extends Controller
       ]);
       DB::commit();
 
+      // construct data
+      $vendorBillsAttachment = [
+        'tanggal_inv' => $param['invoice_date'],
+        'nomor_inv' => $param['reff_number'],
+        'invoice_id' => $invoice['id'],
+        'url' => $param['url']
+      ];
+
+      VendorBillFileUpload::create($vendorBillsAttachment);
+
       $terms = [];
       foreach ($param['terms'] as $key) {
         # code...
@@ -426,7 +446,11 @@ class InvoiceController extends Controller
 
     try {
       if (isset($type)) {
-        $query = Invoice::with('items', 'party', 'payment_history', 'sales_order', 'purchase_order', 'status', 'terms', 'submission')->find($id);
+        if($type === 1) {
+          $query = Invoice::with('items', 'party', 'payment_history', 'sales_order', 'status', 'terms', 'submission')->find($id);
+        } else {
+          $query = Invoice::with('items', 'party', 'payment_history', 'purchase_order', 'vendor_bills_attachment', 'status', 'terms', 'submission')->find($id);
+        }
       } else {
         $query = Invoice::with('party')->find($id);
       }
@@ -590,15 +614,14 @@ class InvoiceController extends Controller
 
     try {
       $query = Invoice::select('sold_to', 'invoice_date')
-                ->with('party')
-                ->whereHas('type', function ($query) use ($type) {
-                  return ($query->where('invoice_type_id', $type));
-                })
-                ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
-                ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
-                ->groupBy('sold_to')
-                ->get();
-
+        ->with('party')
+        ->whereHas('type', function ($query) use ($type) {
+          return ($query->where('invoice_type_id', $type));
+        })
+        ->whereMonth(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $month)
+        ->whereYear(DB::raw('DATE_ADD(invoice_date, INTERVAL due_date DAY)'), $year)
+        ->groupBy('sold_to')
+        ->get();
     } catch (\Throwable $th) {
       //throw $th;
 

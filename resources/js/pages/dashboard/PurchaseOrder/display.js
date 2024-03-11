@@ -125,8 +125,6 @@ function PurchaseOrder({ placeHolder }) {
 
   const { user } = useAuth();
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     handleUpdateData();
   }, [filterMonthYear]);

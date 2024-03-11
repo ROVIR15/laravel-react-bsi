@@ -3850,6 +3850,29 @@ const main = {
         cb(err.response);
       });
   },
+  uploadVendorBills(_formData, cb) {
+    if (!_formData) return undefined;
+    axios
+      .post(uri + '/upload-vendor-bills', _formData)
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
+  updateVendorBillsAttachment(id, _data, cb) {
+    if (!id) throw new Error('ID is required');
+    if (!_data) throw new Error('data is required');
+    axios
+      .put(uri + '/update-vendor-bills-attachment/' + id, { payload: _data })
+      .then(function (res) {
+        cb(res.data);
+      })
+      .catch(function (err) {
+        cb(err.response);
+      });
+  },
   postVendorBills(_data, cb) {
     if (!_data) {
       console.error('data not found');

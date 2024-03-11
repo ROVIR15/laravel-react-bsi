@@ -125,4 +125,36 @@ class UploadController extends Controller
 			'path' => $path
 		]);
 	}
+
+	public function upload_vendor_bill_doc(Request $request)
+	{
+		$this->validate($request, [
+			'file' => 'required',
+		]);
+
+		// Get the uploaded file
+		$file = $request->file('file');
+
+		// Generate a unique filename
+		$filename = time() . "_" . uniqid() . "_" . $file->getClientOriginalName();
+
+		// Define the upload directory
+		$tujuan_upload = 'vendor_bills';
+
+		// Create a new record in the Upload model (if applicable)
+		Upload::create([
+			'name' => $filename
+		]);
+
+		// Move the uploaded file to the destination directory with the new filename
+		$file->move($tujuan_upload, $filename);
+
+		// Create the path for the uploaded file
+		$path = '/' . $tujuan_upload . '/' . $filename;
+
+		return response()->json([
+			'success' => true,
+			'path' => $path
+		]);
+	}
 }

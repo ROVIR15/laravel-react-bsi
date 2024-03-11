@@ -274,6 +274,8 @@ Route::group(['middleware' => ['auth:api', 'record.api.transactions', 'notificat
     Route::put('update-new-feature-v2/{id}', 'ContactMechanismController@update_flag_contact_mechanism');
     Route::get('purchase-order-v2', 'PurchaseOrderController@getPurchaseOrderWhereNotInvoicedYet');
     Route::post('vendor-bills', 'InvoiceController@storeVendorBills');
+    Route::post('upload-vendor-bills', 'UploadController@upload_vendor_bill_doc');
+    Route::resource('update-vendor-bills-attachment', 'VendorBillsFileUploadController')->only(['update']);
 
     Route::get('capacity-sewing', 'MonitoringSewingController@indexV2');
     Route::get('finished-garment-valuation', 'MonitoringFinishedGoodsController@getReadyMadeGarmentValuation');
