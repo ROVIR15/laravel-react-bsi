@@ -87,6 +87,9 @@ function BillofMaterial() {
   // reconcile data storage
   const [reconcile, setReconcile] = useState({});
 
+  // po_proof data storage
+  const [proof, setProof] = useState(null);
+
   // export document data storage
   const [exportLicense, setExportLicense] = useState({});
 
@@ -165,6 +168,8 @@ function BillofMaterial() {
 
           setReconcile(res.reconcile);
 
+          setProof(res?.po_proof?.imageUrl)
+
           setExportLicense(res.export_license);
 
           setShipmentList(res.shipment);
@@ -182,6 +187,7 @@ function BillofMaterial() {
   const goodsColumns = useMemo(
     () => [
       { field: 'sku_id', headerName: 'SKU ID', width: 200, editable: false, visible: 'hide' },
+      { field: 'hs_code', width: 150, headerName: 'HS Code', editable: false },
       { field: 'item_serial_number', width: 150, headerName: 'Nomor Seri Barang', editable: false },
       { field: 'document_number', width: 150, headerName: 'No. Dokumen', editable: false },
       { field: 'bl_number', width: 150, headerName: 'Bill of Lading', editable: false },
@@ -364,6 +370,21 @@ function BillofMaterial() {
 
                         <tr>
                           <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
+                            PO Pembeli
+                          </td>
+                          <td className="wk_width_1 wk_padd_8_20 wk_text_left">
+                            <a
+                              href={proof}
+                              disabled={isNull(proof) ? true : false}
+                              target="_blank"
+                            >
+                              {proof ? proof : 'Belum di Upload'}
+                            </a>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="wk_width_1 wk_padd_8_20 wk_semi_bold wk_primary_color wk_gray_bg">
                             Nomor PEB
                           </td>
                           <td className="wk_width_1 wk_padd_8_20 wk_text_left">
@@ -423,14 +444,14 @@ function BillofMaterial() {
                         <TableCell align="left">{index + 1}</TableCell>
                         <TableCell align="left">
                           <a
-                            href={`../../../shipment/outgoing/document/${id}`}
+                            href={`../../../shipment/outgoing/document/${row.id}`}
                             target="_blank"
                           >
                             {`INSHIP-${row.id}`}
                           </a>
                         </TableCell>
                         <TableCell align="left">{row?.delivery_date}</TableCell>
-                        <TableCell align="right">{`${row?.sum[0]?.total_qty} pcs`}</TableCell>
+                        <TableCell align="right">{`${parseFloat(row?.sum[0]?.total_qty).toFixed(2)} pcs`}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

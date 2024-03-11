@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Manufacture\BOM_alt;
 use App\Models\Manufacture\BOMItem;
 use App\Models\Manufacture\BOMItem_alt;
+use App\Models\Order\POBuyerProof;
 use App\Models\Order\PurchaseOrder;
 use App\Models\Product\ScrapHasProductFeature;
 use App\Models\Reconcile\Reconcile;
@@ -120,6 +121,12 @@ class BOM_AltController extends Controller
             $reconcile = Reconcile::with('order')->where('costing_id', $query->id)->orderBy('id', 'desc')->first();
 
             if(!$reconcile) throw new Exception("Error Processing Requestrecon", 1);
+
+            $po_proof = null;
+
+            if(isset($reconcile->sales_order_id)){
+                $po_proof = POBuyerProof::where('sales_order_id', $reconcile->sales_order_id)->orderBy('id', 'desc')->first();
+            }
 
             $shipment = Shipment::with('sum', 'issuance')
               ->where('order_id', $reconcile->order_id)
@@ -245,6 +252,7 @@ class BOM_AltController extends Controller
                         'pl_number' => $doc_import ? $doc_import->doc->pl_number : 'Tidak Ada',
                         'document_number' => $doc_import ? $doc_import->doc->document_number : 'Tidak Ada',
                         'item_serial_number' => $doc_import ? $doc_import->item_serial_number : 'Tidak Ada',
+                        'hs_code' => $doc_import ? $doc_import->hs_code : 'Tidak Ada',
                         'scrap' => $scrap_val . ' ' . $goods->satuan
                     ];
                 });
@@ -259,6 +267,7 @@ class BOM_AltController extends Controller
         return response()->json([
             'success' => true,
             'data' => $query,
+            'po_proof' => $po_proof,
             'items' => $items,
             'reconcile' => $reconcile,
             'export_license' => $export_kite,

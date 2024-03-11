@@ -970,6 +970,7 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
+            'material_transfer_id' => $item['document_number'],
             'document_number' => str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
             'document_date' => $this->change_date_format($item['document_date']),
             'sku_id' => $item['sku_id'],

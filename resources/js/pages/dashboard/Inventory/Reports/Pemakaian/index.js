@@ -326,7 +326,14 @@ function Inbound() {
                         </IconButton>
                       </TableCell>
                       <TableCell>{row.id}</TableCell>
-                      <TableCell>{`MT-${row.document_number}`}</TableCell>
+                      <TableCell>
+                        <a
+                          href={`../inventory/material-transfer-view/view-document/${row.material_transfer_id}`}
+                          target="_blank"
+                        >
+                          {`MT-${row.document_number}`}
+                        </a>
+                      </TableCell>
                       <TableCell>{row.document_date}</TableCell>
                       <TableCell>
                         {row.sku_id}

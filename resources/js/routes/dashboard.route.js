@@ -196,6 +196,7 @@ import DocumentSO from '../pages/dashboard/SalesOrder/pages/Document';
 import DocumentINV from '../pages/dashboard/Finance/Invoice/pages/Document';
 import DocumentVINV from '../pages/dashboard/Finance/VendorBills/pages/Document';
 import DocumentMaterialTransfer from '../pages/dashboard/Inventory/MaterialTransfer/document';
+import DocumentMaterialTransferViewOnly from '../pages/dashboard/Inventory/MaterialTransfer/document/no-edit';
 
 //Report
 import ReportINV from '../pages/dashboard/Finance/Invoice/pages/Report';
@@ -402,6 +403,10 @@ export default function TestRouter() {
             { path: 'notif', element: <NotifMaterialTransfer/>},
             { path: 'document/:id', element: <DocumentMaterialTransfer/>}
           ]
+        },
+        {
+          path: 'inventory/material-transfer-view/view-document/:id',
+          element: <DocumentMaterialTransferViewOnly/>
         },
         {
           path: 'material-transfer',
