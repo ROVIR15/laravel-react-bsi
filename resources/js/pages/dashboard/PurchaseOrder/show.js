@@ -132,6 +132,7 @@ function SalesOrder() {
     },
     validationSchema: PurchaseOrderSchema,
     onSubmit: (values) => {
+      values = {...values, import_flag: values.import_flag-1}
       try {
         API.updatePurchaseOrder(id, values, function (res) {
           if (!res) return undefined;

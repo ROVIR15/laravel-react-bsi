@@ -133,7 +133,7 @@ function SalesOrder() {
       const _data = {
         ...values,
         order_items: items,
-        import_flag: values-1
+        import_flag: values.import_flag-1
       };
 
       try {
