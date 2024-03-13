@@ -44,6 +44,8 @@ import BasicModal from './components/Modal';
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
 function Inbound() {
+  moment.locale('id')
+  
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState([]);
 
@@ -322,7 +324,7 @@ function Inbound() {
                       </TableCell>
                       <TableCell>{row?.id}</TableCell>
                       <TableCell>{row?.export_document_number}</TableCell>
-                      <TableCell>{row?.export_document_date}</TableCell>
+                      <TableCell>{moment(row?.export_document_date).format('LL')}</TableCell>
                       {/* <TableCell>{row?.serial_number}</TableCell> */}
                       <TableCell>
                         {`OUTSHIP-${strPadLeft(row?.sales_order_id, 4, 0)}-${strPadLeft(

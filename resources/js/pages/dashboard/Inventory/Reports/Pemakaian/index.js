@@ -43,6 +43,8 @@ import BasicModal from './components/Modal';
 const names = ['Bahan Baku', 'Skrap'];
 
 function Inbound() {
+  moment.locale('id');
+
   const [searchParams] = useSearchParams();
 
   const xlsRef = useRef(null);
@@ -334,7 +336,7 @@ function Inbound() {
                           {`MT-${row.document_number}`}
                         </a>
                       </TableCell>
-                      <TableCell>{row.document_date}</TableCell>
+                      <TableCell>{moment(row.document_date).format('LL')}</TableCell>
                       <TableCell>
                         {row.sku_id}
                         {/* {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} */}

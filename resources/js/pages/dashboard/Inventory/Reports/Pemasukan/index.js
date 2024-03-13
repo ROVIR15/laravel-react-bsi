@@ -38,6 +38,8 @@ import BasicModal from './components/Modal';
 
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
+moment.locale('id');
+
 function Inbound() {
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState([]);
@@ -52,37 +54,6 @@ function Inbound() {
     start_date: moment().subtract(7, 'd').format('YYYY-MM-DD'),
     end_date: moment().format('YYYY-MM-DD')
   });
-
-  function exportToExcel(tableID, filename = '') {
-    let downloadLink;
-    const dataType = 'application/vnd.ms-excel';
-    const tableSelect = document.getElementById(tableID);
-    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
-
-    // Specify file name
-    filename = filename ? filename + '.xls' : 'excel_data.xls';
-
-    // Create download link element
-    downloadLink = document.createElement('a');
-
-    document.body.appendChild(downloadLink);
-
-    if (navigator.msSaveOrOpenBlob) {
-      const blob = new Blob(['\ufeff', tableHTML], {
-        type: dataType
-      });
-      navigator.msSaveOrOpenBlob(blob, filename);
-    } else {
-      // Create a link to the file
-      downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
-
-      // Setting the file name
-      downloadLink.download = filename;
-
-      //triggering the function
-      downloadLink.click();
-    }
-  }
 
   const handleDownload = React.useCallback(() => {
     const dataType = 'application/vnd.ms-excel';
@@ -326,17 +297,17 @@ function Inbound() {
                         </IconButton>
                       </TableCell>
                       <TableCell> {row.id} </TableCell>
-                      <TableCell> {row.recoded_date} </TableCell>
+                      <TableCell> {moment(row.recoded_date).format('LL')} </TableCell>
 
                       <TableCell> {row.customs_doc} </TableCell>
 
                       <TableCell> {row.customs_document_number} </TableCell>
-                      <TableCell> {row.customs_document_date}</TableCell>
+                      <TableCell> {moment(row.customs_document_date).format('LL')}</TableCell>
                       <TableCell> {row?.hs_code_item} </TableCell>
                       <TableCell> {row?.customs_item_number} </TableCell>
 
                       <TableCell> {row.serial_number} </TableCell>
-                      <TableCell> {row.shipment_date}</TableCell>
+                      <TableCell> {moment(row.shipment_date).format('LL')}</TableCell>
 
                       <TableCell> {row?.sku_id} </TableCell>
                       {/* <TableCell> {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} </TableCell> */}

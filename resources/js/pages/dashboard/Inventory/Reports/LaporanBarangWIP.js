@@ -39,6 +39,8 @@ import moment from 'moment';
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
 function Inbound() {
+  moment.locale('id');
+  
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState(__payload);
 
@@ -294,7 +296,7 @@ function Inbound() {
                             {row.document_number}
                           </a>
                         </TableCell>
-                        <TableCell>{row.document_date}</TableCell>
+                        <TableCell>{moment(row.document_date).format('LL')}</TableCell>
                         <TableCell>
                           {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
                         </TableCell>
