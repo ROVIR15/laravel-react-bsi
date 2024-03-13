@@ -140,129 +140,202 @@ class InventoryController extends Controller
 
     try {
 
-      $costing = Reconcile::select('order_id', 'costing_id')
-        ->where('costing_id', $costingId)
-        ->first();
+      if ($costingId) {
+        $costing = Reconcile::select('order_id', 'costing_id')
+          ->where('costing_id', $costingId)
+          ->first();
 
-      $list_of_so_item = OrderItem::select('id', 'product_feature_id')
-        ->where('order_id', $costing->order_id)
-        ->pluck('id')
-        ->toArray();
+        $list_of_so_item = OrderItem::select('id', 'product_feature_id')
+          ->where('order_id', $costing->order_id)
+          ->pluck('id')
+          ->toArray();
 
-      $costing_item_id = BOMItem::select('id', 'product_feature_id', 'product_id')
-        ->where('bom_id', $costingId)
-        ->pluck('id')
-        ->toArray();
+        $costing_item_id = BOMItem::select('id', 'product_feature_id', 'product_id')
+          ->where('bom_id', $costingId)
+          ->pluck('id')
+          ->toArray();
 
-      $list_order_item = OrderItem::select('id', 'product_feature_id', 'costing_item_id')
-        ->whereIn('costing_item_id', $costing_item_id)
-        ->pluck('id')
-        ->toArray();
+        $list_order_item = OrderItem::select('id', 'product_feature_id', 'costing_item_id')
+          ->whereIn('costing_item_id', $costing_item_id)
+          ->pluck('id')
+          ->toArray();
 
-      $list_of_item = array_merge($list_order_item, $list_of_so_item);
+        $list_of_item = array_merge($list_order_item, $list_of_so_item);
 
-      // $query = ProductFeature::with('product', 'product_category')
-      //   ->with(['movement' => function ($query) use ($_items, $facilityId) {
-      //     return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))
-      //       ->where('facility_id', $facilityId)
-      //       ->whereIn('product_feature_id', $_items)
-      //       ->groupBy('product_feature_id');
-      //   }])
-      //   ->whereHas('movement')
-      //   ->get()
-      //   ->map(function ($query) {
-      //     $product = $query->product ? $query->product : null;
-      //     $goods = $product ? $product->goods : null;
+        // $query = ProductFeature::with('product', 'product_category')
+        //   ->with(['movement' => function ($query) use ($_items, $facilityId) {
+        //     return $query->select('id', 'product_feature_id', DB::raw('sum(qty) as current_stock'))
+        //       ->where('facility_id', $facilityId)
+        //       ->whereIn('product_feature_id', $_items)
+        //       ->groupBy('product_feature_id');
+        //   }])
+        //   ->whereHas('movement')
+        //   ->get()
+        //   ->map(function ($query) {
+        //     $product = $query->product ? $query->product : null;
+        //     $goods = $product ? $product->goods : null;
 
-      //     return
-      //       [
-      //         'id' => $query['id'],
-      //         'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($query['id'], 4, '0', STR_PAD_LEFT),
-      //         'product_id' => $query['product_id'],
-      //         'product_feature_id' => $query['id'],
-      //         'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
-      //         'unit_measurement' => $goods ? $goods->satuan : null,
-      //         'brand' => $goods ? $goods->brand : null,
-      //         'category_id' => $query->product_category->product_category_id,
-      //         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-      //         'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0
-      //       ];
-      //   })
-      //   ->filter(function ($item) {
-      //     return $item['current_stock'] > 0;
-      //   })
-      //   ->values();
+        //     return
+        //       [
+        //         'id' => $query['id'],
+        //         'sku_id' => str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($query['id'], 4, '0', STR_PAD_LEFT),
+        //         'product_id' => $query['product_id'],
+        //         'product_feature_id' => $query['id'],
+        //         'item_name' => $goods ? $goods->name . ' - ' . $query->color . ' ' . $query->size : null,
+        //         'unit_measurement' => $goods ? $goods->satuan : null,
+        //         'brand' => $goods ? $goods->brand : null,
+        //         'category_id' => $query->product_category->product_category_id,
+        //         'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+        //         'current_stock' => count($query->movement) ? $query->movement[0]->current_stock : 0
+        //       ];
+        //   })
+        //   ->filter(function ($item) {
+        //     return $item['current_stock'] > 0;
+        //   })
+        //   ->values();
 
-      $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
-        ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
-        ->where('facility_id', $facilityId)
-        ->whereIn('order_item_id', $list_of_item)
-        ->groupBy('product_feature_id', 'import_flag', 'facility_id')
-        ->get()
-        ->map(function ($query) {
-          $product_feature = $query->product_feature ? $query->product_feature : null;
-          $product = $query['product'] ? $query['product'] : null;
-          $goods = $query->goods ? $query->goods : null;
+        $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
+          ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
+          ->where('facility_id', $facilityId)
+          ->whereIn('order_item_id', $list_of_item)
+          ->groupBy('product_feature_id', 'import_flag', 'facility_id')
+          ->get()
+          ->map(function ($query) {
+            $product_feature = $query->product_feature ? $query->product_feature : null;
+            $product = $query['product'] ? $query['product'] : null;
+            $goods = $query->goods ? $query->goods : null;
 
-          // $import_flag = $query->import_flag ? 2 : 1;
-          $doc_import = $query->import_flag;
-          $import_flag = 1;
-
-          if ($doc_import === 1) {
-            $import_flag = 2;
-          } elseif ($doc_import === 2) {
-            $import_flag = 3;
-          } else {
+            // $import_flag = $query->import_flag ? 2 : 1;
+            $doc_import = $query->import_flag;
             $import_flag = 1;
-          }
+
+            if ($doc_import === 1) {
+              $import_flag = 2;
+            } elseif ($doc_import === 2) {
+              $import_flag = 3;
+            } else {
+              $import_flag = 1;
+            }
 
 
-          $order_item_c = OrderItem::select('order_id', 'product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
-          $order_item = count($order_item_c) ? $order_item_c[0] : null;
-          if ($order_item) {
-            $order_c = Order::select('currency_id')->where('id', $order_item->order_id)->get();
-            if (count($order_c)) {
-              $currency = $order_c[0]->currency_id;
+            $order_item_c = OrderItem::select('order_id', 'product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
+            $order_item = count($order_item_c) ? $order_item_c[0] : null;
+            if ($order_item) {
+              $order_c = Order::select('currency_id')->where('id', $order_item->order_id)->get();
+              if (count($order_c)) {
+                $currency = $order_c[0]->currency_id;
 
-              if ($currency === 1) {
-                $unit_price = $order_item->unit_price * 15000;
+                if ($currency === 1) {
+                  $unit_price = $order_item->unit_price * 15000;
+                } else {
+                  $unit_price = $order_item->unit_price;
+                }
               } else {
+                $currency = 2;
                 $unit_price = $order_item->unit_price;
               }
             } else {
               $currency = 2;
-              $unit_price = $order_item->unit_price;
+              $unit_price = 0;
             }
-          } else {
-            $currency = 2;
-            $unit_price = 0;
-          }
 
-          return
-            [
-              'id' => $query->id,
-              // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
-              'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
-              'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
-              // 'product_id' => $product->id,
-              // 'product_feature_id' => $product_feature->id,
-              'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
-              'unit_measurement' => $goods ? $goods->satuan : null,
-              // 'brand' => $goods ? $goods->brand : null,
-              'facility_id' => $query->facility_id,
-              'facility_name' => $query->facility->name,
-              'category_id' => $query->product_category->product_category_id,
-              'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
-              'current_stock' => $query->current_stock,
-              'origin_currency' => $currency === 2 ? 'Rupiah' : 'USD',
-              'unit_price' => $unit_price,
-              'total_price' => $unit_price * $query->current_stock
-            ];
-        })
-        ->filter(function ($item) {
-          return $item['current_stock'] >= 0;
-        })
-        ->values();
+            return
+              [
+                'id' => $query->id,
+                // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
+                'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+                'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
+                // 'product_id' => $product->id,
+                // 'product_feature_id' => $product_feature->id,
+                'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
+                'unit_measurement' => $goods ? $goods->satuan : null,
+                // 'brand' => $goods ? $goods->brand : null,
+                'facility_id' => $query->facility_id,
+                'facility_name' => $query->facility->name,
+                'category_id' => $query->product_category->product_category_id,
+                'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+                'current_stock' => $query->current_stock,
+                'origin_currency' => $currency === 2 ? 'Rupiah' : 'USD',
+                'unit_price' => $unit_price,
+                'total_price' => $unit_price * $query->current_stock
+              ];
+          })
+          ->filter(function ($item) {
+            return $item['current_stock'] >= 0;
+          })
+          ->values();
+      } else {
+
+        $query = GoodsMovement::select('id', DB::raw('sum(qty) as current_stock'), 'product_id', 'goods_id', 'product_feature_id', 'order_item_id', 'import_flag', 'facility_id')
+          ->with('product', 'product_feature', 'goods', 'product_category', 'facility')
+          ->where('facility_id', $facilityId)
+          ->groupBy('product_feature_id', 'import_flag', 'facility_id')
+          ->get()
+          ->map(function ($query) {
+            $product_feature = $query->product_feature ? $query->product_feature : null;
+            $product = $query['product'] ? $query['product'] : null;
+            $goods = $query->goods ? $query->goods : null;
+
+            // $import_flag = $query->import_flag ? 2 : 1;
+            $doc_import = $query->import_flag;
+            $import_flag = 1;
+
+            if ($doc_import === 1) {
+              $import_flag = 2;
+            } elseif ($doc_import === 2) {
+              $import_flag = 3;
+            } else {
+              $import_flag = 1;
+            }
+
+
+            $order_item_c = OrderItem::select('order_id', 'product_feature_id', DB::raw('avg(unit_price) as unit_price'))->where('product_feature_id', $product_feature->id)->groupBy('product_feature_id')->get();
+            $order_item = count($order_item_c) ? $order_item_c[0] : null;
+            if ($order_item) {
+              $order_c = Order::select('currency_id')->where('id', $order_item->order_id)->get();
+              if (count($order_c)) {
+                $currency = $order_c[0]->currency_id;
+
+                if ($currency === 1) {
+                  $unit_price = $order_item->unit_price * 15000;
+                } else {
+                  $unit_price = $order_item->unit_price;
+                }
+              } else {
+                $currency = 2;
+                $unit_price = $order_item->unit_price;
+              }
+            } else {
+              $currency = 2;
+              $unit_price = 0;
+            }
+
+            return
+              [
+                'id' => $query->id,
+                // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
+                'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+                'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
+                // 'product_id' => $product->id,
+                // 'product_feature_id' => $product_feature->id,
+                'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
+                'unit_measurement' => $goods ? $goods->satuan : null,
+                // 'brand' => $goods ? $goods->brand : null,
+                'facility_id' => $query->facility_id,
+                'facility_name' => $query->facility->name,
+                'category_id' => $query->product_category->product_category_id,
+                'category' => $query->product_category ? $query->product_category->category->name . ' - ' . $query->product_category->category->sub->name : null,
+                'current_stock' => $query->current_stock,
+                'origin_currency' => $currency === 2 ? 'Rupiah' : 'USD',
+                'unit_price' => $unit_price,
+                'total_price' => $unit_price * $query->current_stock
+              ];
+          })
+          ->filter(function ($item) {
+            return $item['current_stock'] >= 0;
+          })
+          ->values();
+      }
     } catch (\Throwable $th) {
       //throw $th;
 
@@ -904,7 +977,7 @@ class InventoryController extends Controller
                 $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $temp[0]->order_id)->first();
                 if (isset($inv['vendor_bills_attachment'])) {
                   $vb_attachment = $inv['vendor_bills_attachment'];
-                }  
+                }
               }
 
               $costing = BOMItem::find($order_item->costing_item_id);
@@ -921,7 +994,6 @@ class InventoryController extends Controller
               if (count($temp_import_doc)) {
                 $import_doc = $temp_import_doc[0];
               }
-
             }
           }
 
@@ -1310,11 +1382,11 @@ class InventoryController extends Controller
           if ($order_item) {
             $purchase_order = PurchaseOrder::where('order_id', $order_item->order_id)->get();
             if (count($purchase_order) > 0) {
-              $import_flag = $purchase_order[0]->import_flag ? 2 : 1;              
+              $import_flag = $purchase_order[0]->import_flag ? 2 : 1;
               $inv = Invoice::with('vendor_bills_attachment')->where('order_id', $order_item->order_id)->first();
               if (isset($inv['vendor_bills_attachment'])) {
                 $vb_attachment = $inv['vendor_bills_attachment'];
-              }  
+              }
             }
 
 

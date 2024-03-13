@@ -48,7 +48,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
   const loading = open && options.length === 0;
   const [type, setType] = React.useState(0);
 
-  const [selectedFacility, setSelectedFacility] = React.useState(0);
+  const [selectedFacility, setSelectedFacility] = React.useState(15);
 
   const handleSelectType = (e) => {
     setSelectedCosting(0);
@@ -211,6 +211,7 @@ export default function BasicModal({ payload, open, handleClose, items, setItems
                 value={selectedFacility}
                 input={<OutlinedInput label="Name" />}
                 size="small"
+                disabled={true}
                 fullWidth
               >
                 <MenuItem value={0}>None</MenuItem>

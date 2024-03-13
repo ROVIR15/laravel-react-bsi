@@ -120,7 +120,8 @@ function DisplayInventory({ placeHolder }) {
         if (!res.data) {
           setCostingOptions([]);
         } else {
-          setCostingOptions(res.data);
+          let data = [{id: 0, name: 'All'}, ...res.data]
+          setCostingOptions(data);
         }
       });
     } catch (error) {
