@@ -96,6 +96,7 @@ function Goods() {
       unit_measurement: '',
       category: '',
       value: '',
+      product_code: 0,
       brand: '',
       feature_one: '',
       feature_two: ''
@@ -103,6 +104,7 @@ function Goods() {
     validationSchema: GoodsSchema,
     onSubmit: ({
       name,
+      product_code,
       code,
       unit_measurement,
       value,
@@ -114,6 +116,7 @@ function Goods() {
       const _new = {
         goods: {
           name: `${name} - #${code}`,
+          product_code,
           unit: unit_measurement,
           value,
           brand,
