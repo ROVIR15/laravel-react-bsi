@@ -50,7 +50,7 @@ class Goods extends JsonResource
               $join->on("p.id", "=", "pf.product_id");
             })
             ->select(DB::raw("CONCAT(
-                    LPAD(pc.code, 4, '0'), 
+                    pc.code, 
                     '-',
                     LPAD(g.id, 4, '0'), 
                     '-',
