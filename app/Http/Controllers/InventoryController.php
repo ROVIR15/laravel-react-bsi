@@ -384,8 +384,8 @@ class InventoryController extends Controller
             'sku_id' => '02-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => 'INSHIP-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
-            'recoded_date' => $this->change_date_format($item->shipment->delivery_date),
-            'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
+            'recoded_date' => $item->shipment->delivery_date,
+            'shipment_date' => $item->shipment->delivery_date,
             'product_id' => $product->id,
             'product_feature_id' => $productFeature->id,
             'goods_id' => $goods->id,
@@ -406,7 +406,7 @@ class InventoryController extends Controller
             'pl_number' => $importDoc->pl_number,
             'customs_document_id' => $importDoc->id,
             'customs_document_number' => $importDoc->document_number,
-            'customs_document_date' => $this->change_date_format($importDoc->date),
+            'customs_document_date' => $importDoc->date,
             'currency' => $order->currency_id,
             'costing_item_id' => $costing_item ? $costing_item->id : null,
             'costing_id' => $costing_item ? $costing_item->bom_id : null,
@@ -462,6 +462,7 @@ class InventoryController extends Controller
             })
             ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $thru_date]);
         })
+        ->whereHas('export_info')
         ->get()
         ->map(function ($item, $index) {
           $orderItem = $item->order_item ? $item->order_item : null;
@@ -1042,6 +1043,7 @@ class InventoryController extends Controller
       $order_item = OrderItem::select('product_feature_id')->whereIn('order_id', $order_id)->groupBy('product_feature_id')->get()->map(function ($item) {
         return $item->product_feature_id;
       });
+
       $query = GoodsMovement::select(
         'id',
         'product_id',
