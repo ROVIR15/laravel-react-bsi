@@ -40,6 +40,39 @@ const UploadPaper = styled(Button)(({ theme }) => ({
   height: '100%'
 }));
 
+const recognised_cat = [
+  {
+    id: 0,
+    code: '00',
+    name: 'None'
+  },
+  {
+    id: 1,
+    code: '01',
+    name: '01 - Bahan Baku atau Bahan Penolong Domestik (Ekspor Order)'
+  },
+  {
+    id: 2,
+    code: '02',
+    name: '02 - Bahan Baku atau Bahan Penolong Impor (Ekspor Order)'
+  },
+  {
+    id: 3,
+    code: '03',
+    name: '03 - Bahan Baku atau Bahan Penolong Domestik (Ekspor Order)'
+  },
+  {
+    id: 4,
+    code: 'F01',
+    name: 'F01 - Finished Goods (Ekspor Order)'
+  },
+  {
+    id: 5,
+    code: 'F02',
+    name: 'F01 - Finished Goods (Ekspor Order)'
+  }
+];
+
 function Goods() {
   const [cat, setCat] = useState([]);
   const loading = cat.length === 0;
@@ -51,6 +84,7 @@ function Goods() {
     unit_measurement: Yup.string().required('Satuan is required'),
     category: Yup.string().required('Kategori is required'),
     value: Yup.string().required('Nilai Produk is required'),
+    product_code: Yup.number().min(1).required('Kode Produk is required'),
     feature_one: Yup.string().required('Size Produk is required'),
     feature_two: Yup.string().required('Color Produk is required')
   });
@@ -67,7 +101,16 @@ function Goods() {
       feature_two: ''
     },
     validationSchema: GoodsSchema,
-    onSubmit: ({ name, code, unit_measurement, value, brand, category, feature_one, feature_two }) => {
+    onSubmit: ({
+      name,
+      code,
+      unit_measurement,
+      value,
+      brand,
+      category,
+      feature_one,
+      feature_two
+    }) => {
       const _new = {
         goods: {
           name: `${name} - #${code}`,
@@ -241,7 +284,7 @@ function Goods() {
                         />
                       </Grid>
 
-                      <Grid item xs={7}>
+                      <Grid item xs={4}>
                         <FormControl fullWidth>
                           <InputLabel>Kategori</InputLabel>
                           <Select
@@ -266,7 +309,28 @@ function Goods() {
                         </FormControl>
                       </Grid>
 
-                      <Grid item xs={5}>
+                      <Grid item xs={4}>
+                        <FormControl fullWidth>
+                          <InputLabel>Kode Pengenalan Produk</InputLabel>
+                          <Select
+                            autoComplete="product_code"
+                            type="text"
+                            {...getFieldProps('product_code')}
+                            error={Boolean(
+                              touched.product_code && errors.product_code
+                            )}
+                            helperText={
+                              touched.product_code && errors.product_code
+                            }
+                          >
+                            {recognised_cat.map(function (x) {
+                              return <MenuItem value={x.id}>{`${x.name}`}</MenuItem>;
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+
+                      <Grid item xs={4}>
                         <TextField
                           fullWidth
                           autoComplete="brand"

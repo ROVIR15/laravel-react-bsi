@@ -42,7 +42,7 @@ class GoodsMovement extends Model
 
     public function goods()
     {
-        return $this->belongsTo('App\Models\Product\Goods', 'goods_id', 'id');
+        return $this->belongsTo('App\Models\Product\Goods', 'goods_id', 'id')->with('product_code_');
     }
 
     public function product_category()

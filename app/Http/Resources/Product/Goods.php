@@ -18,6 +18,8 @@ class Goods extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'product_code' => $this->product_code,
+            'product_code_' => $this->product_code_,
             'unit_measurement' => $this->satuan,
             'value' => $this->value,
             'brand' => $this->brand,
@@ -41,10 +43,15 @@ class Goods extends JsonResource
             ->join("product as p", function($join){
               $join->on("g.id", "=", "p.goods_id");
             })
+            ->join("product_code as pc", function($join){
+              $join->on("g.product_code", "=", "pc.id");
+            })
             ->join("product_feature as pf", function($join){
               $join->on("p.id", "=", "pf.product_id");
             })
             ->select(DB::raw("CONCAT(
+                    LPAD(pc.code, 4, '0'), 
+                    '-',
                     LPAD(g.id, 4, '0'), 
                     '-',
                     LPAD(p.id, 4, '0'), 

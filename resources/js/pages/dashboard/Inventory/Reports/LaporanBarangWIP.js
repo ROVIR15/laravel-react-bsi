@@ -297,9 +297,7 @@ function Inbound() {
                           </a>
                         </TableCell>
                         <TableCell>{moment(row.document_date).format('LL')}</TableCell>
-                        <TableCell>
-                          {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
-                        </TableCell>
+                        <TableCell>{row.sku_id}</TableCell>
                         <TableCell>{row.item_name}</TableCell>
                         <TableCell>{row.unit_measurement}</TableCell>
                         <TableCell>{parseFloat(row.qty).toFixed(2)}</TableCell>
@@ -360,9 +358,7 @@ function Inbound() {
                         </th>
                       </tr>
                       <tr>
-                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">
-                          No
-                        </th>
+                        <th className="wk_width_1 wk_semi_bold wk_primary_color wk_gray_bg">No</th>
                         <th className="wk_width_2 wk_semi_bold wk_primary_color wk_gray_bg">
                           Nomor
                         </th>
@@ -404,9 +400,7 @@ function Inbound() {
                             <td className="wk_width_3">{row.document_number}</td>
                             <td className="wk_width_3">{row.document_date}</td>
                             <td className="wk_width_2">{row.item_name}</td>
-                            <td className="wk_width_2">
-                              {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
-                            </td>
+                            <td className="wk_width_2">{row.sku_id}</td>
                             <td className="wk_width_1">{row.unit_measurement}</td>
                             <td className="wk_width_1">{row.qty}</td>
                             <td className="wk_width_1">{row.subcontractor_name}</td>

@@ -94,14 +94,16 @@ class ScrapController extends Controller
                     $product = $item->product ? $item->product : null;
                     $goods = $product ? $product->goods : null;
                     $import_flag = $item->import_flag ? 2 : 1;
-                    
+                    $product_code = $goods ? $goods->product_code_ : null;
+                    $code = $product_code ? $product_code->code . '-' : null;
+                
                     $scrap = ScrapHasProductFeature::with('scrap_product')->where('scrap_product_id', $item->product_id)->where('scrap_product_feature_id', $item->product_feature_id)->get();
 
                     if (count($scrap) === 0) {
                         $scrap = null;
-                        $sku_id = str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT);
+                        $sku_id = $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT);
                     } else {
-                        $sku_id = str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->product->goods_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_feature_id, 4, '0', STR_PAD_LEFT) . '-W';
+                        $sku_id = $code . str_pad($scrap[0]->product->goods_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($scrap[0]->ori_product_feature_id, 4, '0', STR_PAD_LEFT) . '-W';
                     }
 
                     $bom_id = null;

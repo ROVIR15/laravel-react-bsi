@@ -44,8 +44,8 @@ import BasicModal from './components/Modal';
 const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'];
 
 function Inbound() {
-  moment.locale('id')
-  
+  moment.locale('id');
+
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState([]);
 
@@ -336,9 +336,7 @@ function Inbound() {
                       <TableCell>{row?.shipment_date} </TableCell>
                       <TableCell>{row.buyer_name}</TableCell>
                       <TableCell>{row.country}</TableCell>
-                      <TableCell>
-                        {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
-                      </TableCell>
+                      <TableCell>{row.sku_id}</TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{parseFloat(row.qty).toFixed(2)}</TableCell>
@@ -458,9 +456,7 @@ function Inbound() {
                           <td className="wk_width_2">{row?.shipment_date} </td>
                           <td className="wk_width_2">{row.buyer_name}</td>
                           <td className="wk_width_2">{row.country}</td>
-                          <td className="wk_width_2">
-                            {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
-                          </td>
+                          <td className="wk_width_2">{row.sku_id}</td>
                           <td className="wk_width_2">{row.item_name}</td>
                           <td className="wk_width_2">{row.unit_measurement}</td>
                           <td className="wk_width_2">{parseFloat(row.qty).toFixed(2)}</td>

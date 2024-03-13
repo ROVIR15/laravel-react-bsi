@@ -204,6 +204,8 @@ class InventoryController extends Controller
             $product_feature = $query->product_feature ? $query->product_feature : null;
             $product = $query['product'] ? $query['product'] : null;
             $goods = $query->goods ? $query->goods : null;
+            $product_code = $goods ? $goods->product_code_ : null;
+            $code = $product_code ? $product_code->code : null;
 
             // $import_flag = $query->import_flag ? 2 : 1;
             $doc_import = $query->import_flag;
@@ -243,13 +245,14 @@ class InventoryController extends Controller
               [
                 'id' => $query->id,
                 // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
-                'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+                'sku_id' => $code . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                 'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
                 // 'product_id' => $product->id,
                 // 'product_feature_id' => $product_feature->id,
                 'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
                 'unit_measurement' => $goods ? $goods->satuan : null,
                 // 'brand' => $goods ? $goods->brand : null,
+                'product_code' => $goods->product_code,
                 'facility_id' => $query->facility_id,
                 'facility_name' => $query->facility->name,
                 'category_id' => $query->product_category->product_category_id,
@@ -275,6 +278,8 @@ class InventoryController extends Controller
             $product_feature = $query->product_feature ? $query->product_feature : null;
             $product = $query['product'] ? $query['product'] : null;
             $goods = $query->goods ? $query->goods : null;
+            $product_code = $goods ? $goods->product_code_ : null;
+            $code = $product_code ? $product_code->code . '-' : null;
 
             // $import_flag = $query->import_flag ? 2 : 1;
             $doc_import = $query->import_flag;
@@ -314,13 +319,14 @@ class InventoryController extends Controller
               [
                 'id' => $query->id,
                 // 'sku_id_alt' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT) . '-' . $query->facility_id,
-                'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
+                'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product_feature->id, 4, '0', STR_PAD_LEFT),
                 'import_flag' => $query->import_flag === 1 ? 'Lokal' : 'Impor',
                 // 'product_id' => $product->id,
                 // 'product_feature_id' => $product_feature->id,
                 'item_name' => $goods ? $goods->name . ' - ' . $product_feature->color . ' ' . $product_feature->size : null,
                 'unit_measurement' => $goods ? $goods->satuan : null,
                 // 'brand' => $goods ? $goods->brand : null,
+                'product_code' => $goods->product_code,
                 'facility_id' => $query->facility_id,
                 'facility_name' => $query->facility->name,
                 'category_id' => $query->product_category->product_category_id,
@@ -409,6 +415,9 @@ class InventoryController extends Controller
           $goods = $product->goods ? $product->goods : null;
           $importItem  = $item->import_info ? $item->import_info : null;
           $importDoc  = $importItem ? $importItem->doc : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
+
 
           $doc_type = '';
 
@@ -454,7 +463,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
-            'sku_id' => '02-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => 'INSHIP-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($item->shipment->id, 4, '0', STR_PAD_LEFT),
             'recoded_date' => $item->shipment->delivery_date,
@@ -546,6 +555,8 @@ class InventoryController extends Controller
           $product = $productFeature->product ? $productFeature->product : null;
           $goods = $product->goods ? $product->goods : null;
           $exportDoc  = $salesOrder->export_doc ? $salesOrder->export_doc : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $costing_item_id = $orderItem['costing_item_id'];
           $costing_item = null;
@@ -567,7 +578,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
-            'sku_id' => '01-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'serial_number' => $item->shipment->serial_number,
             'shipment_date' => $this->change_date_format($item->shipment->delivery_date),
@@ -880,6 +891,8 @@ class InventoryController extends Controller
           $productFeature = $item->order_item ? $item->order_item->product_feature : null;
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $ship_to = $item->shipment->ship_to ? $item->shipment->party['name'] : null;
 
@@ -893,6 +906,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'shipment_id' => $item->shipment->id,
             'document_number' => $name . $item->shipment->id,
             'document_date' => $item->shipment->delivery_date,
@@ -960,6 +974,8 @@ class InventoryController extends Controller
           $productFeature = $item->product_feature;
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $purchase_order_id = null;
           $costing_id = null;
@@ -1029,7 +1045,7 @@ class InventoryController extends Controller
             'customs_document_number' => $import_doc ? $import_doc->document_number : null,
             'pl_number' => $import_doc ? $import_doc->pl_number : 'Tidak Ada',
             'bl_number' => $import_doc ? $import_doc->bl_number : 'Tidak Ada',
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'invoice_id' => $inv ? $inv['id'] : null,
             'vendor_bills' => $inv ? $inv['reff_number'] : null,
             'vb_attachment' => $vb_attachment ? (isset($vb_attachment['url']) ? $vb_attachment['url'] : null) : null
@@ -1145,6 +1161,8 @@ class InventoryController extends Controller
           $productFeature = $item->product_feature;
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $shipment_item = ShipmentItem::select(
             'id',
@@ -1165,6 +1183,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'order_item_id' => $item->order_item_id,
             'facility_id' => $item->facility_id,
             'document_number' => $materialTransfer->id,
@@ -1186,6 +1205,7 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
+            'sku_id' => $item['sku_id'],
             'material_transfer_id' => $item['document_number'],
             'document_number' => 'MT-' . str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
             'document_date' => $this->change_date_format($item['document_date']),
@@ -1389,6 +1409,8 @@ class InventoryController extends Controller
           $productFeature = $item->product_feature;
           $product = $item->product ? $item->product : null;
           $goods = $item->goods ? $item->goods : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $order_item = OrderItem::find($item->order_item_id);
           $purchase_order = null;
@@ -1436,6 +1458,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'initial_stock' => count($initial_stock) ? $initial_stock[0]['stock'] : 0,
             'date' => $item->date,
             'facility_name' => $item->facility ? $item->facility->name : '',
@@ -1444,7 +1467,6 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
             'purchase_order_id' => count($purchase_order) ? $purchase_order[0]->id : 0,
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
             'qty' => $item->qty,
@@ -1557,6 +1579,8 @@ class InventoryController extends Controller
           $productFeature = $item->product_feature;
           $product = $item->product ? $item->product : null;
           $goods = $item->goods ? $item->goods : null;
+          $product_code = $goods ? $goods->product_code_ : null;
+          $code = $product_code ? $product_code->code . '-' : null;
 
           $order_item = OrderItem::find($item->order_item_id);
           $sales_order = null;
@@ -1595,6 +1619,7 @@ class InventoryController extends Controller
 
           return [
             'id' => $index + 1,
+            'sku_id' => $code . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'initial_stock' => count($initial_stock) ? $initial_stock[0]['stock'] : 0,
             'date' => $item->date,
             'facility_name' => $item->facility ? $item->facility->name : '',
@@ -1603,7 +1628,6 @@ class InventoryController extends Controller
             'product_feature_id' => $item->product_feature_id,
             'goods_id' => $goods->id,
             'sales_order_id' => $sales_order ? $sales_order->id : 0,
-            'sku_id' => str_pad($import_flag, 2, '0', STR_PAD_LEFT) . '-' . str_pad($goods->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($product->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($productFeature->id, 4, '0', STR_PAD_LEFT),
             'unit_measurement' => $goods ? $goods->satuan : null,
             'type_movement' => $item->type_movement,
             'qty' => $item->qty,
@@ -1624,6 +1648,7 @@ class InventoryController extends Controller
         if (!isset($organizedData[$itemName])) {
           $organizedData[$itemName] = array(
             'id' => $item['id'],
+            'sku_id' => $item['sku_id'],
             'date' => $item['date'],
             'shipment_id' => $item['shipment_id'],
             'export_document_id' => $item['export_id'],

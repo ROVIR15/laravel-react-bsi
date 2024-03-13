@@ -39,7 +39,6 @@ import moment from 'moment';
 
 const names = ['Bahan Baku', 'Skrap'];
 
-
 function Inbound() {
   moment.locale('id');
   const [searchParams] = useSearchParams();
@@ -300,7 +299,8 @@ function Inbound() {
                       </TableCell>
                       <TableCell>{moment(row.document_date).format('LL')}</TableCell>
                       <TableCell>
-                        {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)}
+                        {row.sku_id}
+                        {/* {generalizeSKU(row.goods_id, row.product_id, row.product_feature_id)} */}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
@@ -406,7 +406,8 @@ function Inbound() {
                           <td className="wk_width_2">{row.document_number}</td>
                           <td className="wk_width_2">{row.document_date}</td>
                           <td className="wk_width_3">
-                            {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)}
+                            {row.sku_id}
+                            {/* {generalizeSKU(row.goods_id, row.product_feature_id, row.product_id)} */}
                           </td>
                           <td className="wk_width_1">{row.item_name}</td>
                           <td className="wk_width_1">{row.unit_measurement}</td>

@@ -195,6 +195,7 @@ class GoodsController extends Controller
     try {
       $goods = Goods::create([
         'name' => $goodsParam['name'],
+        'product_code' => $goodsParam['product_code'],
         'satuan' => $goodsParam['unit'],
         'value' => $goodsParam['value'],
         'brand' => $goodsParam['brand'],
@@ -291,7 +292,7 @@ class GoodsController extends Controller
           'message' => 'Not found!'
         ], 404);
       } else {
-        $goods = $goods->find($tes->goods_id);
+        $goods = $goods->with('product_code_')->find($tes->goods_id);
         if (!$goods){
           return response()->json([
             'success' => false,
@@ -346,6 +347,7 @@ class GoodsController extends Controller
 
       Goods::find($existingProduct->goods_id)->update([
         'name' => $goodsParam['name'],
+        'product_code' => $goodsParam['product_code'],
         'satuan' => $goodsParam['unit'],
         'value' => $goodsParam['value'],
         'brand' => $goodsParam['brand'],

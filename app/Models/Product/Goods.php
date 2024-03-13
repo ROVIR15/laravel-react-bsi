@@ -15,6 +15,7 @@ class Goods extends Model
 
     protected $fillable = [
         'name',
+        'product_code',
         'satuan',
         'value',
         'brand',
@@ -23,6 +24,10 @@ class Goods extends Model
 
     public function product(){
         return $this->belongsTo('App\Models\Product\Product', 'id', 'goods_id')->with('productCategory');
+    }
+
+    public function product_code_(){
+        return $this->belongsTo('App\Models\Product\ProductCode', 'product_code', 'id');
     }
 
     // public function ProductFeature(){

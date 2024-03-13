@@ -20,7 +20,7 @@ class Product extends Model
     ];
 
     public function goods(){
-        return $this->belongsTo('App\Models\Product\Goods');
+        return $this->belongsTo('App\Models\Product\Goods')->with('product_code_');
     }
 
     public function service(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V2;
 
 use App\Models\Product\ProductHasCategory;
 use App\Http\Controllers\Controller;
+use App\Models\Product\ProductCode;
 use Throwable;
 
 class GoodsController extends Controller
@@ -82,12 +83,17 @@ class GoodsController extends Controller
                                     'category_name' => NULL
                                 ];
                             } else {
+                                $product_code = ProductCode::find($goods->product_code);
                                 $category_id = str_pad($category->id, 2, '0', STR_PAD_LEFT);
                                 $category_sub_id = str_pad($category->sub->id, 2, '0', STR_PAD_LEFT);
                                 $product_id = str_pad($product->id, 4, '0', STR_PAD_LEFT);
                                 $goods_id = str_pad($goods->id, 4, '0', STR_PAD_LEFT);
                                 // $sku_id = $category_id.$category_sub_id.$product_id.$goods_id;
-                                $sku_id = $goods_id.'-'.$product_id;
+                                if($goods->product_code) {
+                                    $sku_id = $product_code['code'] . '-' . $goods_id . '-' . $product_id;
+                                } else {
+                                    $sku_id = $goods_id . '-' . $product_id;
+                                }
                                 return [
                                     'sku_id' => $sku_id,
                                     'id' => $product->id,
