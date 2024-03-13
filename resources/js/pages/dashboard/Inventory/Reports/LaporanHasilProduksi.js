@@ -305,7 +305,7 @@ function Inbound() {
                       <TableCell>{row.item_name}</TableCell>
                       <TableCell>{row.unit_measurement}</TableCell>
                       <TableCell>{row.qty_digunakan}</TableCell>
-                      <TableCell>{row.qty_subcontract}</TableCell>
+                      <TableCell>{parseFloat(row.qty_subcontract).toFixed(2)}</TableCell>
                       <TableCell>{'Warehouse (Finished Goods)'}</TableCell>
                     </TableRow>
                   ))}

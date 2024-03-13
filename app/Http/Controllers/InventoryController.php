@@ -1118,6 +1118,7 @@ class InventoryController extends Controller
 
       $query = GoodsMovement::select(
         'id',
+        'order_item_id',
         'product_id',
         'product_feature_id',
         'goods_id',
@@ -1145,8 +1146,26 @@ class InventoryController extends Controller
           $product = $productFeature ? $productFeature->product : null;
           $goods = $product ? $product->goods : null;
 
+          $shipment_item = ShipmentItem::select(
+            'id',
+            'shipment_id',
+            'order_item_id',
+            DB::raw('SUM(qty) as total_qty'), // Corrected sum function and added alias
+            DB::raw('SUM(qty_shipped) as total_qty_shipped') // Corrected sum function and added alias
+          )
+            ->whereHas('shipment', function ($query) {
+              return $query->where('shipment_type_id', 3);
+            })
+            // ->limit(3)
+            ->whereHas('order_item', function ($query) use ($productFeature){
+              return $query->where('product_feature_id', $productFeature->id);
+            })
+            ->groupBy('order_item_id')
+            ->first();
+
           return [
             'id' => $index + 1,
+            'order_item_id' => $item->order_item_id,
             'facility_id' => $item->facility_id,
             'document_number' => $materialTransfer->id,
             'document_date' => $materialTransfer->est_transfer_date,
@@ -1155,7 +1174,8 @@ class InventoryController extends Controller
             'product_id' => $productFeature->product->id,
             'product_feature_id' => $item->product_feature_id,
             'unit_measurement' => $goods ? $goods->satuan : null,
-            'qty' => $item->qty
+            'qty' => $item->qty,
+            'qty_subcontract' => $shipment_item ? $shipment_item->total_qty_shipped : 0
           ];
         });
 
@@ -1169,6 +1189,7 @@ class InventoryController extends Controller
             'material_transfer_id' => $item['document_number'],
             'document_number' => 'MT-' . str_pad($item['document_number'], 4, '0', STR_PAD_LEFT),
             'document_date' => $this->change_date_format($item['document_date']),
+            'order_item_id' => $item['order_item_id'],
             'facility_id' => $item['facility_id'],
             "item_name" => $item['item_name'],
             "product_id" => $item['product_id'],
@@ -1176,8 +1197,7 @@ class InventoryController extends Controller
             "goods_id" => $item['goods_id'],
             "unit_measurement" => $item['unit_measurement'],
             "qty_digunakan" => 0,
-            "qty_subcontract" => 0,
-            "subcontractor_name" => ''
+            "qty_subcontract" => $item['qty_subcontract']
           );
         }
 
@@ -1185,7 +1205,7 @@ class InventoryController extends Controller
         if ($facility == 2) {
           $organizedData[$itemName]['qty_digunakan'] += $item['qty'];
         } elseif ($facility == 17) {
-          $organizedData[$itemName]['qty_subcontract'] = 0;
+          // $organizedData[$itemName]['qty_subcontract'] = 0;
         }
       }
 

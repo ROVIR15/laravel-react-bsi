@@ -300,7 +300,7 @@ function Inbound() {
                         </TableCell>
                         <TableCell>{row.item_name}</TableCell>
                         <TableCell>{row.unit_measurement}</TableCell>
-                        <TableCell>{row.qty}</TableCell>
+                        <TableCell>{parseFloat(row.qty).toFixed(2)}</TableCell>
                         <TableCell>{row.subcontractor_name}</TableCell>
                       </TableRow>
                     );
@@ -397,7 +397,7 @@ function Inbound() {
                             </td>
                             <td className="wk_width_3">{row.item_name}</td>
                             <td className="wk_width_1">{row.unit_measurement}</td>
-                            <td className="wk_width_1">{row.qty}</td>
+                            <td className="wk_width_1">{parseFloat(row.qty).toFixed(2)}</td>
                             <td className="wk_width_1">{row.subcontractor_name}</td>
                           </tr>
                         );

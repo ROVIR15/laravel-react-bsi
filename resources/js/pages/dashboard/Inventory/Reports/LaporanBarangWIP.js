@@ -40,7 +40,7 @@ const names = ['Bahan Baku', 'Barang Jadi', 'Skrap', 'WIP', 'Mesin & Alat Tulis'
 
 function Inbound() {
   moment.locale('id');
-  
+
   const xlsRef = useRef(null);
   const [payloadData, setPayloadData] = useState(__payload);
 
@@ -302,7 +302,7 @@ function Inbound() {
                         </TableCell>
                         <TableCell>{row.item_name}</TableCell>
                         <TableCell>{row.unit_measurement}</TableCell>
-                        <TableCell>{row.qty}</TableCell>
+                        <TableCell>{parseFloat(row.qty).toFixed(2)}</TableCell>
                         <TableCell>{row.subcontractor_name}</TableCell>
                       </TableRow>
                     );
