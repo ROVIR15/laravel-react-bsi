@@ -69,7 +69,7 @@ const recognised_cat = [
   {
     id: 3,
     code: '03',
-    name: '03 - Bahan Baku atau Bahan Penolong Domestik (Ekspor Order)'
+    name: '03 - Bahan Baku atau Bahan Penolong Domestik (Domestik Order)'
   },
   {
     id: 4,
